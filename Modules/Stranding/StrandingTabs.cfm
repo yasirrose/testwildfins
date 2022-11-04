@@ -989,8 +989,9 @@
     </cfif> --->
 
 
-    <!---   getting data on the basis of LCEID  --->
-    <cfif (isDefined('form.LCEID') and form.LCEID neq "") || (isDefined('form.HI_ID') and form.HI_ID neq "") || (isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "") || (isDefined('form.AD_ID') and form.AD_ID neq "") || (isDefined('form.Nfieldnumber') and form.Nfieldnumber neq "") || (isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "")>
+    <!---   getting data on the basis of LCEID  error--->
+    
+    <cfif (isDefined('form.bloodValue_ID') and form.bloodValue_ID neq "") || (isDefined('form.His_ID') and form.His_ID neq "") || (isDefined('form.LA_ID') and form.LA_ID neq "") || (isDefined('form.HI_ID') and form.HI_ID neq "") || (isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "") || (isDefined('form.AD_ID') and form.AD_ID neq "") || (isDefined('form.Nfieldnumber') and form.Nfieldnumber neq "") || (isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "")>
         <!--- <cfdump var="#form.Toxicology_ID#" abort="true"> --->
         <!--- ceteceanExam --->
         <cfif isDefined('form.LCEID') and form.LCEID neq "">        
@@ -2858,22 +2859,43 @@
 
                     <cfoutput query="data" startRow="2">
                                                
-           
-                       <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                            INSERT INTO ST_LevelAForm
-                            (
-                            Fnumber
-                            ,ILAD
-                            ,CarcassStatus                                   
-                            ) 
-                            VALUES
-                            (
-                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.INITIALLIVEANIMALDISPOSITION#'>
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.CARCASSSTATUS#'> 
-                                                    
-                            )
+                         <!---  Level A Form ---> 
+                        <cfquery name="qcheckLAFnumber" datasource="#Application.dsn#">
+                            SELECT ID,Fnumber FROM ST_LevelAForm
+                            WHERE Fnumber ='#data.FieldNumber#'
                         </cfquery>
+
+                        <cfif isDefined('qcheckLAFnumber.Fnumber') and qcheckLAFnumber.Fnumber neq ''>
+
+                        <cfloop query="qcheckLAFnumber">
+                            <cfquery name="qUpdateNotesData" datasource="#Application.dsn#">
+                                Update  ST_LevelAForm set 
+                                ILAD = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.INITIALLIVEANIMALDISPOSITION#'>
+                                ,CarcassStatus = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.CARCASSSTATUS#'> 
+                                where
+                                ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckLAFnumber.ID#'>
+                            </cfquery>
+                        </cfloop>
+
+                        <cfelse>
+                            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                                INSERT INTO ST_LevelAForm
+                                (
+                                Fnumber
+                                ,ILAD
+                                ,CarcassStatus                                   
+                                ) 
+                                VALUES
+                                (
+                                <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.INITIALLIVEANIMALDISPOSITION#'>
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.CARCASSSTATUS#'> 
+                                                        
+                                )
+                            </cfquery>
+                      
+                        </cfif>
+                
 
                      
                     </cfoutput>
@@ -3136,6 +3158,13 @@
                         <cfelse>
                             <cfset Finalcodition = ''>
                         </cfif>
+                        <cfif isDefined('data.EUTHANIZED') and data.EUTHANIZED NEQ '' >
+                            <cfif data.EUTHANIZED eq 'TRUE'>
+                                <cfset EUTHANIZED = '1'>
+                            <cfelse>
+                                <cfset EUTHANIZED = '0'>
+                            </cfif>
+                        </cfif>
                         
                         <!---  CetaceanExam ---> 
                         <cfquery name="qcheckFnumber" datasource="#Application.dsn#">
@@ -3154,7 +3183,7 @@
                             ,FinalCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>
                             ,code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>
                             ,hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>
-                            ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>
+                            ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>
                             ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>
                             where
                             ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckFnumber.ID#'>
@@ -3183,14 +3212,14 @@
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
-                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
                                 )
                             </cfquery> 
                         </cfif>
 
                         <!---  HIform ---> 
-                        <cfquery name="qcheckHiFnumber" datasource="#Application.dsn#">
+                        <!--- <cfquery name="qcheckHiFnumber" datasource="#Application.dsn#">
                             SELECT ID,Fnumber FROM ST_HIForm
                             WHERE Fnumber ='#data.FieldNumber#'
                         </cfquery>
@@ -3206,7 +3235,7 @@
                             ,FinalCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>
                             ,code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>
                             ,hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>
-                            ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>
+                            ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>
                             ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>
                             where
                             ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckHiFnumber.ID#'>
@@ -3235,14 +3264,14 @@
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
-                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
                                 )
                             </cfquery> 
-                        </cfif>
+                        </cfif> --->
                 
                         <!---  Level A Form ---> 
-                        <cfquery name="qcheckLAFnumber" datasource="#Application.dsn#">
+                        <!--- <cfquery name="qcheckLAFnumber" datasource="#Application.dsn#">
                             SELECT ID,Fnumber FROM ST_LevelAForm
                             WHERE Fnumber ='#data.FieldNumber#'
                         </cfquery>
@@ -3257,7 +3286,7 @@
                                 ,FinalCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>
                                 ,code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>
                                 ,hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>
-                                ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>
+                                ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>
                                 ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>
                                 where
                                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckLAFnumber.ID#'>
@@ -3285,7 +3314,7 @@
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
-                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
                                 )
                             </cfquery> 
@@ -3307,7 +3336,7 @@
                                 ,FinalCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>
                                 ,code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>
                                 ,hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>
-                                ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>
+                                ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>
                                 ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>
                                 where
                                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckHisFnumber.ID#'>
@@ -3335,14 +3364,14 @@
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
-                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
                                 )
                             </cfquery> 
-                        </cfif>
+                        </cfif> --->
                         
                         <!---  Blood Value ---> 
-                        <cfquery name="qcheckBVFnumber" datasource="#Application.dsn#">
+                       <!---   <cfquery name="qcheckBVFnumber" datasource="#Application.dsn#">
                             SELECT ID,Fnumber FROM ST_Blood_Values
                             WHERE Fnumber ='#data.FieldNumber#'
                         </cfquery>
@@ -3357,7 +3386,7 @@
                                 ,FinalCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>
                                 ,code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>
                                 ,hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>
-                                ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>
+                                ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>
                                 ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>
                                 where
                                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckBVFnumber.ID#'>
@@ -3385,170 +3414,266 @@
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
-                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>   
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
                                 )
                             </cfquery> 
                         </cfif>
+                        
+                        
+                        <!---  Toxicology ---> 
+                        <cfquery name="qcheckToxiFnumber" datasource="#Application.dsn#">
+                            SELECT ID,Fnumber FROM ST_Toxicology
+                            WHERE Fnumber ='#data.FieldNumber#'
+                        </cfquery>
+
+                        <cfif isDefined('qcheckToxiFnumber.Fnumber') and qcheckToxiFnumber.Fnumber neq ''>
+
+                        <cfloop query="qcheckToxiFnumber">
+                            <cfquery name="qUpdateNotesData" datasource="#Application.dsn#">
+                                Update  ST_Toxicology set 
+                                affiliatedID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>
+                                ,InitialCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>
+                                ,FinalCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>
+                                ,code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>
+                                ,hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>
+                                ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>
+                                ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>
+                                where
+                                ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckToxiFnumber.ID#'>
+                            </cfquery>
+                        </cfloop>
+
+                        <cfelse>
+                            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                                INSERT INTO ST_Toxicology
+                                (
+                                Fnumber   
+                                ,affiliatedID   
+                                ,InitialCondition  
+                                ,FinalCondition                                                   
+                                ,code                                                   
+                                ,hera                                                   
+                                ,euthanizedCB                                                   
+                                ,actualClass                                                   
+                                ) 
+                                VALUES
+                                (
+                                <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
+                                )
+                            </cfquery> 
+                        </cfif>--->
+
+                        <!---  Ancillary_Diagnostics  ---> 
+                        <!--- <cfquery name="qcheckADFnumber" datasource="#Application.dsn#">
+                            SELECT ID,Fnumber FROM ST_Ancillary_Diagnostics
+                            WHERE Fnumber ='#data.FieldNumber#'
+                        </cfquery>
+
+                        <cfif isDefined('qcheckADFnumber.Fnumber') and qcheckADFnumber.Fnumber neq ''>
+
+                        <cfloop query="qcheckADFnumber">
+                            <cfquery name="qUpdateNotesData" datasource="#Application.dsn#">
+                                Update  ST_Ancillary_Diagnostics set 
+                                affiliatedID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>
+                                ,InitialCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>
+                                ,FinalCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>
+                                ,code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>
+                                ,hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>
+                                ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>
+                                ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>
+                                where
+                                ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckADFnumber.ID#'>
+                            </cfquery>
+                        </cfloop>
+
+                        <cfelse>
+                            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                                INSERT INTO ST_Ancillary_Diagnostics
+                                (
+                                Fnumber   
+                                ,affiliatedID   
+                                ,InitialCondition  
+                                ,FinalCondition                                                   
+                                ,code                                                   
+                                ,hera                                                   
+                                ,euthanizedCB                                                   
+                                ,actualClass                                                   
+                                ) 
+                                VALUES
+                                (
+                                <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
+                                )
+                            </cfquery> 
+                        </cfif>
+
+                        <!---  SampleArchive  ---> 
+                        <cfquery name="qcheckSAFnumber" datasource="#Application.dsn#">
+                            SELECT ID,Fnumber FROM ST_SampleArchive
+                            WHERE Fnumber ='#data.FieldNumber#'
+                        </cfquery>
+
+                        <cfif isDefined('qcheckSAFnumber.Fnumber') and qcheckSAFnumber.Fnumber neq ''>
+
+                        <cfloop query="qcheckSAFnumber">
+                            <cfquery name="qUpdateNotesData" datasource="#Application.dsn#">
+                                Update  ST_SampleArchive set 
+                                affiliatedID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>
+                                ,InitialCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>
+                                ,FinalCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>
+                                ,code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>
+                                ,hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>
+                                ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>
+                                ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>
+                                where
+                                ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckSAFnumber.ID#'>
+                            </cfquery>
+                        </cfloop>
+
+                        <cfelse>
+                            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                                INSERT INTO ST_SampleArchive
+                                (
+                                Fnumber   
+                                ,affiliatedID   
+                                ,InitialCondition  
+                                ,FinalCondition                                                   
+                                ,code                                                   
+                                ,hera                                                   
+                                ,euthanizedCB                                                   
+                                ,actualClass                                                   
+                                ) 
+                                VALUES
+                                (
+                                <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
+                                )
+                            </cfquery> 
+                        </cfif> --->
+
+
+                        <!---  Necropsy Report ---> 
+                        <!--- <cfquery name="qcheckCNFnumber" datasource="#Application.dsn#">
+                            SELECT ID,Fnumber FROM ST_CetaceanNecropsyReport
+                            WHERE Fnumber ='#data.FieldNumber#'
+                        </cfquery>
+
+                        <cfif isDefined('qcheckCNFnumber.Fnumber') and qcheckCNFnumber.Fnumber neq ''>
+
+                        <cfloop query="qcheckCNFnumber">
+                            <cfquery name="qUpdateNotesData" datasource="#Application.dsn#">
+                                Update  ST_CetaceanNecropsyReport set 
+                                affiliatedID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>
+                                ,InitialCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>
+                                ,FinalCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>
+                                ,code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>
+                                ,hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>
+                                ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>
+                                ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>
+                                where
+                                ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckCNFnumber.ID#'>
+                            </cfquery>
+                        </cfloop>
+
+                        <cfelse>
+                            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                                INSERT INTO ST_CetaceanNecropsyReport
+                                (
+                                Fnumber   
+                                ,affiliatedID   
+                                ,InitialCondition  
+                                ,FinalCondition                                                   
+                                ,code                                                   
+                                ,hera                                                   
+                                ,euthanizedCB                                                   
+                                ,actualClass                                                                                 
+                                ,CNRDATE                                                  
+                                ) 
+                                VALUES
+                                (
+                                <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.NecropsyDate#'>   
+                                )
+                            </cfquery> 
+                        </cfif> --->
                 
-                        
-                         
-                      <!---  
-                        
-                        <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                            INSERT INTO ST_Blood_Values
-                            (
-                            Fnumber   
-                            ,affiliatedID   
-                            ,InitialCondition  
-                            ,FinalCondition                                                   
-                            ,code                                                   
-                            ,hera                                                   
-                            ,euthanizedCB                                                   
-                            ,actualClass                                                   
-                            ) 
-                            VALUES
-                            (
-                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
-                            )
-                        </cfquery>
-                        
-                        <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                            INSERT INTO ST_Toxicology
-                            (
-                            Fnumber   
-                            ,affiliatedID   
-                            ,InitialCondition  
-                            ,FinalCondition                                                   
-                            ,code                                                   
-                            ,hera                                                   
-                            ,euthanizedCB                                                   
-                            ,actualClass                                                   
-                            ) 
-                            VALUES
-                            (
-                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
-                            )
-                        </cfquery> 
 
-                       <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                            INSERT INTO ST_Ancillary_Diagnostics
-                            (
-                            Fnumber   
-                            ,affiliatedID   
-                            ,InitialCondition  
-                            ,FinalCondition                                                   
-                            ,code                                                   
-                            ,hera                                                   
-                            ,euthanizedCB                                                   
-                            ,actualClass                                                   
-                            ) 
-                            VALUES
-                            (
-                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
-                            )
+                        <!---  Morphometrics ---> 
+                        <!--- <cfquery name="qcheckMorphoFnumber" datasource="#Application.dsn#">
+                            SELECT ID,Fnumber FROM ST_Morphometrics
+                            WHERE Fnumber ='#data.FieldNumber#'
                         </cfquery>
 
-                       <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                            INSERT INTO ST_SampleArchive
-                            (
-                            Fnumber   
-                            ,affiliatedID   
-                            ,InitialCondition  
-                            ,FinalCondition                                                   
-                            ,code                                                   
-                            ,hera                                                   
-                            ,euthanizedCB                                                   
-                            ,actualClass                                                   
-                            ) 
-                            VALUES
-                            (
-                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
-                            )
-                        </cfquery>
+                        <cfif isDefined('qcheckMorphoFnumber.Fnumber') and qcheckMorphoFnumber.Fnumber neq ''>
 
-                       <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                            INSERT INTO ST_CetaceanNecropsyReport
-                            (
-                            Fnumber   
-                            ,affiliatedID   
-                            ,InitialCondition  
-                            ,FinalCondition                                                   
-                            ,code                                                   
-                            ,hera                                                   
-                            ,euthanizedCB                                                   
-                            ,actualClass                                                   
-                            ,CNRDATE                                                   
-                            ,date                                                   
-                            ) 
-                            VALUES
-                            (
-                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.NecropsyDate#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.NecropsyDate#'>   
-                            )
-                        </cfquery>
+                        <cfloop query="qcheckMorphoFnumber">
+                            <cfquery name="qUpdateNotesData" datasource="#Application.dsn#">
+                                Update  ST_Morphometrics set 
+                                affiliatedID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>
+                                ,InitialCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>
+                                ,FinalCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>
+                                ,code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>
+                                ,hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>
+                                ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>
+                                ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>
+                                where
+                                ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckMorphoFnumber.ID#'>
+                            </cfquery>
+                        </cfloop>
 
-                       <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                            INSERT INTO ST_Morphometrics
-                            (
-                            Fnumber   
-                            ,affiliatedID   
-                            ,InitialCondition  
-                            ,FinalCondition                                                   
-                            ,code                                                   
-                            ,hera                                                   
-                            ,euthanizedCB                                                   
-                            ,actualClass                                                   
-                            ) 
-                            VALUES
-                            (
-                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.EUTHANIZED#'>   
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
-                            )
-                        </cfquery> --->
-                                             
+                        <cfelse>
+                            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                                INSERT INTO ST_Morphometrics
+                                (
+                                Fnumber   
+                                ,affiliatedID   
+                                ,InitialCondition  
+                                ,FinalCondition                                                   
+                                ,code                                                   
+                                ,hera                                                   
+                                ,euthanizedCB                                                   
+                                ,actualClass                                                   
+                                ) 
+                                VALUES
+                                (
+                                <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ADDITIONALIDENTIFIER#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#initialcodition#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Finalcodition#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.code#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HERAFBNO#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#EUTHANIZED#'>   
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ACTUALAGE#'>   
+                                )
+                            </cfquery> 
+                        </cfif>                                              --->
                     </cfoutput>
                 </cfif>    
             </cfif>    
@@ -5621,7 +5746,7 @@
                                 </div>
                             </form>
                         </div>
-                        <cfif (permissions eq "full_access")>
+                        <!--- <cfif (permissions eq "full_access")>
                             <div class="row mt-4 file-tabdesign-row">
                                 <form id="myform" enctype="multipart/form-data" action="" method="post" >
                                     <div class="col-lg-12 dis-flex just-center choose-file-tabdesign">
@@ -5634,7 +5759,7 @@
                                     </div>
                                 </form>
                             </div>
-                        </cfif>
+                        </cfif> --->
                         <div class="flex-center flex-wrap bottons-wrap tabdesign-foot-btns">
                             <input type="submit" id="SaveAndNew" name="SaveAndNew" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">
                             <!--- <input type="submit" id="SaveAndClose" class="btn btn-green m-rl-4" value="Save and Close" name="SaveAndClose" onclick="chkreq(event)"> --->
