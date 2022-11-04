@@ -2131,7 +2131,7 @@
         </cfif>
     </cfif>
     <!--- end --->
-     <!--- import for sample archive --->
+     <!--- import for sample archive test--->
      <cfif structKeyExists(form, "sampleFile") and len(form.sampleFile)>
         <cfset dest = getTempDirectory()>
         <cffile action="upload" destination="#dest#" filefield="sampleFile" result="upload" nameconflict="makeunique">
@@ -2365,6 +2365,242 @@
         </cfif>
     </cfif>
     <!--- end --->
+     <!--- import for Specialsamplearchive test--->
+     <cfif structKeyExists(form, "sampleArchiveSpecialFile") and len(form.sampleArchiveSpecialFile)>
+        <cfset dest = getTempDirectory()>
+        <cffile action="upload" destination="#dest#" filefield="sampleArchiveSpecialFile" result="upload" nameconflict="makeunique">
+        <!--- <cfdump var="#upload#"><cfabort> --->
+        <cfif upload.fileWasSaved>
+            <cfset theFile = upload.serverDirectory & "/" & upload.serverFile>
+            <cfif isSpreadsheetFile(theFile)>
+                <cfspreadsheet action="read" src="#theFile#" query="data" headerrow="1">
+                <cfset showForm = false>
+            <cfelse>
+                <cfset errors = "The file was not an Excel file.">
+                <cfset showForm = true>
+            </cfif>
+        <cfelse>
+            <cfset errors = "The file was not properly uploaded.">	
+        </cfif>
+        <cfif showForm>
+            <div  class="container"  role="alert" id="notify">
+                <div class="row">
+                    <div class="col-lg-8 col-md-6">
+                        <cfif structKeyExists(variables, "errors")>
+                            <cfoutput>
+                            <h3 style="padding-left: 111px;">
+                            <b>Error: #variables.errors#</b>
+                            </h3>
+                            </cfoutput>
+                        </cfif>  
+                    </div>
+                </div>
+            </div>
+        <cfelse>
+        
+            <cfif data.recordCount is 1>
+                <p>
+                This spreadsheet appeared to have no data.
+                </p>
+            <cfelse>
+
+                <!--- <cfset Application.Stranding.SampleTypeUpdate(argumentCollection="#Form#")> --->
+                <cfset colNameArray = data.getColumnNames() />
+                <!--- <cfdump var="#colNameArray#" abort="true"> --->
+                <cfif arrayContains(colNameArray, 'Sample ID') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Sample ID" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Field Number') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Field Number" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Tissue Type') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Tissue Type" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Preservation Method') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Preservation Method" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Sample Comments') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Sample Comments" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Storage Type') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Storage Type" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Location') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Location" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Bin Number') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Bin Number" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Date') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Date" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Date2') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Date2" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Location 2') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Location 2" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Subsampled') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Subsampled" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Subsample Date') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Subsample Date" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Date3') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Date3" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Location3') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Location3" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Thaw') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Thaw" ');
+                    </script>
+                <cfelse>
+                    <cfloop from="1" to="#arrayLen(colNameArray)#" index="i">
+                        <cfset colNameArray[i] = colNameArray[i].replace(' ','') />
+                    </cfloop>
+                    <cfset data.setColumnNames(colNameArray) />
+                   <!--- <cfdump var="#data#" abort="true"> --->
+                    <cfoutput query="data" startRow="2">
+
+                        <cfquery name="qcheckFilesampleArchive" datasource="#Application.dsn#">
+                            SELECT ID,Fnumber,date FROM ST_SampleArchive
+                            WHERE Fnumber ='#data.FieldNumber#'  
+                            
+                        </cfquery>  
+                        <!--- <cfoutput>#qcheckFilesampleArchive.recordCount#</cfoutput> --->
+                       
+                        <cfif qcheckFilesampleArchive.recordCount gt 0>
+                            <cfset SA_ID = "#qcheckFilesampleArchive.ID#">
+                        <cfelse>
+                            <cfquery name="qinsertFilesampleArchive" datasource="#Application.dsn#" result="return_data">
+                                INSERT INTO ST_SampleArchive
+                                (
+                                    Fnumber
+                                    
+                                )
+                                VALUES
+                                (
+                                    <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>
+                                    
+                                )
+                            </cfquery>
+                            <cfset SA_ID = "#return_data.generatedkey#">
+                        </cfif>
+
+                        <cfquery name="qcheckFilesampleType" datasource="#Application.dsn#">
+                            SELECT ID,SampleID FROM ST_SampleType
+                            WHERE SampleID ='#data.SampleID#' and SampleType = '#data.TissueType#' and SA_ID = #SA_ID#
+                        </cfquery>
+                        <cfif qcheckFilesampleType.recordCount gt 0>
+                            <cfset ST_ID = "#qcheckFilesampleType.ID#">
+                        <cfelse>   
+                            <!--- <cfquery name="qcheckEMptySampleIDs" datasource="#Application.dsn#">
+                                SELECT ID,SampleID FROM ST_SampleType
+                                WHERE SampleID ='Not Available'  and SampleType = '#data.TissueType#' and SA_ID = #SA_ID#
+                            </cfquery> --->
+                            <!--- <cfif qcheckEMptySampleIDs.recordCount eq 0> --->
+                                <cfif data.SampleID eq "">
+                                    <cfset Sid = "Not Available">
+                                <cfelse>
+                                    <cfset Sid = "#data.SampleID#">
+                                </cfif>
+                                <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                                    INSERT INTO ST_SampleType
+                                    (
+                                    SampleID
+                                    ,PreservationMethod
+                                    ,SampleComments
+                                    ,StorageType
+                                    ,Sample_Location
+                                    ,BinNumber
+                                    ,SampleType
+                                    ,Sample_Date
+                                    ,maindate
+                                    ,SA_ID
+                                    ) 
+                                    VALUES
+                                    (
+                                    <cfqueryparam cfsqltype="cf_sql_varchar" value='#Sid#'>
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.PreservationMethod#'>
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.SampleComments#'>
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.StorageType#'>
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Location#'>
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BinNumber#'>
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.TissueType#'>
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Date2#' null="#IIF(Date2 EQ "", true, false)#">
+                                    ,<cfqueryparam cfsqltype="CF_SQL_varchar" value='#data.Date#'>
+                                    ,<cfqueryparam cfsqltype="cf_sql_BIGINT" value='#SA_ID#'>
+                                    )
+                                </cfquery>
+                                <cfset ST_ID = "#return_data.generatedkey#">
+                                <cfquery name="qinsertFilesampleDetail" datasource="#Application.dsn#" result="return_data">
+                                    Insert into ST_SampleDetail
+                                    (
+                                        SADate
+                                        ,SampleLocation
+                                        ,subsampleDate
+                                        ,Thawed
+                                        ,subsampled
+                                        ,ST_ID
+                                    )
+                                    VALUES
+                                    (
+                                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Date3#' null="#IIF(Date3 EQ "", true, false)#">
+                                        ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Location2#'>
+                                        ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.SubsampleDate#' null="#IIF(SubsampleDate EQ "", true, false)#">
+                                        ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Thaw#'>
+                                        ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Subsampled#'>
+                                        ,<cfqueryparam cfsqltype="cf_sql_BIGINT" value='#ST_ID#'>
+                                    )
+                                </cfquery>
+                                <cfset count = 2>
+                                <cfif isDefined('data.Location#count++#') AND evaluate('data.Location#count++#') neq "">
+                                    <cfquery name="qinsertFilesampleDetail" datasource="#Application.dsn#" result="return_data">
+                                        Insert into ST_SampleDetail
+                                        (
+                                            SADate
+                                            ,SampleLocation
+                                            ,subsampleDate
+                                            ,Thawed
+                                            ,subsampled
+                                            ,ST_ID
+                                        )
+                                        VALUES
+                                        (
+                                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Date3#' null="#IIF(Date3 EQ "", true, false)#">
+                                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Location3#'>
+                                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.SubsampleDate#' null="#IIF(SubsampleDate EQ "", true, false)#">
+                                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Thaw#'>
+                                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Subsampled#'>
+                                            ,<cfqueryparam cfsqltype="cf_sql_BIGINT" value='#ST_ID#'>
+                                        )
+                                    </cfquery>
+                                </cfif>
+                            <!--- </cfif> --->
+                        </cfif>    
+                    </cfoutput>
+                </cfif>    
+            </cfif>    
+        </cfif>
+    </cfif>
+    <!--- end --->
 
     <!--- start for necropsy --->
     <!--- getting all fieldnumbers from stranding sections --->
@@ -2390,7 +2626,6 @@
     <cfset Spinal_Cord= ['No Findings','Trauma','Hemorrhage','Necrosis','Exudate','Possible Parasite Ova','Not Examed','Partial Examed','Other']>
     <cfset qgetNxLocation= Application.StaticDataNew.getNxLocation()>
     <!--- <cfset qgetCetaceanSpecies=Application.Stranding.getCetaceanSpecies()> --->
-    <!--- <cfset qgetVeterinarians= Application.StaticDataNew.getVeterinarians()> --->
     <cfset qgetLiverFinding= Application.StaticDataNew.getLiverFinding()>
     <cfset qgetLungFinding= Application.StaticDataNew.getLungFinding()>
     <cfset qgetParasiteLocation= Application.StaticDataNew.getParasiteLocation()>
@@ -3089,7 +3324,7 @@
                 <!--- <cfelseif arrayContains(colNameArray, 'FINAL CONDITION') eq false>
                     <script>
                         alert('The Column name in the sheet should be "Final Condition" ');
-                    </script>      --->
+                    </script>--->
                 <cfelseif arrayContains(colNameArray, 'CODE') eq false>
                     <script>
                         alert('The Column name in the sheet should be "CODE" ');
@@ -3680,7 +3915,314 @@
         </cfif>
     </cfif>
 <!--- header Import end ---> 
+     <!--- import for Necropsy test--->
+     <cfif structKeyExists(form, "NecropsySpecialFile") and len(form.NecropsySpecialFile)>
+        <cfset dest = getTempDirectory()>
+        <cffile action="upload" destination="#dest#" filefield="NecropsySpecialFile" result="upload" nameconflict="makeunique">
+        <!--- <cfdump var="#upload#"><cfabort> --->
+        <cfif upload.fileWasSaved>
+            <cfset theFile = upload.serverDirectory & "/" & upload.serverFile>
+            <cfif isSpreadsheetFile(theFile)>
+                <cfspreadsheet action="read" src="#theFile#" query="data" headerrow="1">
+                <cfset showForm = false>
+            <cfelse>
+                <cfset errors = "The file was not an Excel file.">
+                <cfset showForm = true>
+            </cfif>
+        <cfelse>
+            <cfset errors = "The file was not properly uploaded.">	
+        </cfif>
+        <cfif showForm>
+            <div  class="container"  role="alert" id="notify">
+                <div class="row">
+                    <div class="col-lg-8 col-md-6">
+                        <cfif structKeyExists(variables, "errors")>
+                            <cfoutput>
+                            <h3 style="padding-left: 111px;">
+                            <b>Error: #variables.errors#</b>
+                            </h3>
+                            </cfoutput>
+                        </cfif>  
+                    </div>
+                </div>
+            </div>
+        <cfelse>
+        
+            <cfif data.recordCount is 1>
+                <p>
+                This spreadsheet appeared to have no data.
+                </p>
+            <cfelse>
+                
+                <!--- <cfset Application.Stranding.SampleTypeUpdate(argumentCollection="#Form#")> --->
+                <cfset colNameArray = data.getColumnNames() />
 
+                <!--- <cfdump var="#colNameArray#" abort="true"> --->
+                <cfif arrayContains(colNameArray, 'Field Number') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Field Number" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Attending Veterninarian') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Attending Veterninarian" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Prosectors') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Prosectors" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Tentative Gross Diagnosis') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Tentative Gross Diagnosis" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Cause of Death') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Cause of Death" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'General Body Condition') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "General Body Condition" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Integument Comments') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Integument Comments" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Musculoskeletal System Comments') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Musculoskeletal System Comments" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Alimentary Tract Comments') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Alimentary Tract Comments" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Hepatobiliary System Comments') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "	Hepatobiliary System Comments" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Cardiovascular System Comments') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Cardiovascular System Comments" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Pulmonary System Comments') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Pulmonary System Comments" ');
+                    </script>
+                <cfelseif arrayContains(colNameArray, 'Urogential System Comments') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "	Urogential System Comments" ');
+                    </script>              
+                <cfelseif arrayContains(colNameArray, 'Endocrine System Comments') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Endocrine System Comments" ');
+                    </script>     
+                <cfelseif arrayContains(colNameArray, 'Lymphoreticular System Comments') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Lymphoreticular System Comments" ');
+                    </script>     
+                <cfelseif arrayContains(colNameArray, 'Central Nervous System Comments') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "Central Nervous System Comments" ');
+                    </script>     
+                <cfelseif arrayContains(colNameArray, 'GI Foreign Material Type (Necropsy)') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "GI Foreign Material Type (Necropsy)" ');
+                    </script>     
+                <cfelseif arrayContains(colNameArray, 'GI Foreign Material Describe (Necropsy)') eq false>
+                    <script>
+                        alert('The Column name in the sheet should be "GI Foreign Material Describe (Necropsy)" ');
+                    </script>     
+                
+                <cfelse>
+                    <cfloop from="1" to="#arrayLen(colNameArray)#" index="i">
+                        <cfset colNameArray[i] = colNameArray[i].replaceAll(' ','') />
+                    </cfloop>
+                    <cfloop from="1" to="#arrayLen(colNameArray)#" index="i">
+                        <cfset colNameArray[i] = colNameArray[i].replace('(Necropsy)','') />
+                    </cfloop> 
+                    <cfset data.setColumnNames(colNameArray) />
+
+                     <!--- <cfdump var="#data#"abort="true">  --->
+
+                    <cfoutput query="data" startRow="2">
+                        <!--- Start team veterinarian --->
+                          <!--- for Veterinarian --->
+                        <cfif isDefined('data.ATTENDINGVETERNINARIAN') and data.ATTENDINGVETERNINARIAN neq ''>
+                            <cfset myarray=[] >
+                            <cfloop from="1" to="#ListLen(data.ATTENDINGVETERNINARIAN)#" index="i">
+                                <cfset VeterinarianDat = '#data.ATTENDINGVETERNINARIAN#'>
+                                <cfset VeterinarianData = VeterinarianDat.replaceAll(', ',',') />
+                            <!--- store query for insert data in master table --->
+                                <cfset convertedData =listToArray(VeterinarianData,",",false,true) >
+     
+                                <cfquery name="qgetdata1" datasource="#Application.dsn#" result="getData">
+                                    SELECT Veterinarians FROM TLU_Veterinarians
+                                    WHERE Veterinarians ='#ListGetAt(VeterinarianData,i)#'                         
+                                </cfquery> 
+                                <cfset veterian = '#qgetdata1.Veterinarians#' >
+                            <!--- <cfdump var="#veterian#" abort="true"> --->
+                                <cfif veterian eq ''>
+                                    <cfquery name="qinsertFileTLU" datasource="#Application.dsn#">
+                                        INSERT INTO TLU_Veterinarians
+                                            (
+                                            Veterinarians
+                                            ,status
+                                            ) 
+                                            VALUES
+                                            (
+                                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#convertedData[i]#'>
+                                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='0'>   
+                                            )
+                                    </cfquery>
+                                </cfif>
+                                <cfquery name="qgetdata" datasource="#Application.dsn#" >
+                                    SELECT ID FROM TLU_Veterinarians
+                                    WHERE Veterinarians ='#ListGetAt(VeterinarianData,i)#'                         
+                                </cfquery> 
+                                <cfset ArrayAppend(myarray, qgetdata.ID ,"true") >
+                            </cfloop>
+                            <cfset myConvertedList=myarray.toList() >
+                        <cfelse>
+                            <cfset myConvertedList= ''>
+                        </cfif>
+                       <!--- end veterbarian --->
+                        <!--- <cfdump var="#myConvertedList#"abort="true">   --->
+                       <!--- for teamMember --->
+                       <!--- testabc --->
+                       <cfif isDefined('data.Prosectors') and data.Prosectors neq ''>
+                        <cfset teamMemberArray=[] >
+                        <cfloop from="1" to="#ListLen(data.Prosectors)#" index="i">
+                            <cfset TeamMemberDat = '#data.Prosectors#'>
+                            <cfset TeamMemberData = TeamMemberDat.replaceAll(', ',',') />
+                        <!--- add query for insert data in master table --->
+                            <cfset convertedTeamData =listToArray(TeamMemberData,",",false,true) >
+ 
+                            <cfquery name="qgetTeamData" datasource="#Application.dsn#" result="getData">
+                                SELECT RT_MemberName FROM TLU_ResearchTeamMembers
+                                WHERE RT_MemberName ='#ListGetAt(TeamMemberData,i)#'                         
+                            </cfquery> 
+                            <cfset team = '#qgetTeamData.RT_MemberName#' >
+                        <!--- <cfdump var="#team#" abort="true"> --->
+                            <cfif team eq ''>
+                                <cfquery name="qinsertFileTLU" datasource="#Application.dsn#">
+                                    INSERT INTO TLU_ResearchTeamMembers
+                                        (
+                                        RT_MemberName
+                                        ,active
+                                        ) 
+                                        VALUES
+                                        (
+                                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#convertedTeamData[i]#'>
+                                        ,<cfqueryparam cfsqltype="cf_sql_varchar" value='0'>   
+                                        )
+                                </cfquery>
+                            </cfif>
+                        <cfquery name="qgetTeamdata" datasource="#Application.dsn#" >
+                            SELECT RT_ID FROM TLU_ResearchTeamMembers
+                            WHERE RT_MemberName ='#ListGetAt(TeamMemberData,i)#'                         
+                        </cfquery> 
+                        <cfset ArrayAppend(teamMemberArray, qgetTeamdata.RT_ID ,"true") >
+                        </cfloop>
+                        <cfset myConvertedTeamList=teamMemberArray.toList() >
+
+                        <cfelse>
+                            <cfset myConvertedTeamList= ''>
+                       </cfif>
+                        
+                        <!--- end team veterinarian --->
+                        <!--- <cfdump var="#myConvertedTeamList#" abort="true">  --->
+
+                         <!--- test Necropsy ---> 
+                         <!--- <cfquery name="qgetVeterinarians" datasource="#Application.dsn#" >
+                            SELECT * from TLU_Veterinarians
+                            where Veterinarians = '#data.ATTENDINGVETERNINARIAN#'
+                         </cfquery>
+                        <cfquery name="query" datasource="#Application.dsn#">
+                            SELECT * FROM TLU_ResearchTeamMembers where RT_MemberName = '#data.Prosectors#'
+                        </cfquery> --->
+                        <!--- <cfdump var="#myConvertedTeamList#"abort="true">  --->
+
+                        <cfquery name="qcheckNRFnumber" datasource="#Application.dsn#">
+                            SELECT ID,Fnumber FROM ST_CetaceanNecropsyReport
+                            WHERE Fnumber ='#data.FieldNumber#'
+                        </cfquery>
+                        <cfif isDefined('qcheckNRFnumber.Fnumber') and qcheckNRFnumber.Fnumber neq ''>
+
+                        <cfloop query="qcheckNRFnumber">
+                            <cfquery name="qUpdateNotesData" datasource="#Application.dsn#">
+                                Update  ST_CetaceanNecropsyReport set 
+                                attendingVeterinarian = <cfqueryparam cfsqltype="cf_sql_varchar" value='#myConvertedList#'>
+                                ,Prosectors = <cfqueryparam cfsqltype="cf_sql_varchar" value='#myConvertedTeamList#'> 
+                                ,Tentative = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.TENTATIVEGROSSDIAGNOSIS#'> 
+                                ,deathcause = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.CAUSEOFDEATH#'> 
+                                ,Bodycondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GENERALBODYCONDITION#'> 
+                                ,lessiondescribe = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.INTEGUMENTCOMMENTS#'> 
+                                ,muscular_comments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.MUSCULOSKELETALSYSTEMCOMMENTS#'> 
+                                ,hepatobiliary_comments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HEPATOBILIARYSYSTEMCOMMENTS#'> 
+                                ,cardio_comments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.CARDIOVASCULARSYSTEMCOMMENTS#'> 
+                                ,pulmonary_comments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.PULMONARYSYSTEMCOMMENTS#'> 
+                                ,UROGENITAL_Comments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.UROGENTIALSYSTEMCOMMENTS#'> 
+                                ,endocrine_comments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ENDOCRINESYSTEMCOMMENTS#'> 
+                                ,lympho_comments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.LYMPHORETICULARSYSTEMCOMMENTS#'> 
+                                ,nervoussystemcomments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.CENTRALNERVOUSSYSTEMCOMMENTS#'> 
+                                ,GIForeignMaterialType = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIFOREIGNMATERIALTYPE#'> 
+                                ,InjuryLesionAssociatedContents = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIFOREIGNMATERIALDESCRIBE#'> 
+                                where
+                                ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckNRFnumber.ID#'>
+                            </cfquery>
+                        </cfloop>
+
+                        <cfelse>
+                            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                                INSERT INTO ST_CetaceanNecropsyReport
+                                (
+                                Fnumber
+                                ,attendingVeterinarian
+                                ,Prosectors
+                                ,Tentative
+                                ,deathcause
+                                ,Bodycondition
+                                ,lessiondescribe
+                                ,muscular_comments
+                                ,hepatobiliary_comments
+                                ,cardio_comments
+                                ,pulmonary_comments
+                                ,UROGENITAL_Comments
+                                ,endocrine_comments  
+                                ,lympho_comments  
+                                ,nervoussystemcomments
+                                ,GIForeignMaterialType
+                                ,InjuryLesionAssociatedContents                              
+                                ) 
+                                VALUES
+                                (
+                                <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#myConvertedList#'>
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#myConvertedTeamList#'> 
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.TENTATIVEGROSSDIAGNOSIS#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.CAUSEOFDEATH#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GENERALBODYCONDITION#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.INTEGUMENTCOMMENTS#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.MUSCULOSKELETALSYSTEMCOMMENTS#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.HEPATOBILIARYSYSTEMCOMMENTS#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.CARDIOVASCULARSYSTEMCOMMENTS#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.PULMONARYSYSTEMCOMMENTS#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.UROGENTIALSYSTEMCOMMENTS#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ENDOCRINESYSTEMCOMMENTS#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.LYMPHORETICULARSYSTEMCOMMENTS#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.CENTRALNERVOUSSYSTEMCOMMENTS#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIFOREIGNMATERIALTYPE#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIFOREIGNMATERIALDESCRIBE#'>  
+                                                        
+                                )
+                            </cfquery>
+                      
+                        </cfif>
+                                    
+                    </cfoutput>
+                </cfif>    
+            </cfif>    
+        </cfif>
+    </cfif>
+<!--- end for NecropsyReport ---> 
     
     
     <cfoutput>
@@ -4648,9 +5190,9 @@
                                                             <select class="form-control search-box" multiple="multiple" name="ResearchTeam"
                                                             id="ResearchTeam">
                                                             <cfloop query="getTeams">
-                                                                <!--- <cfif active eq 1> --->
+                                                                <cfif active eq 1>
                                                                     <option value="#getTeams.RT_ID#" <cfif ListFind(ValueList(qLCEDataa.ResearchTeam,","),getTeams.RT_ID)>selected</cfif>>#getTeams.RT_MemberName#</option>
-                                                                <!--- </cfif> --->
+                                                                </cfif>
                                                             </cfloop>
 
                                                         </select>
@@ -4660,7 +5202,6 @@
                                             <div class="col-lg-12">
                                                 <div class="form-group input-group flex-center">
                                                     <label class="veterinarian">Veterinarian</label>
-                                                    <!--- <cfdump var="#qgetVeterinarians.Veterinarians#" about="true"> --->
                                                     <div class="input">
                                                         <select class="form-control search-box" multiple="multiple" name="Veterinarian" id="Veterinarian" onclick ="removeOptions()">
                                                            
@@ -10176,7 +10717,26 @@
                             </div>
                         </div>
                     </form>
-                </div>                     
+                </div>  
+                
+                <!--- <cfif (permissions eq "full_access")>
+                    <div class="row mt-4 file-tabdesign-row">
+                        <form id="myform" enctype="multipart/form-data" action="" method="post" >
+                            <div class="col-lg-12 dis-flex just-center choose-file-tabdesign">
+                                <div class="form-group select-width">
+                                    <cfif (permissions eq "full_access")>
+                                        <input type="file" name="sampleArchiveSpecialFile" required>
+                                    </cfif>
+                                </div>
+                                <div class="form-group select-width">
+                                    <cfif (permissions eq "full_access")>
+                                        <button type="submit" class="btn btn-success">Import</button>
+                                    </cfif>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </cfif>                    --->
             </div>   
 
             <!--- end for SampleArchive --->
@@ -10197,9 +10757,9 @@
                             <div class="cust-inp">
                                 <select class="stl-op search-box" multiple="multiple" name="attendingVeterinarian" id="attendingVeterinarian">
                                     <cfloop query="qgetVeterinarians">
-                                        <cfif status eq 1>
+                                        <!--- <cfif status eq 1> --->
                                             <option value="#qgetVeterinarians.ID#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.attendingVeterinarian,","),#qgetVeterinarians.ID#)>selected</cfif>>#qgetVeterinarians.Veterinarians#</option>
-                                        </cfif>
+                                        <!--- </cfif> --->
                                     </cfloop>
                                 </select>
                             </div>
@@ -10214,9 +10774,9 @@
                             <div class="cust-inp">
                                 <select class="stl-op search-box" multiple="multiple" name="Prosectors" id="Prosectors">
                                     <cfloop query="getTeams">
-                                        <cfif active eq 1>
+                                        <!--- <cfif active eq 1> --->
                                             <option value="#getTeams.RT_ID#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.Prosectors,","),#getTeams.RT_ID#)>selected</cfif>>#getTeams.RT_MemberName#</option>
-                                        </cfif>
+                                        <!--- </cfif> --->
                                     </cfloop>
                                 </select>
                             </div>
@@ -13288,6 +13848,24 @@
                 </cfif>
         </div>
     </cfif>
+    <cfif (permissions eq "full_access")>
+            <div class="row mt-4 file-tabdesign-row">
+                <form id="myform" enctype="multipart/form-data" action="" method="post" >
+                    <div class="col-lg-12 dis-flex just-center choose-file-tabdesign">
+                        <div class="form-group select-width">
+                            <cfif (permissions eq "full_access")>
+                                <input type="file" name="NecropsySpecialFile" required>
+                            </cfif>
+                        </div>
+                        <div class="form-group select-width">
+                            <cfif (permissions eq "full_access")>
+                                <button type="submit" class="btn btn-success">Import</button>
+                            </cfif>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </cfif>
         
     </div>
     </div>
