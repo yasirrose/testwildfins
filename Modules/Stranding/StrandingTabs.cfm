@@ -4165,6 +4165,7 @@
                                 ,nervoussystemcomments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.CENTRALNERVOUSSYSTEMCOMMENTS#'> 
                                 ,GIForeignMaterialType = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIFOREIGNMATERIALTYPE#'> 
                                 ,InjuryLesionAssociatedContents = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIFOREIGNMATERIALDESCRIBE#'> 
+                                ,Parasitecomments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.AlimentaryTractComments#'> 
                                 where
                                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckNRFnumber.ID#'>
                             </cfquery>
@@ -4190,7 +4191,8 @@
                                 ,lympho_comments  
                                 ,nervoussystemcomments
                                 ,GIForeignMaterialType
-                                ,InjuryLesionAssociatedContents                              
+                                ,InjuryLesionAssociatedContents  
+                                ,Parasitecomments                            
                                 ) 
                                 VALUES
                                 (
@@ -4211,6 +4213,7 @@
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.CENTRALNERVOUSSYSTEMCOMMENTS#'>  
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIFOREIGNMATERIALTYPE#'>  
                                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIFOREIGNMATERIALDESCRIBE#'>  
+                                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.AlimentaryTractComments#'>  
                                                         
                                 )
                             </cfquery>
@@ -13848,7 +13851,7 @@
                 </cfif>
         </div>
     </cfif>
-    <cfif (permissions eq "full_access")>
+    <!--- <cfif (permissions eq "full_access")>
             <div class="row mt-4 file-tabdesign-row">
                 <form id="myform" enctype="multipart/form-data" action="" method="post" >
                     <div class="col-lg-12 dis-flex just-center choose-file-tabdesign">
@@ -13865,7 +13868,7 @@
                     </div>
                 </form>
             </div>
-        </cfif>
+        </cfif> --->
         
     </div>
     </div>
