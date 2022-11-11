@@ -4893,7 +4893,7 @@
     <!--- getcetaceanexamDate --->
     <cffunction name="getcetaceanexamDate" returntype="any" output="false" access="public">
         <cfquery name="qgetcetaceanexamDate" datasource="#Application.dsn#"  >
-             SELECT cnr.date as cnrdate  from ST_SampleArchive sa 
+             SELECT cnr.CNRDATE as cnrdate  from ST_SampleArchive sa 
             left JOIN ST_CetaceanNecropsyReport cnr on cnr.fnumber = sa.Fnumber
             where sa.ID = #SEID#
         </cfquery>
@@ -4901,7 +4901,7 @@
     </cffunction>
     <cffunction name="getcetaceanNecropsyDate" returntype="any" output="false" access="public">
         <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
-            SELECT cn.date as cnrdate  from ST_LiveCetaceanExam sa 
+            SELECT cn.CNRDATE as cnrdate  from ST_LiveCetaceanExam sa 
             left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
             where sa.ID = '#form.LCEID#'            
         </cfquery>
@@ -4909,7 +4909,7 @@
     </cffunction>
     <cffunction name="getHIFormNecropsyDate" returntype="any" output="false" access="public">
         <cfquery name="qgetHIFormNecropsyDate" datasource="#Application.dsn#"  >
-            SELECT cn.date as cnrdate  from ST_HIForm sa 
+            SELECT cn.CNRDATE as cnrdate  from ST_HIForm sa 
             left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
             where sa.ID = '#form.LCEID#'            
         </cfquery>
@@ -4917,7 +4917,7 @@
     </cffunction>
     <cffunction name="getLevelAFormNecropsyDate" returntype="any" output="false" access="public">
         <cfquery name="qgetLevelAFormNecropsyDate" datasource="#Application.dsn#"  >
-            SELECT cn.date as cnrdate  from ST_LevelAForm sa 
+            SELECT cn.CNRDATE as cnrdate  from ST_LevelAForm sa 
             left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
             where sa.ID = '#form.LA_ID#'            
         </cfquery>
@@ -4925,7 +4925,7 @@
     </cffunction>
     <cffunction name="getHistopathologyNecropsyDate" returntype="any" output="false" access="public">
         <cfquery name="qgetHistopathologyNecropsyDate" datasource="#Application.dsn#"  >
-            SELECT cn.date as cnrdate  from ST_HistoForm sa 
+            SELECT cn.CNRDATE as cnrdate  from ST_HistoForm sa 
             left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
             where sa.ID = '#form.His_ID#'            
         </cfquery>
@@ -4933,7 +4933,7 @@
     </cffunction>
     <cffunction name="getBloodValueNecropsyDate" returntype="any" output="false" access="public">
         <cfquery name="qgetBloodValueNecropsyDate" datasource="#Application.dsn#"  >
-            SELECT cn.date as cnrdate  from ST_Blood_Values sa 
+            SELECT cn.CNRDATE as cnrdate  from ST_Blood_Values sa 
             left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
             where sa.ID = '#form.bloodValue_ID#'            
         </cfquery>
@@ -4941,7 +4941,7 @@
     </cffunction>
     <cffunction name="getToxicologyNecropsyDate" returntype="any" output="false" access="public">
         <cfquery name="qgetToxicologyNecropsyDate" datasource="#Application.dsn#"  >
-            SELECT cn.date as cnrdate  from ST_Toxicology sa 
+            SELECT cn.CNRDATE as cnrdate  from ST_Toxicology sa 
             left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
             where sa.ID = '#form.Toxicology_ID#'            
         </cfquery>
@@ -4949,7 +4949,7 @@
     </cffunction>
     <cffunction name="getAncillaryDiagnosticsNecropsyDate" returntype="any" output="false" access="public">
         <cfquery name="qgetAncillaryDiagnosticsNecropsyDate" datasource="#Application.dsn#"  >
-            SELECT cn.date as cnrdate  from ST_Ancillary_Diagnostics sa 
+            SELECT cn.CNRDATE as cnrdate  from ST_Ancillary_Diagnostics sa 
             left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
             where sa.ID = '#form.AD_ID#'            
         </cfquery>
@@ -4957,7 +4957,7 @@
     </cffunction>
     <cffunction name="getMorphometricsNecropsyDate" returntype="any" output="false" access="public">
         <cfquery name="qgetMorphometricsNecropsyDate" datasource="#Application.dsn#"  >
-            SELECT cn.date as cnrdate  from ST_Morphometrics sa 
+            SELECT cn.CNRDATE as cnrdate  from ST_Morphometrics sa 
             left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
             where sa.ID = '#form.Morphometrics_ID#'            
         </cfquery>

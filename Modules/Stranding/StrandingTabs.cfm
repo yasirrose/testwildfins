@@ -991,7 +991,7 @@
 
     <!---   getting data on the basis of LCEID  error--->
     
-    <cfif (isDefined('form.bloodValue_ID') and form.bloodValue_ID neq "") || (isDefined('form.His_ID') and form.His_ID neq "") || (isDefined('form.LA_ID') and form.LA_ID neq "") || (isDefined('form.HI_ID') and form.HI_ID neq "") || (isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "") || (isDefined('form.AD_ID') and form.AD_ID neq "") || (isDefined('form.Nfieldnumber') and form.Nfieldnumber neq "") || (isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "")>
+    <cfif (isDefined('form.LCEID') and form.LCEID neq "") || (isDefined('form.bloodValue_ID') and form.bloodValue_ID neq "") || (isDefined('form.His_ID') and form.His_ID neq "") || (isDefined('form.LA_ID') and form.LA_ID neq "") || (isDefined('form.HI_ID') and form.HI_ID neq "") || (isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "") || (isDefined('form.AD_ID') and form.AD_ID neq "") || (isDefined('form.Nfieldnumber') and form.Nfieldnumber neq "") || (isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "")>
         <!--- <cfdump var="#form.Toxicology_ID#" abort="true"> --->
         <!--- ceteceanExam --->
         <cfif isDefined('form.LCEID') and form.LCEID neq "">        
