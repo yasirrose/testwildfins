@@ -1971,13 +1971,14 @@ function AddNewRecordforSample() {
       SampleLocation = $("#SampleLocation option:selected").text().trim();
       SampleTracking = $("#SampleTracking option:selected").text().trim();
       SampleTrack = $("#SampleTracking option:selected").val().trim();
-      LabSentto = $("#LabSentto option:selected").text().trim();
+      LabSentto = $("#LabSenttoo option:selected").text().trim();
       SampleNote = $("#SampleArchiveNote").val().trim();
       SampleID = $("#SampleID").val().trim();
       Thawed = $("#Thawed option:selected").val().trim();
       subsample = $("#subsample option:selected").val().trim();
       subsampleDate= $("#subsampleDate").val().trim();
       
+      // console.log(SampleNote);
       // console.log(SampleNote);
       // console.log(Thawed);
       // console.log(subsample);
@@ -2017,7 +2018,7 @@ function AddNewRecordforSample() {
           $("#sub").val(subsampleDateArray);
           $("#SampleAccessionDate").val("");
           $("#SampleLocation").val("");
-          $("#LabSentto").val("");
+          $("#LabSenttoo").val("");
           $("#SampleTracking").val("");
           $("#SampleArchiveNote").val("");
           $("#Thawed").val("");
@@ -2031,7 +2032,7 @@ function AddNewRecordforSample() {
           $("#sampleDate").html('');
           $("#sampleLocation").html('');
           $("#sampleTracking").html('');
-          $("#labsentto").html('');
+          $("#labsenttoo").html('');
           $("#SampleArchiveNote").html('');
       }else{
           if(SampleAccessionDate == ''){
@@ -2050,9 +2051,9 @@ function AddNewRecordforSample() {
               $("#sampleTracking").html('');
           }
           if(LabSentto == 'Select Lab Sent to'){
-              $("#labsentto").html('*Select Lab');
+              $("#labsenttoo").html('*Select Lab');
           }else{
-              $("#labsentto").html('');
+              $("#labsenttoo").html('');
           }
           // if(SampleNote == ''){
           //     $("#sampleNote").html('*Write Note');
@@ -2064,7 +2065,7 @@ function AddNewRecordforSample() {
       SampleAccessionDate = $("#SampleAccessionDate").val().trim();
       SampleLocation = $("#SampleLocation option:selected").text().trim();
       SampleTracking = $("#SampleTracking option:selected").text().trim();
-      LabSentto = $("#LabSentto option:selected").text().trim();
+      LabSentto = $("#LabSenttoo option:selected").text().trim();
       SampleNote = $("#SampleArchiveNote").val().trim();
       Thawed = $("#Thawed option:selected").val().trim();
       subsample = $("#subsample option:selected").val().trim();
@@ -2123,7 +2124,7 @@ function AddNewRecordforSample() {
                   $("#SampleAccessionDate").val(''); 
                   $("#SampleLocation").val('');
                   $("#SampleTracking").val('');
-                  $("#LabSentto").val('');
+                  $("#LabSenttoo").val('');
                   $("#SampleArchiveNote").val('');
                   $("#Thawed").val('');
                   $("#subsample").val('');

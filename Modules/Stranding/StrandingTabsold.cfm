@@ -7003,7 +7003,7 @@
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group blood-from-froup input-group flex-center flex-wrap-wrap">
                             <label class="lab-label">Diagnostic Lab</label>
-                            <select class="form-control" name="LabSenttoo" id="LabSenttoo">
+                            <select class="form-control" name="LabSentto" id="LabSentto">
                                 <option value="">Select Lab</option>
                                 <cfloop query="#qgetDiagnosticLab#">
                                     <cfif status eq 1>
