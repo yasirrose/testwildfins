@@ -4,6 +4,22 @@ $(document).ready(function () {
         $('#myModalLabel').html($(this).attr('title'));
         $('#imagemodal').modal('show');
     });
+    
+    
+//     let tab_url1 = $(location).attr('href'); 
+//     let tab_url =  tab_url1.split('&').pop();
+// //    console.log(tab_url);
+// // const histoDirect = tab_url.substring(15, tab_url.indexOf('='));
+// if(tab_url != "Page=Home"){
+//     var ret = tab_url.replace('SightingId=','');
+//     // alert();
+//     setTimeout(() => {
+//         document.getElementById('sightid').value = ret;
+//             // submitsightForm()
+//     }, 310);
+//     }
+
+//     console.log(ret);
 
     var handleBootstrapCombobox = function () {
         "use strict";

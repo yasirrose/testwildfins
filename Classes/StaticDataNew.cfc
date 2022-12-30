@@ -3070,4 +3070,35 @@
             DELETE FROM TLU_LipemiaIndex   WHERE ID = <cfqueryparam  cfsqltype="cf_sql_integer" value='#URL.id#' >
         </cfquery>
     </cffunction>
+
+     <!--- Sighting Map--->
+     <cffunction name="SightingMapInsert" returntype="any" output="false" access="public" >
+        <cfquery name="qMapInfoInsert" datasource="#variables.dsn#"  result="return_data" >
+            INSERT INTO SightingMap (lat,lng,mapZoom) VALUES(<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.latitude#' >,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.longitude#' >,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.mapZoom#' >)
+        </cfquery>
+        <cfreturn return_data>
+    </cffunction>
+
+    <cffunction name="getSightingMapData" returntype="any" output="false" access="public" >
+        <cfquery name="qgetSightingMap" datasource="#variables.dsn#"  >
+            SELECT * from SightingMap
+        </cfquery>
+        <cfreturn qgetSightingMap>
+    </cffunction>
+
+    <cffunction name="DeleteSightingMap" returntype="any" output="false"  access="remote" >
+        <cfquery name="qDeleteDescription" datasource="#variables.dsn#" >
+           DELETE FROM SightingMap  WHERE id = <cfqueryparam  cfsqltype="cf_sql_integer" value='#URL.id#' >
+         </cfquery>
+   </cffunction>
+
+   <cffunction name="EditSightingMap" returntype="any" output="false" access="public" >
+    <cfquery name="qEditDescription" datasource="#variables.dsn#" result="rEditDescription">
+       UPDATE SightingMap SET  lat = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.latitude#' >,
+       lng=<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.longitude#' >,mapZoom=<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.mapZoom#'>,mapStyle=<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.mapStyle#'>
+       WHERE ID = <cfqueryparam  cfsqltype="cf_sql_integer" value='1' >
+     </cfquery>
+     <cfreturn rEditDescription>
+    </cffunction>
+
 </cfcomponent>

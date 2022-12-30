@@ -112,6 +112,19 @@
     <cfset SightDelete=Application.SightingNew.survey_delete(argumentCollection="#Form#")>
     <cfset message="Survey Deleted.">
   </cfif>
+ <cfparam name="form.PROJECT_ID" default="0">
+ <cfparam name="form.sight_id" default="0">
+
+  <cfparam  name="url.SurveyId" DEFAULT="0">
+  <cfparam  name="url.SightingId" DEFAULT="0">
+  <cfif isDefined('url.SightingId') and url.SightingId neq '0'>
+        <!----<cfdump var="test" abort="true">
+        --->
+        <cfset form.project_id = '#url.SurveyId#'>
+        <cfset form.sight_id = '160'>
+
+  </cfif>
+
   
   <!----
   --
@@ -246,7 +259,7 @@
     <!-- time if end -->
   </cfif>
 
-  <cfparam name="form.PROJECT_ID" default="0">
+  
   <cfif isdefined('form.update_data_clear') OR isdefined('form.update_data_clear_pro')>
     <cfset form.PROJECT_ID = 0>
   </cfif>
@@ -259,7 +272,7 @@
   </cfif>
   
   <!---- Sight Detail--->
-  <cfparam name="form.sight_id" default="0">
+ 
   
   <!----- add sighting & retain---->
   <cfif isdefined('form.add_sighting')>
@@ -271,6 +284,7 @@
     </cfif>
   </cfif>
   <cfset qGetSightings=Application.SightingNew.qSightningDetails(argumentCollection="#Form#")>
+
   
   <!---- get Sighting List--->
   <cfset getsightinglist=Application.SightingNew.getsightinglist(argumentCollection="#Form#")>
@@ -464,7 +478,7 @@
                   <div class="form-group">
                     <label class="col-lg-4 col-md-5 col-sm-12 col-xs-12 control-label">Date</label>
                     <div id="datetimepicker1" class="input-group date col-lg-8 col-md-7 col-sm-12 col-xs-12">
-                      <input type="text" value='#DateTimeFormat(qSurveys.Date, "MM/dd/YYYY")#' name="ProjectDate"  placeholder="mm/dd/yyyy" class="form-control"  >
+                      <input type="text" value='#DateTimeFormat(qSurveys.Date, "MM/dd/YYYY")#' name="ProjectDate"  placeholder="mm/dd/yyyy" class="form-control" >
                       <span class="input-group-addon"> <span class="glyphicon glyphicon-calendar"></span> </span> </div>
                   </div>
                   <div class="form-group">

@@ -936,8 +936,8 @@
     <cfset qgetUnitofsample=Application.StaticDataNew.getUnitofsample()>
     <cfset qgetPreservationMethod=Application.StaticDataNew.getPreservationMethod()>
 
-    <cfif isDefined('SaveAndNewSampleArchive') OR isDefined('SaveAndClose')>
-        <!--- <cfset form.check = "1"> --->
+    <cfif isDefined('SaveAndNewSampleArchive')>
+
         <cfif isDefined('form.SampleArchiveSEID') and form.SampleArchiveSEID neq "">
             <cfset Session.SampleArchive = #form.SampleArchiveSEID#>
             <cfset form.SEID = "#SampleArchiveSEID#">
@@ -1046,7 +1046,7 @@
         <cfset qgetcetaceanDate=Application.Stranding.getcetaceanexamDate(#form.SEID#)>
     </cfif>
 
-
+    <!---all tab data --->
     <cfif (isDefined('form.LCEID') and form.LCEID neq "") || (isDefined('form.bloodValue_ID') and form.bloodValue_ID neq "") || (isDefined('form.His_ID') and form.His_ID neq "") || (isDefined('form.LA_ID') and form.LA_ID neq "") || (isDefined('form.HI_ID') and form.HI_ID neq "") || (isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "") || (isDefined('form.AD_ID') and form.AD_ID neq "") || (isDefined('form.Nfieldnumber') and form.Nfieldnumber neq "") || (isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "")>
         <!--- <cfdump var="#form.Toxicology_ID#" abort="true"> --->
         <!--- ceteceanExam test--->
@@ -2689,10 +2689,11 @@
        <!--- <cfdump var="yes" abort="true"> --->
         <cfset form.field = form.Nfieldnumber>
         <!--- <cfdump var="#form.field#">--->
-            <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>          
+            <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>
+
+            <!--- <cfdump var="#qgetCetaceanNecropsy#"><cfabort>  --->
             <cfset qLCEDataa=Application.Stranding.getCetaceanNecropsy("#form.field#")>
             <cfset qgetcetaceanDate.CNRDATE= qLCEDataa.CNRDATE>
-            <!--- <cfdump var="#qLCEDataa#"><cfabort>  --->
         <cfset qgetAllData=Application.Stranding.getAllData("#form.field#")>
         
         <cfset qgetNutritional=Application.Stranding.getNutritional("#form.field#")>     
@@ -2972,53 +2973,90 @@
                     </cfloop> --->
                     <cfset data.setColumnNames(colNameArray) />
 
+                    <!--- <cfdump var="#data#" abort="true"> --->
                     
                     <cfoutput query="data" startRow="2">
-                                 
-                       <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                            INSERT INTO ST_Morphometrics
-                            (
-                            Fnumber
-                            ,EstimatedWeight
-                            ,weight_values
-                            ,totalLength
-                            ,blowhole   
-                            ,lengthWeight_values                         
-                            ,rostrum
-                            ,girth    
-                            ,fluke                     
-                            ,axillary                     
-                            ,maxium                     
-                            ,blubber                     
-                            ,midlateral                     
-                            ,midVentral                     
-                            ,Lateralupperleft                     
-                            ,Laterallowerleft
-                            ,Ventralupperleft  
-                            ,Ventrallowerright                   
-                            ) 
-                            VALUES
-                            (
-                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Weight#'>
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.WEIGHTESTIMATEDACTUAL#'> 
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.TOTALLENGTH#'>
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BLOWHOLETODORSAL#'>                         
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.LENGTHESTIMATEDACTUAL#'>                    
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ROSTRUMTODORSALFIN#'>                       
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIRTHCERVICAL#'>                         
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FLUKEWIDTH#'>                         
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIRTHAXILLARY#'>                         
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIRTHMAXIMUM#'>                         
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BLUBBERMIDDORSAL#'>                         
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BLUBBERMIDLATERAL#'>                        
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BLUBBERMIDVENTRAL#'>                        
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ToothUpperLeft#'>                         
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ToothLowerLeft#'>                         
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ToothUpperLeft#'>                         
-                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ToothUpperRight#'>                         
-                            )
+
+                        <cfquery name="qcheckMorphoFnumber" datasource="#Application.dsn#">
+                            SELECT ID,Fnumber FROM ST_Morphometrics
+                            WHERE Fnumber ='#data.FieldNumber#'
                         </cfquery>
+
+                        <cfif isDefined('qcheckMorphoFnumber.Fnumber') and qcheckMorphoFnumber.Fnumber neq ''>
+                            <!--- <cfdump var="exist" abort="true"> --->
+                            <cfquery name="qUpdateNotesData" datasource="#Application.dsn#">
+                                Update  ST_Morphometrics set 
+                                EstimatedWeight = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Weight#'>
+                                ,weight_values = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.WEIGHTESTIMATEDACTUAL#'> 
+                                ,totalLength = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.TOTALLENGTH#'> 
+                                ,blowhole = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BLOWHOLETODORSAL#'> 
+                                ,lengthWeight_values = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.LENGTHESTIMATEDACTUAL#'> 
+                                ,rostrum = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ROSTRUMTODORSALFIN#'> 
+                                ,girth = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIRTHCERVICAL#'> 
+                                ,fluke = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FLUKEWIDTH#'> 
+                                ,axillary = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIRTHAXILLARY#'> 
+                                ,maxium = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIRTHMAXIMUM#'> 
+                                ,blubber = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BLUBBERMIDDORSAL#'> 
+                                ,midlateral = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BLUBBERMIDLATERAL#'> 
+                                ,midVentral = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BLUBBERMIDVENTRAL#'> 
+                                ,Lateralupperleft = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ToothUpperLeft#'> 
+                                ,Laterallowerleft = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ToothLowerLeft#'> 
+                                ,Ventralupperleft = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ToothUpperRight#'> 
+                                ,Ventrallowerright = <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ToothLowerRight#'> 
+
+                                where
+                                ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qcheckMorphoFnumber.ID#'>
+                            </cfquery>
+                        <cfelse>
+                            <!--- <cfdump var="not exist" abort="true"> --->
+                            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                                    INSERT INTO ST_Morphometrics
+                                    (
+                                    Fnumber
+                                    ,EstimatedWeight
+                                    ,weight_values
+                                    ,totalLength
+                                    ,blowhole   
+                                    ,lengthWeight_values                         
+                                    ,rostrum
+                                    ,girth    
+                                    ,fluke                     
+                                    ,axillary                     
+                                    ,maxium                     
+                                    ,blubber                     
+                                    ,midlateral                     
+                                    ,midVentral                     
+                                    ,Lateralupperleft                     
+                                    ,Laterallowerleft
+                                    ,Ventralupperleft  
+                                    ,Ventrallowerright                   
+                                    ) 
+                                    VALUES
+                                    (
+                                    <cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FieldNumber#'>
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.Weight#'>
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.WEIGHTESTIMATEDACTUAL#'> 
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.TOTALLENGTH#'>
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BLOWHOLETODORSAL#'>                         
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.LENGTHESTIMATEDACTUAL#'>                    
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ROSTRUMTODORSALFIN#'>                       
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIRTHCERVICAL#'>                         
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.FLUKEWIDTH#'>                         
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIRTHAXILLARY#'>                         
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.GIRTHMAXIMUM#'>                         
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BLUBBERMIDDORSAL#'>                         
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BLUBBERMIDLATERAL#'>                        
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.BLUBBERMIDVENTRAL#'>                        
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ToothUpperLeft#'>                         
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ToothLowerLeft#'>                         
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ToothUpperRight#'>                         
+                                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#data.ToothLowerRight#'>                         
+                                    )
+                                </cfquery>
+
+                        </cfif>
+                        <!--- <cfdump var="test" abort="true"> --->
+                                 
 
                      
                     </cfoutput>
@@ -6518,7 +6556,7 @@
                                                             <td id="">
                                                                 <div class="tablebutn edbtn" style="display: inline-flex;">
                                                                     <input type="button" id="edit_button#ID#" value="Edit" class="edit" onclick="edit_row2(#ID#)">
-                                                                    <input type="button" value="Delete"  class="delete" onclick="delete_row(#ID#)" style="margin-left: 5%;">
+                                                                    <input type="button" value="Delete"  class="delete" onclick="delete_row2(#ID#)" style="margin-left: 5%;">
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -7003,7 +7041,7 @@
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <div class="form-group blood-from-froup input-group flex-center flex-wrap-wrap">
                             <label class="lab-label">Diagnostic Lab</label>
-                            <select class="form-control" name="LabSenttoo" id="LabSenttoo">
+                            <select class="form-control" name="LabSentto" id="LabSentto">
                                 <option value="">Select Lab</option>
                                 <cfloop query="#qgetDiagnosticLab#">
                                     <cfif status eq 1>
@@ -10508,7 +10546,7 @@
                             <div class="form-input-holder">
                                 <div class="form-group input-group flex-center">
                                     <label class="lab-label">Lab Sent to</label>
-                                    <select class="form-control" id="LabSentto">
+                                    <select class="form-control" id="LabSenttoo">
                                         <option value="">Select Lab Sent to</option>
                                         <cfloop query="#qgetDiagnosticLab#">
                                             <cfif status eq 1>
@@ -13458,13 +13496,12 @@
                 <div class="just-fld"><label class="fl-lbl">If Yes, see below</label>
             </div>
         </div>
-        <!--- <cfdump var="#qgetCetaceanNecropsy.InjuryLesionAssociated#>" --->
         <div class="col-lg-5">
             <div class="cust-row material-rw">
                 <div class="cust-fld"><label class="fl-lbl">Injury/Lesion Associated with Foreign Material</label>
                 </div>
                 <div class="cust-inp">
-                    <select class="stl-op" name="InjuryLesionAssociated" id="InjuryLesionAssociated">
+                    <select class="stl-op" name="InjuryLesionAssociated" id="InjuryLesionAssociated">                 
                         <option value="">Select</option>
                         <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.InjuryLesionAssociated') and  qgetCetaceanNecropsy.InjuryLesionAssociated  eq 'Yes'>selected</cfif>>Yes</option>
                         <option value="No"<cfif isdefined('qgetCetaceanNecropsy.InjuryLesionAssociated') and  qgetCetaceanNecropsy.InjuryLesionAssociated  eq 'No'>selected</cfif>>No</option>

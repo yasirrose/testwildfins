@@ -1637,7 +1637,7 @@ function edit_row2(id){
       $('#GearDeposition').val('');
   }
 }
-function delete_row(id){
+function delete_row2(id){
   LesionID=id;
   var ajaxData = new FormData();
   ajaxData.append('ID', LesionID);
