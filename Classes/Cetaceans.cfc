@@ -911,6 +911,7 @@
     <cffunction name="getCetaceanFriends" access="public" returnformat="plain" output="true">
         <cfargument name='SightingNo' default=''>
         <cfargument name='code' default=''>
+
         <cfquery name="qgetCetaceanFriends" datasource="#variables.dsn#">
         SELECT Cetaceans.Sex,CONCAT(Cetaceans.Code, ' - ', Cetaceans.Name) as CetaceanCodeName ,Cetaceans.ID , COUNT(*) as times
         FROM Cetacean_Sightings
@@ -923,6 +924,7 @@
 		Cetaceans.Name,Cetaceans.Code,Cetaceans.Sex,Cetaceans.ID
         order by code Asc
         </cfquery>
+        
         <cfreturn qgetCetaceanFriends>
     </cffunction>
     <cffunction name="getCatalog" returntype="any" output="false" access="public" >

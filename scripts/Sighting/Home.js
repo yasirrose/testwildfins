@@ -6,20 +6,17 @@ $(document).ready(function () {
     });
     
     
-//     let tab_url1 = $(location).attr('href'); 
-//     let tab_url =  tab_url1.split('&').pop();
-// //    console.log(tab_url);
-// // const histoDirect = tab_url.substring(15, tab_url.indexOf('='));
+    // let tab_url1 = $(location).attr('href'); 
+    // let tab_url =  tab_url1.split('&').pop();
+//    console.log(tab_url);
+// const histoDirect = tab_url.substring(15, tab_url.indexOf('='));
 // if(tab_url != "Page=Home"){
 //     var ret = tab_url.replace('SightingId=','');
-//     // alert();
 //     setTimeout(() => {
 //         document.getElementById('sightid').value = ret;
-//             // submitsightForm()
 //     }, 310);
 //     }
 
-//     console.log(ret);
 
     var handleBootstrapCombobox = function () {
         "use strict";

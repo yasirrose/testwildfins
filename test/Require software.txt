@@ -1,6 +1,0 @@
-i need following software.
-\\10.110.5.16
-
-1) Xampp server
-2) Notpad++
-3) Netbeans

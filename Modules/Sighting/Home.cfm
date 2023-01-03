@@ -119,9 +119,9 @@
   <cfparam  name="url.SightingId" DEFAULT="0">
   <cfif isDefined('url.SightingId') and url.SightingId neq '0'>
         <!----<cfdump var="test" abort="true">
+        <cfset form.sight_id = '#url.SightingId#'>
         --->
         <cfset form.project_id = '#url.SurveyId#'>
-        <cfset form.sight_id = '160'>
 
   </cfif>
 
@@ -270,6 +270,10 @@
   <cfelse>
     <cfset qSurveys=Application.SightingNew.qProject_ten()>
   </cfif>
+  <cfif isDefined('url.SightingId') and url.SightingId neq '0'>
+      <cfset form.sight_id = '#url.SightingId#'>
+  </cfif>
+
   
   <!---- Sight Detail--->
  

@@ -6,7 +6,22 @@ $(document).ready(function () {
 		"paging": false,
 		"info":    false,
 		responsive: true,
-		dom: 'rtip',
+		dom: 'Brtip',
+		buttons: [
+			{
+                extend: 'copy',
+                title: 'LYDIA LesionsReport_Preferred Columns'
+            },
+            {
+                extend: 'excelHtml5',
+                title: 'LYDIA LesionsReport_Preferred Columns'
+            },
+            {
+                extend: 'csv',
+                title: 'LYDIA LesionsReport_Preferred Columns'
+            }
+          
+        ]
 	});
 	$('input[name="date"]').daterangepicker({
         opens: "right",
