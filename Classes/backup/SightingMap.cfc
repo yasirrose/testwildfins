@@ -20,14 +20,14 @@
 					where ATLATITUDE != '' and ATLONGITUDE != ''
 		</cfquery>
 					
-		<!--- <cfdump var="#query#" abort="true"> --->
+					<!--- <cfdump var="#query#" abort="true"> --->
 
 										
       <cfset features=[]>
 		<cfloop query = "query">
 			<cfquery name="qgetCetaceanSpecies" datasource="#Application.dsn#"  >
 				SELECT * from TLU_CetaceanSpecies where id = #query.FE_SPECIES#
-	  </cfquery>  
+		</cfquery>  
 		
 		<cfset CETACEANS_ID= '10' >
 		<cfquery name="cetaceans" datasource="#Application.dsn#">
@@ -36,7 +36,7 @@
 			
 			<cfset geojsonn=StructNew("ordered","text","asc",false)>
 			<cfset geojsonn.type = "Feature">
-			<cfset geojsonn.geometry = {type:'Point', coordinates:[#query.ATLONGITUDE#, #query.ATLATITUDE#] }>	
+			<cfset geojsonn.geometry = {type:'Point', coordinates:[#query.ATLATITUDE#, #query.ATLONGITUDE#] }>	
 			<cfset geojsonn.properties = {title:'Mapbox', date:"#DateFormat(date,'mm/dd/yyyy')#", sightingNo:#query.SIGHTINGNUMBER#, Species:#qgetCetaceanSpecies.CETACEANSPECIESNAME#,SightingId:#query.ss_id#,SurveyId:#query.s_id#,CETACEANS_ID:#cetaceans.code#}>
 	
 
@@ -59,12 +59,12 @@
 					SELECT * from SightingMap
 			</cfquery>
 			<cfreturn serializeJSON(qgetSightingMap)>
-		</cffunction>
+	</cffunction>
 
 
 	<cffunction name="getFilterSightingMapData" returntype="any" output="false" access="remote" returnformat="plain">
 	
-				<!--- <cfset date = '01/01/2018 - 01/02/2023'> --->
+				<cfset date = '01/01/2018 - 01/02/2023'>
 
 				<cfset FE_SPECIES = '#cetaceanSpecies#' >
 

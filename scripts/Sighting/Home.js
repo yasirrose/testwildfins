@@ -68,6 +68,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '#btn_lesion_history', function (e) {
+        // alert();
         // Get the list if CL records
         getlesionsList(true);
     });

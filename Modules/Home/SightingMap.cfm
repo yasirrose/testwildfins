@@ -67,7 +67,7 @@
                             <select class="form-control" name="cetaceanSpecies" id="cetaceanSpecies">
                                 <option value="">Select Species</option>
                                 <cfloop query="#qgetCetaceanSpecies#">
-                                    <option value="#CetaceanSpeciesName#" >#CetaceanSpeciesName#</option>
+                                    <option value="#ID#" >#CetaceanSpeciesName#</option>
                                 </cfloop>
                             </select>
                         </div>
@@ -89,10 +89,10 @@
                         <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                             <select class="form-control" name="Cetacean_code">
                                 <option value="">Select  Code</option>
-                                <cfloop query="cetaceans">
+                                <!--- <cfloop query="cetaceans">
                                 <option value="#cetaceans.ID#">#cetaceans.Code# </option>
                                 <!--- <option value="#cetaceans.ID#"> #cetaceans.Name# | #cetaceans.Code# </option> --->
-                                </cfloop>
+                                </cfloop> --->
                             </select>
                         </div>
                     </div>
@@ -110,56 +110,92 @@
 <script>
 
     function filterData(){
+        $.ajax({
+            url:"http://test.wildfins.org/classes/SightingMap.cfc?method=getSightingMapData",
+            type: "POST",
+            data: {},
+            success: function(data) {
+                var data = jQuery.parseJSON(data);
+                // console.log(data.DATA[0]);
+                if(data){
+                var lat = data.DATA[0][1];
+                var lng = data.DATA[0][2];
+                var mapZoom = data.DATA[0][3];
+
+                 if(data.DATA[0][5] == 'light-vv10')
+            {
+                jQuery("#heat_map").attr('checked', true);
+            }else if (data.DATA[0][5] == 'satellite-v9') {
+                jQuery("#satellite-v9").attr('checked', true);
+            }else if (data.DATA[0][5] == 'light-v10') {
+                jQuery("#light-v10").attr('checked', true);
+            }else if (data.DATA[0][5] == 'dark-v10') {
+                jQuery("#dark-v10").attr('checked', true);
+            }else if (data.DATA[0][5] == 'outdoors-v11') {
+                jQuery("#outdoors-v11").attr('checked', true);
+            }
+            
+            if(data.DATA[0][5] == 'light-vv10'){
+                var mapStyle = 'light-v10';
+            }else{
+                var mapStyle = data.DATA[0][5];
+            }
+        mapboxgl.accessToken = 'pk.eyJ1Ijoid2F0Y2hzcG90dGVyIiwiYSI6ImNsMmY0OTgxdzA3MW0zYm1jMmY5MGY5OG4ifQ.vEle7r52YhgPJ8D-MVlZ2A';
+        const map = new mapboxgl.Map({
+        container: 'content', // container ID
+        style: 'mapbox://styles/mapbox/'+ mapStyle, // style URL
+        center:  [lng, lat], // starting position [lng, lat]
+        zoom:mapZoom, // starting zoom
+        });
+
         var date = $('#date').val();
         const myArray = date.split("-");
         let word = myArray[1];
-        console.log(myArray);
 
         var startDate = myArray[0];
         var endDate = myArray[1];
-        // console.log(startDate);
-        // console.log(endDate);
         var cetaceanSpecies = $('#cetaceanSpecies').val();
         var Cetacean_code = $('#Cetacean_code').val();
-        // alert(date + '-' +cetaceanSpecies+'-'+ Cetacean_code )
     $.ajax({
       url:"http://test.wildfins.org/classes/SightingMap.cfc?method=getFilterSightingMapData",
       type: "POST",
       dataType: "json",
       data: {
-          date: date,    
-          cetaceanSpecies: cetaceanSpecies,    
-          Cetacean_code: Cetacean_code,    
+            startDate: startDate,    
+            endDate: endDate,    
+            cetaceanSpecies: cetaceanSpecies,    
+            Cetacean_code: Cetacean_code,    
         },
       success: function(data) {
 
 
-        var lat = 27.534991;
-        var lng = -80.337171;
-        var mapZoom = 7;
-        var mapStyle = 'outdoors-v11';
+        // var lat = 27.534991;
+        // var lng = -80.337171;
+        // var mapZoom = 7;
+        // var mapStyle = 'outdoors-v11';
 
-        mapboxgl.accessToken = 'pk.eyJ1Ijoid2F0Y2hzcG90dGVyIiwiYSI6ImNsMmY0OTgxdzA3MW0zYm1jMmY5MGY5OG4ifQ.vEle7r52YhgPJ8D-MVlZ2A';
+        // mapboxgl.accessToken = 'pk.eyJ1Ijoid2F0Y2hzcG90dGVyIiwiYSI6ImNsMmY0OTgxdzA3MW0zYm1jMmY5MGY5OG4ifQ.vEle7r52YhgPJ8D-MVlZ2A';
             
-            const map = new mapboxgl.Map({
-            container: 'content', // container ID 
-            style: 'mapbox://styles/mapbox/'+mapStyle, // style URL for glob  streets-v12
-            center: [lng, lat], // starting position [lng, lat]
-            zoom: mapZoom, // starting zoom
-            });  
+        // const map = new mapboxgl.Map({
+        // container: 'content', // container ID 
+        // style: 'mapbox://styles/mapbox/'+mapStyle, // style URL for glob  streets-v12
+        // center: [lng, lat], // starting position [lng, lat]
+        // zoom: mapZoom, // starting zoom
+        // });  
 
-
-        var data = jQuery.parseJSON(data);
-        //   console.log('test')
+        
+        $('#myModal').modal('hide');
+        // var data = jQuery.parseJSON(data);
+        
         var mapSighting = data.features;
         
-        for (var i =0 ; i <= mapSighting.length; i++ ) {
+        for (var i =0 ; i < mapSighting.length; i++ ) {
         // create a HTML element for each feature
         const el = document.createElement('div');
         el.className = 'marker';
         
         // make a marker for each feature and add to the map
-        new mapboxgl.Marker(el).setLngLat(mapSighting[i].geometry.coordinates).addTo(map);
+        // new mapboxgl.Marker(el).setLngLat(mapSighting[i].geometry.coordinates).addTo(map);
             var date = mapSighting[i].properties.description;        
             
         // make a marker for each feature and add it to the map
@@ -168,17 +204,24 @@
         .setPopup(
         new mapboxgl.Popup({ offset: 25 }) // add popups
         .setHTML(
-        `<div class="head-modal"><div class="header-title"><h3>Spot Detail</h3></div><div class="modal-content"><p><b>Title:</b>${mapSighting[i].properties.title}</p><p><b>Date:</b>${mapSighting[i].properties.date}</p><p><b>Sighting Number:</b>${mapSighting[i].properties.sightingNo}</p><p><b>Species:</b>${mapSighting[i].properties.Species}</p> <a href="http://test.wildfins.org/?Module=Sighting&Page=Home&SurveyId=${mapSighting[i].properties.SurveyId}&SightingId=${mapSighting[i].properties.SightingId}">Open Sighting</a>`
+        `<div class="head-modal"><div class="header-title"><h3>Spot Detail</h3></div><div class="modal-content"><p><b>Date:</b>${mapSighting[i].properties.date}</p><p><b>Sighting Number:</b>${mapSighting[i].properties.sightingNo}</p><p><b>Species:</b>${mapSighting[i].properties.Species}</p> <a href="http://test.wildfins.org/?Module=Sighting&Page=Home&SurveyId=${mapSighting[i].properties.SurveyId}&SightingId=${mapSighting[i].properties.SightingId}">Open Sighting</a>`
         )
         )
         .addTo(map);
         }
 
-        $('#myModal').modal('hide');
 
+        
         }
       
     });
+        }else{
+            // loadMap(lat,lng,mapZoom)
+            }
+
+            }
+
+        });
     }
 
 
@@ -195,10 +238,9 @@
       data: {},
       success: function(data) {
           var data = jQuery.parseJSON(data);
-        // console.log(data.DATA[0]);
         if(data){
-            var lat = data.DATA[0][2];
-            var lng = data.DATA[0][1];
+            var lat = data.DATA[0][1];
+            var lng = data.DATA[0][2];
             var mapZoom = data.DATA[0][3];
             if(data.DATA[0][5] == 'light-vv10')
             {
@@ -250,10 +292,14 @@
         success: function(data) {
 
             var data = jQuery.parseJSON(data);
+            console.log(data);
             var mapSighting = data.features;
         
-            for (var i =0 ; i <= mapSighting.length; i++ ) {
+            for (var i =0 ; i < mapSighting.length; i++ ) {
             // create a HTML element for each feature
+            // if(){
+
+            // }
             const el = document.createElement('div');
             el.className = 'marker';
             
@@ -268,7 +314,7 @@
             .setPopup(
             new mapboxgl.Popup({ offset: 25 }) // add popups
             .setHTML(
-            `<div class="head-modal"><div class="header-title"><h3>Spot Detail</h3></div><div class="modal-content"><p><b>Title:</b>${mapSighting[i].properties.title}</p><p><b>Date:</b>${mapSighting[i].properties.date}</p><p><b>Sighting Number:</b>${mapSighting[i].properties.sightingNo}</p><p><b>Species:</b>${mapSighting[i].properties.Species}</p> <a href="http://test.wildfins.org/?Module=Sighting&Page=Home&SurveyId=${mapSighting[i].properties.SurveyId}&SightingId=${mapSighting[i].properties.SightingId}">Open Sighting</a>`
+            `<div class="head-modal"><div class="header-title"><h3>Spot Detail</h3></div><div class="modal-content"><p><b>Date:</b>${mapSighting[i].properties.date}</p><p><b>Sighting Number:</b>${mapSighting[i].properties.sightingNo}</p><p><b>Species:</b>${mapSighting[i].properties.Species}</p> <a href="http://test.wildfins.org/?Module=Sighting&Page=Home&SurveyId=${mapSighting[i].properties.SurveyId}&SightingId=${mapSighting[i].properties.SightingId}">Open Sighting</a>`
             )
             )
             .addTo(map);
@@ -293,10 +339,9 @@
                 var data = jQuery.parseJSON(data);
                 console.log(data.DATA[0]);
                 if(data){
-                var lat = data.DATA[0][2];
-                var lng = data.DATA[0][1];
+                var lat = data.DATA[0][1];
+                var lng = data.DATA[0][2];
                 var mapZoom = data.DATA[0][3];
-                // loadMap(lat,lng,mapZoom)
 
         const map = new mapboxgl.Map({
         container: 'content', // container ID
@@ -316,7 +361,7 @@
                 var mapSighting = data.features;
                 console.log(mapSighting);
             
-                for (var i =0 ; i <= mapSighting.length; i++ ) {
+                for (var i =0 ; i < mapSighting.length; i++ ) {
                 // create a HTML element for each feature
                 const el = document.createElement('div');
                 el.className = 'marker';
@@ -330,7 +375,7 @@
                 .setPopup(
                 new mapboxgl.Popup({ offset: 25 }) // add popups
                 .setHTML(
-                `<div class="head-modal"><div class="header-title"><h3>Spot Detail</h3></div><div class="modal-content"><p><b>Title:</b>${mapSighting[i].properties.title}</p><p><b>Location:</b>${mapSighting[i].properties.description}</p><p><b>Location:</b>${mapSighting[i].properties.description}</p></div></div>`
+                    `<div class="head-modal"><div class="header-title"><h3>Spot Detail</h3></div><div class="modal-content"><p><b>Date:</b>${mapSighting[i].properties.date}</p><p><b>Sighting Number:</b>${mapSighting[i].properties.sightingNo}</p><p><b>Species:</b>${mapSighting[i].properties.Species}</p> <a href="http://test.wildfins.org/?Module=Sighting&Page=Home&SurveyId=${mapSighting[i].properties.SurveyId}&SightingId=${mapSighting[i].properties.SightingId}">Open Sighting</a>`
                 )
                 )
                 .addTo(map);
@@ -350,142 +395,13 @@
         });
       
     }
-function showModal(){
-    $('#myModal').modal('show');
-}
-
-
-<!--- 
-        map.on('load', () => {
-        // Add a new source from our GeoJSON data and
-        // set the 'cluster' option to true. GL-JS will
-        // add the point_count property to your source data.
-        map.addSource('earthquakes', {
-        type: 'geojson',
-        // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
-        // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
-    
-        data: 'https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson',
-        cluster: true,
-        clusterMaxZoom: 14, // Max zoom to cluster points on
-        clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
-        });
-        
-        map.addLayer({
-        id: 'clusters',
-        type: 'circle',
-        source: 'earthquakes',
-        filter: ['has', 'point_count'],
-        paint: {
-        // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-        // with three steps to implement three types of circles:
-        //   * Blue, 20px circles when point count is less than 100
-        //   * Yellow, 30px circles when point count is between 100 and 750
-        //   * Pink, 40px circles when point count is greater than or equal to 750
-        'circle-color': [
-        'step',
-        ['get', 'point_count'],
-        '#51bbd6',
-        100,
-        '#f1f075',
-        750,
-        '#f28cb1'
-        ],
-        'circle-radius': [
-        'step',
-        ['get', 'point_count'],
-        20,
-        100,
-        30,
-        750,
-        40
-        ]
-        }
-        });
-        
-        map.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'earthquakes',
-        filter: ['has', 'point_count'],
-        layout: {
-        'text-field': ['get', 'point_count_abbreviated'],
-        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-        'text-size': 12
-        }
-        });
-        
-        map.addLayer({
-        id: 'unclustered-point',
-        type: 'circle',
-        source: 'earthquakes',
-        filter: ['!', ['has', 'point_count']],
-        paint: {
-        'circle-color': '#11b4da',
-        'circle-radius': 4,
-        'circle-stroke-width': 1,
-        'circle-stroke-color': '#fff'
-        }
-        });
-        
-        // inspect a cluster on click
-        map.on('click', 'clusters', (e) => {
-        const features = map.queryRenderedFeatures(e.point, {
-        layers: ['clusters']
-        });
-        const clusterId = features[0].properties.cluster_id;
-        map.getSource('earthquakes').getClusterExpansionZoom(
-        clusterId,
-        (err, zoom) => {
-        if (err) return;
-        
-        map.easeTo({
-        center: features[0].geometry.coordinates,
-        zoom: zoom
-        });
-        }
-        );
-        });
-        
-        // When a click event occurs on a feature in
-        // the unclustered-point layer, open a popup at
-        // the location of the feature, with
-        // description HTML from its properties.
-        map.on('click', 'unclustered-point', (e) => {
-        const coordinates = e.features[0].geometry.coordinates.slice();
-        const mag = e.features[0].properties.mag;
-        const tsunami =
-        e.features[0].properties.tsunami === 1 ? 'yes' : 'no';
-        
-        // Ensure that if the map is zoomed out such that
-        // multiple copies of the feature are visible, the
-        // popup appears over the copy being pointed to.
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
-        
-        new mapboxgl.Popup()
-        .setLngLat(coordinates)
-        .setHTML(
-        `magnitude: ${mag}<br>Was there a tsunami?: ${tsunami}`
-        )
-        .addTo(map);
-        });
-        
-        content.on('mouseenter', 'clusters', () => {
-            content.getCanvas().style.cursor = 'pointer';
-        });
-        map.on('mouseleave', 'clusters', () => {
-        map.getCanvas().style.cursor = '';
-        });
-        }); --->
+    function showModal(){
+        $('#myModal').modal('show');
+    }
 
 
 
-
-
-
-    </script>
+</script>
 
 <style>
 .marker {

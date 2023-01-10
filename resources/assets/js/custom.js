@@ -917,6 +917,7 @@ function save_exis_lesion() {
 
 function getlesionsList(is_history) {
     var cl_cs_Id = $('#cl_cs_Id').val();
+    // alert(cl_cs_Id)
     if (cl_cs_Id != "" && cl_cs_Id != 0) {
         $.ajax({
             type: "post",

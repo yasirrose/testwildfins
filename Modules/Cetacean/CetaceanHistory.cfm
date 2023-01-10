@@ -18,7 +18,7 @@
   <cfset variables.dsn = "wildfins_new">
   <cfset setLeftImage  = '#Application.CloudRoot#no-image.jpg'> 
   <cfset setRightImage  = '#Application.CloudRoot#no-image.jpg'>
-  
+  <!--- Nouman --->
   <cfif isdefined('FORM.CetaceanId')>
     <cfquery name="qgetlesionCode" datasource="#Application.dsn#">
       select Code from Cetaceans where ID = '#FORM.CetaceanId#'

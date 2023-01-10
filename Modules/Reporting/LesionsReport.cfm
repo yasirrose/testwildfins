@@ -756,7 +756,7 @@
                 <cfif qFiltered.recordCount neq 0>
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12 text-right">
-                            <button type="button" onclick="excel()" class="btn btn-success width-123 m-r-5  ml-auto">Export Excel</button>
+                            <!--- <button type="button" onclick="excel()" class="btn btn-success width-123 m-r-5  ml-auto">Export Excel</button> --->
                         </div>
                     </div>
                 </cfif>   

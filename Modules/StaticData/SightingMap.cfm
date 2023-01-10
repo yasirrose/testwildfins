@@ -52,7 +52,7 @@
       <div class="row">
          <!-- begin col-6 -->
          <div class="col-md-10">
-            <h5 class="m-t-0">Map Setting</h5>
+            <h5 class="m-t-0">Map Settings</h5>
             <cfoutput>
                <form class="form-horizontal" action="#CGI.SCRIPT_NAME#?#CGI.QUERY_STRING#" name="add-camara" method="post">
                   <div class="form-group m-b-10">
@@ -69,13 +69,17 @@
                         <input type="text" value="#qgetSightingMap.lng#" class="form-control" name="longitude" id="longitude" placeholder="Please input longitude" required/>
                      </div>
                   </div>
+                  <div class="form-group next-check">
+                    <input type="button" style="margin-left: 269px;" class="btn btn-success" value="Validate" onclick="checkLatLngTaged()">
+                  </div>
                   <div class="form-group m-b-10">
                      <label class="col-md-3 control-label">Map Zoom</label>
                      <div class="col-md-7">
                         <input type="hidden" name="IDa" value='' id="mapZoom_id" />
-                        <input type="text" value="#qgetSightingMap.mapZoom#" class="form-control" name="mapZoom" id="mapZoom" placeholder="Please input mapZoom" required/>
+                        <input type="text" value="#qgetSightingMap.mapZoom#" class="form-control" name="mapZoom" id="mapZoom" placeholder="Please input map zoom" required/>
                      </div>
                   </div>
+                 
                   <div id="menu" style="margin-left: 270px;">
                     <input id="satellite-v9" name="mapStyle" type="radio" value="satellite-v9" <cfif qgetSightingMap.mapStyle eq 'satellite-v9'>checked="checked"</cfif>>
                     <label class="map-label" for="satellite-v9">Satellite</label>
@@ -177,3 +181,83 @@
    </div>
 </div>
 <!-- end #content -->
+
+<div id="google_map" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close closeGoogleMapModal" onClick="googleMapClose()">&times;</button>
+          <h4 class="modal-title">Google Map</h4>
+        </div>
+        <div class="modal-body google-modal-body" style="overflow:hidden">
+          <div id="canvas-map"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default closeGoogleMapModal" onClick="googleMapClose()">Close</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxYI6DN6VquzG8dxWfN04TAK5Rfngn9ug" defer></script>
+
+<script>
+  function checkLatLngTaged(){
+    var atLatitude = ($('#latitude').val()).trim();
+    var atLongitude = ($('#longitude').val()).trim();
+
+    if(atLatitude != "" && atLongitude !=""){
+        openGoogleMapModal();
+        validateLatLng(parseFloat(atLatitude), parseFloat(atLongitude));
+        
+    } else {
+      alert("Please set the Latitude and Longitude!");
+      return false;
+    }
+  }
+  function openGoogleMapModal(){
+    $('#google_map').addClass('in');
+    $('#google_map').show();
+}
+
+
+function validateLatLng(lat,lng){
+  var mapCobaltStyles = [{"featureType":"all","elementType":"all","stylers":[{"invert_lightness":true},{"saturation":10},{"lightness":30},{"gamma":0.5},{"hue":"#435158"}]}];
+  const myLatLng = {
+        lat: lat,
+        lng: lng
+      };
+      const map = new google.maps.Map(document.getElementById("canvas-map"), {
+        zoom: 9,
+        center: myLatLng
+      });
+      map.setOptions({styles: mapCobaltStyles});
+      new google.maps.Marker({
+        position: myLatLng,
+        map,
+        title: "Location on the google Map"
+      });
+      console.log(map.center);
+      if(map.center == undefined){
+        $('#google_map').removeClass('in');
+        $('#google_map').hide();
+        alert('Please enter valid Latitude and Longitude!');
+        // return true;
+      }
+      return false;
+}
+function googleMapClose(){
+  $('#google_map').removeClass('in');
+  $('#google_map').hide();
+}
+</script>
+<style>
+#canvas-map {
+  height: 100%;
+}
+ .google-modal-body{
+    height: 500px;
+  }
+</style>

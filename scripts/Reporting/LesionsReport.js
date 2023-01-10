@@ -3,9 +3,24 @@ $(document).ready(function () {
 		"pageLength": 100,
 		"scrollX": true,
 		"paging": false,
-		"info":    false,
-		responsive: true,
-		dom: 'rtip',
+		"messageTop": null,
+		"info": false,
+		"responsive": true,
+		"title": false,
+		dom: 'Brtip',
+		buttons: [
+			{
+				extend: 'copy',
+            },
+            {
+                extend: 'excelHtml5',
+                title: null
+            },
+            {
+                extend: 'csv',
+            }
+          
+        ]
 	});
 
 	$('input[name="date"]').daterangepicker({

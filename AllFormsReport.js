@@ -27,10 +27,10 @@ $(document).ready(function () {
         opens: "right",
         format: "MM/DD/YYYY",
         separator: " - ",
-		startDate: "01/01/" + moment().format('YYYY'),
+        startDate: "01/01/" + moment().format('YYYY'),
         endDate: moment(),
-        minDate: "01/01/1990"
-    });
+		minDate: "01/01/1990"
+		});
 });
 function showdate(){
 
@@ -42,7 +42,7 @@ function paginate(value){
 }
 function excel(){
 	form=document.getElementById('searchAllReports');
-	form.action='http://test.wildfins.org/index.cfm?Module=Reporting&Page=ExportReport';
+	form.action='http://app.wildfins.org/index.cfm?Module=Reporting&Page=ExportReport';
 	form.submit();
 	form.action='';
 	$('#ConditionFromSighting').attr('checked', false);
@@ -123,7 +123,7 @@ window.onload = function()
 		$('#fieldEstimate').attr('checked', true);
 	}
 	if (localStorage.getItem("activity") == "true"){
-		$(".activity").removeClass("hidden");
+		$(".fieldEstimate").removeClass("hidden");
 		$('#activity').attr('checked', true);
 	}
 	if (localStorage.getItem("behavioralEvents") == "true"){

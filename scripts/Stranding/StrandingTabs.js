@@ -1625,7 +1625,7 @@ function edit_row2(id){
       $('#TypeofGearCollected').val(geartype).trigger('change');
   }
 
-  if($("#GearCollected_"+id).text() == "Yes"){
+  if($("#GearCollected_"+id).text() == "Yes" ||$("#GearCollected_"+id).text() == "TRUE"){
       $('#GearCollected').prop('checked', true);
   }else{
       $('#GearCollected').prop('checked', false);

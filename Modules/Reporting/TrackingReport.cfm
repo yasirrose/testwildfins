@@ -130,12 +130,13 @@
                 <cfset form.startDate = dateformat(form.date.split('-')[1],'YYYY-mm-dd')>
                 <cfset form.endDate   = dateformat(form.date.split('-')[2],'YYYY-mm-dd')>
             </cfif>
-            <!--- <cfdump var="#form.startDate#" > --->
-            <cfif isdefined("form.date") and form.date EQ "">
+
+            <!--- <cfif isdefined("form.date") and form.date EQ "">
                 <cfset form.startDate = '2000-01-01'>
                 <cfset form.endDate = dateformat(Now(),'YYYY-mm-dd')>
                 <!--- <cfset form.endDate   = dateformat(form.date.split('-')[2],'YYYY-mm-dd')> --->
-            </cfif>
+            </cfif> --->
+
             <!--- <cfdump var="#form.startDate#" > 
             <cfdump var="#form.endDate#" abort="true"> --->
             <!--- query1 --->
@@ -153,6 +154,7 @@
                 </cfif>
                 ORDER BY ID DESC
             </cfquery>
+            <!--- <cfdump var="#qgetSampleReportsWithFilters#" abort="true"> --->
 
             <div class="section-container  p-b-10">
                 <cfif qgetSampleReportsWithFilters.recordcount NEQ 0>
@@ -160,9 +162,17 @@
                         <thead>
                         <tr class="inverse">
                             <th>Fnumber</th>
-                            <th>SampleType</th>
-                            <th>StorageType</th>
-                            <th>PreservationMethod</th>
+                            <th>Sample ID</th>
+                            <th>Bin Number</th>
+                            <th>Sample Type</th>
+                            <th>Preservation Method</th>
+                            <th>Amount of sample</th>
+                            <th>Unit of sample</th>
+                            <th>Storage Type</th>
+                            <th>Sample Comments</th>
+                            <!--- <th>SampleType</th> --->
+                            <!--- <th>StorageType</th> --->
+                            <!--- <th>PreservationMethod</th> --->
                         </tr>
                         </thead>
                         <tbody>
@@ -170,7 +180,7 @@
                             <cfoutput>
                                 <cfloop query="qgetSampleReportsWithFilters" >
                                     <cfquery name="qgetSampleTypeReportsWithFilters" datasource="#Application.dsn#">
-                                        SELECT SampleType,StorageType,ID,PreservationMethod,SA_ID,date FROM ST_SampleType 
+                                        SELECT * FROM ST_SampleType 
                                         Where 1=1
                                         <cfif isdefined("qgetSampleReportsWithFilters.ID") and qgetSampleReportsWithFilters.ID neq "">
                                             and SA_ID = '#qgetSampleReportsWithFilters.ID#'
@@ -189,9 +199,21 @@
                                 <cfloop query="qgetSampleTypeReportsWithFilters" >
                                     <tr class="gradeU" id="remov_#qgetSampleReportsWithFilters.ID#">
                                         <td><cfif isdefined("qgetSampleReportsWithFilters.Fnumber") and qgetSampleReportsWithFilters.Fnumber neq "">#qgetSampleReportsWithFilters.Fnumber#</cfif></td>
+
+
+                                        <td>#qgetSampleTypeReportsWithFilters.SampleID#</td>
+                                        <td>#qgetSampleTypeReportsWithFilters.BinNumber#</td>
                                         <td><cfif isdefined("qgetSampleTypeReportsWithFilters.SampleType") and qgetSampleTypeReportsWithFilters.SampleType neq "">#qgetSampleTypeReportsWithFilters.SampleType#</cfif></td>
-                                        <td><cfif isdefined("qgetSampleTypeReportsWithFilters.StorageType") and qgetSampleTypeReportsWithFilters.StorageType neq "">#qgetSampleTypeReportsWithFilters.StorageType#</cfif></td>
                                         <td><cfif isdefined("qgetSampleTypeReportsWithFilters.PreservationMethod") and qgetSampleTypeReportsWithFilters.PreservationMethod neq "">#qgetSampleTypeReportsWithFilters.PreservationMethod#</cfif></td>
+                                        <td>#qgetSampleTypeReportsWithFilters.AmountofSample#</td>
+                                        <td>#qgetSampleTypeReportsWithFilters.UnitofSample#</td>
+                                        <td><cfif isdefined("qgetSampleTypeReportsWithFilters.StorageType") and qgetSampleTypeReportsWithFilters.StorageType neq "">#qgetSampleTypeReportsWithFilters.StorageType#</cfif></td>
+                                        <td>#qgetSampleTypeReportsWithFilters.SampleComments#</td>
+                                       
+
+                                        
+
+
                                         <!--- <td>#Application.SampleReport.getIR_IR_TypeName(qGetSampleReports.IR_Type)#</td>
                                         <td> #Application.SampleReport.getIR_CountyLocationName(qGetSampleReports.IR_CountyLocation)#</td>
                                         <td>#DateFormat(qGetSampleReports.IR_Date,"YYYY-MM-DD")#</td> --->

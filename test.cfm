@@ -11,15 +11,17 @@
 				</cfquery> --->
 
 
-				<!--- <cfquery name="qgetcetaceanexamDate_ten" datasource="#Application.dsn#"  >
-					SELECT lc.date,cnr.date as cnrdate  from ST_SampleArchive sa 
-				 left Join ST_LiveCetaceanExam lc on sa.Fnumber = lc.Fnumber
-				 left JOIN ST_CetaceanNecropsyReport cnr on cnr.fnumber = sa.Fnumber
-				 where sa.ID = 0
-		 </cfquery> --->
-
 
 		 <!--- <cfset geojsonn.properties = {title:'Mapbox', date:"#DateFormat(date,'mm/dd/yyyy')#", sightingNo:#query.SIGHTINGNUMBER#, Species:#query.FE_SPECIES#,SightingId:#query.ID#,SurveyId:#query.PROJECT_ID#}> --->
+		 <!--- <cfquery name="query" datasource="#Application.dsn#"  >
+			SELECT s.Date as date, ss.FE_SPECIES,ss.SIGHTINGNUMBER, s.ID as s_id,ss.ATLATITUDE,ss.ATLONGITUDE, ss.id as ss_id,cs.Cetaceans_ID from Survey_Sightings as ss
+					Join Surveys as s on ss.Project_ID = s.ID	
+					Join Cetacean_Sightings as cs on ss.SIGHTINGNUMBER = cs.SIGHTINGNUMBER	
+					where 1=1
+						<cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">and CONVERT(char(10), s.Date,126) BETWEEN '#form.startDate#' AND '#form.endDate#'</cfif>
+						<cfif isdefined("form.FE_SPECIES") and form.FE_SPECIES neq ""> and ss.FE_SPECIES = '#form.FE_SPECIES#'</cfif>
+				AND ATLATITUDE != '' and ATLONGITUDE != ''
+	 </cfquery> --->
 		 <cfset form.date = '01/01/2018 - 01/02/2023'>
 		 <cfset form.FE_SPECIES = '36' >
 
@@ -28,15 +30,12 @@
 			<cfset form.endDate   = dateformat(form.date.split('-')[2],'YYYY-mm-dd')>
 		 </cfif>
 
+		
 		 <cfquery name="query" datasource="#Application.dsn#"  >
-			SELECT s.Date as date, ss.FE_SPECIES,ss.SIGHTINGNUMBER, s.ID as s_id,ss.ATLATITUDE,ss.ATLONGITUDE, ss.id as ss_id,cs.Cetaceans_ID from Survey_Sightings as ss
+			SELECT s.Date as date, ss.FE_SPECIES,ss.SIGHTINGNUMBER, s.ID as s_id,ss.ATLATITUDE,ss.ATLONGITUDE, ss.id as ss_id from Survey_Sightings as ss
 					Join Surveys as s on ss.Project_ID = s.ID	
-					Join Cetacean_Sightings as cs on ss.SIGHTINGNUMBER = cs.SIGHTINGNUMBER	
-					where 1=1
-						<cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">and CONVERT(char(10), s.Date,126) BETWEEN '#form.startDate#' AND '#form.endDate#'</cfif>
-						<cfif isdefined("form.FE_SPECIES") and form.FE_SPECIES neq ""> and ss.FE_SPECIES = '#form.FE_SPECIES#'</cfif>
-				AND ATLATITUDE != '' and ATLONGITUDE != ''
-	 </cfquery>
+					where ATLATITUDE != '' and ATLONGITUDE != ''
+		</cfquery>
 
     <!--- <cfquery name="qgetCetaceanSpecies" datasource="#Application.dsn#"  >
 			SELECT * from TLU_CetaceanSpecies where id = #query.FE_SPECIES#
@@ -52,33 +51,54 @@
 				<!--- <cfdump var="#query#" abort="true"> --->
 
 
-				 <cfset jazzmen = [[-77.032, 38.913],[-122.414, 37.776],[-112.414, 38.776]]>
+				 <!--- <cfset jazzmen = [[-77.032, 38.913],[-122.414, 37.776],[-112.414, 38.776]]> --->
 
-				 <cfset features=[]>
-				 <cfloop query = "query">
-					 <cfquery name="qgetCetaceanSpecies" datasource="#Application.dsn#"  >
-						 SELECT * from TLU_CetaceanSpecies where id = #query.FE_SPECIES#
-				 </cfquery>    
-				 
-				 <cfquery name="cetaceans" datasource="#Application.dsn#">
-					select ID,Code,Name from Cetaceans where ID = #query.CETACEANS_ID#
-			 </cfquery>
-					 
-					 <cfset geojsonn=StructNew("ordered","text","asc",false)>
-					 <cfset geojsonn.type = "Feature">
-					 <cfset geojsonn.geometry = {type:'Point', coordinates:[#query.ATLATITUDE#, #query.ATLONGITUDE#] }>	
-					 <cfset geojsonn.properties = {title:'Mapbox', date:"#DateFormat(date,'mm/dd/yyyy')#", sightingNo:#query.SIGHTINGNUMBER#, Species:#qgetCetaceanSpecies.CETACEANSPECIESNAME#,SightingId:#query.ss_id#,SurveyId:#query.s_id#,CETACEANS_ID:#cetaceans.code#}>
-			 
-		 
-				 <cfset ArrayAppend(features,geojsonn,"true") >           
-				 </cfloop>
-		 
-		 
-				 <cfset geojson=StructNew("ordered","text","asc",false)>
-				 <cfset geojson.type = "FeatureCollection">
-				 <cfset geojson.features = features>
-
-					<cfdump var="#geojson#" abort="true">
+				<cfquery name="query" datasource="#Application.dsn#"  >
+					SELECT s.Date as date, ss.FE_SPECIES,ss.SIGHTINGNUMBER, s.ID as s_id,ss.ATLATITUDE,ss.ATLONGITUDE, ss.id as ss_id,ss.Project_ID from Survey_Sightings as ss
+							Join Surveys as s on ss.Project_ID = s.ID	
+							where ATLATITUDE != '' and ATLONGITUDE != ''
+				</cfquery>
+							
+							<cfdump var="#query#" abort="true">
+		
+												
+			  <cfset features=[]>
+				<cfloop query = "query">
+					<cfquery name="qgetCetaceanSpecies" datasource="#Application.dsn#">
+						SELECT * from TLU_CetaceanSpecies where id = #query.FE_SPECIES#
+				</cfquery>  
+				
+				<cfset CETACEANS_ID= '10' >
+				<!--- tomottow work --->
+					<cfquery name="cetaceansw" datasource="#Application.dsn#">
+					select Cetaceans_ID from Cetacean_Sightings where Cetaceans_ID = #query.Project_ID#
+				 </cfquery>
+					
+				<cfquery name="cetaceans" datasource="#Application.dsn#">
+					select ID,Code,Name from Cetaceans where ID = #CETACEANS_ID#
+				 </cfquery>
+					
+					<cfset geojsonn=StructNew("ordered","text","asc",false)>
+					<cfset geojsonn.type = "Feature">
+					<cfset geojsonn.geometry = {type:'Point', coordinates:[#query.ATLATITUDE#, #query.ATLONGITUDE#] }>	
+					<cfset geojsonn.properties = {title:'Mapbox', date:"#DateFormat(date,'mm/dd/yyyy')#", sightingNo:#query.SIGHTINGNUMBER#, Species:#qgetCetaceanSpecies.CETACEANSPECIESNAME#,SightingId:#query.ss_id#,SurveyId:#query.s_id#,CETACEANS_ID:#cetaceans.code#}>
+			
+		
+				<cfset ArrayAppend(features,geojsonn,"true") >           
+				</cfloop>
+		
+		
+				<cfset geojson=StructNew("ordered","text","asc",false)>
+				<cfset geojson.type = "FeatureCollection">
+				<cfset geojson.features = features>
+		
+				<cfdump var="#query.Project_ID#" abort="true">
+		
+				<cfreturn serializeJSON(geojson)>
+		
+		
+		
+				
 		<cfabort>
 <!--- const geojson = {
 	type: 'FeatureCollection',

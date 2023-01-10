@@ -79,14 +79,13 @@
                         <cfset cc = incrementValue(#cc#)> 
                         <cfset lp =  "LesionPresent" & #cc#>
                         <cfset lete =  "LesionType" & #cc#>
-                        <cfset re =  "Region" & #cc#>
+                        <!---<cfset re =  "Region" & #cc#> --->
                         <cfset slr =  "Side_L_R" & #cc#>
                         <cfset st =  "Status" & #cc#>
                         <cfset lc =  "Comments" & #cc#>
                         <cfset lpn =  "PhotoNumber" & #cc#>
                         <cfset QuerySetCell(allCount, "#lp#", #LesionPresent#, allCount.currentRow)>
                         <cfset QuerySetCell(allCount, "#lete#", #LesionType#, allCount.currentRow)>
-                        <cfset QuerySetCell(allCount, "#re#", #Region#, allCount.currentRow)>
                         <cfset QuerySetCell(allCount, "#slr#", #Side_L_R#, allCount.currentRow)>
                         <cfset QuerySetCell(allCount, "#st#", #Status#, allCount.currentRow)>
                         <cfset QuerySetCell(allCount, "#lc#", #Comments#, allCount.currentRow)>
@@ -369,7 +368,8 @@
             cs.Body_DorsalRidgeScapula,
             cs.Body_Ribs,
             cs.Tail_TransversePro,
-            cs.Cetaceans_ID AS Cetaceans_I
+            cs.Cetaceans_ID AS Cetaceans_I,
+            ss.ID AS sightingID
             
         FROM
             Surveys s
@@ -419,14 +419,12 @@
             <cfset rr = incrementValue(#rr#)> 
             <cfset lp =  "LesionPresent" & #rr#>
             <cfset lete =  "LesionType" & #rr#>
-            <cfset re =  "Region" & #rr#>
             <cfset slr =  "Side_L_R" & #rr#>
             <cfset st =  "Status" & #rr#>
             <cfset lc =  "Comments" & #rr#>
             <cfset lpn =  "PhotoNumber" & #rr#>
             <cfset QueryAddColumn(qFiltered, "#lp#","varchar",[""])>
             <cfset QueryAddColumn(qFiltered, "#lete#","varchar",[""])>
-            <cfset QueryAddColumn(qFiltered, "#re#","varchar",[""])>
             <cfset QueryAddColumn(qFiltered, "#slr#","varchar",[""])>
             <cfset QueryAddColumn(qFiltered, "#st#","varchar",[""])>
             <cfset QueryAddColumn(qFiltered, "#lc#","varchar",[""])>
@@ -447,14 +445,13 @@
                         <cfset cne = incrementValue(#cne#)> 
                         <cfset lp =  "LesionPresent" & #cne#>
                         <cfset lete =  "LesionType" & #cne#>
-                        <cfset re =  "Region" & #cne#>
+                        <!---<cfset re =  "Region" & #cn#> --->
                         <cfset slr =  "Side_L_R" & #cne#>
                         <cfset st =  "Status" & #cne#>
                         <cfset lc =  "Comments" & #cne#>
                         <cfset lpn =  "PhotoNumber" & #cne#>
                         <cfset QuerySetCell(qFiltered, "#lp#", #LesionPresent#, qFiltered.currentRow)>
                         <cfset QuerySetCell(qFiltered, "#lete#", #LesionType#, qFiltered.currentRow)>
-                        <cfset QuerySetCell(qFiltered, "#re#", #Region#, qFiltered.currentRow)>
                         <cfset QuerySetCell(qFiltered, "#slr#", #Side_L_R#, qFiltered.currentRow)>
                         <cfset QuerySetCell(qFiltered, "#st#", #Status#, qFiltered.currentRow)>
                         <cfset QuerySetCell(qFiltered, "#lc#", #Comments#, qFiltered.currentRow)>
@@ -798,31 +795,30 @@
                         <thead>
                         <tr class="inverse">
                             <th>Date</th> 
-                            <th>Survey ID</th> 
+                            <th>Survey Number</th>
                             <th>Survey Route</th>
+                            <th>Sighting Number</th>
+                            <th>Survey Type</th> 
+                            <th>ResearchTeam</th>
                             <th>Body of Water</th> 
                             <th>Platform</th> 
                             <th>NOAAStock</th> 
-                            <th>Survey Type</th> 
+                            <th>SurveyEffort</th> 
                             <th>EngineOn</th>
                             <th>EngineOff</th>
                             <th>SurveyStart</th>
                             <th>SurveyEnd</th>
-                            <th>ResearchTeam</th>
-                            <th>SurveyEffort</th> 
-                            <th>Sighting Number</th>
-                            <th>SightingID</th>
                             <th class="SightingStartEnd hidden">SightingStart</th>
                             <th class="SightingStartEnd hidden">SightingEnd</th>
                             <th class="AtICWMarker hidden">At ICW Marker</th>
-                            <th class="location hidden">Location</th>
                             <th class="location hidden">InitialLatitude</th>
                             <th class="location hidden">InitialLongitude</th>
+                            <th class="location hidden">Location</th>
                             <th class="location hidden">AtLatitude</th>
                             <th class="location hidden">AtLongitude</th>
                             <th class="location hidden">EndLatitude</th>
                             <th class="location hidden">EndLongitude</th>
-                            <th class="ConditionFromSighting hidden">WaterTemp</th>
+                            
                             <th class="ConditionFromSighting hidden">Weather</th>
                             <th class="ConditionFromSighting hidden">WaveHeight</th>
                             <th class="ConditionFromSighting hidden">Glare</th>
@@ -831,6 +827,7 @@
                             <th class="ConditionFromSighting hidden">Beaufort</th>
                             <th class="ConditionFromSighting hidden">HabitatDepth</th>
                             <th class="ConditionFromSighting hidden">HabitatName</th>
+                            <th class="ConditionFromSighting hidden">WaterTemp</th>
                             <th class="ConditionFromSighting hidden">AirTemp</th>
                             <th class="ConditionFromSighting hidden">WindSpeed</th>
                             <th class="ConditionFromSighting hidden">WindDirection</th>
@@ -843,16 +840,17 @@
                             <th class="ConditionFromSighting hidden">GeneralHeading</th>
                             <th class="ConditionFromSighting hidden">FinalHeading</th>
                             <th class="ConditionFromSighting hidden">AssocBio</th>
-                            <th class="fieldEstimate hidden">FE_TotalCetaceans_Min</th>
+
                             <th class="fieldEstimate hidden">FE_TotalCetaceans_Max</th>
+                            <th class="fieldEstimate hidden">FE_TotalCetaceans_Min</th>
                             <th class="fieldEstimate hidden">FE_TotalCetacean_Best</th>
                             <th class="fieldEstimate hidden">FE_TotalCetacean_takes</th>
                             <th class="fieldEstimate hidden">FE_TotalAdults_Min</th>
                             <th class="fieldEstimate hidden">FE_TotalAdults_Max</th>
                             <th class="fieldEstimate hidden">FE_TotalAdults_Best</th>
                             <th class="fieldEstimate hidden">FE_TotalAdults_takes</th>
-                            <th class="fieldEstimate hidden">FE_TotalCalves_Min</th>
                             <th class="fieldEstimate hidden">FE_TotalCalves_Max</th>
+                            <th class="fieldEstimate hidden">FE_TotalCalves_Min</th>
                             <th class="fieldEstimate hidden">FE_TotalCalves_Best</th>
                             <th class="fieldEstimate hidden">FE_TotalCalves_takes</th>
                             <th class="fieldEstimate hidden">FE_YoungOfYear_Min</th>
@@ -881,7 +879,6 @@
                             <th class="feedingEcology hidden">Feeding_Lat</th>
                             <th class="feedingEcology hidden">Feeding_Long</th>
                             <th class="feedingEcology hidden">Structure_Present</th>
-                            
                             <th class="fisheriesInteractions hidden">NoOfCetaceansWithIn100mOfActiveFisher</th>	
                             <th class="fisheriesInteractions hidden">NoOfFishers</th>
                             <th class="fisheriesInteractions hidden">CetaceanResponsetoFisher_Approach</th>
@@ -929,11 +926,10 @@
                             <th>Lens</th>
                             <th>Photographer</th>
                             <th>Driver</th>
-
-                            <th>CompletedBy</th>
                             <th>Comments</th>
-                            <th>SDR</th>
+                            <th>CompletedBy</th>
                             <th>BestSighting</th>
+                            <th>SDR</th>
                             <th>Code</th>
                             <th>Associates</th> 
                             <th>Cetacean Species</th>
@@ -943,26 +939,11 @@
                             <th>Yoy</th>
                             <th>DScore</th>
                             <th>FB_Number</th>
-                            <th>With_Mom</th>
-
-                            <th>NOTE</th>
-                            <th>PQ_FOCUS</th>
-                            <th>PQ_ANGLE</th>
-                            <th>PQ_CONTRAST</th>
-                            <th>PQ_PROPORTION</th>
-                            <th>PQ_PARTIAL</th>
-                            <th>PQSUM</th>
-                            <th>QSCORE</th>
-
+                            <th>wMom</th>
                             <th>BestShot</th>
-
-                            <!--- nouman --->
-                            
-                            <th>EnteredBy</th>
-                            
-
                             <th>PhotoAnalysisInitial</th>
                             <th>PhotoAnalysisFinal</th>
+                            <th>EnteredBy</th>
                             <th>Body Condition</th>
                             <th>Head_NuchalCrest</th>
                             <th>Head_LateralCervicalReg</th>
@@ -977,7 +958,6 @@
                                 <cfloop index="index" from="1" to="#maximumLesions.MaxLesion#">
                                         <th>LesionPresent#index#</th>
                                         <th>LesionType#index#</th>
-                                        <th>Region#index#</th>
                                         <th>Side_L_R#index#</th>
                                         <th>Status#index#</th>
                                         <th>Lesion Comments#index#</th>
@@ -1001,35 +981,8 @@
                                             </cfif>
                                         </cfloop>
                                     </td>
-                                    <td>
-                                        <cfset bd = listToArray(#BodyOfWater#, ",", false, true)> 
-                                        <cfset d = 1>
-                                        <cfloop query="getAreaName">
-                                            <cfif ArrayContains(bd,#ID#)>#trim(AreaName)#
-                                                <cfif arrayLen(bd) gt 1>/</cfif>
-                                            </cfif>
-                                        </cfloop>
-                                    </td>
-                                    <td>#Platform#</td>
-                                    <td>
-                                        <cfset bd = listToArray(#NOAAStock#, ",", false, true)> 
-                                        <cfset d = 1>
-                                        <cfloop query="getStock">
-                                            <cfif ArrayContains(bd,#ID#)>#trim(STOCKNAME)#
-                                                <cfif arrayLen(bd) gt 1>/</cfif>
-                                            </cfif>
-                                        </cfloop>
-                                    </td> 
+                                    <td>#SightingNumber#</td>
                                     <td>#SurveyType#</td> 
-                                    <cfif #Platform# eq "Land " or #Platform# eq "Land Survey" or #SurveyType# eq "Trail Camera">
-                                        <td></td>
-                                        <td></td>
-                                    <cfelse>
-                                        <td>#DateTimeFormat(EngineOn, "yyyy-mm-dd HH:nn")#</td>
-                                        <td>#DateTimeFormat(EngineOff, "yyyy-mm-dd HH:nn")#</td>
-                                    </cfif>
-                                    <td>#DateTimeFormat(SurveyStart, "HH:nn")#</td>
-                                    <td>#DateTimeFormat(SurveyEnd, "HH:nn")#</td>
                                     <td>
                                         <cfset bd = listToArray(#ResearchTeam#, ",", false, true)> 
                                         <cfset d = 1>
@@ -1039,238 +992,262 @@
                                             </cfif>
                                         </cfloop>
                                     </td>
+                                    <td>
+                                        <cfset bd = listToArray(#BodyOfWater#, ",", false, true)> 
+                                        <cfset d = 1>
+                                        <cfloop query="getAreaName">
+                                            <cfif ArrayContains(bd,#ID#)>#trim(AreaName)#
+                                                <cfif arrayLen(bd) gt 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
+                                    <td>#Platform#</td> 
+                                    <td>
+                                        <cfset bd = listToArray(#NOAAStock#, ",", false, true)> 
+                                        <cfset d = 1>
+                                        <cfloop query="getStock">
+                                            <cfif ArrayContains(bd,#ID#)>#trim(STOCKNAME)#
+                                                <cfif arrayLen(bd) gt 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
                                     <td>#SurveyEffort#</td>
-                                    <td>#SightingNumber#</td>
-                                    <td>#sightingID#</td>
+                                    <cfif #Platform# eq "Land " or #Platform# eq "Land Survey" or #SurveyType# eq "Trail Camera">
+                                        <td></td>
+                                        <td></td>
+                                    <cfelse>
+                                        <td>#DateTimeFormat(EngineOn, "yyyy-mm-dd HH:nn")#</td>
+                                        <td>#DateTimeFormat(EngineOff, "yyyy-mm-dd HH:nn")#</td>
+                                    </cfif>
+                                    <td>#DateTimeFormat(SurveyStart, "HH:nn")#</td>
+                                    <td>#DateTimeFormat(SurveyEnd, "HH:nn")#</td>
                                     <td class="SightingStartEnd hidden">#DateTimeFormat(SightingStart, "HH:nn")#</td>
                                     <td class="SightingStartEnd hidden">#DateTimeFormat(SightingEnd, "HH:nn")#</td>
                                     <td class="AtICWMarker hidden">#ICW_Start#</td>
-                                    <td class="location hidden">#Location#</td>
                                     <td class="location hidden">#InitialLatitude#</td>
                                     <td class="location hidden">#InitialLongitude#</td>
+                                    <td class="location hidden">#Location#</td>
                                     <td class="location hidden">#AtLatitude#</td>
                                     <td class="location hidden">#AtLongitude#</td>
                                     <td class="location hidden">#EndLatitude#</td>
                                     <td class="location hidden">#EndLongitude#</td>
-                                    <td class="ConditionFromSighting hidden">
-                                        <cfif WaterTemp neq "">
-                                            <cfset WaterT = #numberFormat(WaterTemp,'__.0')#>
-                                        <cfelse>
-                                            <cfset WaterT = #WaterTemp#> 
-                                        </cfif>
-                                        #WaterT#
-                                    </td>
-                                    <td class="ConditionFromSighting hidden">#Weather#</td>
-                                    <td class="ConditionFromSighting hidden">#WaveHeight#</td>
-                                    <td class="ConditionFromSighting hidden">#Glare#</td>
-                                    <td class="ConditionFromSighting hidden">#GlareDirection#</td>
-                                    <td class="ConditionFromSighting hidden">#Sightability#</td>
-                                    <td class="ConditionFromSighting hidden">#Beaufort#</td>
-                                    <td class="ConditionFromSighting hidden">#HabitatDepth#</td>
-                                    <td class="ConditionFromSighting hidden">#HabitatName#</td>
-                                    <td class="ConditionFromSighting hidden">
-                                        <cfif AirTemp neq "">
-                                            <cfset AirT = #numberFormat(AirTemp,'__.0')#>
-                                        <cfelse>
-                                            <cfset AirT = #AirTemp#> 
-                                        </cfif>
-                                        #AirT#
-                                    </td>
-                                    <td class="ConditionFromSighting hidden">#WindSpeed#</td>
-                                    <td class="ConditionFromSighting hidden">#WindDirection#</td>
-                                    <td class="ConditionFromSighting hidden">#TideName#</td>
-                                    <td class="ConditionFromSighting hidden">#Salinity#</td>
-                                    <td class="ConditionFromSighting hidden">#pH#</td>
-                                    <td class="ConditionFromSighting hidden">#DO#</td>
-                                    <td class="ConditionFromSighting hidden">#Conductivity#</td>
-                                    <td class="ConditionFromSighting hidden">#InitialHeading#</td>
-                                    <td class="ConditionFromSighting hidden">#GeneralHeading#</td>
-                                    <td class="ConditionFromSighting hidden">#FinalHeading#</td>
-                                    <td class="ConditionFromSighting hidden">
-                                        <cfset bd = listToArray(#AssocBio#, ",", false, true)> 
-                                        <cfset d = 1>
-                                        <cfloop query="qGetAssocBioData">
-                                            <cfif ArrayContains(bd,#ASSOCBIOID#)>#trim(ASSOCBIONAME)#
-                                                    <cfif arrayLen(bd) gt 1>/</cfif>
+                                    
+                                        <td class="ConditionFromSighting hidden">#Weather#</td>
+                                        <td class="ConditionFromSighting hidden">#WaveHeight#</td>
+                                        <td class="ConditionFromSighting hidden">#Glare#</td>
+                                        <td class="ConditionFromSighting hidden">#GlareDirection#</td>
+                                        <td class="ConditionFromSighting hidden">#Sightability#</td>
+                                        <td class="ConditionFromSighting hidden">#Beaufort#</td>
+                                        <td class="ConditionFromSighting hidden">#HabitatDepth#</td>
+                                        <td class="ConditionFromSighting hidden">#HabitatName#</td>
+                                        <td class="ConditionFromSighting hidden">
+                                            <cfif WaterTemp neq "">
+                                                <cfset WaterT = #numberFormat(WaterTemp,'__.0')#>
+                                            <cfelse>
+                                                <cfset WaterT = #WaterTemp#> 
                                             </cfif>
-                                        </cfloop>
-                                    </td>
-                                    <td class="fieldEstimate hidden">#FE_TotalCetaceans_Min#</td>
-                                    <td class="fieldEstimate hidden">#FE_TotalCetaceans_Max#</td>
-                                    <td class="fieldEstimate hidden">#FE_TotalCetacean_Best#</td>
-                                    <td class="fieldEstimate hidden">#FE_TotalCetacean_takes#</td>
-                                    <td class="fieldEstimate hidden">#FE_TotalAdults_Min#</td>
-                                    <td class="fieldEstimate hidden">#FE_TotalAdults_Max#</td>
-                                    <td class="fieldEstimate hidden">#FE_TotalAdults_Best#</td>
-                                    <td class="fieldEstimate hidden">#FE_TotalAdults_takes#</td>
-                                    <td class="fieldEstimate hidden">#FE_TotalCalves_Min#</td>
-                                    <td class="fieldEstimate hidden">#FE_TotalCalves_Max#</td>
-                                    <td class="fieldEstimate hidden">#FE_TotalCalves_Best#</td>
-                                    <td class="fieldEstimate hidden">#FE_TotalCalves_takes#</td>
-                                    <td class="fieldEstimate hidden">#FE_YoungOfYear_Min#</td>
-                                    <td class="fieldEstimate hidden">#FE_YoungOfYear_Max#</td>
-                                    <td class="fieldEstimate hidden">#FE_YoungOfYear_Best#</td>
-                                    <td class="fieldEstimate hidden">#FE_YoungOfYear_takes#</td>
-                                    <td class="activity hidden">#Act_Mill#</td>
-                                    <td class="activity hidden">#Act_Feed#</td>
-                                    <td class="activity hidden">#Act_Rest#</td>
-                                    <td class="activity hidden">#Act_Other#</td>
-                                    <td class="activity hidden">#Act_Social#</td>
-                                    <td class="activity hidden">#Act_Travel#</td>
-                                    <td class="activity hidden">#Act_Prob_Feed#</td>
-                                    <td class="activity hidden">#Act_With_Boat#</td>
-                                    <td class="activity hidden">#Act_Avoid_Boat#</td>
-                                    <td class="activity hidden">#Act_Object_Play#</td>
-                                    <td class="behavioralEvents hidden">
-                                        <cfloop query="getBehaviorsData">
-                                            <cfif getBehaviorsData.ID eq #qFiltered.BehavioralSpecifics1#>
-                                                    #getBehaviorsData.BehaviorName#
+                                            #WaterT#
+                                        </td>
+                                        <td class="ConditionFromSighting hidden">
+                                            <cfif AirTemp neq "">
+                                                <cfset AirT = #numberFormat(AirTemp,'__.0')#>
+                                            <cfelse>
+                                                <cfset AirT = #AirTemp#> 
                                             </cfif>
-                                        </cfloop>
-                                    </td>
-                                    <td class="behavioralEvents hidden">
-                                        #BehavioralSpecificsN1#
-                                    </td>
-                                    <td class="behavioralEvents hidden">
-                                        <cfloop query="getBehaviorsData">
-                                            <cfif getBehaviorsData.ID eq #qFiltered.BehavioralSpecifics2#>
-                                                    #getBehaviorsData.BehaviorName#
+                                            #AirT#
+                                        </td>
+                                        <td class="ConditionFromSighting hidden">#WindSpeed#</td>
+                                        <td class="ConditionFromSighting hidden">#WindDirection#</td>
+                                        <td class="ConditionFromSighting hidden">#TideName#</td>
+                                        <td class="ConditionFromSighting hidden">#Salinity#</td>
+                                        <td class="ConditionFromSighting hidden">#pH#</td>
+                                        <td class="ConditionFromSighting hidden">#DO#</td>
+                                        <td class="ConditionFromSighting hidden">#Conductivity#</td>
+                                        <td class="ConditionFromSighting hidden">#InitialHeading#</td>
+                                        <td class="ConditionFromSighting hidden">#GeneralHeading#</td>
+                                        <td class="ConditionFromSighting hidden">#FinalHeading#</td>
+                                        <td class="ConditionFromSighting hidden">
+                                            <cfset bd = listToArray(#AssocBio#, ",", false, true)> 
+                                            <cfset d = 1>
+                                            <cfloop query="qGetAssocBioData">
+                                                <cfif ArrayContains(bd,#ASSOCBIOID#)>#trim(ASSOCBIONAME)#
+                                                        <cfif arrayLen(bd) gt 1>/</cfif>
+                                                </cfif>
+                                            </cfloop>
+                                        </td>
+                                        <td class="fieldEstimate hidden">#FE_TotalCetaceans_Max#</td>
+                                        <td class="fieldEstimate hidden">#FE_TotalCetaceans_Min#</td>
+                                        <td class="fieldEstimate hidden">#FE_TotalCetacean_Best#</td>
+                                        <td class="fieldEstimate hidden">#FE_TotalCetacean_takes#</td>
+                                        <td class="fieldEstimate hidden">#FE_TotalAdults_Min#</td>
+                                        <td class="fieldEstimate hidden">#FE_TotalAdults_Max#</td>
+                                        <td class="fieldEstimate hidden">#FE_TotalAdults_Best#</td>
+                                        <td class="fieldEstimate hidden">#FE_TotalAdults_takes#</td>
+                                        <td class="fieldEstimate hidden">#FE_TotalCalves_Max#</td>
+                                        <td class="fieldEstimate hidden">#FE_TotalCalves_Min#</td>
+                                        <td class="fieldEstimate hidden">#FE_TotalCalves_Best#</td>
+                                        <td class="fieldEstimate hidden">#FE_TotalCalves_takes#</td>
+                                        <td class="fieldEstimate hidden">#FE_YoungOfYear_Min#</td>
+                                        <td class="fieldEstimate hidden">#FE_YoungOfYear_Max#</td>
+                                        <td class="fieldEstimate hidden">#FE_YoungOfYear_Best#</td>
+                                        <td class="fieldEstimate hidden">#FE_YoungOfYear_takes#</td>
+                                        <td class="activity hidden">#Act_Mill#</td>
+                                        <td class="activity hidden">#Act_Feed#</td>
+                                        <td class="activity hidden">#Act_Rest#</td>
+                                        <td class="activity hidden">#Act_Other#</td>
+                                        <td class="activity hidden">#Act_Social#</td>
+                                        <td class="activity hidden">#Act_Travel#</td>
+                                        <td class="activity hidden">#Act_Prob_Feed#</td>
+                                        <td class="activity hidden">#Act_With_Boat#</td>
+                                        <td class="activity hidden">#Act_Avoid_Boat#</td>
+                                        <td class="activity hidden">#Act_Object_Play#</td>
+                                        <td class="behavioralEvents hidden">
+                                            <cfloop query="getBehaviorsData">
+                                                <cfif getBehaviorsData.ID eq #qFiltered.BehavioralSpecifics1#>
+                                                        #getBehaviorsData.BehaviorName#
+                                                </cfif>
+                                            </cfloop>
+                                        </td>
+                                        <td class="behavioralEvents hidden">
+                                            #BehavioralSpecificsN1#
+                                        </td>
+                                        <td class="behavioralEvents hidden">
+                                            <cfloop query="getBehaviorsData">
+                                                <cfif getBehaviorsData.ID eq #qFiltered.BehavioralSpecifics2#>
+                                                        #getBehaviorsData.BehaviorName#
+                                                </cfif>
+                                            </cfloop>
+                                        </td>
+                                        <td class="behavioralEvents hidden">
+                                            #BehavioralSpecificsN2#
+                                        </td>
+                                        <td class="behavioralEvents hidden">
+                                            <cfloop query="getBehaviorsData">
+                                                <cfif getBehaviorsData.ID eq #qFiltered.BehavioralSpecifics3#>
+                                                        #getBehaviorsData.BehaviorName#
+                                                </cfif>
+                                            </cfloop>
+                                        </td>
+                                        <td class="behavioralEvents hidden">
+                                            #BehavioralSpecificsN3#
+                                        </td>
+                                        <td class="behavioralEvents hidden">
+                                            <cfloop query="getBehaviorsData">
+                                                <cfif getBehaviorsData.ID eq #qFiltered.BehavioralSpecifics4#>
+                                                        #getBehaviorsData.BehaviorName#
+                                                </cfif>
+                                            </cfloop>
+                                        </td>
+                                        <td class="behavioralEvents hidden">
+                                            #BehavioralSpecificsN4#
+                                        </td>
+                                        <td class="feedingEcology hidden">
+                                            <cfset bd = listToArray(#PreySpecies#, ",", false, true)> 
+                                            <cfset d = 1>
+                                            <cfloop query="getPreySpeciesData">
+                                                <cfif ArrayContains(bd,#ID#)>#trim(PreySpeciesName)#
+                                                        <cfif arrayLen(bd) gt 1>/</cfif>
+                                                </cfif>
+                                            </cfloop>
+                                        </td>
+                                        <td class="feedingEcology hidden">#Feeding_Lat#</td>
+                                        <td class="feedingEcology hidden">#Feeding_Long#</td>
+                                        <td class="feedingEcology hidden">
+                                            <cfset bd = listToArray(#Structure_Present#, ",", false, true)> 
+                                            <cfset d = 1>
+                                            <cfloop query="StructureList">
+                                                <cfif ArrayContains(bd,#ID#)>#trim(Name)#
+                                                        <cfif arrayLen(bd) gt 1>/</cfif>
+                                                </cfif>
+                                            </cfloop>
+                                        </td>
+                                        <td class="fisheriesInteractions hidden">#NoOfCetaceansWithIn100mOfActiveFisher#</td>	
+                                        <td class="fisheriesInteractions hidden">#NoOfFishers#</td>
+                                        <td class="fisheriesInteractions hidden">#CetaceanResponsetoFisher1#</td>
+                                        <td class="fisheriesInteractions hidden">#CetaceanResponsetoFisher2#</td>
+                                        <td class="fisheriesInteractions hidden">#CetaceanResponsetoFisher3#</td>
+                                        <td class="fisheriesInteractions hidden">#FisherResponsetoCetacean1#</td>
+                                        <td class="fisheriesInteractions hidden">#FisherResponsetoCetacean2#</td>
+                                        <td class="fisheriesInteractions hidden">#FisherResponsetoCetacean3#</td>
+                                        <td class="fisheriesInteractions hidden">#FisherResponsetoCetacean4#</td>
+                                        <td class="fisheriesInteractions hidden">
+                                            <cfif "#Depredation#" eq "High">
+                                            Yes
                                             </cfif>
-                                        </cfloop>
-                                    </td>
-                                    <td class="behavioralEvents hidden">
-                                        #BehavioralSpecificsN2#
-                                    </td>
-                                    <td class="behavioralEvents hidden">
-                                        <cfloop query="getBehaviorsData">
-                                            <cfif getBehaviorsData.ID eq #qFiltered.BehavioralSpecifics3#>
-                                                    #getBehaviorsData.BehaviorName#
+                                            <cfif "#Depredation#" eq "Low">
+                                            No
                                             </cfif>
-                                        </cfloop>
-                                    </td>
-                                    <td class="behavioralEvents hidden">
-                                        #BehavioralSpecificsN3#
-                                    </td>
-                                    <td class="behavioralEvents hidden">
-                                        <cfloop query="getBehaviorsData">
-                                            <cfif getBehaviorsData.ID eq #qFiltered.BehavioralSpecifics4#>
-                                                    #getBehaviorsData.BehaviorName#
-                                            </cfif>
-                                        </cfloop>
-                                    </td>
-                                    <td class="behavioralEvents hidden">
-                                        #BehavioralSpecificsN4#
-                                    </td>
-                                    <td class="feedingEcology hidden">
-                                        <cfset bd = listToArray(#PreySpecies#, ",", false, true)> 
-                                        <cfset d = 1>
-                                        <cfloop query="getPreySpeciesData">
-                                            <cfif ArrayContains(bd,#ID#)>#trim(PreySpeciesName)#
-                                                    <cfif arrayLen(bd) gt 1>/</cfif>
-                                            </cfif>
-                                        </cfloop>
-                                    </td>
-                                    <td class="feedingEcology hidden">#Feeding_Lat#</td>
-                                    <td class="feedingEcology hidden">#Feeding_Long#</td>
-                                    <td class="feedingEcology hidden">
-                                        <cfset bd = listToArray(#Structure_Present#, ",", false, true)> 
-                                        <cfset d = 1>
-                                        <cfloop query="StructureList">
-                                            <cfif ArrayContains(bd,#ID#)>#trim(Name)#
-                                                    <cfif arrayLen(bd) gt 1>/</cfif>
-                                            </cfif>
-                                        </cfloop>
-                                    </td>
+                                        </td>    
+                                        <td class="boatingInteractions hidden">#NoOfCetaceansWithIn100mOfRecreationVessels#</td>
+                                        <td class="boatingInteractions hidden">#NumberOfVessels#</td>
+                                        <td class="boatingInteractions hidden">#CetaceanResponseToVessel1#</td>
+                                        <td class="boatingInteractions hidden">#CetaceanResponseToVessel2#</td>
+                                        <td class="boatingInteractions hidden">#CetaceanResponseToVessel3#</td>
+                                        <td class="boatingInteractions hidden">#VesselResponseToCetacean1#</td>
+                                        <td class="boatingInteractions hidden">#VesselResponseToCetacean2#</td>
+                                        <td class="boatingInteractions hidden">#VesselResponseToCetacean3#</td>
+                                        <td class="boatingInteractions hidden">#VesselResponseToCetacean4#</td>
+                                        <td class="HBOIVesselInteractions hidden">#No_of_Cetaceans_wHBOI_Vessel#</td>
+                                        <td class="HBOIVesselInteractions hidden">#ReactiontoHBOIVessel1#</td>
+                                        <td class="HBOIVesselInteractions hidden">#ReactiontoHBOIVessel2#</td>
+                                        <td class="HBOIVesselInteractions hidden">#ReactiontoHBOIVessel3#</td>
 
-                                    <td class="fisheriesInteractions hidden">#NoOfCetaceansWithIn100mOfActiveFisher#</td>	
-                                    <td class="fisheriesInteractions hidden">#NoOfFishers#</td>
-                                    <td class="fisheriesInteractions hidden">#CetaceanResponsetoFisher1#</td>
-                                    <td class="fisheriesInteractions hidden">#CetaceanResponsetoFisher2#</td>
-                                    <td class="fisheriesInteractions hidden">#CetaceanResponsetoFisher3#</td>
-                                    <td class="fisheriesInteractions hidden">#FisherResponsetoCetacean1#</td>
-                                    <td class="fisheriesInteractions hidden">#FisherResponsetoCetacean2#</td>
-                                    <td class="fisheriesInteractions hidden">#FisherResponsetoCetacean3#</td>
-                                    <td class="fisheriesInteractions hidden">#FisherResponsetoCetacean4#</td>
-                                    <td class="fisheriesInteractions hidden">
-                                        <cfif "#Depredation#" eq "High">
-                                        Yes
-                                        </cfif>
-                                        <cfif "#Depredation#" eq "Low">
-                                        No
-                                        </cfif>
-                                    </td>    
-                                    <td class="boatingInteractions hidden">#NoOfCetaceansWithIn100mOfRecreationVessels#</td>
-                                    <td class="boatingInteractions hidden">#NumberOfVessels#</td>
-                                    <td class="boatingInteractions hidden">#CetaceanResponseToVessel1#</td>
-                                    <td class="boatingInteractions hidden">#CetaceanResponseToVessel2#</td>
-                                    <td class="boatingInteractions hidden">#CetaceanResponseToVessel3#</td>
-                                    <td class="boatingInteractions hidden">#VesselResponseToCetacean1#</td>
-                                    <td class="boatingInteractions hidden">#VesselResponseToCetacean2#</td>
-                                    <td class="boatingInteractions hidden">#VesselResponseToCetacean3#</td>
-                                    <td class="boatingInteractions hidden">#VesselResponseToCetacean4#</td>
-                                    <td class="HBOIVesselInteractions hidden">#No_of_Cetaceans_wHBOI_Vessel#</td>
-                                    <td class="HBOIVesselInteractions hidden">#ReactiontoHBOIVessel1#</td>
-                                    <td class="HBOIVesselInteractions hidden">#ReactiontoHBOIVessel2#</td>
-                                    <td class="HBOIVesselInteractions hidden">#ReactiontoHBOIVessel3#</td>
+                                        <td class="HBOIVesselInteractions ">
+                                            <cfif "#groupeSelect1#" eq "main">
+                                                #groupeSelect1#
+                                            <cfelse>
+                                                
+                                            </cfif>                                               
+                                        </td>
+                                        <td class="HBOIVesselInteractions ">
+                                            <cfif "#groupeSelect1#" eq "main">
+                                                #distanceSelect1#
+                                            <cfelse>
+                                                
+                                            </cfif>                                               
+                                        </td>
+                                        <td class="HBOIVesselInteractions ">
+                                            <cfif "#groupeSelect1#" eq "sub">
+                                                #groupeSelect1#
+                                            <cfelse>
+                                                
+                                            </cfif>                                               
+                                        </td>
+                                        <td class="HBOIVesselInteractions ">
+                                            <cfif "#groupeSelect1#" eq "sub">
+                                                #distanceSelect1#
+                                            <cfelse>
+                                                
+                                            </cfif>                                               
+                                        </td>
+                                        <td class="divetimes hidden">#StratTimeDive1#</td>
+                                        <td class="divetimes hidden">#EndTimeDive1#</td>
+                                        <td class="divetimes hidden">#TotalTimeDive1#</td>
+                                        <td class="divetimes hidden">#StratTimeDive2#</td>
+                                        <td class="divetimes hidden">#EndTimeDive2#</td>
+                                        <td class="divetimes hidden">#TotalTimeDive2#</td>
+                                        <td class="divetimes hidden">#StratTimeDive3#</td>
+                                        <td class="divetimes hidden">#EndTimeDive3#</td>
+                                        <td class="divetimes hidden">#TotalTimeDive3#</td>
+                                        <td class="divetimes hidden">#StratTimeDive4#</td>
+                                        <td class="divetimes hidden">#EndTimeDive4#</td>
+                                        <td class="divetimes hidden">#TotalTimeDive4#</td>
+                                        <td class="divetimes hidden">#StratTimeDive5#</td>
+                                        <td class="divetimes hidden">#EndTimeDive5#</td>
+                                        <td class="divetimes hidden">#TotalTimeDive5#</td>
 
-                                    <td class="HBOIVesselInteractions ">
-                                        <cfif "#groupeSelect1#" eq "main">
-                                            #groupeSelect1#
-                                        <cfelse>
-                                            
-                                        </cfif>                                               
-                                    </td>
-                                    <td class="HBOIVesselInteractions ">
-                                        <cfif "#groupeSelect1#" eq "main">
-                                            #distanceSelect1#
-                                        <cfelse>
-                                            
-                                        </cfif>                                               
-                                    </td>
-                                    <td class="HBOIVesselInteractions ">
-                                        <cfif "#groupeSelect1#" eq "sub">
-                                            #groupeSelect1#
-                                        <cfelse>
-                                            
-                                        </cfif>                                               
-                                    </td>
-                                    <td class="HBOIVesselInteractions ">
-                                        <cfif "#groupeSelect1#" eq "sub">
-                                            #distanceSelect1#
-                                        <cfelse>
-                                            
-                                        </cfif>                                               
-                                    </td>
-                                    <td class="divetimes hidden">#StratTimeDive1#</td>
-                                    <td class="divetimes hidden">#EndTimeDive1#</td>
-                                    <td class="divetimes hidden">#TotalTimeDive1#</td>
-                                    <td class="divetimes hidden">#StratTimeDive2#</td>
-                                    <td class="divetimes hidden">#EndTimeDive2#</td>
-                                    <td class="divetimes hidden">#TotalTimeDive2#</td>
-                                    <td class="divetimes hidden">#StratTimeDive3#</td>
-                                    <td class="divetimes hidden">#EndTimeDive3#</td>
-                                    <td class="divetimes hidden">#TotalTimeDive3#</td>
-                                    <td class="divetimes hidden">#StratTimeDive4#</td>
-                                    <td class="divetimes hidden">#EndTimeDive4#</td>
-                                    <td class="divetimes hidden">#TotalTimeDive4#</td>
-                                    <td class="divetimes hidden">#StratTimeDive5#</td>
-                                    <td class="divetimes hidden">#EndTimeDive5#</td>
-                                    <td class="divetimes hidden">#TotalTimeDive5#</td>                                
+                                    
                                     <td>#Camera#</td>
                                     <td>#Lens#</td>
                                     <td>#Photographer#</td>
                                     <td>#Driver#</td>
-
-                                    <td>#CompletedBy#</td>
                                     <td>
                                         <div style="width:250px; height:50px; overflow-y:scroll;">#Comments#</div>
                                     </td>
-                                    <td>#SDR#</td>
+                                    <td>#CompletedBy#</td>
                                     <td>#BestSighting#</td>
+                                    <td>#SDR#</td>
                                     <td>#Code#</td>
-                                    <!--- <cfquery name="qgetCetaceanSpecies" datasource="#Application.dsn#"  >
-                                        SELECT * from TLU_CetaceanSpecies where id = #query.FE_SPECIES#
-                                    </cfquery> --->
                                     <td>#uCase(Code)# #csname#</td>
                                     <td>#CetaceanSpeciesName#</td>
                                     <td>#Sex#</td>
@@ -1288,30 +1265,7 @@
                                             Partial
                                         </cfif>
                                     </td>
-
-                                    <td>#Note#</td>
-                                    <td>#pq_focus#</td>
-                                    <td>#pq_Angle#</td>
-                                    <td>#pq_Contrast#</td>
-                                    <td>#pq_Proportion#</td>
-                                    <td>#pq_Partial#</td>
-                                    <td>#pqSum#</td>
-                                    <td>#Qscore#</td>
-
                                     <td>#BestShot#</td>
-                                    <!--- nouman --->                           
-                                   
-                                    <td>
-                                        <cfset bd = listToArray(#EnteredBy#, ",", false, true)> 
-                                        <cfset d = 1>
-                                        <cfloop query="users">
-                                            <cfif ArrayContains(bd,#user_id#)>#trim(first_name)# #trim(last_name)#
-                                                    <cfif arrayLen(bd) gt 1>/</cfif>
-                                            </cfif>
-                                        </cfloop>
-                                    </td>
-                                    
-                                    
                                     <td>
                                         <cfset bd = listToArray(#PhotoAnalysisInitial#, ",", false, true)> 
                                         <cfset d = 1>
@@ -1330,7 +1284,15 @@
                                             </cfif>
                                         </cfloop>
                                     </td>
-                                   
+                                    <td>
+                                        <cfset bd = listToArray(#EnteredBy#, ",", false, true)> 
+                                        <cfset d = 1>
+                                        <cfloop query="users">
+                                            <cfif ArrayContains(bd,#user_id#)>#trim(first_name)# #trim(last_name)#
+                                                    <cfif arrayLen(bd) gt 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
                                     <td>
                                         <cfif "#bodyCondition#" eq 1>
                                             Emaciated
@@ -1436,14 +1398,12 @@
                                     
                                         <cfset a =  "LesionPresent">
                                         <cfset b =  "LesionType">
-                                        <cfset g =  "Region">
                                         <cfset c =  "Side_L_R">
                                         <cfset d =  "Status">
                                         <cfset e =  "Comments">
                                         <cfset f =  "PhotoNumber">
                                         <td>#Evaluate(a&cn)#</td>
                                         <td>#Evaluate(b&cn)#</td>
-                                        <td>#Evaluate(g&cn)#</td>
                                         <td>#Evaluate(c&cn)#</td>
                                         <td>#Evaluate(d&cn)#</td>
                                         <td>#Evaluate(e&cn)#</td>

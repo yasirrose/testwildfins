@@ -906,7 +906,7 @@
         <cfargument name="gearCollected" type="string" required="false" default="">
         <cfargument name="typeOfGearCollected" type="string" required="false" default="">
         <cfargument name="gearDeposition" type="string" required="false" default="">
-        <cfargument name="LCE_ID" type="numeric" required="false">
+        <!--- <cfargument name="LCE_ID" type="numeric" required="false"> --->
         <!--- <cfdump var="#form.HiType#" abort="true"> --->
         <cfif len(trim(HiType)) GT 0 >
             
@@ -2967,7 +2967,24 @@
     </cffunction>
     <!--- Update CBC --->
     <cffunction name="CBCUpdate" returntype="any" output="false" access="public" >
-        <!--- <cfdump var="#form#" abort="true"> --->
+            
+        <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
+            SELECT ID from ST_CBC where BV_ID = #form.bloodValues_ID#
+        </cfquery>
+
+        <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
+            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                INSERT INTO ST_CBC
+                (
+                    BV_ID                                 
+                ) 
+                VALUES
+                (
+                <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
+                )
+            </cfquery>
+        </cfif>
+
         <cftry>
         <cfquery name="qCBCUpdate" datasource="#variables.dsn#"  result="return_data" >
             UPDATE  ST_CBC SET
@@ -3050,6 +3067,22 @@
     </cffunction>
     <!--- update Fibrinogen --->
     <cffunction name="FibrinogenUpdate" returntype="any" output="false" access="public" >
+        <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
+            SELECT ID from ST_Fibrinogen where BV_ID = #form.bloodValues_ID#
+        </cfquery>
+
+        <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
+            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                INSERT INTO ST_Fibrinogen
+                (
+                    BV_ID                                 
+                ) 
+                VALUES
+                (
+                <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
+                )
+            </cfquery>
+        </cfif>
         <cftry>
         <cfquery name="qFibrinogenUpdate" datasource="#variables.dsn#"  result="return_data" >
             UPDATE  ST_Fibrinogen SET
@@ -3082,6 +3115,22 @@
     <!--- update chimestry --->
     <cffunction name="ChemisteryUpdate" returntype="any" output="false" access="public" >
         <!--- <cfdump var="#form#" abort="true"> --->
+        <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
+            SELECT ID from ST_chemistry where BV_ID = #form.bloodValues_ID#
+        </cfquery>
+
+        <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
+            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                INSERT INTO ST_chemistry
+                (
+                    BV_ID                                 
+                ) 
+                VALUES
+                (
+                <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
+                )
+            </cfquery>
+        </cfif>
         <cftry>
             <cfquery name="qChemisteryUpdate" datasource="#variables.dsn#"  result="return_data" >
                 UPDATE  ST_chemistry SET
@@ -3200,6 +3249,22 @@
     </cffunction>
     <!--- update Capillary Zone Electrophoresis --->
     <cffunction name="CapillaryUpdate" returntype="any" output="false" access="public" >
+        <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
+            SELECT ID from ST_Capillary where BV_ID = #form.bloodValues_ID#
+        </cfquery>
+
+        <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
+            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                INSERT INTO ST_Capillary
+                (
+                    BV_ID                                 
+                ) 
+                VALUES
+                (
+                <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
+                )
+            </cfquery>
+        </cfif>
         <cftry>
             <cfquery name="qCapillaryUpdate" datasource="#variables.dsn#"  result="return_data" >
                 UPDATE  ST_Capillary SET
@@ -3258,6 +3323,22 @@
     </cffunction>
     <!--- update Dolphin SAA --->
     <cffunction name="DolphinUpdate" returntype="any" output="false" access="public" >
+        <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
+            SELECT ID from ST_Dolphin where BV_ID = #form.bloodValues_ID#
+        </cfquery>
+
+        <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
+            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                INSERT INTO ST_Dolphin
+                (
+                    BV_ID                                 
+                ) 
+                VALUES
+                (
+                <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
+                )
+            </cfquery>
+        </cfif>
         <cftry>
             <cfquery name="qDolphinUpdate" datasource="#variables.dsn#"  result="return_data" >
                 UPDATE  ST_Dolphin SET
@@ -3289,6 +3370,22 @@
     </cffunction>
     <!--- update ISTAT- Chem 8+ --->
     <cffunction name="iSTAT_ChemUpdate" returntype="any" output="false" access="public" >
+        <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
+            SELECT ID from ST_iSTAT_Chem where BV_ID = #form.bloodValues_ID#
+        </cfquery>
+
+        <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
+            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                INSERT INTO ST_iSTAT_Chem
+                (
+                    BV_ID                                 
+                ) 
+                VALUES
+                (
+                <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
+                )
+            </cfquery>
+        </cfif>
         <cftry>
         <cfquery name="qiSTAT_ChemUpdate" datasource="#variables.dsn#"  result="return_data" >
             UPDATE  ST_iSTAT_Chem SET
@@ -3353,6 +3450,22 @@
     </cffunction>
     <!--- update iSTAT- CG4+ --->
     <cffunction name="CG4Update" returntype="any" output="false" access="public" >
+        <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
+            SELECT ID from ST_iSTAT_CG4 where BV_ID = #form.bloodValues_ID#
+        </cfquery>
+
+        <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
+            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                INSERT INTO ST_iSTAT_CG4
+                (
+                    BV_ID                                 
+                ) 
+                VALUES
+                (
+                <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
+                )
+            </cfquery>
+        </cfif>
         <cftry>
             <cfquery name="qCG4Update" datasource="#variables.dsn#"  result="return_data" >
                 UPDATE  ST_iSTAT_CG4 SET
@@ -8000,7 +8113,7 @@
 
     <cffunction name="AjaxMorphometricsInsert" returntype="any" output="false" access="remote" returnformat="plain">
         <cfquery name="qgetLCEID" datasource="#Application.dsn#"  result="return_data" >
-            SELECT ID from ST_Ancillary_Diagnostics where deleted != '1' and Fnumber = '#Fnumber#' 
+            SELECT ID from ST_Morphometrics where deleted != '1' and Fnumber = '#Fnumber#' 
         </cfquery>
         <cfif isDefined('qgetLCEID.ID') and #qgetLCEID.ID# eq ''>
 

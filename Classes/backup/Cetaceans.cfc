@@ -756,7 +756,6 @@
         </cfif>
         <cfreturn selectedRegions> 
     </cffunction> 
-
     <cffunction name="getCetacean_Lesions" access="remote" returnformat="JSON" output="true">
         <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
            select Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status from Condition_Lesions
@@ -776,7 +775,6 @@
         </cfloop>
         <cfreturn qgetCetacean_Lesions>
     </cffunction>
-    
     <cffunction name="getCetacean_Lesions_unique" access="remote" returnformat="JSON" output="true">
         <cfquery name="qgetCetacean_Lesions_unique" datasource="#variables.dsn#">
             select  Distinct Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R from Condition_Lesions
@@ -846,7 +844,7 @@
     </cffunction>
     <cffunction name="getCetacean" access="public" returnformat="plain" output="true">
         
-    <cfquery name="getCetacean" datasource="#variables.dsn#">
+        <cfquery name="getCetacean" datasource="#variables.dsn#">
      SELECT
         DISTINCT (Survey_Sightings.SightingNumber),
         Cetaceans.CetaceanSpecies,
@@ -913,7 +911,6 @@
     <cffunction name="getCetaceanFriends" access="public" returnformat="plain" output="true">
         <cfargument name='SightingNo' default=''>
         <cfargument name='code' default=''>
-
         <cfquery name="qgetCetaceanFriends" datasource="#variables.dsn#">
         SELECT Cetaceans.Sex,CONCAT(Cetaceans.Code, ' - ', Cetaceans.Name) as CetaceanCodeName ,Cetaceans.ID , COUNT(*) as times
         FROM Cetacean_Sightings
@@ -926,7 +923,6 @@
 		Cetaceans.Name,Cetaceans.Code,Cetaceans.Sex,Cetaceans.ID
         order by code Asc
         </cfquery>
-        
         <cfreturn qgetCetaceanFriends>
     </cffunction>
     <cffunction name="getCatalog" returntype="any" output="false" access="public" >
