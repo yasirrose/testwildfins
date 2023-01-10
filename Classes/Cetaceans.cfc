@@ -762,7 +762,7 @@
            select Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status from Condition_Lesions
             INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
 			INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
-            where Condition_Lesions.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#cetacean_Code#'>
+            where Condition_Lesions.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#cetacean_Code#'>           
             AND Surveys.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
             AND Survey_Sightings.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
             order by DateSeen desc

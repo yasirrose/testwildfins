@@ -835,7 +835,8 @@
       <!---get Cetaceans Code--->
 	<cffunction name="getCetaceansCode" returntype="any" output="false" access="public" >
 		<cfquery name="qgetCetaceansCode" datasource="#variables.dsn#">
-            SELECT code,id,Name FROM Cetaceans where CetaceanSpecies = #Cetacean_Species# order by code asc
+            SELECT code,id,Name FROM Cetaceans where CetaceanSpecies = #
+            # order by code asc
         </cfquery>
 		<cfreturn qgetCetaceansCode>
 	</cffunction>

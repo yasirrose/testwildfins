@@ -95,6 +95,7 @@
                 </cfif>
             </cfif>
         </cfloop>
+        <!--- <cfdump var="#allCount#" abort="true"> --->
         <cfscript>
             if( isDefined('form.LesionType') and form.LesionType neq "")
             {    
@@ -464,8 +465,8 @@
             </cfif>
         </cfloop>
     <!--- Data set after filtering --->
+    <!--- <cfdump var="#qFiltered#" abort="true"> --->
     </cfif>
-
     <cfset getAreaName =  Application.Sighting.getAreaName()>
     <cfset getSurveyArea = Application.Sighting.getSurveyArea()>
     <cfset getSurveyType = Application.Sighting.getType()>
@@ -1268,10 +1269,24 @@
                                     <td>#SDR#</td>
                                     <td>#BestSighting#</td>
                                     <td>#Code#</td>
-                                    <!--- <cfquery name="qgetCetaceanSpecies" datasource="#Application.dsn#"  >
-                                        SELECT * from TLU_CetaceanSpecies where id = #query.FE_SPECIES#
-                                    </cfquery> --->
-                                    <td>#uCase(Code)# #csname#</td>
+                                    <cfset AssociateValue=[]>
+                                    <cfquery name="qgetAssociate" datasource="#Application.dsn#"  >
+                                        SELECT cs.Sighting_ID,ss.id,cs.Cetaceans_ID from Cetacean_Sightings cs
+                                        JOIN Survey_Sightings ss ON cs.Sighting_ID = ss.id
+                                        JOIN Surveys s ON s.ID = ss.Project_ID
+                                        where cs.Sighting_ID = #sightingID#
+                                    </cfquery>
+                                    <cfloop query="qgetAssociate" >
+                                        <cfquery name="qgetAssociateValue" datasource="#Application.dsn#"  >
+                                        SELECT * from Cetaceans                                        
+                                        where id = '#qgetAssociate.CETACEANS_ID#'
+                                    </cfquery> 
+                                    <cfset ArrayAppend(AssociateValue,qgetAssociateValue.Code,"true") >                                                                      
+                                    </cfloop>
+                                    <!--- <cfdump var="#Replace(AssociateValue.toList(), ",", ", ", "ALL")#" abort="true"> --->
+
+                                    <td>#Replace(AssociateValue.toList(), ",", ", ", "ALL")#</td>
+                                    <!--- <td>#uCase(Code)# #csname#</td> --->
                                     <td>#CetaceanSpeciesName#</td>
                                     <td>#Sex#</td>
                                     <td>#Fetals#</td>

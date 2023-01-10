@@ -139,6 +139,9 @@
 
             <!--- <cfdump var="#form.startDate#" > 
             <cfdump var="#form.endDate#" abort="true"> --->
+
+        <cfif (isdefined("form.date") and form.date NEQ "") || (isdefined("form.sampleFN") and form.sampleFN NEQ "") || (isdefined("form.Species") and form.Species NEQ "") || (isdefined("form.PreservationMethod") and form.PreservationMethod NEQ "") || (isdefined("form.StorageType") and form.StorageType NEQ "") || (isdefined("form.SampleType") and form.SampleType NEQ "")> 
+
             <!--- query1 --->
              <cfquery name="qgetSampleReportsWithFilters" datasource="#Application.dsn#">
                 SELECT Fnumber,species,ID,StTpye,date FROM ST_SampleArchive 
@@ -161,7 +164,7 @@
                     <table id="data-table" data-order='[[3,"desc"]]' class="table table-bordered table-hover panel">
                         <thead>
                         <tr class="inverse">
-                            <th>Fnumber</th>
+                            <!--- <th>Fnumber</th> --->
                             <th>Sample ID</th>
                             <th>Bin Number</th>
                             <th>Sample Type</th>
@@ -175,9 +178,10 @@
                             <!--- <th>PreservationMethod</th> --->
                         </tr>
                         </thead>
+                                                       
                         <tbody>
 
-                            <cfoutput>
+                            <cfoutput>                                
                                 <cfloop query="qgetSampleReportsWithFilters" >
                                     <cfquery name="qgetSampleTypeReportsWithFilters" datasource="#Application.dsn#">
                                         SELECT * FROM ST_SampleType 
@@ -198,7 +202,7 @@
                                     </cfquery> 
                                 <cfloop query="qgetSampleTypeReportsWithFilters" >
                                     <tr class="gradeU" id="remov_#qgetSampleReportsWithFilters.ID#">
-                                        <td><cfif isdefined("qgetSampleReportsWithFilters.Fnumber") and qgetSampleReportsWithFilters.Fnumber neq "">#qgetSampleReportsWithFilters.Fnumber#</cfif></td>
+                                        <!--- <td><cfif isdefined("qgetSampleReportsWithFilters.Fnumber") and qgetSampleReportsWithFilters.Fnumber neq "">#qgetSampleReportsWithFilters.Fnumber#</cfif></td> --->
 
 
                                         <td>#qgetSampleTypeReportsWithFilters.SampleID#</td>
@@ -220,9 +224,8 @@
                                     </tr>
                                 </cfloop>
                                 </cfloop>
-                                <!--- </cfoutput> --->
                             </cfoutput>
-                        </tbody>
+                        </tbody>                    
                     </table>
                     <cfelse>
                     <div class="alert alert-danger">
@@ -230,6 +233,63 @@
                     </div>
                 </cfif>
             </div>
+            <!--- today work --->
+        <cfelse>
+            <cfquery name="qgetSampleTypeReportsWithFilterss" datasource="#Application.dsn#">
+                SELECT * FROM ST_SampleType             
+                ORDER BY ID DESC
+            </cfquery> 
+            <div class="section-container  p-b-10">
+                <cfif qgetSampleTypeReportsWithFilterss.recordcount NEQ 0>
+                    <table id="data-table" data-order='[[3,"desc"]]' class="table table-bordered table-hover panel">
+                        <thead>
+                        <tr class="inverse">
+                            <!--- <th>Fnumber</th> --->
+                            <th>Sample ID</th>
+                            <th>Bin Number</th>
+                            <th>Sample Type</th>
+                            <th>Preservation Method</th>
+                            <th>Amount of sample</th>
+                            <th>Unit of sample</th>
+                            <th>Storage Type</th>
+                            <th>Sample Comments</th>
+                            <!--- <th>SampleType</th> --->
+                            <!--- <th>StorageType</th> --->
+                            <!--- <th>PreservationMethod</th> --->
+                        </tr>
+                        </thead>
+                                                       
+                        <tbody>
+
+                            <cfoutput>            
+                               
+                                <cfloop query="qgetSampleTypeReportsWithFilterss" >
+                                    <tr class="gradeU" id="remov_#qgetSampleTypeReportsWithFilterss.ID#">
+                        
+                                        <td>#qgetSampleTypeReportsWithFilterss.SampleID#</td>
+                                        <td>#qgetSampleTypeReportsWithFilterss.BinNumber#</td>
+                                        <td><cfif isdefined("qgetSampleTypeReportsWithFilterss.SampleType") and qgetSampleTypeReportsWithFilterss.SampleType neq "">#qgetSampleTypeReportsWithFilterss.SampleType#</cfif></td>
+                                        <td><cfif isdefined("qgetSampleTypeReportsWithFilterss.PreservationMethod") and qgetSampleTypeReportsWithFilterss.PreservationMethod neq "">#qgetSampleTypeReportsWithFilterss.PreservationMethod#</cfif></td>
+                                        <td>#qgetSampleTypeReportsWithFilterss.AmountofSample#</td>
+                                        <td>#qgetSampleTypeReportsWithFilterss.UnitofSample#</td>
+                                        <td><cfif isdefined("qgetSampleTypeReportsWithFilterss.StorageType") and qgetSampleTypeReportsWithFilterss.StorageType neq "">#qgetSampleTypeReportsWithFilterss.StorageType#</cfif></td>
+                                        <td>#qgetSampleTypeReportsWithFilterss.SampleComments#</td>
+                                       
+                                    </tr>
+                                </cfloop>
+                            </cfoutput>
+                        </tbody>                    
+                    </table>
+                    <cfelse>
+                    <div class="alert alert-danger">
+                        <strong>Alert!</strong> No record found.
+                    </div>
+                </cfif>
+            </div>
+        </cfif>
+
+
+
         </cfif>
         <!-- end panel -->
     </div>
