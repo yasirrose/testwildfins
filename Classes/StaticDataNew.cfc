@@ -2433,7 +2433,7 @@
 
        <cffunction name="getDiagnosticLab" returntype="any" output="false" access="public" >
         <cfquery name="qgetType" datasource="#variables.dsn#" >
-            SELECT * from TLU_Diagnostic_Lab
+            SELECT * from TLU_Diagnostic_Lab where Diagnostic != ''
         </cfquery>
         <cfreturn qgetType>
     </cffunction>
@@ -2509,7 +2509,7 @@
 
        <cffunction name="getSampleType" returntype="any" output="false" access="public" >
         <cfquery name="qgetType" datasource="#variables.dsn#" >
-            SELECT * from TLU_Sample_Type order by Type asc
+            SELECT * from TLU_Sample_Type where type != '' order by Type asc
         </cfquery>
         <cfreturn qgetType>
     </cffunction>
@@ -2623,7 +2623,7 @@
 
        <cffunction name="getTissueType" returntype="any" output="false" access="public" >
         <cfquery name="qgetType" datasource="#variables.dsn#" >
-            SELECT * from TLU_Sample_Type order by Type asc
+            SELECT * from TLU_Sample_Type where type != '' order by Type asc
         </cfquery>
         <cfreturn qgetType>
     </cffunction>

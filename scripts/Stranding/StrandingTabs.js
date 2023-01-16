@@ -115,6 +115,12 @@ $(document).ready(function() {
           var name=$(this).attr('name');
           $("#Sample_Date").formValidation('revalidateField', name);
       });  
+      $('#datetimepicker_Date_samplerecord').datetimepicker({ format: 'YYYY-MM-DD' }).on('dp.change', function(e) {
+          // Revalidate the date field
+          var name=$(this).attr('name');
+          $("#reportSample_Date").formValidation('revalidateField', name);
+      });  
+
       $("#first_date")
       .datetimepicker({ format: "MM/DD/YYYY" })
       .on("dp.change", function(e) {
@@ -1332,6 +1338,11 @@ function formNecropsySerchByFieldNumber(){
   url = $('#Site_url').val();
   $('#myformNecropsySerchByFieldNumber').attr('action', url + '&NecropsyReport');
   $( "#myformNecropsySerchByFieldNumber" ).submit();
+}
+function formNecropsySerchByDate(){
+  url = $('#Site_url').val();
+  $('#myformNecropsySerchByDate').attr('action', url + '&NecropsyReport');
+  $( "#myformNecropsySerchByDate" ).submit();
 }
 
 function fieldnum(){
@@ -4810,7 +4821,7 @@ function levelAFormimg(){
                     $('#LApdfFiles').val(LAPDFArray);
                     $('.spi').remove();
                     $('#LevelAFormpreviousimages').append('<span class="pip"><a data-toggle="modal" data-target="#myHiFormModal" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selectedHIForm(this)"/></a><br/><span class="remove" id="'+data+'" onclick="LevelAFormremove(this)">Remove image</span></span>');
-                    $('#files').prop('disabled', false);
+                    $('#LevelAFormfiles').prop('disabled', false);
                     }else{
                         alert('Selected file corrupted PDF');
                         $('.spi').remove();
@@ -4838,6 +4849,8 @@ function levelAFormimg(){
         $('#LevelAFormfiles').val("");
     }        
 }
+
+
 function LevelAFormremove(el){
 
   ID = $('#level_A_ID').val();
@@ -4866,8 +4879,100 @@ function LevelAFormremove(el){
   });    
 }
 
+///
+var ToxiPDFArray = [];
+if($('#toxipdfFiles').val() != ''){
+  ToxiPDFArray.push($('#toxipdfFiles').val());
+}
 
-// end for Level A Form
+function Toxifile(){
+
+    cn = ++cn;
+    pr = cn - 1;
+    var files = $('#Toxifiles').prop('files');
+    var f = files[0];    
+    
+    if(f.size < 10000000){
+        if(f.type == 'application/pdf'){    
+            $('#TXstart').after('<span class="spi"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></span>');
+            $('#Toxifiles').prop('disabled', true);
+            var pdffile = new FormData();
+            pdffile.append('pdf', f);
+
+            $.ajax({
+                url: application_root +"Stranding.cfc?method=uploadpdf",
+                type: "POST",
+                data: pdffile,
+                enctype: 'multipart/form-data',
+                processData: false, // tell jQuery not to process the data
+                contentType: false, // tell jQuery not to set contentType
+                success: function (data) {
+                    if(data != ""){
+                      ToxiPDFArray.push(data);
+                    // $('#toxipdfFiles').val(ToxiPDFArray);
+                    var oldvalue = $('#toxipdfFiles').val();
+                    var newvalue = data;
+                    if(oldvalue){
+                        var FullValue = oldvalue +","+ newvalue;
+                    }else{
+                        var FullValue = newvalue;
+                    }
+                    $('#toxipdfFiles').val(FullValue);
+                    $('.spi').remove();
+
+                    $('#Toxipreviousimages').append('<span class="pip"><a data-toggle="modal" data-target="#myHiFormModal" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selectedHIForm(this)"/></a><br/><span class="remove" id="'+data+'" onclick="toxifileremove(this)">Remove image</span></span>');
+                    $('#Toxifiles').prop('disabled', false);
+                    }else{
+                        alert('Selected file corrupted PDF');
+                        $('.spi').remove();
+                        $('#Toxifiles').prop('disabled', false);
+                    }
+       
+                }
+            });
+        }else{
+            alert('Selected file is not PDF');
+            $('#Toxifiles').val("");
+        }
+    }else{
+        alert('Selected file is Large than 10MB');
+        $('#Toxifiles').val("");
+    }        
+}
+
+
+function toxifileremove(el){
+
+
+  ID = $('#TX_IDValue').val();
+  var element = el;
+  pdffile = element.id
+
+  data = $('#toxipdfFiles').val();
+
+  data1 = data.split(",");
+  var removeArrayValue = pdffile;
+  data1.splice($.inArray(removeArrayValue, data1), 1);
+  data2 = data1.toString();
+
+  $('#toxipdfFiles').val(data2);
+
+  $.ajax({
+      url: application_root +"Stranding.cfc?method=removeToxifiles",
+      type: "POST",
+      data: { ID: ID, pdf: pdffile, imgValue: data2 },
+      success: function (data) {
+          // PDFArray = PDFArray.filter(e => e !== "Get_Started_With_Smallpdf20.pdf"); 
+          // $('#pdfFiles').val(PDFArray);
+          element.parentNode.remove();
+      }
+  });    
+}
+
+
+
+
+// 
 
 function gotoTopFunction() {
   document.body.scrollTop = 0;
@@ -5218,9 +5323,113 @@ function ResetAll(){
     // $('#'+ID).val(value);
     }
 
+    function delete_SampleReport(no)
+    {
+      
+      var ajaxData = new FormData();
+      ajaxData.append('ID', no);
+      $.ajax({
+          url : application_root+"Stranding.cfc?method=deleteSampleReportRecord",
+          type: "POST",
+          cache: false,
+          contentType:false,
+          processData: false,
+          data : ajaxData,
+          success: function (response)
+          {
+              // var pageURL = $(location).attr("href");
+              // window.location.href= pageURL;
+              $('#'+'samplereporttr_'+no).remove();
+          },
+          error: function (response)
+          {
+              alert(response);
+          }
+      });
+    }
 
+    function edit_SampleReport(no)
+    {
+      $('#SampleReportUpdate').modal('show');
+      $("#idForUpdateSampleReport").val(no);
+      $("#SamplereportID").val($("#SamplereportID"+no).text());
+      $("#reportBinNumber").val($("#reportBinNumber"+no).text());
+      
+      let d=$("#reportSampleType"+no).text();
+      console.log(d);
+      $("#reportSampleType").val(d);
+      // $("#reportSampleType option:contains("+d+")").attr('selected', 'selected');
+      
+      $("#reportPreservationMethod").val($("#reportPreservationMethod"+no).text());
+      $("#reportAmountofSample").val($("#reportAmountofSample"+no).text());
+      $("#reportUnitofSample").val($("#reportUnitofSample"+no).text());
+      $("#reportStorageType").val($("#reportStorageType"+no).text());
+      $("#reportSampleComments").val($("#reportSampleComments"+no).text());
+      $("#reportSample_Date").val($("#reportSample_Date"+no).text());
+      $("#reportSample_Location").val($("#reportSample_Location"+no).text());
+      
+     
+    }
 
+function updateReportData(){
 
+  SamplereportID = $("#SamplereportID").val();
+  reportBinNumber = $("#reportBinNumber").val();
+  reportPreservationMethod = $("#reportPreservationMethod").val();
+  reportAmountofSample = $("#reportAmountofSample").val();
+  reportUnitofSample = $("#reportUnitofSample").val();
+  reportStorageType = $("#reportStorageType").val();
+  reportSampleComments = $("#reportSampleComments").val();
+  reportSample_Date = $("#reportSample_Date").val();
+  reportSample_Location = $("#reportSample_Location").val();
+  reportSampleType = $("#reportSampleType").val();
+  ID = $("#idForUpdateSampleReport").val();
+
+  // alert();
+  var ajaxData = new FormData();
+  ajaxData.append('ID', ID);
+  ajaxData.append('SamplereportID', SamplereportID);
+  ajaxData.append('reportBinNumber', reportBinNumber);
+  ajaxData.append('reportPreservationMethod', reportPreservationMethod);
+  ajaxData.append('reportAmountofSample', reportAmountofSample);
+  ajaxData.append('reportUnitofSample', reportUnitofSample);
+  ajaxData.append('reportStorageType', reportStorageType);
+  ajaxData.append('reportSampleComments', reportSampleComments);
+  ajaxData.append('reportSample_Date', reportSample_Date);
+  ajaxData.append('reportSample_Location', reportSample_Location);
+  ajaxData.append('reportSampleType', reportSampleType);
+  $.ajax({
+      url : application_root+"Stranding.cfc?method=updateSampleReportRecord",
+      type: "POST",
+      cache: false,
+      contentType:false,
+      processData: false,
+      data : ajaxData,
+      success: function (response)
+      {
+        
+        // console.log(response);
+        $("#SamplereportID"+ID).text(SamplereportID);
+        $("#reportBinNumber"+ID).text(reportBinNumber);
+        $("#reportPreservationMethod"+ID).text(reportPreservationMethod);
+        $("#reportAmountofSample"+ID).text(reportAmountofSample);
+        $("#reportUnitofSample"+ID).text(reportUnitofSample);
+        $("#reportStorageType"+ID).text(reportStorageType);
+        $("#reportSampleComments"+ID).text(reportSampleComments);
+        $("#reportSample_Date"+ID).text(reportSample_Date);
+        $("#reportSample_Location"+ID).text(reportSample_Location);
+        $("#reportSampleType"+ID).text(reportSampleType);
+
+        $('#SampleReportUpdate').modal('hide');
+      },
+      error: function (response)
+      {
+          alert(response);
+      }
+  });
+}
   
     
   
+
+

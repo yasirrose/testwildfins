@@ -763,6 +763,25 @@
         <cfreturn True>
     </cffunction>
 
+    <cffunction name="removeToxifiles" returntype="string" output="false" access="remote" returnformat="plain">
+        <cfquery name="removePdfFiles" datasource="#Application.dsn#" result = "results">
+                update ST_Toxicology set
+                pdfFiles=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+        
+                    where
+                    ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                    
+                </cfquery>
+                        <!--- <cfdump var=#results# abort="true"> --->
+               
+        <cfif len(trim(#pdf#))>
+            <cfif FileExists("#Application.CloudDirectory&pdf#")>
+                <cffile action = "delete" file = "#Application.CloudDirectory&pdf#">
+            </cfif>
+        </cfif>
+        <cfreturn True>
+    </cffunction>
+
     <cffunction name="getCetaceanSpecies" returntype="any" output="false" access="public" >
          
         <cfquery name="qgetCetaceanSpecies" datasource="#variables.dsn#"  >
@@ -2467,6 +2486,7 @@
                 ,date
                 ,BriefHistory
                 ,euthanizedCB
+                ,pdfFiles
                 ) 
                 VALUES
                 (
@@ -2500,6 +2520,7 @@
                 ,<cfqueryparam cfsqltype="CF_SQL_DATE" value='#FORM.date#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.toxipdfFiles#'>
                 )
             </cfquery>
         <cfcatch type="any">
@@ -2571,6 +2592,7 @@
                 ,date = <cfqueryparam cfsqltype="CF_SQL_DATE" value='#FORM.date#'>
                 ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+                ,pdfFiles = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.toxipdfFiles#'>
                 WHERE
                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#form.TX_ID#'>
             </cfquery>
@@ -2647,6 +2669,7 @@
         </cfquery>
         <!--- <cfdump var="#form#" abort="true"> --->
         <cfset FORM.LCE_ID = '0'>
+        <cfif isDefined('FORM.Tissue_type') and FORM.Tissue_type neq ''>
         <cftry>
             <cfquery name="qToxiType_Insert" datasource="#variables.dsn#"  result="return_data" >
             INSERT INTO ST_ToxiType
@@ -2696,6 +2719,7 @@
         </cftry>
         <cfset TT_ID = "#return_data.generatedkey#">
         <cfreturn TT_ID>
+        </cfif>
     </cffunction>
     <!--- update toxi type --->
     <cffunction name="ToxiType_FormUpdate" returntype="any" output="false" access="public" >
@@ -4392,6 +4416,13 @@
         <cfreturn qgetHistoDate>
     </cffunction>
 
+    <cffunction name="getNecropsyDate" returntype="any" output="false" access="public" >
+        <cfquery name="qgetNecropsyDate" datasource="#Application.dsn#"  >
+            SELECT ID,date,Fnumber from ST_CetaceanNecropsyReport where date != '' order by DATE DESC
+        </cfquery>
+        <cfreturn qgetNecropsyDate>
+    </cffunction>
+
     <cffunction name="getMorphometricsBNumber" returntype="any" output="false" access="public" >
         <cfquery name="MorphometricsoFBNumber" datasource="#Application.dsn#"  >
             SELECT ID,Fnumber from ST_Morphometrics order by Fnumber ASC
@@ -4874,9 +4905,11 @@
             delete from ST_SampleDetail
             where ID = '#ID#'
         </cfquery>
-        <cfdump var="#deletesampleDetail#">
+        <!--- <cfdump var="#deletesampleDetail#"> --->
 		<cfreturn True>
-	</cffunction>
+    </cffunction>
+    
+    
     <cffunction name="deleteLesion"  returntype="any" output="false" access="remote" returnformat="json">
         
         <cfquery name="qdeleteLesion" datasource="#Application.dsn#">
@@ -5212,7 +5245,8 @@
         </cfif>
         <cfif NOT isDefined('FORM.NOAAStock')>
             <cfset FORM.NOAAStock = "">
-        </cfif>  <cfif NOT isDefined('FORM.euthanizedCB')>
+        </cfif>  
+        <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
 
@@ -6352,21 +6386,21 @@
     <!--- getallfieldnumber --->
     <cffunction name="getallfieldnumber" returntype="any" output="false" access="public" >
         <cfquery name="qgetallfieldnumber" datasource="#Application.dsn#">
-            SELECT Fnumber FROM ST_LiveCetaceanExam
+            SELECT Fnumber FROM ST_LiveCetaceanExam where deleted != '1'
             UNION
-            SELECT Fnumber FROM ST_HIForm
+            SELECT Fnumber FROM ST_HIForm where deleted != '1'
             UNION
-            SELECT Fnumber FROM ST_HistoForm
+            SELECT Fnumber FROM ST_HistoForm where deleted != '1'
             UNION
-            SELECT Fnumber FROM ST_LevelAForm
+            SELECT Fnumber FROM ST_LevelAForm where deleted != '1'
             UNION
-            SELECT Fnumber FROM ST_Ancillary_Diagnostics
+            SELECT Fnumber FROM ST_Ancillary_Diagnostics where deleted != '1'
             UNION
-            SELECT Fnumber FROM ST_Blood_Values
+            SELECT Fnumber FROM ST_Blood_Values where deleted != '1'
             UNION
-            SELECT Fnumber FROM ST_Toxicology
+            SELECT Fnumber FROM ST_Toxicology where deleted != '1'
             UNION
-            SELECT Fnumber FROM ST_SampleArchive
+            SELECT Fnumber FROM ST_SampleArchive where deleted != '1'
             UNION
             SELECT Fnumber FROM ST_CetaceanNecropsyReport
             ORDER BY Fnumber;
@@ -8244,5 +8278,38 @@
     </cffunction>
 
 
+    <cffunction name="updateSampleReportRecord"  returntype="any" output="false" access="remote" >
+       
+        <!--- <cfdump var="test"><cfabort> --->
+
+        <cfquery name="qupdateSampleData" datasource="#Application.dsn#" >
+            update ST_SampleType set
+             SampleID=<cfqueryparam cfsqltype="cf_sql_varchar" value='#SamplereportID#' >
+            ,BinNumber=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportBinNumber#'>
+            ,SampleType=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportSampleType#'>
+            ,PreservationMethod=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportPreservationMethod#'>
+            ,AmountofSample=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportAmountofSample#'>
+            ,UnitofSample=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportUnitofSample#'>
+            ,StorageType=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportStorageType#'>
+            ,SampleComments=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportSampleComments#'>
+            ,Sample_Date=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportSample_Date#'>
+            ,Sample_Location=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportSample_Location#'>
+            
+            where
+            ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+            
+        </cfquery>
+        <!--- <cfdump var="#qupdateSampleData#"> --->
+		<cfreturn True>
+	</cffunction>
+
+    <cffunction name="deleteSampleReportRecord"  returntype="any" output="false" access="remote" returnformat="json">        
+        <cfquery name="qdeleteSamplerecord" datasource="#Application.dsn#">
+            delete from ST_SampleType
+            where ID = '#ID#'
+        </cfquery>
+        <!--- <cfdump var="#qdeleteSamplerecord#"> --->
+		<cfreturn True>
+    </cffunction>
 
 </cfcomponent>    

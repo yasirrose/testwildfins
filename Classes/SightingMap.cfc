@@ -68,7 +68,7 @@
 
 				<cfset FE_SPECIES = '#cetaceanSpecies#' >
 
-				<cfif isdefined("startDate") and date NEQ "">
+				<cfif isdefined("startDate") and startDate NEQ "">
 				<cfset startDate = dateformat('#startDate#','YYYY-mm-dd')>
 				<cfset endDate   = dateformat('#endDate#','YYYY-mm-dd')>
 				</cfif>
@@ -99,7 +99,7 @@
 					
 					<cfset geojsonn=StructNew("ordered","text","asc",false)>
 					<cfset geojsonn.type = "Feature">
-					<cfset geojsonn.geometry = {type:'Point', coordinates:[#query.ATLATITUDE#, #query.ATLONGITUDE#] }>	
+					<cfset geojsonn.geometry = {type:'Point', coordinates:[#query.ATLONGITUDE#, #query.ATLATITUDE#] }>	
 					<cfset geojsonn.properties = {title:'Mapbox', date:"#DateFormat(date,'mm/dd/yyyy')#", sightingNo:#query.SIGHTINGNUMBER#, Species:#qgetCetaceanSpecies.CETACEANSPECIESNAME#,SightingId:#query.ss_id#,SurveyId:#query.s_id#,CETACEANS_ID:#cetaceans.code#}>
 			
 		

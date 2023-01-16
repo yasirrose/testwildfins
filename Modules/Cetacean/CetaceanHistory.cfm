@@ -18,17 +18,18 @@
   <cfset variables.dsn = "wildfins_new">
   <cfset setLeftImage  = '#Application.CloudRoot#no-image.jpg'> 
   <cfset setRightImage  = '#Application.CloudRoot#no-image.jpg'>
-  <!--- Nouman --->
+  <!--- working --->
+  <cfset qSurveysId = Application.SightingNew.qSurveysId()>
+
   <cfif isdefined('FORM.CetaceanId')>
     <cfquery name="qgetlesionCode" datasource="#Application.dsn#">
       select Code from Cetaceans where ID = '#FORM.CetaceanId#'
     </cfquery>
     <cfset form.cetacean_Code = qgetlesionCode.Code>
     <cfset qGetCetacean = Application.Cetaceans.getCetacean(argumentCollection="#Form#")>
-
-    <!--- <cfdump var="#qGetCetacean#" abort="true"> --->
+   
     <cfset qgetCetacean_Lesions = Application.Cetaceans.getCetacean_Lesions(argumentCollection="#Form#")>
-  
+    <!--- <cfdump var="#qgetCetacean_Lesions#" abort='true'> --->
     
     <cfif qGetCetacean.RECORDCOUNT EQ 0> 
       <cfset isDataAvaiable = "Record not found on selected CODE">       
@@ -195,8 +196,20 @@
                             </select>
                         </form>
                       </div>
+                      <div class="specie-area">
+                        <form id="myform" class="cetcean-form" action="#Application.siteroot#?Module=Cetacean&Page=CetaceanHistory" method="post" >
+                            <label for="sel1">Select SurveyID</label>
+                            <select class="form-control search-box" id="Cetacean_SurveyID" name="Cetacean_SurveyID" onchange="setSurveyId(this.value)">
+                                <option value="0">Select SurveyID</option>
+                                <cfloop query="qSurveysId">
+                                  <option value="#qSurveysId.id#" <cfif isdefined('qgetCetacean_Lesions.surveyid') and qgetCetacean_Lesions.surveyid eq qSurveysId.id>selected</cfif> >#qSurveysId.id#</option>
+                                </cfloop>
+                            </select>
+                        </form>
+                      </div>
                       <div class="code-area">
                         <form id="myform" class="cetcean-form" action="#Application.siteroot#?Module=Cetacean&Page=CetaceanHistory" method="post" >
+                              <input type="hidden" name="Cetacean_Survey" id="Cetacean_Survey" value=''>
                             <cfif isdefined('FORM.Cetacean_Species')>
                               <input type="hidden" name="Cetacean_Species" value='#FORM.Cetacean_Species#'>
                             </cfif>
@@ -499,6 +512,11 @@
   
   
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxYI6DN6VquzG8dxWfN04TAK5Rfngn9ug"></script>
+  <script>
+  function setSurveyId(val){
+    $('#Cetacean_Survey').val(val);
+  }
+  </script>
 <style>
 table.dataTable thead th, table.dataTable thead td {
     padding: 10px 6px!important;
