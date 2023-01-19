@@ -5615,7 +5615,7 @@
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                         <form  action="" method="post" id="myformNecropsySerchByDate">
-                            <label for="sel1">Search Necropsy Report By Date:</label>
+                            <label for="sel1">Search Necropsy Report By Stranding Date:</label>
                             <div class="input"> 
                                 <select class="form-control search-box" name="Nfieldnumber" onChange="formNecropsySerchByDate()">
                                     <option value="">Select Date</option>
@@ -7660,7 +7660,7 @@
                             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                 <div class="form-group flex-center">
                                     <label class="scomment-label">Remarks</label>
-                                    <textarea class="form-control textareaCustomReset locations-textarea" id="SampleCommentsID" name="SampleComments">#trim(qgetHIDataa.SampleComments)#</textarea>
+                                    <textarea class="form-control textareaCustomReset locations-textarea" id="SampleCommentsID" name="SampleCommentss">#trim(qgetHIDataa.SampleComments)#</textarea>
                                 </div>
                             </div>             
                         </div>

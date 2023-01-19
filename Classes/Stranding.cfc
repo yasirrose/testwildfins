@@ -2103,7 +2103,7 @@
                 ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.LCE_ID#'>
                 ,<cfqueryparam cfsqltype="CF_SQL_DATE" value='#FORM.HISTOPATHOLOGYDATE#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.PATHOLOGISTACCESSION#'>
-                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Trim(FORM.SAMPLECOMMENTS)#'>
+                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#Trim(FORM.SAMPLECOMMENTSS)#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.code#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.hera#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.sex#'>
@@ -2190,7 +2190,7 @@
             ,NAA = <cfqueryparam cfsqltype="cf_sql_varchar" value='#NAA#'>
             ,histoDate = <cfqueryparam cfsqltype="CF_SQL_DATE" value='#FORM.HISTOPATHOLOGYDATE#'>
             ,PathologistAccession = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.PATHOLOGISTACCESSION#'>
-            ,SampleComments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Trim(FORM.SAMPLECOMMENTS)#'>
+            ,SampleComments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Trim(FORM.SAMPLECOMMENTSS)#'>
             ,CompletedBy = <cfqueryparam cfsqltype="cf_sql_varchar" value='#CompletedBy#'>
             ,code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#code#'>
             ,hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#hera#'>

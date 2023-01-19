@@ -4705,7 +4705,17 @@ function HIFormimg(){
                 success: function (data) {
                     if(data != ""){
                     HIPDFArray.push(data);
-                    $('#HIFormpdfFiles').val(HIPDFArray);
+                    // $('#HIFormpdfFiles').val(HIPDFArray);
+                    // PDFEXAMArray.push(data);
+                    // $('#pdfFiles').val(PDFArray);
+                    var oldvalue = $('#HIFormpdfFiles').val();
+                    var newvalue = data;
+                    if(oldvalue){
+                        var FullValue = oldvalue +","+ newvalue;
+                    }else{
+                        var FullValue = newvalue;
+                    }
+                    $('#HIFormpdfFiles').val(FullValue);
                     $('.spi').remove();
                     $('#HIFormPreviousimages').append('<span class="pip"><a data-toggle="modal" data-target="#myHiFormModal" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selectedHIForm(this)"/></a><br/><span class="remove" id="'+data+'" onclick="removeHiFormPDF(this)">Remove image</span></span>');
                     $('#files').prop('disabled', false);
@@ -4818,7 +4828,15 @@ function levelAFormimg(){
                 success: function (data) {
                     if(data != ""){
                     LAPDFArray.push(data);
-                    $('#LApdfFiles').val(LAPDFArray);
+                    // $('#LApdfFiles').val(LAPDFArray);
+                    var oldvalue = $('#LApdfFiles').val();
+                    var newvalue = data;
+                    if(oldvalue){
+                        var FullValue = oldvalue +","+ newvalue;
+                    }else{
+                        var FullValue = newvalue;
+                    }
+                    $('#LApdfFiles').val(FullValue);
                     $('.spi').remove();
                     $('#LevelAFormpreviousimages').append('<span class="pip"><a data-toggle="modal" data-target="#myHiFormModal" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selectedHIForm(this)"/></a><br/><span class="remove" id="'+data+'" onclick="LevelAFormremove(this)">Remove image</span></span>');
                     $('#LevelAFormfiles').prop('disabled', false);
