@@ -247,7 +247,11 @@
             s.DATE,
             ss.SightingNumber,
             s.SurveyRoute,
+            s.id as SurveyID,
             FE_TotalCetacean_takes as Total_Takes,
+            FE_TotalAdults_takes,
+            FE_TotalCalves_takes,
+            FE_YoungOfYear_takes,
             c.code as Code,
             tlu.CetaceanSpeciesName,
             cs.bodyCondition,
@@ -660,11 +664,16 @@
                         <thead>
                         <tr class="inverse">
                             <th>Date</th> 
-                            <th>Sighting Number</th>
+                            <th>SurveyID</th> 
                             <th>Survey Route</th>
-                            <th>Total_Takes</th>
+                            <th>Sighting Number</th>
+                            <th>FE_TOTALCETACEAN_TAKES</th>
+                            <th>FE_TOTALADULTS_TAKES</th>
+                            <th>FE_TOTALCALVES_TAKES</th>
+                            <th>FE_YOUNGOFYEAR_TAKES</th>
                             <th>Code</th>
-                            <th>Cetacean Species</th>
+                            <th>Associates</th>
+                            <th>CetaceanSpeciesName</th>
                             <th>Body Condition</th>
                             <th>Head_NuchalCrest</th>
                             <th>Head_LateralCervicalReg</th>
@@ -679,11 +688,11 @@
                                 <cfloop index="index" from="1" to="#maximumLesions.MaxLesion#">
                                         <th>LesionPresent#index#</th>
                                         <th>LesionType#index#</th>
+                                        <th>Region#index#</th>
                                         <th>Side_L_R#index#</th>
                                         <th>Status#index#</th>
-                                        <th>Region#index#</th>
-                                        <th>PhotoNumber#index#</th>
-                                        <th>Comments#index#</th>
+                                        <th>Lesion Comments#index#</th>
+                                        <th>Lesion Photo#index#</th>
                                 </cfloop>
                             </cfoutput>
                         </tr>
@@ -693,14 +702,34 @@
                                 <tr>
                             
                                     <td>#dateformat(Date, "yyyy-mm-dd")#</td> 
-                                    <td>#SightingNumber#</td>
+                                    <td>#SurveyID#</td>
                                     <td>
                                         #SurveyRoute#
                                     </td>
-                                    <td>
-                                        #Total_Takes#
-                                    </td>
+                                    <td>#SightingNumber#</td>
+                                    <td>#Total_Takes#</td>
+                                    <td>#FE_TotalAdults_takes#</td>
+                                    <td>#FE_TotalCalves_takes#</td>
+                                    <td>#FE_YoungOfYear_takes#</td>
+
                                     <td>#Code#</td>
+                                    <!--- <td>#Code#</td> --->
+                                    <cfset AssociateValue=[]>
+                                    <cfquery name="qgetAssociate" datasource="#Application.dsn#"  >
+                                        SELECT cs.Sighting_ID,ss.id,cs.Cetaceans_ID from Cetacean_Sightings cs
+                                        JOIN Survey_Sightings ss ON cs.Sighting_ID = ss.id
+                                        JOIN Surveys s ON s.ID = ss.Project_ID
+                                        where cs.Sighting_ID = #sightingID#
+                                    </cfquery>
+                                    <cfloop query="qgetAssociate" >
+                                        <cfquery name="qgetAssociateValue" datasource="#Application.dsn#"  >
+                                        SELECT * from Cetaceans                                        
+                                        where id = '#qgetAssociate.CETACEANS_ID#'
+                                    </cfquery> 
+                                    <cfset ArrayAppend(AssociateValue,qgetAssociateValue.Code,"true") >                                                                      
+                                    </cfloop>
+                               
+                                    <td>#Replace(AssociateValue.toList(), ",", ", ", "ALL")#</td>
                                     <td>#CetaceanSpeciesName#</td>
                                     <td>
                                         #bodyCondition#
@@ -735,18 +764,18 @@
                                     <cfloop index="cn" from="1" to="#maximumLesions.MaxLesion#">
                                         <cfset a =  "LesionPresent">
                                         <cfset b =  "LesionType">
+                                        <cfset r =  "Region">
                                         <cfset c =  "Side_L_R">
                                         <cfset d =  "Status">
-                                        <cfset r =  "Region">
-                                        <cfset p =  "PhotoNumber" >
                                         <cfset c =  "Comments" >
+                                        <cfset p =  "PhotoNumber" >
                                         <td>#Evaluate(a&cn)#</td>
                                         <td>#Evaluate(b&cn)#</td>
+                                        <td>#Evaluate(r&cn)#</td>
                                         <td>#Evaluate(c&cn)#</td>
                                         <td>#Evaluate(d&cn)#</td>
-                                        <td>#Evaluate(r&cn)#</td>
-                                        <td>#Evaluate(p&cn)#</td>
                                         <td>#Evaluate(c&cn)#</td>
+                                        <td>#Evaluate(p&cn)#</td>
                                     </cfloop>
                                 </tr>
                             </cfoutput>

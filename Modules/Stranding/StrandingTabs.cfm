@@ -6348,7 +6348,7 @@
                                     <option value="">Select Type</option>
                                     <cfloop query="#qgetDrugType#">
                                         <cfif status eq 1>
-                                            <option value="#qgetDrugType.ID#">#qgetDrugType.Type#</option>
+                                            <option value="#qgetDrugType.Type#">#qgetDrugType.Type#</option>
                                         </cfif>
                                     </cfloop>
                                 </select>
@@ -6403,7 +6403,7 @@
                             <span id="D_volume" class="D_volume_error"></span>
                         </div>
                         <div class="col-lg-1 col-md-4 col-sm-6 col-xs-6 drug-width">
-                            <input type="button" class="btn btn-success ml-auto" id="drugsNew" value="Add New" onClick="AddNewDrug()"/>
+                            <input type="button" class="btn btn-success ml-auto" id="drugsNeww" value="Add New" onClick="AddNewDrug()"/>
                         </div>
                     </div>
                     <br>
@@ -6417,17 +6417,25 @@
                                         <th>Time</th>
                                         <th>Dosage</th>
                                         <th>Total Volume</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <cfif isDefined('qgetDrugData')>
                                         <cfloop query="qgetDrugData">
-                                            <tr>
-                                                <td>#qgetDrugData.Drugtype#</td>
-                                                <td>#qgetDrugData.DrugMethod#</td>
-                                                <td>#qgetDrugData.DrugTime#</td>
-                                                <td>#qgetDrugData.DrugDosage#</td>
-                                                <td><cfif #qgetDrugData.DrugVolume# neq 0>#qgetDrugData.DrugVolume#</cfif></td>
+                                            <tr id="DrugsAdministered_#ID#">
+                                                <td id="Drugtype#ID#">#qgetDrugData.Drugtype#</td>
+                                                <td id="DrugMethod#ID#"><cfif #qgetDrugData.DrugMethod# neq 0>#qgetDrugData.DrugMethod#</cfif></td>
+                                                <td id="DrugTime#ID#"><cfif #qgetDrugData.DrugTime# neq 0>#qgetDrugData.DrugTime#</cfif></td>
+                                                <td id="DrugDosage#ID#"><cfif #qgetDrugData.DrugDosage# neq 0>#qgetDrugData.DrugDosage#</cfif></td>
+                                                <td id="DrugVolume#ID#"><cfif #qgetDrugData.DrugVolume# neq 0>#qgetDrugData.DrugVolume#</cfif></td>
+                                                <td>
+                                                    <div class="tablebutn" style="display: inline-flex;">
+                                                        <input type="button" id="edit_DrugsAdministered#ID#" value="Edit" class="edit" onclick="edit_DrugsAdministered(#ID#)">
+                                                        <input type="button" value="Delete"  class="delete" onclick="delete_DrugsAdministered(#ID#)" style="margin-left: 5%;">
+                                                        <!--- Working here --->
+                                                    </div>
+                                                </td>
                                             </tr>
                                         </cfloop>
                                     </cfif>
@@ -7464,7 +7472,7 @@
                                     <div class="form-group flex-center">
                                         <label >Comment</label>
                                         <textarea class="form-control textareaCustomReset locations-textarea" name="ILADComment"
-                                            maxlength="75">#qgetLevelAData.ILADComment#</textarea>
+                                            maxlength="2084">#qgetLevelAData.ILADComment#</textarea>
                                     </div>
                                 </div> 
                                 <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
@@ -15247,13 +15255,15 @@
                             
                             
                         </div>
-                        <div class="modal-footer row">
+                        <div class="modal-footer " style="display: flex;">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-primary" onclick="updateReportData()">Update</button>
                         </div>
                     </div>
                 </div>
             </div>
+
+    
     </cfoutput>
 
     <style>

@@ -138,7 +138,7 @@
             </cfif> --->
 
         
-            <cfquery name="qgetSampleTrackingReport" datasource="#Application.dsn#">
+            <cfquery name="join" datasource="#Application.dsn#">
                 SELECT SA.Fnumber, ST.SampleID,ST.BinNumber,ST.SampleType,ST.PreservationMethod,ST.AmountofSample,ST.UnitofSample,ST.StorageType,ST.SampleComments,SD.SADate,SD.SampleLocation,SD.SampleTracking,SD.LabSentto,SD.SampleNote,SD.subsampleDate,SD.Thawed,SD.Sample_available
                 FROM ST_SampleArchive as SA
                 LEFT JOIN ST_SampleType as ST ON SA.ID = ST.SA_ID   
@@ -166,15 +166,33 @@
             </cfquery>
             
 
-            <!--- <cfdump var="#qgetSampleTrackingReport#" abort="true"> --->
+            <cfdump var="#join#" abort="true">
 
-            <div class="section-container  p-b-10 " >
-                <cfif qgetSampleTrackingReport.recordcount NEQ 0>
-                    
+        <cfif (isdefined("form.date") and form.date NEQ "") || (isdefined("form.sampleFN") and form.sampleFN NEQ "") || (isdefined("form.Species") and form.Species NEQ "") || (isdefined("form.PreservationMethod") and form.PreservationMethod NEQ "") || (isdefined("form.StorageType") and form.StorageType NEQ "") || (isdefined("form.SampleType") and form.SampleType NEQ "")> 
+
+            <!--- query1 --->
+             <cfquery name="qgetSampleReportsWithFilters" datasource="#Application.dsn#">
+                SELECT Fnumber,species,ID,StTpye,date FROM ST_SampleArchive 
+                Where 1=1
+                <cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">
+                    and CONVERT(char(10), date,126) BETWEEN '#form.startDate#' AND '#form.endDate#'
+                </cfif>
+                <cfif isdefined("form.sampleFN") and form.sampleFN neq "">
+                    and Fnumber = '#form.sampleFN#'
+                </cfif>
+                <cfif isdefined("form.Species") and form.Species neq "">
+                    and Species = '#form.Species#'
+                </cfif>
+                ORDER BY ID DESC
+            </cfquery>
+            <!--- <cfdump var="#qgetSampleReportsWithFilters#" abort="true"> --->
+
+            <div class="section-container  p-b-10">
+                <cfif qgetSampleReportsWithFilters.recordcount NEQ 0>
                     <table id="data-table" data-order='[[3,"desc"]]' class="table table-bordered table-hover panel">
                         <thead>
                         <tr class="inverse">
-                            <th>Fnumber</th>
+                            <!--- <th>Fnumber</th> --->
                             <th>Sample ID</th>
                             <th>Bin Number</th>
                             <th>Sample Type</th>
@@ -183,15 +201,89 @@
                             <th>Unit of sample</th>
                             <th>Storage Type</th>
                             <th>Sample Comments</th>
+                            <!--- <th>SampleType</th> --->
+                            <!--- <th>StorageType</th> --->
+                            <!--- <th>PreservationMethod</th> --->
+                        </tr>
+                        </thead>
+                                                       
+                        <tbody>
 
-                            <th>Sample Accession Date</th>
-                            <th>Sample Location</th>
-                            <th>Sample Tracking</th>
-                            <th>Lab Sent to</th>
-                            <th>Sample Note</th>
-                            <th>Subsampled Date</th>
-                            <th>Sample Availability</th>
-                            <th>Thawed</th>
+                            <cfoutput>                                
+                                <cfloop query="qgetSampleReportsWithFilters" >
+                                    <cfquery name="qgetSampleTypeReportsWithFilters" datasource="#Application.dsn#">
+                                        SELECT * FROM ST_SampleType 
+                                        Where 1=1
+                                        <cfif isdefined("qgetSampleReportsWithFilters.ID") and qgetSampleReportsWithFilters.ID neq "">
+                                            and SA_ID = '#qgetSampleReportsWithFilters.ID#'
+                                        </cfif>
+                                        <cfif isdefined("form.SampleType") and form.SampleType neq "">
+                                            and SampleType = '#form.SampleType#'
+                                        </cfif>
+                                        <cfif isdefined("form.StorageType") and form.StorageType neq "">
+                                            and StorageType = '#form.StorageType#'
+                                        </cfif>
+                                        <cfif isdefined("form.PreservationMethod") and form.PreservationMethod neq "">
+                                            and PreservationMethod = '#form.PreservationMethod#'
+                                        </cfif>
+                                        ORDER BY ID DESC
+                                    </cfquery> 
+                                <cfloop query="qgetSampleTypeReportsWithFilters" >
+                                    <tr class="gradeU" id="remov_#qgetSampleReportsWithFilters.ID#">
+                                        <!--- <td><cfif isdefined("qgetSampleReportsWithFilters.Fnumber") and qgetSampleReportsWithFilters.Fnumber neq "">#qgetSampleReportsWithFilters.Fnumber#</cfif></td> --->
+
+
+                                        <td>#qgetSampleTypeReportsWithFilters.SampleID#</td>
+                                        <td>#qgetSampleTypeReportsWithFilters.BinNumber#</td>
+                                        <td><cfif isdefined("qgetSampleTypeReportsWithFilters.SampleType") and qgetSampleTypeReportsWithFilters.SampleType neq "">#qgetSampleTypeReportsWithFilters.SampleType#</cfif></td>
+                                        <td><cfif isdefined("qgetSampleTypeReportsWithFilters.PreservationMethod") and qgetSampleTypeReportsWithFilters.PreservationMethod neq "">#qgetSampleTypeReportsWithFilters.PreservationMethod#</cfif></td>
+                                        <td>#qgetSampleTypeReportsWithFilters.AmountofSample#</td>
+                                        <td>#qgetSampleTypeReportsWithFilters.UnitofSample#</td>
+                                        <td><cfif isdefined("qgetSampleTypeReportsWithFilters.StorageType") and qgetSampleTypeReportsWithFilters.StorageType neq "">#qgetSampleTypeReportsWithFilters.StorageType#</cfif></td>
+                                        <td>#qgetSampleTypeReportsWithFilters.SampleComments#</td>
+                                       
+
+                                        
+
+
+                                        <!--- <td>#Application.SampleReport.getIR_IR_TypeName(qGetSampleReports.IR_Type)#</td>
+                                        <td> #Application.SampleReport.getIR_CountyLocationName(qGetSampleReports.IR_CountyLocation)#</td>
+                                        <td>#DateFormat(qGetSampleReports.IR_Date,"YYYY-MM-DD")#</td> --->
+                                    </tr>
+                                </cfloop>
+                                </cfloop>
+                            </cfoutput>
+                        </tbody>                    
+                    </table>
+                    <cfelse>
+                    <div class="alert alert-danger">
+                        <strong>Alert!</strong> No record found.
+                    </div>
+                </cfif>
+            </div>
+            <!--- today work --->
+        <cfelse>
+            <cfquery name="qgetSampleTypeReportsWithFilterss" datasource="#Application.dsn#">
+                SELECT * FROM ST_SampleType             
+                ORDER BY ID DESC
+            </cfquery> 
+            <div class="section-container  p-b-10">
+                <cfif qgetSampleTypeReportsWithFilterss.recordcount NEQ 0>
+                    <table id="data-table" data-order='[[3,"desc"]]' class="table table-bordered table-hover panel">
+                        <thead>
+                        <tr class="inverse">
+                            <!--- <th>Fnumber</th> --->
+                            <th>Sample ID</th>
+                            <th>Bin Number</th>
+                            <th>Sample Type</th>
+                            <th>Preservation Method</th>
+                            <th>Amount of sample</th>
+                            <th>Unit of sample</th>
+                            <th>Storage Type</th>
+                            <th>Sample Comments</th>
+                            <!--- <th>SampleType</th> --->
+                            <!--- <th>StorageType</th> --->
+                            <!--- <th>PreservationMethod</th> --->
                         </tr>
                         </thead>
                                                        
@@ -199,34 +291,17 @@
 
                             <cfoutput>            
                                
-                                <cfloop query="qgetSampleTrackingReport" >
-                                    <tr class="gradeU" id="remov_">
+                                <cfloop query="qgetSampleTypeReportsWithFilterss" >
+                                    <tr class="gradeU" id="remov_#qgetSampleTypeReportsWithFilterss.ID#">
                         
-                                        <td>#qgetSampleTrackingReport.Fnumber#</td>
-                                        <td>#qgetSampleTrackingReport.SampleID#</td>
-                                        <td>#qgetSampleTrackingReport.BinNumber#</td>
-                                        <td><cfif isdefined("qgetSampleTrackingReport.SampleType") and qgetSampleTrackingReport.SampleType neq "">#qgetSampleTrackingReport.SampleType#</cfif></td>
-                                        <td><cfif isdefined("qgetSampleTrackingReport.PreservationMethod") and qgetSampleTrackingReport.PreservationMethod neq "">#qgetSampleTrackingReport.PreservationMethod#</cfif></td>
-                                        <td>#qgetSampleTrackingReport.AmountofSample#</td>
-                                        <td>#qgetSampleTrackingReport.UnitofSample#</td>
-                                        <td><cfif isdefined("qgetSampleTrackingReport.StorageType") and qgetSampleTrackingReport.StorageType neq "">#qgetSampleTrackingReport.StorageType#</cfif></td>
-                                        <td>#qgetSampleTrackingReport.SampleComments#</td>
-                                        <td>#qgetSampleTrackingReport.SADate#</td>
-                                        <td>#qgetSampleTrackingReport.SampleLocation#</td>
-                                        <td>#qgetSampleTrackingReport.SampleTracking#</td>
-                                        <td>#qgetSampleTrackingReport.LabSentto#</td>
-
-                                        <td ><cfif #qgetSampleTrackingReport.SampleNote# neq 0>#qgetSampleTrackingReport.SampleNote#</cfif></td>
-                                        <td ><cfif #qgetSampleTrackingReport.subsampleDate# neq 0>#qgetSampleTrackingReport.subsampleDate#</cfif></td>
-                                        <td ><cfif #qgetSampleTrackingReport.Sample_available# neq 0 and #qgetSampleTrackingReport.Sample_available# neq 'Select Availability'>#qgetSampleTrackingReport.Sample_available#</cfif></td>
-
-                                        <td ><cfif #qgetSampleTrackingReport.Thawed# neq 'Select Thawed' and #qgetSampleTrackingReport.Thawed# neq 0>#qgetSampleTrackingReport.Thawed#</cfif></td>
-                                        <!--- <td>#qgetSampleTrackingReport.SampleNote#</td> --->
-                                        <!--- <td>#qgetSampleTrackingReport.subsampleDate#</td> --->
-                                        <!--- <td>#qgetSampleTrackingReport.Sample_available#</td>
-                                        <td>#qgetSampleTrackingReport.Thawed#</td> --->
-
-
+                                        <td>#qgetSampleTypeReportsWithFilterss.SampleID#</td>
+                                        <td>#qgetSampleTypeReportsWithFilterss.BinNumber#</td>
+                                        <td><cfif isdefined("qgetSampleTypeReportsWithFilterss.SampleType") and qgetSampleTypeReportsWithFilterss.SampleType neq "">#qgetSampleTypeReportsWithFilterss.SampleType#</cfif></td>
+                                        <td><cfif isdefined("qgetSampleTypeReportsWithFilterss.PreservationMethod") and qgetSampleTypeReportsWithFilterss.PreservationMethod neq "">#qgetSampleTypeReportsWithFilterss.PreservationMethod#</cfif></td>
+                                        <td>#qgetSampleTypeReportsWithFilterss.AmountofSample#</td>
+                                        <td>#qgetSampleTypeReportsWithFilterss.UnitofSample#</td>
+                                        <td><cfif isdefined("qgetSampleTypeReportsWithFilterss.StorageType") and qgetSampleTypeReportsWithFilterss.StorageType neq "">#qgetSampleTypeReportsWithFilterss.StorageType#</cfif></td>
+                                        <td>#qgetSampleTypeReportsWithFilterss.SampleComments#</td>
                                        
                                     </tr>
                                 </cfloop>
@@ -239,8 +314,7 @@
                     </div>
                 </cfif>
             </div>
-            <!--- today work --->
-     
+        </cfif>
 
 
 

@@ -488,11 +488,30 @@ function AddNewDrug() {
   DrugDosage = $("#DrugDosage").val().trim();
   DrugVolume = $("#DrugVolume").val().trim();
 
-  if (Drugtype != '' && DrugMethod !='' && DrugTime != '' && DrugDosage != '' && DrugVolume != '') {
+  // if (Drugtype != '' && DrugMethod !='' && DrugTime != '' && DrugDosage != '' && DrugVolume != '') {
+  if($("#drugsNeww").val() == "Add New"){
+   
+  if (Drugtype != '' && Drugtype != 'Select Type') {
       DrugtypeArray.push(Drugtype);
-      DrugMethodeArray.push(DrugMethod);
-      DrugTimeArray.push(DrugTime);
-      DrugDosageArray.push(DrugDosage);
+ 
+      if(DrugDosage == ""){
+          DrugDosageArray.push("0");
+      }else{
+       DrugDosageArray.push(DrugDosage);
+      }
+
+      if(DrugTime == ""){
+          DrugTimeArray.push("0");
+      }else{
+       DrugTimeArray.push(DrugTime);
+      }
+
+      if(DrugMethod == ""){
+          DrugMethodeArray.push("0");
+      }else{
+       DrugMethodeArray.push(DrugMethod);
+      }
+      /////////////
       if(DrugVolume == ""){
           DrugVolumeArray.push("0");
       }else{
@@ -520,11 +539,11 @@ function AddNewDrug() {
       $("#D_dosage").html('');
       $("#D_volume").html('');
   }else{
-      // if(Drugtype == '' || Drugtype == 'Select Type'){
-      //     $("#D_type").html("*Type Required");
-      // }else{
-      //   $("#D_type").html(''); 
-      // }
+      if(Drugtype == '' || Drugtype == 'Select Type'){
+          $("#D_type").html("*Type Required");
+      }else{
+        $("#D_type").html(''); 
+      }
       // if(DrugMethod == ''){
       //     $("#D_method").html("*Method Required");
       // }else{
@@ -543,6 +562,71 @@ function AddNewDrug() {
       // if(DrugVolume == ''){
       //     $("#D_volume").html("*Volume Required");
       // }
+  }
+   
+  }else{
+    // alert('update')
+    id = $("#idForUpdateSampleReport").val();
+
+    // Drugtype = $("#Drugtype option:selected").text();
+    // DrugMethod = $("#DrugMethod option:selected").val();
+    // DrugTime = $("#DrugTime ").val();
+    // DrugDosage = $("#DrugDosage").val().trim();
+    // DrugVolume = $("#DrugVolume").val().trim();
+
+    var ajaxData = new FormData();
+    ajaxData.append('Drugtype', Drugtype);
+    ajaxData.append('DrugMethod', DrugMethod);
+    ajaxData.append('DrugTime', DrugTime);
+    ajaxData.append('DrugDosage', DrugDosage);
+    ajaxData.append('DrugVolume', DrugVolume);
+    ajaxData.append('ID', id);
+
+    $.ajax({
+        url : application_root+"Stranding.cfc?method=updatedrugAdmin",
+        type: "POST",
+        cache: false,
+        contentType:false,
+        processData: false,
+        data : ajaxData,
+       
+    
+        success: function (response)
+        {
+          // alert()
+          no = $("#idForUpdateSampleReport").val();
+          // nouman
+          // $("#Drugtype").val($("#Drugtype"+no).text());
+          // $("#DrugMethod").val($("#DrugMethod"+no).text());
+          // $("#DrugTime").val($("#DrugTime"+no).text());
+          // $("#DrugDosage").val($("#DrugDosage"+no).text());
+          // $("#DrugVolume").val($("#DrugVolume"+no).text());
+          $("#Drugtype"+no).text(Drugtype);
+          $("#DrugMethod"+no).text(DrugMethod);
+          $("#DrugTime"+no).text(DrugTime);
+          $("#DrugDosage"+no).text(DrugDosage);
+          $("#DrugVolume"+no).text(DrugVolume);
+
+            // $("#L_present"+id).html(LesionPresent);
+            // $("#L_type"+id).html(LesionType);
+            // $("#L_region"+id).html(Region);
+            // $("#L_side"+id).html(Side);
+            // $("#L_status"+id).html(Status);
+            
+            $("#Drugtype").val(''); 
+            $("#DrugMethod").val('');
+            $("#DrugTime").val('');
+            $("#DrugDosage").val('');
+            $("#DrugVolume").val('');
+        },
+        error: function (response)
+    {
+    //    alert(response);
+    }
+       
+    });
+    $("#drugsNeww").val("Add New");
+
   }
 }
 function AddNewBiopsy() {
@@ -5446,8 +5530,49 @@ function updateReportData(){
       }
   });
 }
+
+
+
+function edit_DrugsAdministered(no)
+{
+
+  $("#idForUpdateSampleReport").val(no);
+
+  $("#Drugtype").val($("#Drugtype"+no).text());
+  $("#DrugMethod").val($("#DrugMethod"+no).text());
+  $("#DrugTime").val($("#DrugTime"+no).text());
+  $("#DrugDosage").val($("#DrugDosage"+no).text());
+  $("#DrugVolume").val($("#DrugVolume"+no).text());
   
-    
   
+  $("#drugsNeww").val('Update');
+  
+ 
+}   
+
+
+function delete_DrugsAdministered(no)
+{
+  
+  var ajaxData = new FormData();
+  ajaxData.append('ID', no);
+  $.ajax({
+      url : application_root+"Stranding.cfc?method=deleteDrugsAdministeredRecord",
+      type: "POST",
+      cache: false,
+      contentType:false,
+      processData: false,
+      data : ajaxData,
+      success: function (response)
+      {
+       
+          $('#'+'DrugsAdministered_'+no).remove();
+      },
+      error: function (response)
+      {
+          alert(response);
+      }
+  });
+}
 
 

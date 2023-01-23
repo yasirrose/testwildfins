@@ -8312,4 +8312,38 @@
 		<cfreturn True>
     </cffunction>
 
+    <cffunction name="deleteDrugsAdministeredRecord"  returntype="any" output="false" access="remote" returnformat="json">        
+        <cfquery name="qdeleteSamplerecord" datasource="#Application.dsn#">
+            delete from ST_DrugsAdministered
+            where ID = '#ID#'
+        </cfquery>        
+        <cfreturn True>       
+    </cffunction>
+
+    <cffunction name="updatedrugAdmin" access="remote" >
+        <!--- <cfdump var="#ID#" abort="true"> --->
+        <!--- <cfargument name="samplDate" type="any" required="yes"> --->
+        <!--- <cfdump var="#form.LesionPresent#">
+        <cfdump var="#form.LesionType#">
+        <cfdump var="#form.Region#">
+        <cfdump var="#form.Side#">
+        <cfdump var="#form.ID#">
+        <cfabort> --->
+        <!--- <cfexit> --->
+        <cfquery name="qupdateLesions" datasource="#Application.dsn#" >
+            update ST_DrugsAdministered set
+            Drugtype=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Drugtype#' >
+            ,DrugMethod=<cfqueryparam cfsqltype="cf_sql_varchar" value='#DrugMethod#'>
+            ,DrugTime=<cfqueryparam cfsqltype="cf_sql_varchar" value='#DrugTime#'>
+            ,DrugDosage=<cfqueryparam cfsqltype="cf_sql_varchar" value='#DrugDosage#'>
+            ,DrugVolume=<cfqueryparam cfsqltype="cf_sql_varchar" value='#DrugVolume#'>          
+            
+            where
+            ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+            
+        </cfquery>
+        <!--- <cfdump var="#qupdateLesions#"> --->
+		<cfreturn True>
+	</cffunction>
+
 </cfcomponent>    

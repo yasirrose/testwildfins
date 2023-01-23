@@ -74,7 +74,7 @@
                 </cfquery>
                 <cfif cldd.RECORDCOUNT gte 1 >
                     <cfset cc = 0>
-                    <!--- loop for seting columns data  working--->
+                    <!--- loop for seting columns data  --->
                     <cfloop query="cldd" > 
                         <cfset cc = incrementValue(#cc#)> 
                         <cfset lp =  "LesionPresent" & #cc#>
@@ -847,19 +847,19 @@
                             <th class="fieldEstimate hidden">FE_TotalCetaceans_Min</th>
                             <th class="fieldEstimate hidden">FE_TotalCetaceans_Max</th>
                             <th class="fieldEstimate hidden">FE_TotalCetacean_Best</th>
-                            <th class="fieldEstimate hidden">FE_TotalCetacean_takes</th>
+                            <th class="fieldEstimate hidden">FE_TotalCetacean_Takes</th>
                             <th class="fieldEstimate hidden">FE_TotalAdults_Min</th>
                             <th class="fieldEstimate hidden">FE_TotalAdults_Max</th>
                             <th class="fieldEstimate hidden">FE_TotalAdults_Best</th>
-                            <th class="fieldEstimate hidden">FE_TotalAdults_takes</th>
+                            <th class="fieldEstimate hidden">FE_TotalAdults_Takes</th>
                             <th class="fieldEstimate hidden">FE_TotalCalves_Min</th>
                             <th class="fieldEstimate hidden">FE_TotalCalves_Max</th>
                             <th class="fieldEstimate hidden">FE_TotalCalves_Best</th>
-                            <th class="fieldEstimate hidden">FE_TotalCalves_takes</th>
+                            <th class="fieldEstimate hidden">FE_TotalCalves_Takes</th>
                             <th class="fieldEstimate hidden">FE_YoungOfYear_Min</th>
                             <th class="fieldEstimate hidden">FE_YoungOfYear_Max</th>
                             <th class="fieldEstimate hidden">FE_YoungOfYear_Best</th>
-                            <th class="fieldEstimate hidden">FE_YoungOfYear_takes</th>
+                            <th class="fieldEstimate hidden">FE_YoungOfYear_Takes</th>
                             <th class="activity hidden">Act_Mill</th>
                             <th class="activity hidden">Act_Feed</th>
                             <th class="activity hidden">Act_Rest</th>
@@ -913,19 +913,19 @@
 
                             <th class="divetimes hidden">StratTimeDive1</th>
                             <th class="divetimes hidden">EndTimeDive1</th>
-                            <th class="divetimes hidden">TotalDiveTime1</th>
+                            <th class="divetimes hidden">TotalTimeDive1</th>
                             <th class="divetimes hidden">StratTimeDive2</th>
                             <th class="divetimes hidden">EndTimeDive2</th>
-                            <th class="divetimes hidden">TotalDiveTime2</th>
+                            <th class="divetimes hidden">TotalTimeDive2</th>
                             <th class="divetimes hidden">StratTimeDive3</th>
                             <th class="divetimes hidden">EndTimeDive3</th>
-                            <th class="divetimes hidden">TotalDiveTime3</th>
+                            <th class="divetimes hidden">TotalTimeDive3</th>
                             <th class="divetimes hidden">StratTimeDive4</th>
                             <th class="divetimes hidden">EndTimeDive4</th>
-                            <th class="divetimes hidden">TotalDiveTime4</th>
+                            <th class="divetimes hidden">TotalTimeDive4</th>
                             <th class="divetimes hidden">StratTimeDive5</th>
                             <th class="divetimes hidden">EndTimeDive5</th>
-                            <th class="divetimes hidden">TotalDiveTime5</th>
+                            <th class="divetimes hidden">TotalTimeDive5</th>
                             <th>Camera</th>
                             <th>Lens</th>
                             <th>Photographer</th>
@@ -937,7 +937,7 @@
                             <th>BestSighting</th>
                             <th>Code</th>
                             <th>Associates</th> 
-                            <th>Cetacean Species</th>
+                            <th>CetaceanSpeciesName</th>
                             <th>Sex</th>
                             <th>Fetals</th>
                             <th>Calf</th>
@@ -956,8 +956,6 @@
                             <th>QSCORE</th>
 
                             <th>BestShot</th>
-
-                            <!--- nouman --->
                             
                             <th>EnteredBy</th>
                             
@@ -1313,9 +1311,7 @@
                                     <td>#pqSum#</td>
                                     <td>#Qscore#</td>
 
-                                    <td>#BestShot#</td>
-                                    <!--- nouman --->                           
-                                   
+                                    <td>#BestShot#</td> 
                                     <td>
                                         <cfset bd = listToArray(#EnteredBy#, ",", false, true)> 
                                         <cfset d = 1>
