@@ -8321,15 +8321,7 @@
     </cffunction>
 
     <cffunction name="updatedrugAdmin" access="remote" >
-        <!--- <cfdump var="#ID#" abort="true"> --->
-        <!--- <cfargument name="samplDate" type="any" required="yes"> --->
-        <!--- <cfdump var="#form.LesionPresent#">
-        <cfdump var="#form.LesionType#">
-        <cfdump var="#form.Region#">
-        <cfdump var="#form.Side#">
-        <cfdump var="#form.ID#">
-        <cfabort> --->
-        <!--- <cfexit> --->
+
         <cfquery name="qupdateLesions" datasource="#Application.dsn#" >
             update ST_DrugsAdministered set
             Drugtype=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Drugtype#' >
@@ -8343,6 +8335,39 @@
             
         </cfquery>
         <!--- <cfdump var="#qupdateLesions#"> --->
+		<cfreturn True>
+	</cffunction>
+
+    <cffunction name="deleteToxicologyRecord"  returntype="any" output="false" access="remote" returnformat="json">        
+        <cfquery name="qdeleteToxicologyRecord" datasource="#Application.dsn#">
+            delete from ST_ToxiType
+            where ID = '#ID#'
+        </cfquery>        
+        <cfreturn True>       
+    </cffunction>
+
+    <cffunction name="updatetoxicologyrecords" access="remote" >
+
+        <cfquery name="qupdateLesions" datasource="#Application.dsn#" >
+            update ST_ToxiType set
+            Arsenic=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Arsenic#' >
+            ,Cadmium=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Cadmium#'>
+            ,Lead=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Lead#'>
+            ,Mercury=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Mercury#'>
+            ,Thallium=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Thallium#'>          
+            ,Selenium=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Selenium#' >
+            ,Iron=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Iron#'>
+            ,Copper=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Copper#'>
+            ,Zinc=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Zinc#'>
+            ,Molybdenum=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Molybdenum#'>          
+            ,Manganese=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Manganese#'>
+            ,Cobalt=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Cobalt#'>
+            ,quantity_toxi=<cfqueryparam cfsqltype="cf_sql_varchar" value='#quantity#'>  
+            where
+            ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+            
+        </cfquery>
+        <!--- <cfdump var="#qupdateLesions#"about="true"> --->
 		<cfreturn True>
 	</cffunction>
 

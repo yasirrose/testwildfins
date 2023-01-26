@@ -5514,7 +5514,7 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
 	<cfreturn  query>
 </cffunction>
 <!---Dolphin Activity Report--->
-<!---All Form Report Excel--->
+<!---All Form Report Excel working--->
 <cffunction  name="allFormExcel" returntype="any" output="false" access="remote">
   <cfset getAreaName =  Application.Sighting.getAreaName()>
   <cfset getSurveyRouteData = Application.StaticDataNew.getSurveyRoute()>
@@ -5536,19 +5536,19 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
 
   <cfquery datasource="#variables.dsn#" name="qFiltered">
     SELECT
-    s.ID AS SurveyID,
     CONVERT(varchar, s.DATE) AS DATE,
+    s.ID AS SurveyID,
     s.SurveyRoute,
     s.BodyOfWater,
     s.Platform,
     s.NOAAStock,
     s.SurveyType,
-    ss.Survey AS SurveyEffort,
     CONVERT(varchar, s.EngineOn) AS EngineOn,
     CONVERT(varchar, s.EngineOff) AS EngineOff,
     CONVERT(varchar, s.SurveyStart) AS SurveyStart,
     CONVERT(varchar, s.SurveyEnd) AS SurveyEnd,
     s.ResearchTeam,
+    ss.Survey AS SurveyEffort,
     ss.SightingNumber,
     ss.ID AS sightingID,
     CONVERT(varchar, ss.SightingStart) AS SightingStart,
@@ -5562,7 +5562,6 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
     ss.EndLatitude,
     ss.EndLongitude,
     ss.WaterTemp,
-    ss.Comments,
     w.[Desc] AS Weather,
     wh.[Desc] AS WaveHeight,
     g.[Desc] AS Glare,
@@ -5583,16 +5582,16 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
     gh.GHeadingName AS GeneralHeading,
     fh.FHeadingName AS FinalHeading,
     ss.AssocBio,
-    FE_TotalCetaceans_Max,
     FE_TotalCetaceans_Min,
+    FE_TotalCetaceans_Max,
     FE_TotalCetacean_Best,
     FE_TotalCetacean_takes,
     FE_TotalAdults_Min,
     FE_TotalAdults_Max,
     FE_TotalAdults_Best,
     FE_TotalAdults_takes,
-    FE_TotalCalves_Max,
     FE_TotalCalves_Min,
+    FE_TotalCalves_Max,
     FE_TotalCalves_Best,
     FE_TotalCalves_takes,
     FE_YoungOfYear_Min,
@@ -5644,6 +5643,14 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
     ReactiontoHBOIVessel1 AS ReactiontoHBOIVessel_Approach,
     ReactiontoHBOIVessel2 AS ReactiontoHBOIVessel_Neutral,
     ReactiontoHBOIVessel3 AS ReactiontoHBOIVessel_Relocate,
+    groupeSelect1 AS COHESIVENESS_Main,
+    distanceSelect1 AS Cohesiveness_MainDistance,
+    groupeSelect2 AS COHESIVENESS_Subgroup1,
+    distanceSelect2 AS COHESIVENESS_Subgroup1_Distance,
+    groupeSelect3 AS COHESIVENESS_Subgroup2,
+    distanceSelect3 AS COHESIVENESS_Subgroup2_Distance,
+    groupeSelect4 AS COHESIVENESS_Subgroup3,
+    distanceSelect4 AS COHESIVENESS_Subgroup3_Distance,
     StratTimeDive1,
     EndTimeDive1,
     TotalTimeDive1,
@@ -5664,9 +5671,11 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
     rtp.RT_MemberName AS Photographer,
     rtd.RT_MemberName AS Driver,
     ss.EnteredBy AS CompletedBy,
+    ss.Comments,
     cs.SDR,
     cs.BestSighting,
     c.Code,
+    c.code as Associates,
     tlu.CetaceanSpeciesName,
     c.Sex,
     cs.Fetals,
@@ -5697,6 +5706,7 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
     bdrs.BDRS_Name as Body_DorsalRidgeScapula,
     br.BR_Name as Body_Ribs,
     ttp.TTP_Name as Tail_TransversePro,
+    
     cs.Cetaceans_ID AS Cetaceans_I,
     c.code AS cscode
   FROM
@@ -5764,6 +5774,7 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
     HAVING count(*) > 1
     ORDER BY MaxLesion desc
   </cfquery>
+  
   <cfset oo = 0>
   <!--- loop for adding columns in main query --->
   <cfloop index="index" from="1" to="#maximumLesions.MaxLesion#">
@@ -5773,18 +5784,23 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
     <cfset re =  "Region" & #oo#>
     <cfset slr =  "Side_L_R" & #oo#>
     <cfset st =  "Status" & #oo#>
+    <cfset lc =  "Lesion_Comments" & #oo#>
+    <cfset lpn =  "Lesion_Photo" & #oo#>
     <cfset QueryAddColumn(qFiltered, "#lp#","varchar",[""])>
     <cfset QueryAddColumn(qFiltered, "#lete#","varchar",[""])>
     <cfset QueryAddColumn(qFiltered, "#re#","varchar",[""])>
     <cfset QueryAddColumn(qFiltered, "#slr#","varchar",[""])>
     <cfset QueryAddColumn(qFiltered, "#st#","varchar",[""])>
+    <cfset QueryAddColumn(qFiltered, "#lc#","varchar",[""])>
+    <cfset QueryAddColumn(qFiltered, "#lpn#","varchar",[""])>
   </cfloop>
+  
   <!--- main query --->
   <cfloop query="qFiltered">
     <cfif #sightingID# neq "" and #Cetaceans_I# neq ""> 
       <!--- Query get lesion data against a cetacean and sighting ID --->
       <cfquery datasource="#variables.dsn#" name="cld">
-        SELECT cl.*
+        SELECT SurveyID,SightingNumber,Sighting_ID,Cetaceans_ID,LesionPresent,LesionType,Region,Side_L_R,Status,PhotoNumber as Lesion_Photo,Comments as Lesion_Comments,ID
         FROM Condition_Lesions cl
         where cl.Sighting_ID = #sightingID# and cl.Cetaceans_ID='#cscode#'
       </cfquery>
@@ -5798,10 +5814,14 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
           <cfset re =  "Region" & #cn#>
           <cfset slr =  "Side_L_R" & #cn#>
           <cfset st =  "Status" & #cn#>
+          <cfset lc =  "Lesion_Comments" & #cn#>
+          <cfset lpn =  "Lesion_Photo" & #cn#>
           <cfset QuerySetCell(qFiltered, "#lp#", #LesionPresent#, qFiltered.currentRow)>
           <cfset QuerySetCell(qFiltered, "#lete#", #LesionType#, qFiltered.currentRow)>
           <cfset QuerySetCell(qFiltered, "#slr#", #Side_L_R#, qFiltered.currentRow)>
           <cfset QuerySetCell(qFiltered, "#st#", #Status#, qFiltered.currentRow)>
+          <cfset QuerySetCell(qFiltered, "#lc#", #Lesion_Comments#, qFiltered.currentRow)>
+          <cfset QuerySetCell(qFiltered, "#lpn#", #Lesion_Photo#, qFiltered.currentRow)>
           <cfset bd = listToArray(#Region#, ",", false, true)> 
           <cfset RegionA = arrayNew(1,false)> 
           <cfloop query="lesionRegion">
@@ -5817,6 +5837,28 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
   
     <cfset Dated = Left(#DATE#,10)>
     <cfset QuerySetCell(qFiltered, "DATE", #Dated#, qFiltered.currentRow)>
+
+    ///////////////
+    <cfset AssociateValue=[]>
+    <cfquery name="qgetAssociate" datasource="#Application.dsn#"  >
+        SELECT cs.Sighting_ID,ss.id,cs.Cetaceans_ID from Cetacean_Sightings cs
+        JOIN Survey_Sightings ss ON cs.Sighting_ID = ss.id
+        JOIN Surveys s ON s.ID = ss.Project_ID
+        where cs.Sighting_ID = #sightingID#
+    </cfquery>
+    <cfloop query="qgetAssociate" >
+        <cfquery name="qgetAssociateValue" datasource="#Application.dsn#"  >
+        SELECT * from Cetaceans                                        
+        where id = '#qgetAssociate.CETACEANS_ID#'
+    </cfquery> 
+    <cfset ArrayAppend(AssociateValue,qgetAssociateValue.Code,"true") >                                                                      
+    </cfloop>
+    <!--- <cfdump var="#Replace(AssociateValue.toList(), ",", ", ", "ALL")#" abort="true"> --->
+
+    <cfset Associatess = '#Replace(AssociateValue.toList(), ",", " ", "ALL")#'>
+    <cfset QuerySetCell(qFiltered, "Associates", #Associatess#, qFiltered.currentRow)>
+
+    //////////////
 
     <cfif #qFiltered.Platform# eq "Land Survey" or #qFiltered.SurveyType# eq "Trail Camera">
       <cfset QuerySetCell(qFiltered, "EngineOn", "", qFiltered.currentRow)>

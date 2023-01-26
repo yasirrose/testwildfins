@@ -1,5 +1,6 @@
 <cfif CGI.HTTP_REFERER eq '#Application.siteroot#index.cfm?Module=Reporting&Page=AllFormsReport'>
     <cfset allFormExcel = Application.Reporting.allFormExcel("#FORM#")>
+    <!--- <cfdump var="#allFormExcel#" abort="true"> --->
     <cfscript> 
         theSheet = SpreadsheetNew("AllDataReport");
         SpreadsheetAddRow(theSheet,ArrayToList(allFormExcel.getColumnList()));

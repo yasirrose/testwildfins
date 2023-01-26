@@ -287,6 +287,12 @@
             FE_TotalAdults_takes,
             groupeSelect1,
             distanceSelect1,
+            groupeSelect2,
+            distanceSelect2,
+            groupeSelect3,
+            distanceSelect3,
+            groupeSelect4,
+            distanceSelect4,
             pH,
             DO,
             Conductivity,
@@ -795,6 +801,14 @@
         </cfscript>
             <div class="section-container section-with-top-border"> 
                 <div class="">
+                    <cfif qFiltered.recordCount neq 0>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 text-right" style="position: absolute;
+                            right: 12px; width: 10%; z-index: 2;">
+                                <button type="button" name="excelExport" value ="Download as Excel" onclick='excel()' class="btn btn-success width-123 m-r-5  ml-auto">Export All</button>
+                            </div>
+                    </div>
+                    </cfif> 
                     <table id="allReport" data-order='[[0,"desc"]]' class="table table-bordered table-hover ">
                         <thead>
                         <tr class="inverse">
@@ -906,11 +920,16 @@
                             <th class="HBOIVesselInteractions hidden">ReactiontoHBOIVessel_Approach</th>
                             <th class="HBOIVesselInteractions hidden">ReactiontoHBOIVessel_Neutral</th>
                             <th class="HBOIVesselInteractions hidden">ReactiontoHBOIVessel_Relocate</th>
+
                             <th class="HBOIVesselInteractions ">COHESIVENESS_Main</th>
                             <th class="HBOIVesselInteractions ">Cohesiveness_Main distance</th>
-                            <th class="HBOIVesselInteractions ">COHESIVENESS_Subgroup</th>
-                            <th class="HBOIVesselInteractions ">Cohesiveness_Subgroup distance</th>
-
+                            <th class="HBOIVesselInteractions ">COHESIVENESS_Subgroup1</th>
+                            <th class="HBOIVesselInteractions ">Cohesiveness_Subgroup1 distance</th>
+                            <th class="HBOIVesselInteractions ">COHESIVENESS_Subgroup2</th>
+                            <th class="HBOIVesselInteractions ">Cohesiveness_Subgroup2 distance</th>
+                            <th class="HBOIVesselInteractions ">COHESIVENESS_Subgroup3</th>
+                            <th class="HBOIVesselInteractions ">Cohesiveness_Subgroup3 distance</th>
+                            <!--- working --->
                             <th class="divetimes hidden">StratTimeDive1</th>
                             <th class="divetimes hidden">EndTimeDive1</th>
                             <th class="divetimes hidden">TotalTimeDive1</th>
@@ -932,7 +951,9 @@
                             <th>Driver</th>
 
                             <th>CompletedBy</th>
-                            <th>Comments</th>
+                            <th>
+                                <div style="width: 180px !important;">Comments</div>
+                            </th>
                             <th>SDR</th>
                             <th>BestSighting</th>
                             <th>Code</th>
@@ -1211,35 +1232,16 @@
                                     <td class="HBOIVesselInteractions hidden">#ReactiontoHBOIVessel1#</td>
                                     <td class="HBOIVesselInteractions hidden">#ReactiontoHBOIVessel2#</td>
                                     <td class="HBOIVesselInteractions hidden">#ReactiontoHBOIVessel3#</td>
+                                    <!--- working --->
+                                    <td class="HBOIVesselInteractions ">#groupeSelect1#</td>
+                                    <td class="HBOIVesselInteractions ">#distanceSelect1#</td>
+                                    <td class="HBOIVesselInteractions ">#groupeSelect2#</td>
+                                    <td class="HBOIVesselInteractions ">#distanceSelect2#</td>
+                                    <td class="HBOIVesselInteractions ">#groupeSelect3#</td>
+                                    <td class="HBOIVesselInteractions ">#distanceSelect3#</td>
+                                    <td class="HBOIVesselInteractions ">#groupeSelect4#</td>
+                                    <td class="HBOIVesselInteractions ">#distanceSelect4#</td>
 
-                                    <td class="HBOIVesselInteractions ">
-                                        <cfif "#groupeSelect1#" eq "main">
-                                            #groupeSelect1#
-                                        <cfelse>
-                                            
-                                        </cfif>                                               
-                                    </td>
-                                    <td class="HBOIVesselInteractions ">
-                                        <cfif "#groupeSelect1#" eq "main">
-                                            #distanceSelect1#
-                                        <cfelse>
-                                            
-                                        </cfif>                                               
-                                    </td>
-                                    <td class="HBOIVesselInteractions ">
-                                        <cfif "#groupeSelect1#" eq "sub">
-                                            #groupeSelect1#
-                                        <cfelse>
-                                            
-                                        </cfif>                                               
-                                    </td>
-                                    <td class="HBOIVesselInteractions ">
-                                        <cfif "#groupeSelect1#" eq "sub">
-                                            #distanceSelect1#
-                                        <cfelse>
-                                            
-                                        </cfif>                                               
-                                    </td>
                                     <td class="divetimes hidden">#StratTimeDive1#</td>
                                     <td class="divetimes hidden">#EndTimeDive1#</td>
                                     <td class="divetimes hidden">#TotalTimeDive1#</td>
@@ -1262,7 +1264,7 @@
 
                                     <td>#CompletedBy#</td>
                                     <td>
-                                        <div style="width:250px; height:50px; overflow-y:scroll;">#Comments#</div>
+                                        <div style="width:210px; height:50px; overflow:scroll;">#Comments#</div>
                                     </td>
                                     <td>#SDR#</td>
                                     <td>#BestSighting#</td>
@@ -1283,7 +1285,7 @@
                                     </cfloop>
                                     <!--- <cfdump var="#Replace(AssociateValue.toList(), ",", ", ", "ALL")#" abort="true"> --->
 
-                                    <td>#Replace(AssociateValue.toList(), ",", ", ", "ALL")#</td>
+                                    <td>#Replace(AssociateValue.toList(), ",", " ", "ALL")#</td>
                                     <!--- <td>#uCase(Code)# #csname#</td> --->
                                     <td>#CetaceanSpeciesName#</td>
                                     <td>#Sex#</td>

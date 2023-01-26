@@ -568,12 +568,6 @@ function AddNewDrug() {
     // alert('update')
     id = $("#idForUpdateSampleReport").val();
 
-    // Drugtype = $("#Drugtype option:selected").text();
-    // DrugMethod = $("#DrugMethod option:selected").val();
-    // DrugTime = $("#DrugTime ").val();
-    // DrugDosage = $("#DrugDosage").val().trim();
-    // DrugVolume = $("#DrugVolume").val().trim();
-
     var ajaxData = new FormData();
     ajaxData.append('Drugtype', Drugtype);
     ajaxData.append('DrugMethod', DrugMethod);
@@ -593,26 +587,14 @@ function AddNewDrug() {
     
         success: function (response)
         {
-          // alert()
           no = $("#idForUpdateSampleReport").val();
-          // nouman
-          // $("#Drugtype").val($("#Drugtype"+no).text());
-          // $("#DrugMethod").val($("#DrugMethod"+no).text());
-          // $("#DrugTime").val($("#DrugTime"+no).text());
-          // $("#DrugDosage").val($("#DrugDosage"+no).text());
-          // $("#DrugVolume").val($("#DrugVolume"+no).text());
+ 
           $("#Drugtype"+no).text(Drugtype);
           $("#DrugMethod"+no).text(DrugMethod);
           $("#DrugTime"+no).text(DrugTime);
           $("#DrugDosage"+no).text(DrugDosage);
           $("#DrugVolume"+no).text(DrugVolume);
 
-            // $("#L_present"+id).html(LesionPresent);
-            // $("#L_type"+id).html(LesionType);
-            // $("#L_region"+id).html(Region);
-            // $("#L_side"+id).html(Side);
-            // $("#L_status"+id).html(Status);
-            
             $("#Drugtype").val(''); 
             $("#DrugMethod").val('');
             $("#DrugTime").val('');
@@ -1794,12 +1776,98 @@ $( "#deleteallMorphometricsRecord" ).click(function() {
 
 var count=0;
 function newToxi(){
-  count = ++count;
 
-  $( "#Toxi" ).append('<div class="row toxi-rw" id="toxi_'+count+'"><div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column"><input type="text" placeholder="Toxin" onblur="checkValue(this)" value="" name="toxi_label" id="toxi_label" required><input class="toxi-field" type="text" maxlength="8" onblur="checkValue(this)" value="" name="toxi_type" id="toxi_type'+count+'" required><span>ug/g dry</span></div><span class="remove1" id="toxi_'+count+'" onclick="removeToxiDiv(this)">Remove</span></span></div>');
-  $("#dynamic_Toxi").val(count);
+  if($("#Add_newtoxi").val() == "Update"){
+    id = $("#idForUpdatetoxicology").val();
 
-  $("#toxi_label").val();
+    quantity = $("#quantity").val();
+    Arsenic = $("#Arsenic").val();
+    Cadmium = $("#Cadmium").val();
+    Lead = $("#Lead").val();
+    Mercury = $("#Mercury").val();
+    Thallium = $("#Thallium").val();
+    Selenium = $("#Selenium").val();
+    Iron = $("#Iron").val();
+    Copper = $("#Copper").val();
+    Zinc = $("#Zinc").val();
+    Molybdenum = $("#Molybdenum").val();
+    Manganese = $("#Manganese").val();
+    Cobalt = $("#Cobalt").val();
+    // alert('nouman')
+    // return false;
+    var ajaxData = new FormData();
+    ajaxData.append('quantity', quantity);
+    ajaxData.append('Arsenic', Arsenic);
+    ajaxData.append('Cadmium', Cadmium);
+    ajaxData.append('Lead', Lead);
+    ajaxData.append('Mercury', Mercury);
+    ajaxData.append('Thallium', Thallium);
+    ajaxData.append('Selenium', Selenium);
+    ajaxData.append('Iron', Iron);
+    ajaxData.append('Copper', Copper);
+    ajaxData.append('Zinc', Zinc);
+    ajaxData.append('Molybdenum', Molybdenum);
+    ajaxData.append('Manganese', Manganese);
+    ajaxData.append('Cobalt', Cobalt);
+    ajaxData.append('ID', id);
+
+    $.ajax({
+        url : application_root+"Stranding.cfc?method=updatetoxicologyrecords",
+        type: "POST",
+        cache: false,
+        contentType:false,
+        processData: false,
+        data : ajaxData,
+       
+    
+        success: function (response)
+        {
+          no = $("#idForUpdatetoxicology").val();
+
+          $("#quantity_toxi"+no).text(quantity);
+          $("#Arsenic"+no).text(Arsenic);
+          $("#Cadmium"+no).text(Cadmium);
+          $("#Lead"+no).text(Lead);
+          $("#Mercury"+no).text(Mercury);
+          $("#Thallium"+no).text(Thallium);
+          $("#Selenium"+no).text(Selenium);
+          $("#Iron"+no).text(Iron);
+          $("#Copper"+no).text(Copper);
+          $("#Zinc"+no).text(Zinc);
+          $("#Molybdenum"+no).text(Molybdenum);
+          $("#Manganese"+no).text(Manganese);
+          $("#Cobalt"+no).text(Cobalt);
+
+          $("#quantity").val('');
+          $("#Arsenic").val('');
+          $("#Cadmium").val('');
+          $("#Lead").val('');
+          $("#Mercury").val('');
+          $("#Thallium").val('');
+          $("#Selenium").val('');
+          $("#Iron").val('');
+          $("#Copper").val('');
+          $("#Zinc").val('');
+          $("#Molybdenum").val('');
+          $("#Manganese").val('');
+          $("#Cobalt").val('');
+        },
+        error: function (response)
+    {
+    //    alert(response);
+    }
+       
+    });
+    $("#Add_newtoxi").val("Add New");
+  }else{
+
+    count = ++count;
+  
+    $( "#Toxi" ).append('<div class="row toxi-rw" id="toxi_'+count+'"><div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column"><input type="text" placeholder="Toxin" onblur="checkValue(this)" value="" name="toxi_label" id="toxi_label" required><input class="toxi-field" type="text" maxlength="8" onblur="checkValue(this)" value="" name="toxi_type" id="toxi_type'+count+'" required><span>ug/g dry</span></div><span class="remove1" id="toxi_'+count+'" onclick="removeToxiDiv(this)">Remove</span></span></div>');
+    $("#dynamic_Toxi").val(count);
+  
+    $("#toxi_label").val();
+  }
 }
 
 function removeToxiDiv(elem){
@@ -5574,5 +5642,54 @@ function delete_DrugsAdministered(no)
       }
   });
 }
+function delete_taxicologyreport(no)
+{
+ 
+  var ajaxData = new FormData();
+  ajaxData.append('ID', no);
+  $.ajax({
+      url : application_root+"Stranding.cfc?method=deleteToxicologyRecord",
+      type: "POST",
+      cache: false,
+      contentType:false,
+      processData: false,
+      data : ajaxData,
+      success: function (response)
+      {
+       
+          $('#'+'TissueTypeForTable'+no).remove();
+      },
+      error: function (response)
+      {
+          alert(response);
+      }
+  });
+}
+
+function edit_taxicologyreport(no)
+{
+
+  $("#idForUpdatetoxicology").val(no);
+// alert()
+  // $("#Drugtype").val($("#toxiTypeName"+no).text());
+  $("#quantity").val($("#quantity_toxi"+no).text());
+  $("#Arsenic").val($("#Arsenic"+no).text());
+  $("#Cadmium").val($("#Cadmium"+no).text());
+  $("#Lead").val($("#Lead"+no).text());
+  $("#Mercury").val($("#Mercury"+no).text());
+  $("#Thallium").val($("#Thallium"+no).text());
+  $("#Selenium").val($("#Selenium"+no).text());
+  $("#Iron").val($("#Iron"+no).text());
+  $("#Copper").val($("#Copper"+no).text());
+  $("#Zinc").val($("#Zinc"+no).text());
+  $("#Molybdenum").val($("#Molybdenum"+no).text());
+  $("#Manganese").val($("#Manganese"+no).text());
+  $("#Cobalt").val($("#Cobalt"+no).text());
+  
+  
+  $("#Add_newtoxi").val('Update');
+  
+ 
+}  
 
 

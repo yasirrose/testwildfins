@@ -2609,7 +2609,7 @@
     <cfset Animal_Renderings = ['Buried On Site','Towed Offshore','Burried and Towed Offshore','Landfill']>
     <cfset Fat_Blubber = ['Abundant - No Atrophy','Mild to Moderate Atrophy','Severe Atrophy','NE']>
     <cfset Eye_Finding = ['No Findings','Cloudy','Bloody','Predated','Present']>
-    <cfset Joint_Fluid = ['No Findings','Cloudy - Solid Material','Bloody']>
+    <cfset Joint_Fluid = ['No Findings','Cloudy - Solid Material','Bloody','Blood-tinged','Blood clots','Fibrin','Other']>
     <cfset Muscle_Status = ['Well Muscled - No Atropy','Mild to Modrate Atropy','Severe Atropy','NE']>
     <cfset Musculature_Findings= ['No Findings','Trauma','Hemorrhage','Pallor','Necrosis','Other']>
     <cfset Lining= ['No Findings','Masess','Hemorrhage','Adhesions','Other']>
@@ -6417,7 +6417,9 @@
                                         <th>Time</th>
                                         <th>Dosage</th>
                                         <th>Total Volume</th>
+                                        <cfif isDefined('qgetDrugData')>
                                         <th>Action</th>
+                                        </cfif>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -6432,8 +6434,7 @@
                                                 <td>
                                                     <div class="tablebutn" style="display: inline-flex;">
                                                         <input type="button" id="edit_DrugsAdministered#ID#" value="Edit" class="edit" onclick="edit_DrugsAdministered(#ID#)">
-                                                        <input type="button" value="Delete"  class="delete" onclick="delete_DrugsAdministered(#ID#)" style="margin-left: 5%;">
-                                                        <!--- Working here --->
+                                                        <input type="button" value="Delete"  class="delete" onclick="delete_DrugsAdministered(#ID#)" style="margin-left: 5%;"> 
                                                     </div>
                                                 </td>
                                             </tr>
@@ -6905,6 +6906,7 @@
                             </div>
                             <input type="hidden" id="idForUpdate" value="">
                             <input type="hidden" id="idForUpdateSampleReport" value="">
+                            <input type="hidden" id="idForUpdatetoxicology" value="">
                             <div class="col-lg-5 col-md-6 col-sm-12 col-xs-12 justify-content-end">
                                 <input type="button" class="btn btn-success" id="addNewLesion" value="Add New Lesion" onClick="AddNewLesion()"/>
                             </div>
@@ -10375,27 +10377,6 @@
                                 </div>
                             </div>  
                             <div class="row dry-result-row">
-                                <!-- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group c-b">
-                                            <label class="">Dry Weight Fraction (gravimetry)</label>
-                                        </div>
-                                    </div>
-                                </div> -->
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group c-b">
-                                            <label class="">Reference Range</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group c-b">
-                                            <label class="">Sample Result</label>
-                                        </div>
-                                    </div>
-                                </div> --->      
                                 
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10412,27 +10393,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup thre-rw">
-                                        <div class="input-group ">
-                                            <label class="">Reference Range</label>
-                                            <input class="Arsenic _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Arsenic_Reference_Range#" name="Arsenic_Reference_Range"  id="Arsenic_Reference_Range"><span>ug/g dry</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group result-row">
-                                            <label class="county-label">Sample Result</label>
-                                            <select class="form-control" name="Arsenic_Sample_Result" id="Arsenic_Sample_Result">
-                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Arsenic_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                </cfloop>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --->
-    
+                                 
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
                                         <div class="input-group ">
@@ -10441,27 +10402,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup thre-rw">
-                                        <div class="input-group ">
-                                            <label class="">Reference Range</label>
-                                            <input class="Cadmium _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Cadmium_Reference_Range#" name="Cadmium_Reference_Range"  id="Cadmium _Reference_Range"><span>ug/g dry</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group result-row">
-                                            <label class="county-label">Sample Result</label>
-                                            <select class="form-control" name="Cadmium_Sample_Result" id="Cadmium_Sample_Result">
-                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Cadmium_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                </cfloop>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --->
-                                
+                                                               
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
                                         <div class="input-group ">
@@ -10470,27 +10411,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup thre-rw">
-                                        <div class="input-group ">
-                                            <label class="">Reference Range</label>
-                                            <input class="Lead _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Lead_Reference_Range#" name="Lead_Reference_Range"  id="Lead _Reference_Range"><span>ug/g dry</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm- col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group result-row">
-                                            <label class="county-label">Sample Result</label>
-                                            <select class="form-control" name="Lead_Sample_Result" id="Lead_Sample_Result">
-                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Lead_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                </cfloop>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --->
-    
+                                  
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
                                         <div class="input-group ">
@@ -10499,26 +10420,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup thre-rw">
-                                        <div class="input-group ">
-                                            <label class="">Reference Range</label>
-                                            <input class="Mercury _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Mercury_Reference_Range#" name="Mercury_Reference_Range"  id="Mercury _Reference_Range"><span>ug/g dry</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group result-row">
-                                            <label class="county-label">Sample Result</label>
-                                            <select class="form-control" name="Mercury_Sample_Result" id="Mercury_Sample_Result">
-                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Mercury_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                </cfloop>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --->
+                             
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10528,26 +10430,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup thre-rw">
-                                        <div class="input-group ">
-                                            <label class="">Reference Range</label>
-                                            <input class="Thallium _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Thallium_Reference_Range#" name="Thallium_Reference_Range"  id="Thallium _Reference_Range"><span>ug/g dry</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group result-row">
-                                            <label class="county-label">Sample Result</label>
-                                            <select class="form-control" name="Thallium_Sample_Result" id="Thallium_Sample_Result">
-                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Thallium_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                </cfloop>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --->
+                      
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10557,26 +10440,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup thre-rw">
-                                        <div class="input-group ">
-                                            <label class="">Reference Range</label>
-                                            <input class="Selenium _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Selenium_Reference_Range#" name="Selenium_Reference_Range"  id="Selenium _Reference_Range"><span>ug/g dry</span> 
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group result-row">
-                                            <label class="county-label">Sample Result</label>
-                                            <select class="form-control" name="Selenium_Sample_Result" id="Selenium_Sample_Result">
-                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Selenium_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                </cfloop>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --->
+                           
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10585,27 +10449,7 @@
                                             <input class="Iron" type="text" maxlength="8" value="#qgetToxitype.Iron#" name="Iron" onblur="checkValue(this)" id="Iron"><span>ug/g dry</span> 
                                         </div>
                                     </div>
-                                </div>
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup thre-rw">
-                                        <div class="input-group ">
-                                            <label class="">Reference Range</label>
-                                            <input class="Iron _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Iron_Reference_Range#" name="Iron_Reference_Range"  id="Iron _Reference_Range"><span>ug/g dry</span> 
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group result-row">
-                                            <label class="county-label">Sample Result</label>
-                                            <select class="form-control" name="Iron_Sample_Result" id="Iron_Sample_Result">
-                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Iron_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                </cfloop>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --->
+                                </div>                      
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10615,26 +10459,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup thre-rw">
-                                        <div class="input-group ">
-                                            <label class="">Reference Range</label>
-                                            <input class="Copper _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Copper_Reference_Range#" name="Copper_Reference_Range"  id="Copper _Reference_Range"><span>ug/g dry</span> 
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group result-row">
-                                            <label class="county-label">Sample Result</label>
-                                            <select class="form-control" name="Copper_Sample_Result" id="Copper_Sample_Result">
-                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Copper_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                </cfloop>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --->
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10644,26 +10468,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup thre-rw">
-                                        <div class="input-group ">
-                                            <label class="">Reference Range</label>
-                                            <input class="Zinc _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Zinc_Reference_Range#" name="Zinc_Reference_Range"  id="Zinc _Reference_Range"><span>ug/g dry</span> 
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group result-row">
-                                            <label class="county-label">Sample Result</label>
-                                            <select class="form-control" name="Zinc_Sample_Result" id="Zinc_Sample_Result">
-                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Zinc_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                </cfloop>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --->
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10787,64 +10591,71 @@
                                 </cfif>
                                 <div id="Toxi"> </div>
                                 <input type="hidden" name="dynamic_Toxi" value="" id="dynamic_Toxi">
-                                <input type="button" id="Add_new" name="Add_new" class="btn btn-success m-rl-4 my-toxi-btn" value="Add New" onclick="newToxi()">
-                                <cfif isDefined('TissueTypeForTable')>                                
-                                <div class="row mt-3" >
-                                    
-                                    <div class="col-lg-12" style="margin-top: 15px;">
-                                        <div class="simple-accession-table" style="overflow: auto;">
-                                            <div class="responsive-tale">
-                                                <!--- <cfif isDefined('qAncillaryReportGet') AND #qAncillaryReportGet.recordcount# gt 0><cfelse> hidden</cfif> test--->
-                                                <table class="table table-bordered table-hover" id="AncillaryTable2" >
-                                                    <thead>
-                                                        <tr>
-                                                            <th>ID</th>
-                                                            <th>Tissue Type</th>
-                                                            <th>Dry Weight Fraction</th>
-                                                            <th>Arsenic</th>
-                                                            <th>Cadmium</th> 
-                                                            <th>Lead</th> 
-                                                            <th>Mercury</th> 
-                                                            <th>Thallium</th> 
-                                                            <th>Selenium</th> 
-                                                            <th>Iron</th> 
-                                                            <th>Copper</th> 
-                                                            <th>Zinc</th> 
-                                                            <th>Molybdenum</th> 
-                                                            <th>Manganese</th> 
-                                                            <th>Cobalt</th> 
-                                                         
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody> 
-                                                        <cfset tCount = '1' >
-                                                            <cfloop query="TissueTypeForTable">
-                                                                <tr>
-                                                                    <td>#tCount#</td>
-                                                                    <td>#TissueTypeForTable.toxiTypeName#</td>
-                                                                    <td>#TissueTypeForTable.quantity_toxi#</td>
-                                                                    <td>#TissueTypeForTable.Arsenic#</td>
-                                                                    <td>#TissueTypeForTable.Cadmium#</td> 
-                                                                    <td>#TissueTypeForTable.Lead#</td> 
-                                                                    <td>#TissueTypeForTable.Mercury#</td> 
-                                                                    <td>#TissueTypeForTable.Thallium#</td> 
-                                                                    <td>#TissueTypeForTable.Selenium#</td> 
-                                                                    <td>#TissueTypeForTable.Iron#</td> 
-                                                                    <td>#TissueTypeForTable.Copper#</td> 
-                                                                    <td>#TissueTypeForTable.Zinc#</td> 
-                                                                    <td>#TissueTypeForTable.Molybdenum#</td> 
-                                                                    <td>#TissueTypeForTable.Manganese#</td> 
-                                                                    <td>#TissueTypeForTable.Cobalt#</td> 
-                                                                </tr> 
-                                                                <cfset tCount = tCount + 1 >                                                          
-                                                            </cfloop>                                                           
-                                                    </tbody>
-                                                </table>
+                                <input type="button" id="Add_newtoxi" name="Add_new" class="btn btn-success m-rl-4 my-toxi-btn" value="Add New" onclick="newToxi()">
+                                <cfif isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "">                                
+                                    <div class="row mt-3" >
+                                        
+                                        <div class="col-lg-12" style="margin-top: 15px;">
+                                            <div class="simple-accession-table" style="overflow: auto;">
+                                                <div class="responsive-tale">
+                                                    <!--- <cfif isDefined('qAncillaryReportGet') AND #qAncillaryReportGet.recordcount# gt 0><cfelse> hidden</cfif> test--->
+                                                    <table class="table table-bordered table-hover" id="AncillaryTable2" >
+                                                        <thead>
+                                                            <tr>
+                                                                <th>ID</th>
+                                                                <th>Tissue Type</th>
+                                                                <th>Dry Weight Fraction</th>
+                                                                <th>Arsenic</th>
+                                                                <th>Cadmium</th> 
+                                                                <th>Lead</th> 
+                                                                <th>Mercury</th> 
+                                                                <th>Thallium</th> 
+                                                                <th>Selenium</th> 
+                                                                <th>Iron</th> 
+                                                                <th>Copper</th> 
+                                                                <th>Zinc</th> 
+                                                                <th>Molybdenum</th> 
+                                                                <th>Manganese</th> 
+                                                                <th>Cobalt</th> 
+                                                                <th>Action</th> 
+                                                            
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody> 
+                                                            <cfset tCount = '1' >
+                                                                <cfloop query="TissueTypeForTable">
+                                                                    <tr id="TissueTypeForTable#ID#">
+                                                                        <td>#tCount#</td>
+                                                                        <td id="toxiTypeName#ID#">#TissueTypeForTable.toxiTypeName#</td>
+                                                                        <td id="quantity_toxi#ID#">#TissueTypeForTable.quantity_toxi#</td>
+                                                                        <td id="Arsenic#ID#">#TissueTypeForTable.Arsenic#</td>
+                                                                        <td id="Cadmium#ID#">#TissueTypeForTable.Cadmium#</td> 
+                                                                        <td id="Lead#ID#">#TissueTypeForTable.Lead#</td> 
+                                                                        <td id="Mercury#ID#">#TissueTypeForTable.Mercury#</td> 
+                                                                        <td id="Thallium#ID#">#TissueTypeForTable.Thallium#</td> 
+                                                                        <td id="Selenium#ID#">#TissueTypeForTable.Selenium#</td> 
+                                                                        <td id="Iron#ID#">#TissueTypeForTable.Iron#</td> 
+                                                                        <td id="Copper#ID#">#TissueTypeForTable.Copper#</td> 
+                                                                        <td id="Zinc#ID#">#TissueTypeForTable.Zinc#</td> 
+                                                                        <td id="Molybdenum#ID#">#TissueTypeForTable.Molybdenum#</td> 
+                                                                        <td id="Manganese#ID#">#TissueTypeForTable.Manganese#</td> 
+                                                                        <td id="Cobalt#ID#">#TissueTypeForTable.Cobalt#</td> 
+                                                                        <td>
+                                                                            <div class="tablebutn" style="display: inline-flex;">
+                                                                                <input type="button" id="edit_taxicologyreport#ID#" value="Edit" class="edit" onclick="edit_taxicologyreport(#ID#)">
+                                                                                <input type="button" value="Delete"  class="delete" onclick="delete_taxicologyreport(#ID#)" style="margin-left: 5%;"> 
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr> 
+                                                                    <cfset tCount = tCount + 1 >                                                          
+                                                                </cfloop>                                                           
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                              </cfif>
+                                </cfif>
                      
                         
                             </div>

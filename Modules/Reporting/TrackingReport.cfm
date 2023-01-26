@@ -168,12 +168,11 @@
 
             <!--- <cfdump var="#qgetSampleTrackingReport#" abort="true"> --->
 
-            <div class="section-container  p-b-10 " >
+            <div class="section-container  p-b-10" >
                 <cfif qgetSampleTrackingReport.recordcount NEQ 0>
-                    
-                    <table id="data-table" data-order='[[3,"desc"]]' class="table table-bordered table-hover panel">
+                    <table id="data-table" data-order='[[3,"desc"]]' class="table table-bordered table-hover panel" style="overflow: auto; display: block; border-radius: inherit;">
                         <thead>
-                        <tr class="inverse">
+                         <tr class="inverse">
                             <th>Fnumber</th>
                             <th>Sample ID</th>
                             <th>Bin Number</th>

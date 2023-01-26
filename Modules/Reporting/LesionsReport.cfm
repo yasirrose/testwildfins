@@ -516,8 +516,11 @@
                                         </select>
                                     </div>
                                 </div>
-                            
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
+                                  
+                                </div>
+                            
+                                <!---  <div class="form-group col-lg-4 col-md-6 col-sm-12">
                                     <label class="col-lg-4 col-md-4 col-sm-12 control-label">Nuchal Crest</label>
                                     <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                         <select class="form-control" id="Head_NuchalCrest" name="Head_NuchalCrest">
@@ -623,7 +626,7 @@
                                          </select>
                                     </div>
                                 </div>
-                            </div>
+                            </div>--->
                             <div class="form-row btn-flex">
                                 <div class="col-lg-10 col-md-10 col-sm-9 text-right">
                                     <button type="submit" name="btnSearchSightings" value ="submit"  class="btn btn-success width-100 m-r-5  ml-auto" id="add">Run</button>
@@ -729,7 +732,7 @@
                                     <cfset ArrayAppend(AssociateValue,qgetAssociateValue.Code,"true") >                                                                      
                                     </cfloop>
                                
-                                    <td>#Replace(AssociateValue.toList(), ",", ", ", "ALL")#</td>
+                                    <td>#Replace(AssociateValue.toList(), ",", " ", "ALL")#</td>
                                     <td>#CetaceanSpeciesName#</td>
                                     <td>
                                         #bodyCondition#
