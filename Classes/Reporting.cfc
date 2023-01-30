@@ -6012,133 +6012,133 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
   <cfscript>
     QueryDeleteColumn(qFiltered, "CSCODE");
     QueryDeleteColumn(qFiltered, "Cetaceans_I");
-    if( not isDefined('form.SightingStartEnd'))
-    {
-      QueryDeleteColumn(qFiltered, "SIGHTINGSTART");
-      QueryDeleteColumn(qFiltered, "SIGHTINGEND");
-    }
-    if( not isDefined('form.ConditionFromSighting'))
-    {
-      QueryDeleteColumn(qFiltered, "Weather");
-      QueryDeleteColumn(qFiltered, "WaveHeight");
-      QueryDeleteColumn(qFiltered, "Glare");
-      QueryDeleteColumn(qFiltered, "GlareDirection");
-      QueryDeleteColumn(qFiltered, "Sightability");
-      QueryDeleteColumn(qFiltered, "HabitatDepth");
-      QueryDeleteColumn(qFiltered, "HabitatName");
-      QueryDeleteColumn(qFiltered, "WaterTemp");
-      QueryDeleteColumn(qFiltered, "AirTemp");
-      QueryDeleteColumn(qFiltered, "WindSpeed");
-      QueryDeleteColumn(qFiltered, "TideName");
-      QueryDeleteColumn(qFiltered, "Salinity");
-      QueryDeleteColumn(qFiltered, "pH");
-      QueryDeleteColumn(qFiltered, "DO");
-      QueryDeleteColumn(qFiltered, "Conductivity");
-      QueryDeleteColumn(qFiltered, "InitialHeading");
-      QueryDeleteColumn(qFiltered, "GeneralHeading");
-      QueryDeleteColumn(qFiltered, "FinalHeading");
-      QueryDeleteColumn(qFiltered, "AssocBio");
-    }
-    if( not isDefined('form.fieldEstimate'))
-    {
-      QueryDeleteColumn(qFiltered, "FE_TotalCetaceans_Max");
-      QueryDeleteColumn(qFiltered, "FE_TotalCetaceans_Min");
-      QueryDeleteColumn(qFiltered, "FE_TotalCetacean_Best");
-      QueryDeleteColumn(qFiltered, "FE_TotalCetacean_takes");
-      QueryDeleteColumn(qFiltered, "FE_TotalAdults_Min");
-      QueryDeleteColumn(qFiltered, "FE_TotalAdults_Max");
-      QueryDeleteColumn(qFiltered, "FE_TotalAdults_Best");
-      QueryDeleteColumn(qFiltered, "FE_TotalAdults_takes");
-      QueryDeleteColumn(qFiltered, "FE_TotalCalves_Max");
-      QueryDeleteColumn(qFiltered, "FE_TotalCalves_Min");
-      QueryDeleteColumn(qFiltered, "FE_TotalCalves_Best");
-      QueryDeleteColumn(qFiltered, "FE_TotalCalves_takes");
-      QueryDeleteColumn(qFiltered, "FE_YoungOfYear_Min");
-      QueryDeleteColumn(qFiltered, "FE_YoungOfYear_Max");
-      QueryDeleteColumn(qFiltered, "FE_YoungOfYear_Best");
-      QueryDeleteColumn(qFiltered, "FE_YoungOfYear_takes");
-    }
-    if( not isDefined('form.activity'))
-    {
-      QueryDeleteColumn(qFiltered, "Act_Mill");
-      QueryDeleteColumn(qFiltered, "Act_Feed");
-      QueryDeleteColumn(qFiltered, "Act_Rest");
-      QueryDeleteColumn(qFiltered, "Act_Other");
-      QueryDeleteColumn(qFiltered, "Act_Social");
-      QueryDeleteColumn(qFiltered, "Act_Travel");
-      QueryDeleteColumn(qFiltered, "Act_Prob_Feed");
-      QueryDeleteColumn(qFiltered, "Act_With_Boat");
-      QueryDeleteColumn(qFiltered, "Act_Avoid_Boat");
-      QueryDeleteColumn(qFiltered, "Act_Object_Play");
-    }
-    if( not isDefined('form.behavioralEvents'))
-    {
-      QueryDeleteColumn(qFiltered, "BehavioralSpecifics1");
-      QueryDeleteColumn(qFiltered, "BehavioralSpecificsN1");
-      QueryDeleteColumn(qFiltered, "BehavioralSpecifics2");
-      QueryDeleteColumn(qFiltered, "BehavioralSpecificsN2");
-      QueryDeleteColumn(qFiltered, "BehavioralSpecifics3");
-      QueryDeleteColumn(qFiltered, "BehavioralSpecificsN3");
-      QueryDeleteColumn(qFiltered, "BehavioralSpecifics4");
-      QueryDeleteColumn(qFiltered, "BehavioralSpecificsN4");
-    }
-    if( not isDefined('form.feedingEcology'))
-    {
-      QueryDeleteColumn(qFiltered, "PreySpecies");
-      QueryDeleteColumn(qFiltered, "Feeding_Lat");
-      QueryDeleteColumn(qFiltered, "Feeding_Long");
-      QueryDeleteColumn(qFiltered, "Structure_Present");
-    }
-    if( not isDefined('form.fisheriesInteractions'))
-    {
-      QueryDeleteColumn(qFiltered, "NoOfCetaceansWithIn100mOfActiveFisher");
-      QueryDeleteColumn(qFiltered, "NoOfFishers");
-      QueryDeleteColumn(qFiltered, "CetaceanResponsetoFisher_Approach");
-      QueryDeleteColumn(qFiltered, "CetaceanResponsetoFisher_Neutral");
-      QueryDeleteColumn(qFiltered, "CetaceanResponsetoFisher_Relocate");
-      QueryDeleteColumn(qFiltered, "FisherResponsetoCetacean_Approach");
-      QueryDeleteColumn(qFiltered, "FisherResponsetoCetacean_No_Response");
-      QueryDeleteColumn(qFiltered, "FisherResponsetoCetacean_Pull_in_Line");
-      QueryDeleteColumn(qFiltered, "FisherResponsetoCetacean_Relocate");
-      QueryDeleteColumn(qFiltered, "Depredation");
-    }
-    if( not isDefined('form.boatingInteractions'))
-    {
-      QueryDeleteColumn(qFiltered, "NoOfCetaceansWithIn100mOfRecreationVessels");
-      QueryDeleteColumn(qFiltered, "NumberOfVessels");
-      QueryDeleteColumn(qFiltered, "CetaceanResponseToVessel_Approach");
-      QueryDeleteColumn(qFiltered, "CetaceanResponseToVessel_Neutral");
-      QueryDeleteColumn(qFiltered, "CetaceanResponseToVessel_Relocate");
-      QueryDeleteColumn(qFiltered, "VesselResponseToCetacean_Approach");
-      QueryDeleteColumn(qFiltered, "VesselResponseToCetacean_No_Response");
-      QueryDeleteColumn(qFiltered, "VesselResponseToCetacean_Out_Of_Gear");
-      QueryDeleteColumn(qFiltered, "VesselResponseToCetacean_Relocate");
-    }
-    if( not isDefined('form.HBOIVesselInteractions'))
-    {
-      QueryDeleteColumn(qFiltered, "No_of_Cetaceans_wHBOI_Vessel");
-      QueryDeleteColumn(qFiltered, "ReactiontoHBOIVessel_Approach");
-      QueryDeleteColumn(qFiltered, "ReactiontoHBOIVessel_Neutral");
-      QueryDeleteColumn(qFiltered, "ReactiontoHBOIVessel_Relocate");
-    }
-    if( not isDefined('form.divetimes'))
-    {
-      QueryDeleteColumn(qFiltered, "StratTimeDive1");
-      QueryDeleteColumn(qFiltered, "StratTimeDive2");
-      QueryDeleteColumn(qFiltered, "StratTimeDive3");
-      QueryDeleteColumn(qFiltered, "StratTimeDive4");
-      QueryDeleteColumn(qFiltered, "StratTimeDive5");
-      QueryDeleteColumn(qFiltered, "EndTimeDive1");
-      QueryDeleteColumn(qFiltered, "EndTimeDive2");
-      QueryDeleteColumn(qFiltered, "EndTimeDive3");
-      QueryDeleteColumn(qFiltered, "EndTimeDive4");
-      QueryDeleteColumn(qFiltered, "EndTimeDive5");
-      QueryDeleteColumn(qFiltered, "TotalTimeDive1");
-      QueryDeleteColumn(qFiltered, "TotalTimeDive2");
-      QueryDeleteColumn(qFiltered, "TotalTimeDive3");
-      QueryDeleteColumn(qFiltered, "TotalTimeDive4");
-      QueryDeleteColumn(qFiltered, "TotalTimeDive5");
-    }
+    // if( not isDefined('form.SightingStartEnd'))
+    // {
+    //   QueryDeleteColumn(qFiltered, "SIGHTINGSTART");
+    //   QueryDeleteColumn(qFiltered, "SIGHTINGEND");
+    // }
+    // if( not isDefined('form.ConditionFromSighting'))
+    // {
+    //   QueryDeleteColumn(qFiltered, "Weather");
+    //   QueryDeleteColumn(qFiltered, "WaveHeight");
+    //   QueryDeleteColumn(qFiltered, "Glare");
+    //   QueryDeleteColumn(qFiltered, "GlareDirection");
+    //   QueryDeleteColumn(qFiltered, "Sightability");
+    //   QueryDeleteColumn(qFiltered, "HabitatDepth");
+    //   QueryDeleteColumn(qFiltered, "HabitatName");
+    //   QueryDeleteColumn(qFiltered, "WaterTemp");
+    //   QueryDeleteColumn(qFiltered, "AirTemp");
+    //   QueryDeleteColumn(qFiltered, "WindSpeed");
+    //   QueryDeleteColumn(qFiltered, "TideName");
+    //   QueryDeleteColumn(qFiltered, "Salinity");
+    //   QueryDeleteColumn(qFiltered, "pH");
+    //   QueryDeleteColumn(qFiltered, "DO");
+    //   QueryDeleteColumn(qFiltered, "Conductivity");
+    //   QueryDeleteColumn(qFiltered, "InitialHeading");
+    //   QueryDeleteColumn(qFiltered, "GeneralHeading");
+    //   QueryDeleteColumn(qFiltered, "FinalHeading");
+    //   QueryDeleteColumn(qFiltered, "AssocBio");
+    // }
+    // if( not isDefined('form.fieldEstimate'))
+    // {
+    //   QueryDeleteColumn(qFiltered, "FE_TotalCetaceans_Max");
+    //   QueryDeleteColumn(qFiltered, "FE_TotalCetaceans_Min");
+    //   QueryDeleteColumn(qFiltered, "FE_TotalCetacean_Best");
+    //   QueryDeleteColumn(qFiltered, "FE_TotalCetacean_takes");
+    //   QueryDeleteColumn(qFiltered, "FE_TotalAdults_Min");
+    //   QueryDeleteColumn(qFiltered, "FE_TotalAdults_Max");
+    //   QueryDeleteColumn(qFiltered, "FE_TotalAdults_Best");
+    //   QueryDeleteColumn(qFiltered, "FE_TotalAdults_takes");
+    //   QueryDeleteColumn(qFiltered, "FE_TotalCalves_Max");
+    //   QueryDeleteColumn(qFiltered, "FE_TotalCalves_Min");
+    //   QueryDeleteColumn(qFiltered, "FE_TotalCalves_Best");
+    //   QueryDeleteColumn(qFiltered, "FE_TotalCalves_takes");
+    //   QueryDeleteColumn(qFiltered, "FE_YoungOfYear_Min");
+    //   QueryDeleteColumn(qFiltered, "FE_YoungOfYear_Max");
+    //   QueryDeleteColumn(qFiltered, "FE_YoungOfYear_Best");
+    //   QueryDeleteColumn(qFiltered, "FE_YoungOfYear_takes");
+    // }
+    // if( not isDefined('form.activity'))
+    // {
+    //   QueryDeleteColumn(qFiltered, "Act_Mill");
+    //   QueryDeleteColumn(qFiltered, "Act_Feed");
+    //   QueryDeleteColumn(qFiltered, "Act_Rest");
+    //   QueryDeleteColumn(qFiltered, "Act_Other");
+    //   QueryDeleteColumn(qFiltered, "Act_Social");
+    //   QueryDeleteColumn(qFiltered, "Act_Travel");
+    //   QueryDeleteColumn(qFiltered, "Act_Prob_Feed");
+    //   QueryDeleteColumn(qFiltered, "Act_With_Boat");
+    //   QueryDeleteColumn(qFiltered, "Act_Avoid_Boat");
+    //   QueryDeleteColumn(qFiltered, "Act_Object_Play");
+    // }
+    // if( not isDefined('form.behavioralEvents'))
+    // {
+    //   QueryDeleteColumn(qFiltered, "BehavioralSpecifics1");
+    //   QueryDeleteColumn(qFiltered, "BehavioralSpecificsN1");
+    //   QueryDeleteColumn(qFiltered, "BehavioralSpecifics2");
+    //   QueryDeleteColumn(qFiltered, "BehavioralSpecificsN2");
+    //   QueryDeleteColumn(qFiltered, "BehavioralSpecifics3");
+    //   QueryDeleteColumn(qFiltered, "BehavioralSpecificsN3");
+    //   QueryDeleteColumn(qFiltered, "BehavioralSpecifics4");
+    //   QueryDeleteColumn(qFiltered, "BehavioralSpecificsN4");
+    // }
+    // if( not isDefined('form.feedingEcology'))
+    // {
+    //   QueryDeleteColumn(qFiltered, "PreySpecies");
+    //   QueryDeleteColumn(qFiltered, "Feeding_Lat");
+    //   QueryDeleteColumn(qFiltered, "Feeding_Long");
+    //   QueryDeleteColumn(qFiltered, "Structure_Present");
+    // }
+    // if( not isDefined('form.fisheriesInteractions'))
+    // {
+    //   QueryDeleteColumn(qFiltered, "NoOfCetaceansWithIn100mOfActiveFisher");
+    //   QueryDeleteColumn(qFiltered, "NoOfFishers");
+    //   QueryDeleteColumn(qFiltered, "CetaceanResponsetoFisher_Approach");
+    //   QueryDeleteColumn(qFiltered, "CetaceanResponsetoFisher_Neutral");
+    //   QueryDeleteColumn(qFiltered, "CetaceanResponsetoFisher_Relocate");
+    //   QueryDeleteColumn(qFiltered, "FisherResponsetoCetacean_Approach");
+    //   QueryDeleteColumn(qFiltered, "FisherResponsetoCetacean_No_Response");
+    //   QueryDeleteColumn(qFiltered, "FisherResponsetoCetacean_Pull_in_Line");
+    //   QueryDeleteColumn(qFiltered, "FisherResponsetoCetacean_Relocate");
+    //   QueryDeleteColumn(qFiltered, "Depredation");
+    // }
+    // if( not isDefined('form.boatingInteractions'))
+    // {
+    //   QueryDeleteColumn(qFiltered, "NoOfCetaceansWithIn100mOfRecreationVessels");
+    //   QueryDeleteColumn(qFiltered, "NumberOfVessels");
+    //   QueryDeleteColumn(qFiltered, "CetaceanResponseToVessel_Approach");
+    //   QueryDeleteColumn(qFiltered, "CetaceanResponseToVessel_Neutral");
+    //   QueryDeleteColumn(qFiltered, "CetaceanResponseToVessel_Relocate");
+    //   QueryDeleteColumn(qFiltered, "VesselResponseToCetacean_Approach");
+    //   QueryDeleteColumn(qFiltered, "VesselResponseToCetacean_No_Response");
+    //   QueryDeleteColumn(qFiltered, "VesselResponseToCetacean_Out_Of_Gear");
+    //   QueryDeleteColumn(qFiltered, "VesselResponseToCetacean_Relocate");
+    // }
+    // if( not isDefined('form.HBOIVesselInteractions'))
+    // {
+    //   QueryDeleteColumn(qFiltered, "No_of_Cetaceans_wHBOI_Vessel");
+    //   QueryDeleteColumn(qFiltered, "ReactiontoHBOIVessel_Approach");
+    //   QueryDeleteColumn(qFiltered, "ReactiontoHBOIVessel_Neutral");
+    //   QueryDeleteColumn(qFiltered, "ReactiontoHBOIVessel_Relocate");
+    // }
+    // if( not isDefined('form.divetimes'))
+    // {
+    //   QueryDeleteColumn(qFiltered, "StratTimeDive1");
+    //   QueryDeleteColumn(qFiltered, "StratTimeDive2");
+    //   QueryDeleteColumn(qFiltered, "StratTimeDive3");
+    //   QueryDeleteColumn(qFiltered, "StratTimeDive4");
+    //   QueryDeleteColumn(qFiltered, "StratTimeDive5");
+    //   QueryDeleteColumn(qFiltered, "EndTimeDive1");
+    //   QueryDeleteColumn(qFiltered, "EndTimeDive2");
+    //   QueryDeleteColumn(qFiltered, "EndTimeDive3");
+    //   QueryDeleteColumn(qFiltered, "EndTimeDive4");
+    //   QueryDeleteColumn(qFiltered, "EndTimeDive5");
+    //   QueryDeleteColumn(qFiltered, "TotalTimeDive1");
+    //   QueryDeleteColumn(qFiltered, "TotalTimeDive2");
+    //   QueryDeleteColumn(qFiltered, "TotalTimeDive3");
+    //   QueryDeleteColumn(qFiltered, "TotalTimeDive4");
+    //   QueryDeleteColumn(qFiltered, "TotalTimeDive5");
+    // }
     if( isDefined('form.LesionType') and form.LesionType neq "")
     {    
         

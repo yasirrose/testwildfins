@@ -24,7 +24,7 @@
         <cfquery datasource="#variables.dsn#" name="allCount"  result="r">
             SELECT s.*,
             cs.Cetaceans_ID AS Cetaceans_I,
-            FE_TotalCetacean_takes as Total_Takes,
+            FE_TotalCetacean_takes,
             c.code as cscode,
             ss.ID AS sightingID, 
             hncr.HNC_Name as Head_NuchalCrest,
@@ -84,8 +84,8 @@
             <cfset re =  "Region" & #oo#>
             <cfset slr =  "Side_L_R" & #oo#>
             <cfset st =  "Status" & #oo#>
-            <cfset pn =  "PhotoNumber" & #oo#>
-            <cfset cn =  "Comments" & #oo#>
+            <cfset pn =  "Lesion_Photo" & #oo#>
+            <cfset cn =  "Lesion_Comments" & #oo#>
             <cfset QueryAddColumn(allCount, "#lp#","varchar",[""])>
             <cfset QueryAddColumn(allCount, "#lete#","varchar",[""])>
             <cfset QueryAddColumn(allCount, "#re#","varchar",[""])>
@@ -98,7 +98,7 @@
             <cfif #sightingID# neq "" and #Cetaceans_I# neq ""> 
                 <!--- Query get lesion data against a cetacean and sighting ID --->
                 <cfquery datasource="#variables.dsn#" name="cldd">
-                    SELECT cl.*
+                    SELECT SurveyID,SightingNumber,Sighting_ID,Cetaceans_ID,LesionPresent,LesionType,Region,Side_L_R,Status,PhotoNumber as Lesion_Photo,Comments as Lesion_Comments,ID
                     FROM Condition_Lesions cl
                     where cl.Sighting_ID = #sightingID# and cl.Cetaceans_ID='#cscode#'
                 </cfquery>
@@ -112,14 +112,14 @@
                         <cfset re =  "Region" & #cc#>
                         <cfset slr =  "Side_L_R" & #cc#>
                         <cfset st =  "Status" & #cc#>
-                        <cfset pn =  "PhotoNumber" & #cc#>
-                        <cfset cn =  "Comments" & #cc#>
+                        <cfset pn =  "Lesion_Photo" & #cc#>
+                        <cfset cn =  "Lesion_Comments" & #cc#>
                         <cfset QuerySetCell(allCount, "#lp#", #LesionPresent#, allCount.currentRow)>
                         <cfset QuerySetCell(allCount, "#lete#", #LesionType#, allCount.currentRow)>
                         <cfset QuerySetCell(allCount, "#slr#", #Side_L_R#, allCount.currentRow)>
                         <cfset QuerySetCell(allCount, "#st#", #Status#, allCount.currentRow)>
-                        <cfset QuerySetCell(allCount, "#pn#", #PhotoNumber#, allCount.currentRow)>
-                        <cfset QuerySetCell(allCount, "#cn#", #Comments#, allCount.currentRow)>
+                        <cfset QuerySetCell(allCount, "#pn#", #Lesion_Photo#, allCount.currentRow)>
+                        <cfset QuerySetCell(allCount, "#cn#", #Lesion_Comments#, allCount.currentRow)>
                         <cfif #Region# NEQ "">
                             <cfset regionN = Application.Cetaceans.getRegionNamebyId(Region)>
                             <cfset QuerySetCell(allCount, "#re#", #regionN#, allCount.currentRow)>
@@ -245,14 +245,15 @@
         <cfquery datasource="#variables.dsn#" name="qFiltered">
             SELECT
             s.DATE,
-            ss.SightingNumber,
-            s.SurveyRoute,
             s.id as SurveyID,
-            FE_TotalCetacean_takes as Total_Takes,
+            s.SurveyRoute,
+            ss.SightingNumber,
+            FE_TotalCetacean_takes,
             FE_TotalAdults_takes,
             FE_TotalCalves_takes,
             FE_YoungOfYear_takes,
             c.code as Code,
+            c.code as Associates,
             tlu.CetaceanSpeciesName,
             cs.bodyCondition,
             hncr.HNC_Name as Head_NuchalCrest,
@@ -306,24 +307,24 @@
                 <cfset rr = incrementValue(#rr#)> 
                 <cfset lp =  "LesionPresent" & #rr#>
                 <cfset lete =  "LesionType" & #rr#>
+                <cfset re =  "Region" & #rr#>
                 <cfset slr =  "Side_L_R" & #rr#>
                 <cfset st =  "Status" & #rr#>
-                <cfset re =  "Region" & #rr#>
-                <cfset pn =  "PhotoNumber" & #rr#>
-                <cfset cn =  "Comments" & #rr#>
+                <cfset cn =  "Lesion_Comments" & #rr#>
+                <cfset pn =  "Lesion_Photo" & #rr#>
                 <cfset QueryAddColumn(qFiltered, "#lp#","varchar",[""])>
                 <cfset QueryAddColumn(qFiltered, "#lete#","varchar",[""])>
+                <cfset QueryAddColumn(qFiltered, "#re#","varchar",[""])>
                 <cfset QueryAddColumn(qFiltered, "#slr#","varchar",[""])>
                 <cfset QueryAddColumn(qFiltered, "#st#","varchar",[""])>
-                <cfset QueryAddColumn(qFiltered, "#re#","varchar",[""])>
-                <cfset QueryAddColumn(qFiltered, "#pn#","varchar",[""])>
                 <cfset QueryAddColumn(qFiltered, "#cn#","varchar",[""])>
+                <cfset QueryAddColumn(qFiltered, "#pn#","varchar",[""])>
         </cfloop>
         <cfloop query="qFiltered">
             <cfif #sightingID# neq "" and #Code# neq ""> 
                 <!--- Query get lesion data against a cetacean and sighting ID --->
                 <cfquery datasource="#variables.dsn#" name="cldd">
-                    SELECT cl.*
+                    SELECT SurveyID,SightingNumber,Sighting_ID,Cetaceans_ID,LesionPresent,LesionType,Region,Side_L_R,Status,PhotoNumber as Lesion_Photo,Comments as Lesion_Comments,ID
                     FROM Condition_Lesions cl
                     where cl.Sighting_ID = #sightingID# and cl.Cetaceans_ID='#Code#'
                 </cfquery>
@@ -337,14 +338,14 @@
                         <cfset re =  "Region" & #cne#>
                         <cfset slr =  "Side_L_R" & #cne#>
                         <cfset st =  "Status" & #cne#>
-                        <cfset pn =  "PhotoNumber" & #oo#>
-                        <cfset cn =  "Comments" & #oo#>
+                        <cfset pn =  "Lesion_Photo" & #oo#>
+                        <cfset cn =  "Lesion_Comments" & #oo#>
                         <cfset QuerySetCell(qFiltered, "#lp#", #LesionPresent#, qFiltered.currentRow)>
                         <cfset QuerySetCell(qFiltered, "#lete#", #LesionType#, qFiltered.currentRow)>
                         <cfset QuerySetCell(qFiltered, "#slr#", #Side_L_R#, qFiltered.currentRow)>
                         <cfset QuerySetCell(qFiltered, "#st#", #Status#, qFiltered.currentRow)>
-                        <cfset QuerySetCell(qFiltered, "#pn#", #PhotoNumber#, qFiltered.currentRow)>
-                        <cfset QuerySetCell(qFiltered, "#cn#", #Comments#, qFiltered.currentRow)>
+                        <cfset QuerySetCell(qFiltered, "#pn#", #Lesion_Photo#, qFiltered.currentRow)>
+                        <cfset QuerySetCell(qFiltered, "#cn#", #Lesion_Comments#, qFiltered.currentRow)>
                         <cfif #Region# NEQ "">
                             <cfset regionN = Application.Cetaceans.getRegionNamebyId(Region)>
                             <cfset QuerySetCell(qFiltered, "#re#", #regionN#, qFiltered.currentRow)>
@@ -359,6 +360,28 @@
                     <cfset arn = ArrayAppend(SurveyRouteA,#ROUTENAME#,"true")>
                 </cfif>
             </cfloop>
+            
+            <cfset AssociateValue=[]>
+            <cfquery name="qgetAssociate" datasource="#Application.dsn#"  >
+                SELECT cs.Sighting_ID,ss.id,cs.Cetaceans_ID from Cetacean_Sightings cs
+                JOIN Survey_Sightings ss ON cs.Sighting_ID = ss.id
+                JOIN Surveys s ON s.ID = ss.Project_ID
+                where cs.Sighting_ID = #sightingID#
+            </cfquery>
+            <cfloop query="qgetAssociate" >
+                <cfquery name="qgetAssociateValue" datasource="#Application.dsn#"  >
+                SELECT * from Cetaceans                                        
+                where id = '#qgetAssociate.CETACEANS_ID#'
+            </cfquery> 
+            <cfset ArrayAppend(AssociateValue,qgetAssociateValue.Code,"true") >                                                                      
+            </cfloop>
+            <!--- <cfdump var="#Replace(AssociateValue.toList(), ",", ", ", "ALL")#" abort="true"> --->
+        
+            <cfset Associatess = '#Replace(AssociateValue.toList(), ",", " ", "ALL")#'>
+            <cfset QuerySetCell(qFiltered, "Associates", #Associatess#, qFiltered.currentRow)>     
+           
+
+
             <cfset df = arrayToList(SurveyRouteA,"\")>
             <cfset QuerySetCell(qFiltered, "SurveyRoute", #df#, qFiltered.currentRow)>
             <cfif "#bodyCondition#" eq 1>
@@ -663,6 +686,14 @@
             
             <div class="section-container section-with-top-border"> 
                 <div class="">
+                    <cfif qFiltered.recordCount neq 0>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 text-right" style="position: absolute;
+                            right: 12px; width: 10%; z-index: 2;">
+                                <button type="button" onclick="excel()" class="btn btn-success width-123 m-r-5  ml-auto">Export All</button>
+                            </div>
+                        </div>
+                    </cfif>   
                     <table id="allReport" data-order='[[0,"desc"]]' class="table table-bordered table-hover ">
                         <thead>
                         <tr class="inverse">
@@ -694,8 +725,8 @@
                                         <th>Region#index#</th>
                                         <th>Side_L_R#index#</th>
                                         <th>Status#index#</th>
-                                        <th>Lesion Comments#index#</th>
-                                        <th>Lesion Photo#index#</th>
+                                        <th>Lesion_Comments#index#</th>
+                                        <th>Lesion_Photo#index#</th>
                                 </cfloop>
                             </cfoutput>
                         </tr>
@@ -710,7 +741,7 @@
                                         #SurveyRoute#
                                     </td>
                                     <td>#SightingNumber#</td>
-                                    <td>#Total_Takes#</td>
+                                    <td>#FE_TotalCetacean_takes#</td>
                                     <td>#FE_TotalAdults_takes#</td>
                                     <td>#FE_TotalCalves_takes#</td>
                                     <td>#FE_YoungOfYear_takes#</td>
@@ -770,8 +801,8 @@
                                         <cfset r =  "Region">
                                         <cfset c =  "Side_L_R">
                                         <cfset d =  "Status">
-                                        <cfset c =  "Comments" >
-                                        <cfset p =  "PhotoNumber" >
+                                        <cfset c =  "Lesion_Comments" >
+                                        <cfset p =  "Lesion_Photo" >
                                         <td>#Evaluate(a&cn)#</td>
                                         <td>#Evaluate(b&cn)#</td>
                                         <td>#Evaluate(r&cn)#</td>
@@ -785,13 +816,13 @@
                         </tbody>
                     </table>
                 </div>
-                <cfif qFiltered.recordCount neq 0>
+                <!--- <cfif qFiltered.recordCount neq 0>
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12 text-right">
-                            <!--- <button type="button" onclick="excel()" class="btn btn-success width-123 m-r-5  ml-auto">Export Excel</button> --->
+                            <button type="button" onclick="excel()" class="btn btn-success width-123 m-r-5  ml-auto">Export Excel</button>
                         </div>
                     </div>
-                </cfif>   
+                </cfif>    --->
             </div>
             <div class="row">
                 <cfscript>

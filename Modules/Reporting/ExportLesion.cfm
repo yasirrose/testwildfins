@@ -1,6 +1,7 @@
 <cfif CGI.HTTP_REFERER eq '#Application.siteroot#index.cfm?Module=Reporting&Page=LesionsReport'>
     <cfscript> 
         qFiltered1 = session.exportData;
+        
         theSheet = SpreadsheetNew("LesionsReport");
         SpreadsheetAddRow(theSheet,ArrayToList(qFiltered1.getColumnList()));
         SpreadsheetFormatRow(theSheet, {bold=TRUE, alignment="center"}, 1 );

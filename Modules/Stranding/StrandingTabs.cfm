@@ -10592,7 +10592,7 @@
                                 <div id="Toxi"> </div>
                                 <input type="hidden" name="dynamic_Toxi" value="" id="dynamic_Toxi">
                                 <input type="button" id="Add_newtoxi" name="Add_new" class="btn btn-success m-rl-4 my-toxi-btn" value="Add New" onclick="newToxi()">
-                                <cfif isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "">                                
+                                <cfif isDefined('TissueTypeForTable') and TissueTypeForTable neq "">                                
                                     <div class="row mt-3" >
                                         
                                         <div class="col-lg-12" style="margin-top: 15px;">
