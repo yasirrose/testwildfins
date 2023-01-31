@@ -6260,11 +6260,11 @@
         <!--- <cfset DL = "#return_data.generatedkey#">
         <cfreturn DL> --->
     </cffunction>
-    <!--- getCetaceanNecropsy --->
+    <!--- getCetaceanNecropsy  --->
     <cffunction name="getCetaceanNecropsy" returntype="any" output="false" access="public" >
 
         <cftry>
-            <cfquery name="qgetCetaceanNecropsy" datasource="#Application.dsn#"  >
+            <cfquery name="qgetCetaceanNecropsy" datasource="#Application.dsn#" maxRows = "1">
                 SELECT * from ST_CetaceanNecropsyReport where fnumber = '#Nfieldnumber#'
             </cfquery>
            
@@ -8369,6 +8369,31 @@
         </cfquery>
         <!--- <cfdump var="#qupdateLesions#"about="true"> --->
 		<cfreturn True>
-	</cffunction>
+    </cffunction>
+    
+
+    <cffunction name="deletehistoSTRecord"  returntype="any" output="false" access="remote" returnformat="json">        
+        <cfquery name="qdeleteToxicologyRecord" datasource="#Application.dsn#">
+            delete from ST_HistoSampleData
+            where ID = '#ID#'
+        </cfquery>        
+        <cfreturn True>       
+    </cffunction>
+
+
+    <cffunction name="updateHistopathologySTrecords" access="remote" >
+
+        <cfquery name="qupdateLesions" datasource="#Application.dsn#" >
+            update ST_HistoSampleData set
+            SampleType=<cfqueryparam cfsqltype="cf_sql_varchar" value='#SampleType#' >
+            ,SampleNote=<cfqueryparam cfsqltype="cf_sql_varchar" value='#SampleNote#'>
+            ,DiagnosticLab=<cfqueryparam cfsqltype="cf_sql_varchar" value='#DiagnosticLab#'>
+            where
+            ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+            
+        </cfquery>
+        <!--- <cfdump var="#qupdateLesions#"about="true"> --->
+		<cfreturn True>
+    </cffunction>
 
 </cfcomponent>    

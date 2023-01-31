@@ -161,7 +161,7 @@ $(document).ready(function() {
   handleDateTimePicker();
   handleJqueryTagIt();  
 
-  $("#subsamplee").hide();
+  // $("#subsamplee").hide();
   $("#Thawedd").hide();
   $("#subsampleDatee").hide();
   // getCode(); 
@@ -1622,9 +1622,57 @@ function AddDrug() {
   SampleType = $("#SampleType option:selected").text().trim();
   SampleTypeval = $("#SampleType option:selected").val().trim();
   DiagnosticLabVal = $("#diagnosticLabID").val();
+  
+  SampleNote = $("#SampleNote").val().trim();
   // console.log(DiagnosticLabVal);
 
-  SampleNote = $("#SampleNote").val().trim();
+if($("#drugsNew").val() == "Update"){
+
+  id = $("#idForUpdatetoxicology").val();
+
+
+  var ajaxData = new FormData();
+  ajaxData.append('SampleType', SampleType);
+  ajaxData.append('SampleNote', SampleNote);
+  ajaxData.append('DiagnosticLab', DiagnosticLabVal);
+  ajaxData.append('ID', id);
+
+  $.ajax({
+      url : application_root+"Stranding.cfc?method=updateHistopathologySTrecords",
+      type: "POST",
+      cache: false,
+      contentType:false,
+      processData: false,
+      data : ajaxData,
+     
+  
+      success: function (response)
+      {
+        
+        no = $("#idForUpdatetoxicology").val();
+
+        $("#histoSTData"+no).text(SampleType);
+        $("#STDiagnosticLab"+no).text(DiagnosticLabVal);
+        $("#STSampleNote"+no).text(SampleNote);
+
+        $("#diagnosticLabID").val('');
+        $("#SampleNote").val('');
+        $('#SampleType').val('').trigger('change');
+        // $("#Cadmium").val('');
+
+  
+      },
+      error: function (response)
+  {
+  //    alert(response);
+  }
+     
+  });
+  $("#drugsNew").val("Add New");
+
+}else{
+
+  
   
   if(SampleTypeval != ''){
       if(SampleNote == ""){
@@ -1657,6 +1705,7 @@ function AddDrug() {
           
           $("#stypee").html('*Sapmle type required');
       }
+  }
   }
 }
 
@@ -1793,8 +1842,8 @@ function newToxi(){
     Molybdenum = $("#Molybdenum").val();
     Manganese = $("#Manganese").val();
     Cobalt = $("#Cobalt").val();
-    // alert('nouman')
-    // return false;
+
+
     var ajaxData = new FormData();
     ajaxData.append('quantity', quantity);
     ajaxData.append('Arsenic', Arsenic);
@@ -2104,7 +2153,7 @@ function showFieldsOfSampleArchive() {
       $("#subsampleDatee").show();
       
   }else{
-      $("#subsamplee").hide();
+      // $("#subsamplee").hide();
       $("#Thawedd").hide();
       $("#subsampleDatee").hide();
   }
@@ -2342,7 +2391,7 @@ function edit_SampleRow(no)
           $("#subsampleDatee").show();
           
       }else{
-          $("#subsamplee").hide();
+          // $("#subsamplee").hide();
           $("#Thawedd").hide();
           $("#subsampleDatee").hide();
           $("#subdate"+no).text("");
@@ -5692,4 +5741,50 @@ function edit_taxicologyreport(no)
  
 }  
 
+function delete_histoST(no)
+{
+ 
+  var ajaxData = new FormData();
+  ajaxData.append('ID', no);
+  $.ajax({
+      url : application_root+"Stranding.cfc?method=deletehistoSTRecord",
+      type: "POST",
+      cache: false,
+      contentType:false,
+      processData: false,
+      data : ajaxData,
+      success: function (response)
+      {
+       
+          $('#'+'SampleTypeForTable'+no).remove();
+      },
+      error: function (response)
+      {
+          alert(response);
+      }
+  });
+}
 
+function edit_histoST(no)
+{
+
+  $("#idForUpdatetoxicology").val(no);
+
+  if($("#histoSTData"+no).text() != ''){
+    let c=$("#histoSTData"+no).text();
+    hilocation = c.split(",")
+    $('#SampleType').val(hilocation).trigger('change');
+}else{
+    let c=$("#histoSTData"+no).text();
+    hilocation = c.split(",")
+    $('#SampleType').val(hilocation).trigger('change');
+}
+
+  $("#diagnosticLabID").val($("#STDiagnosticLab"+no).text());
+  $("#SampleNote").val($("#STSampleNote"+no).text());
+    
+  
+  $("#drugsNew").val('Update');
+  
+ 
+} 

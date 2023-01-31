@@ -3077,6 +3077,7 @@
         <cfelse>
             <cfset form.Nfieldnumber = ''>
         </cfif>
+
         <cfif isDefined('form.Nfieldnumber') and Nfieldnumber neq "">
 
             <cfset form.field = form.Nfieldnumber>
@@ -5076,7 +5077,7 @@
                         </form>
                     </div>
                 </div> --->
-                <div class="col-lg-3 col-md-4">
+               <!--- <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myCetaceanExamDateform">
                         <label for="sel1">Search Cetacean Exam By Date:</label>
@@ -5090,7 +5091,7 @@
                         </div>
                     </form>
                     </div>
-                </div>
+                </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myCetaceanExamFieldNumberform">
@@ -5114,7 +5115,7 @@
             <!---start for HIForm --->
             <div class="row" id="HIformSerch" style="display:none;">
             
-                <div class="col-lg-3 col-md-4">
+               <!--- <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                         <form  action="" method="post" id="myHIFormDate">
                             <label for="sel1">Search By Date:</label>
@@ -5128,7 +5129,7 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myHiFormFieldNumber">
@@ -5153,7 +5154,7 @@
             <!--- start for Level A Form --->
             <div class="row" id="LAFormSerch" style="display:none;">
 
-                <div class="col-lg-3 col-md-4">
+               <!--- <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myLevelAFormDate">
                         <label for="sel1">Search Level A Form By Date:</label>
@@ -5167,7 +5168,7 @@
                         </div>
                     </form>
                     </div>
-                </div>
+                </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myLevelAFormFieldNumber">
@@ -5226,7 +5227,7 @@
                         </form>
                     </div>
                 </div> --->
-                <div class="col-lg-3 col-md-4">
+                <!---<div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                         <form  action="" method="post" id="myformHistopathologyByDate">
                             <label for="sel1">Search Histopathology By Date:</label>
@@ -5240,7 +5241,7 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myformHistopathologyByFieldNumber">
@@ -5286,7 +5287,7 @@
            
             <div class="row" style="display:none;" id="BloodValueFormSerch">
 
-                <div class="col-lg-3 col-md-4">
+               <!--- <div class="col-lg-3 col-md-4">
                     <div class="form-group blood-from-froup input-group select-width">
                         <form  action="" method="post" id="myformBloodValueByDate">
                             <label for="sel1">Search Blood Values By Analysis Date:</label>
@@ -5300,7 +5301,7 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group blood-from-froup input-group select-width">
                     <form  action="" method="post" id="myformBloodValueByFieldNum">
@@ -5359,7 +5360,7 @@
                         </form>
                     </div>
                 </div> --->
-                <div class="col-lg-3 col-md-4">
+                <!---<div class="col-lg-3 col-md-4">
                     <div class="form-group blood-from-froup input-group select-width">
                         <form  action="" method="post" id="myformToxicologybyDate">
                             <label for="sel1">Search Toxicology By Analysis Date:</label>
@@ -5373,7 +5374,7 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group blood-from-froup input-group select-width">
                     <form  action="" method="post" id="myformToxicologybyFieldNumber">
@@ -5430,7 +5431,7 @@
                         </form>
                     </div>
                 </div> --->
-                <div class="col-lg-3 col-md-4">
+               <!--- <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                         <form  action="" method="post" id="myformAncillaryDiagnosticsSerchByDate">
                             <label for="sel1">Search Ancillary Diagnostics By Date:</label>
@@ -5444,7 +5445,7 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myformAncillaryDiagnosticsSerchByFieldNumber">
@@ -5503,7 +5504,7 @@
                     </div>
                 </div>            --->           
                 <input type="hidden" name="startValue" value="1001" id="startValue">
-                <div class="col-lg-3 col-md-4">
+                <!---<div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  id="dateform" action="" method="post" >
                         <label for="sel1">Search Sample Archive By Date:</label>
@@ -5534,7 +5535,7 @@
                         </div>
                     </form>
                     </div>
-                </div>
+                </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  id="fieldform" action="" method="post" >
@@ -5612,7 +5613,7 @@
                         </form>
                     </div>
                 </div> --->
-                <div class="col-lg-3 col-md-4">
+                <!---<div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                         <form  action="" method="post" id="myformNecropsySerchByDate">
                             <label for="sel1">Search Necropsy Report By Stranding Date:</label>
@@ -5626,7 +5627,7 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myformNecropsySerchByFieldNumber">
@@ -5686,7 +5687,7 @@
                     </div>
                 </div>--->
 
-                <div class="col-lg-3 col-md-4">
+               <!--- <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                         <form  action="" method="post" id="myformMorphometricsSerchByDate">
                             <label for="sel1">Search Morphometrics By Date:</label>
@@ -5700,7 +5701,7 @@
                             </div>
                         </form>
                     </div>
-                </div> 
+                </div> --->
 
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
@@ -5816,6 +5817,7 @@
                                                 </div>
                                             </div> 
                                        <!--- <cfif isDefined('qLCEDataa.species') and #qLCEDataa.species# neq "" > --->
+
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                 <div class="input-group">
@@ -7688,7 +7690,7 @@
                                         <option value="">Select Sample</option>
                                         <cfloop query="qgetSampleType">
                                             <cfif status  neq 0>
-                                                <option value="#qgetSampleType.ID#">#qgetSampleType.Type#</option>
+                                                <option value="#qgetSampleType.Type#">#qgetSampleType.Type#</option>
                                             </cfif>
                                         </cfloop>
                                     </select>
@@ -7734,15 +7736,22 @@
                                         <th class="col-lg-4">Sample Type</th>
                                         <th>Diagnostic Lab</th>
                                         <th>Result</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <cfif isDefined('qgetHistoSampleData')>
                                         <cfloop query="qgetHistoSampleData">
-                                            <tr>
-                                                <td>#qgetHistoSampleData.SampleType#</td>
-                                                <td><cfif #qgetHistoSampleData.DiagnosticLab# neq 0>#qgetHistoSampleData.DiagnosticLab#</cfif></td>
-                                                <td><cfif #qgetHistoSampleData.SampleNote# neq 0>#qgetHistoSampleData.SampleNote#</cfif></td>
+                                            <tr id="SampleTypeForTable#ID#">
+                                                <td id="histoSTData#ID#">#qgetHistoSampleData.SampleType#</td>
+                                                <td id="STDiagnosticLab#ID#"><cfif #qgetHistoSampleData.DiagnosticLab# neq 0>#qgetHistoSampleData.DiagnosticLab#</cfif></td>
+                                                <td id="STSampleNote#ID#"><cfif #qgetHistoSampleData.SampleNote# neq 0>#qgetHistoSampleData.SampleNote#</cfif></td>
+                                                <td>
+                                                    <div class="tablebutn" style="display: inline-flex;">
+                                                        <input type="button" id="edit_histoST#ID#" value="Edit" class="edit" onclick="edit_histoST(#ID#)">
+                                                        <input type="button" value="Delete"  class="delete" onclick="delete_histoST(#ID#)" style="margin-left: 5%;"> 
+                                                    </div>
+                                                </td>
                                             </tr>
                                         </cfloop>
                                     </cfif>
@@ -14934,7 +14943,6 @@
                             <h4 class="modal-title" >Update Sample Report</h4> 
                         </div>
                         <div class="modal-body">
-                            <!--- nouman --->
                             <div class="row rowbutton">
                                 <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6"> 
                                     <div class="form-input-holder">
