@@ -56,7 +56,7 @@
             <cfset Session.CeteacenExam = #form.ID#>
             <cfset form.LCE_ID = "#form.ID#">
             <cfset form.LCEID = "#form.ID#">
-            <cfset form.CeteacenSelect = "#form.ID#">
+            <cfset form.CeteacenSelect = "#form.ID#"> 
 
             <cfset Application.Stranding.CetaceanExamUpdate(argumentCollection="#Form#")>
             <cfif form.count neq "">
@@ -235,11 +235,10 @@
         <cfif  isDefined('form.HIForm_ID') and form.HIForm_ID neq "">
             <cfset Session.HIForm = #form.HIForm_ID#>
             <cfset LCE = Application.Stranding.HIFormUpdate(argumentCollection="#Form#")>
-            
+
             <cfset form.HI_ID = form.HIForm_ID>
-            
+
             <cfset form.LCE= form.HIForm_ID>
-            <!--- <cfdump var="#form.LCE#" abort="true"> --->
             
             <cfset Application.Stranding.InsertHiExampData(argumentCollection="#Form#")>
         
@@ -277,8 +276,7 @@
     <cfset LocationofHI = ['Rostrum','Mandible','Head/Neck','L Flipper','R Flipper','Dorsum/Dorsal Fin','Ventrum','Peduncle','Flukes','Abdomen','Thorax','Maxilla','Stomach','Forestomach','Fundus','Pylorus','Esophagus','Inside of Mouth','Tongue','Intestine'] >
     <cfset ContributedtoStrandingEvent = ['Uncertain/CBD','Improbable','Suspect','Probable']>
     <cfset TypeofGearCollected = ['Hook','Monofilament Line','Braided Line','Crab Pot','Crab Pot Line','Crab Pot Buoy','Debris','Net','Weight','Lure'] >
-    <cfset GearDeposition =  ['NMFS','FAU Harbor Branch','Disposed of']>
-   <!---  <cfset GearDeposition =  ['NMFS','FAU Harbor Branch','FAU Ocean Discovery Visitor’s Center','Disposed of']>--->
+    <cfset GearDeposition =  ['NMFS','FAU Harbor Branch','FAU Ocean Discovery Visitor’s Center','Disposed of']>
     <cfset Conditions = ['Alive', 'Fresh Dead', 'Moderate Decomposition' ,'Advanced Decomposition','Mummified']>
 
         <!--- if user directed from the Cetacean form, here getr first 4 forms data of Cetacean form --->
@@ -484,8 +482,6 @@
 
     <cfif isDefined('HistoSaveAndNew') OR isDefined('SaveandgotoBloodForm') OR isDefined('SaveAndClose')>
         <cfset form.check = "1">
-        <!--- <cfset SampleNote = deserializeJSON(form.SampleNote)>
-        <cfdump var="#SampleNote.0#" abort="true"> --->
         <!--- If updating existing data --->
         <cfif  isDefined('form.Histo_ID') and form.Histo_ID neq "">
             <!--- if sampletype field is not empty then insert Histo sample form's data which can be multiple at single time --->
@@ -699,6 +695,7 @@
         <!--- start for Toxicology --->
         <cfset qgetTissueType=Application.StaticDataNew.getTissueType()>
 
+         <!--- <cfdump var="#qgetTissueType#" abort="true">  --->
         <cfset ToxicologySelectoptions = ['High','Low','Critical Result','Corrected Result','None']>
         <cfif isDefined('SaveAndNewToxicology') OR isDefined('SaveAndClose') OR isdefined('Add_new') >
             <!--- If updating existing data --->
@@ -763,13 +760,13 @@
                 <cfset Session.Toxicology = ''>
                 </cfif>
             <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-            <!--- <cfdump var="test" abort="true">  --->
+
             <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
             <cfset qLCEDataa=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
             <cfset qgetcetaceanDate=Application.Stranding.getToxicologyNecropsyDate(#form.Toxicology_ID#)>
             <cfset TissueTypeForTable =Application.Stranding.getTissueTypeForTable(#form.Toxicology_ID#)>
 
-            
+                 <!---<cfdump var="#TissueTypeForTable#" abort="true"> --->
 
             <cfif #qgetToxicologyData.species# neq "">
                 <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetToxicologyData.species#")>
@@ -795,7 +792,6 @@
             <cfset form.Toxicology_ID = #Session.Toxicology#>
             <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
             <cfset qgetcetaceanDate=Application.Stranding.getToxicologyNecropsyDate(#form.Toxicology_ID#)>
-            <cfset TissueTypeForTable =Application.Stranding.getTissueTypeForTable(#form.Toxicology_ID#)>
             <cfif #qgetToxicologyData.species# neq "">
                 <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetToxicologyData.species#")>
                 
@@ -929,6 +925,7 @@
     <cfset StorageTypeArray = ['Room Temperature','-80 C','-20 C','-20 F','Refrigerated']>
     <cfset ThawedArray = ['Yes','No','Partial']>
     <cfset Availbility = ['Full Sample','Partial Sample','No Sample','No Sample Available']>
+    <!--- <cfset qgetSampleType=Application.StaticDataNew.getSampleType()> --->
     <cfset qgetSampleLocation=Application.StaticDataNew.getSampleLocation()>
     <cfset qgetSampleTracking=Application.StaticDataNew.getSampleTracking()>
     <cfset qgetBinNumber=Application.StaticDataNew.getBinNumber()>
@@ -936,7 +933,7 @@
     <cfset qgetPreservationMethod=Application.StaticDataNew.getPreservationMethod()>
 
     <cfif isDefined('SaveAndNewSampleArchive')>
-        
+
         <cfif isDefined('form.SampleArchiveSEID') and form.SampleArchiveSEID neq "">
             <cfset Session.SampleArchive = #form.SampleArchiveSEID#>
             <cfset form.SEID = "#SampleArchiveSEID#">
@@ -1140,10 +1137,16 @@
             
             <cfset qgetSampleTypeDataSingle=Application.Stranding.getSampleTypeDataSingle("#form.STID#")>
             <cfset qgetSampleDetailData = Application.Stranding.getSampleDetailDataSingle("#form.STID#")>
-    
+
+        <!--- <cfelse>
+            <cfset qgetSampleTypeDataSingle=Application.Stranding.getSampleType_ten()>  --->
         </cfif>
         <cfset qgetcetaceanDate=Application.Stranding.getcetaceanexamDate(#form.SEID#)>
     </cfif>
+        <!--- <cfdump var="#qgetcetaceanDate.CNRDATE#" abort="true">/ --->
+    <!--- <cfelse>
+        <cfset qgetSampleTypeIByID=Application.Stranding.getSampleType_ten()>
+        <cfset qgetSampleTypeDataSingle = #qgetSampleTypeIByID#>  --->
 
 
     </cfif>
@@ -2644,11 +2647,9 @@
 
     <cfif isDefined('form.save')>
         <cfset form.report_ID ='#form.report_ID#'>
-        <!--- <cfdump var="#form.report_ID#"><cfabort> --->
         <cfif form.report_ID eq '' >
             <cfset CNR = Application.Stranding.CetaceanNecropsyinsert(argumentCollection="#Form#")>
             <cfset form.Nfieldnumber = '#CNR#'> 
-            <!--- <cfdump var="#form.Nfieldnumber#"><cfabort> --->
             <cfset Session.CetaceanNecropsy = #CNR#>
 
 
@@ -3035,8 +3036,11 @@
     <cfif isDefined('form.Toxicology_ID') and form.Toxicology_ID NEQ ''>
         <cfset form.Toxicology_ID = #form.Toxicology_ID#>
         <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
-      
-            <cfset TissueTypeForTable =Application.Stranding.getTissueTypeForTable(#form.Toxicology_ID#)>
+        <!--- <cfset qgetcetaceanDate=Application.Stranding.getToxicologyNecropsyDate(#form.Toxicology_ID#)>
+        <cfif #qgetToxicologyData.species# neq "">
+            <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetToxicologyData.species#")>
+            
+            </cfif> --->
         <cfif isdefined('form.Tissue_type') and form.Tissue_type neq "">
             <cfset qgetToxitype=Application.Stranding.getToxitype("#form.Tissue_type#,#form.TX_ID#")>
             <cfset qgetDynamicToxitype=Application.Stranding.getDynamicToxitype("#form.Tissue_type#")>
@@ -3078,7 +3082,6 @@
         <cfelse>
             <cfset form.Nfieldnumber = ''>
         </cfif>
-
         <cfif isDefined('form.Nfieldnumber') and Nfieldnumber neq "">
 
             <cfset form.field = form.Nfieldnumber>
@@ -3648,9 +3651,9 @@
                     </cfloop> 
                     <cfset data.setColumnNames(colNameArray) />
 
-                     
-                    <cfoutput query="data" startRow="2">    
-                        <!---  HIForm ---> 
+                 
+                    <cfoutput query="data" startRow="2">
+                                               <!---  HIForm ---> 
                     <cfquery name="qcheckHIformFnumber" datasource="#Application.dsn#">
                         SELECT ID,Fnumber FROM ST_HIForm
                         WHERE Fnumber ='#data.FieldNumber#'
@@ -3708,8 +3711,8 @@
 
                     </cfloop>
                 <!--- end update --->
-                    <cfelse>
-                        <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
+                    <cfelse>   
+                       <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
                             INSERT INTO ST_HIForm
                             (
                             Fnumber   
@@ -3740,9 +3743,9 @@
                             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#HI_ID#'>   
                             )
                         </cfquery>
-                 
-                    
-                    </cfif>                
+
+
+                        </cfif>                
              
 
                      
@@ -5078,7 +5081,7 @@
                         </form>
                     </div>
                 </div> --->
-               <!--- <div class="col-lg-3 col-md-4">
+                <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myCetaceanExamDateform">
                         <label for="sel1">Search Cetacean Exam By Date:</label>
@@ -5092,7 +5095,7 @@
                         </div>
                     </form>
                     </div>
-                </div>--->
+                </div>
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myCetaceanExamFieldNumberform">
@@ -5116,7 +5119,7 @@
             <!---start for HIForm --->
             <div class="row" id="HIformSerch" style="display:none;">
             
-               <!--- <div class="col-lg-3 col-md-4">
+                <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                         <form  action="" method="post" id="myHIFormDate">
                             <label for="sel1">Search By Date:</label>
@@ -5130,7 +5133,7 @@
                             </div>
                         </form>
                     </div>
-                </div>--->
+                </div>
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myHiFormFieldNumber">
@@ -5155,7 +5158,7 @@
             <!--- start for Level A Form --->
             <div class="row" id="LAFormSerch" style="display:none;">
 
-               <!--- <div class="col-lg-3 col-md-4">
+                <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myLevelAFormDate">
                         <label for="sel1">Search Level A Form By Date:</label>
@@ -5169,7 +5172,7 @@
                         </div>
                     </form>
                     </div>
-                </div>--->
+                </div>
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myLevelAFormFieldNumber">
@@ -5228,7 +5231,7 @@
                         </form>
                     </div>
                 </div> --->
-                <!---<div class="col-lg-3 col-md-4">
+                <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                         <form  action="" method="post" id="myformHistopathologyByDate">
                             <label for="sel1">Search Histopathology By Date:</label>
@@ -5242,7 +5245,7 @@
                             </div>
                         </form>
                     </div>
-                </div>--->
+                </div>
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myformHistopathologyByFieldNumber">
@@ -5288,7 +5291,22 @@
            
             <div class="row" style="display:none;" id="BloodValueFormSerch">
 
-               <!--- <div class="col-lg-3 col-md-4">
+                <!--- <div class="col-lg-3 col-md-4">
+                    <div class="form-group blood-from-froup input-group select-width">
+                        <form id="myformBloodValueByFieldNumber" action="" method="post" >
+                            <label for="sel1">Select Blood Values</label>
+                            <div class="input"> 
+                                <select class="form-control search-box" name="bloodValue_ID" onChange="formBloodValueByFieldNumber()">
+                                    <option value="">Select Blood Values</option>
+                                    <cfloop query="getBloodValueID">
+                                        <option value="#getBloodValueID.ID#" <cfif isDefined('form.HI_ID') and form.HI_ID eq #getBloodValueID.ID#>selected</cfif>>#getBloodValueID.ID#</option>
+                                    </cfloop>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div> --->
+                <div class="col-lg-3 col-md-4">
                     <div class="form-group blood-from-froup input-group select-width">
                         <form  action="" method="post" id="myformBloodValueByDate">
                             <label for="sel1">Search Blood Values By Analysis Date:</label>
@@ -5302,7 +5320,7 @@
                             </div>
                         </form>
                     </div>
-                </div>--->
+                </div>
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group blood-from-froup input-group select-width">
                     <form  action="" method="post" id="myformBloodValueByFieldNum">
@@ -5361,7 +5379,7 @@
                         </form>
                     </div>
                 </div> --->
-                <!---<div class="col-lg-3 col-md-4">
+                <div class="col-lg-3 col-md-4">
                     <div class="form-group blood-from-froup input-group select-width">
                         <form  action="" method="post" id="myformToxicologybyDate">
                             <label for="sel1">Search Toxicology By Analysis Date:</label>
@@ -5375,7 +5393,7 @@
                             </div>
                         </form>
                     </div>
-                </div>--->
+                </div>
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group blood-from-froup input-group select-width">
                     <form  action="" method="post" id="myformToxicologybyFieldNumber">
@@ -5432,7 +5450,7 @@
                         </form>
                     </div>
                 </div> --->
-               <!--- <div class="col-lg-3 col-md-4">
+                <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                         <form  action="" method="post" id="myformAncillaryDiagnosticsSerchByDate">
                             <label for="sel1">Search Ancillary Diagnostics By Date:</label>
@@ -5446,7 +5464,7 @@
                             </div>
                         </form>
                     </div>
-                </div>--->
+                </div>
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myformAncillaryDiagnosticsSerchByFieldNumber">
@@ -5505,7 +5523,7 @@
                     </div>
                 </div>            --->           
                 <input type="hidden" name="startValue" value="1001" id="startValue">
-                <!---<div class="col-lg-3 col-md-4">
+                <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  id="dateform" action="" method="post" >
                         <label for="sel1">Search Sample Archive By Date:</label>
@@ -5536,7 +5554,7 @@
                         </div>
                     </form>
                     </div>
-                </div>--->
+                </div>
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  id="fieldform" action="" method="post" >
@@ -5614,7 +5632,7 @@
                         </form>
                     </div>
                 </div> --->
-                <!---<div class="col-lg-3 col-md-4">
+                <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                         <form  action="" method="post" id="myformNecropsySerchByDate">
                             <label for="sel1">Search Necropsy Report By Stranding Date:</label>
@@ -5628,7 +5646,7 @@
                             </div>
                         </form>
                     </div>
-                </div>--->
+                </div>
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myformNecropsySerchByFieldNumber">
@@ -5688,7 +5706,7 @@
                     </div>
                 </div>--->
 
-               <!--- <div class="col-lg-3 col-md-4">
+                <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                         <form  action="" method="post" id="myformMorphometricsSerchByDate">
                             <label for="sel1">Search Morphometrics By Date:</label>
@@ -5702,7 +5720,7 @@
                             </div>
                         </form>
                     </div>
-                </div> --->
+                </div> 
 
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
@@ -5818,7 +5836,6 @@
                                                 </div>
                                             </div> 
                                        <!--- <cfif isDefined('qLCEDataa.species') and #qLCEDataa.species# neq "" > --->
-
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                 <div class="input-group">
@@ -6428,19 +6445,20 @@
                                 <tbody>
                                     <cfif isDefined('qgetDrugData')>
                                         <cfloop query="qgetDrugData">
-                                            <tr id="DrugsAdministered_#ID#">
-                                                <td id="Drugtype#ID#">#qgetDrugData.Drugtype#</td>
-                                                <td id="DrugMethod#ID#"><cfif #qgetDrugData.DrugMethod# neq 0>#qgetDrugData.DrugMethod#</cfif></td>
-                                                <td id="DrugTime#ID#"><cfif #qgetDrugData.DrugTime# neq 0>#qgetDrugData.DrugTime#</cfif></td>
-                                                <td id="DrugDosage#ID#"><cfif #qgetDrugData.DrugDosage# neq 0>#qgetDrugData.DrugDosage#</cfif></td>
-                                                <td id="DrugVolume#ID#"><cfif #qgetDrugData.DrugVolume# neq 0>#qgetDrugData.DrugVolume#</cfif></td>
-                                                <td>
-                                                    <div class="tablebutn" style="display: inline-flex;">
-                                                        <input type="button" id="edit_DrugsAdministered#ID#" value="Edit" class="edit" onclick="edit_DrugsAdministered(#ID#)">
-                                                        <input type="button" value="Delete"  class="delete" onclick="delete_DrugsAdministered(#ID#)" style="margin-left: 5%;"> 
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                                <tr id="DrugsAdministered_#ID#">
+                                                    <td id="Drugtype#ID#">#qgetDrugData.Drugtype#</td>
+                                                    <td id="DrugMethod#ID#"><cfif #qgetDrugData.DrugMethod# neq 0>#qgetDrugData.DrugMethod#</cfif></td>
+                                                    <td id="DrugTime#ID#"><cfif #qgetDrugData.DrugTime# neq 0>#qgetDrugData.DrugTime#</cfif></td>
+                                                    <td id="DrugDosage#ID#"><cfif #qgetDrugData.DrugDosage# neq 0>#qgetDrugData.DrugDosage#</cfif></td>
+                                                    <td id="DrugVolume#ID#"><cfif #qgetDrugData.DrugVolume# neq 0>#qgetDrugData.DrugVolume#</cfif></td>
+                                                    <td>
+                                                        <div class="tablebutn" style="display: inline-flex;">
+                                                            <input type="button" id="edit_DrugsAdministered#ID#" value="Edit" class="edit" onclick="edit_DrugsAdministered(#ID#)">
+                                                            <input type="button" value="Delete"  class="delete" onclick="delete_DrugsAdministered(#ID#)" style="margin-left: 5%;">
+                                                            <!--- Working here --->
+                                                        </div>
+                                                    </td>
+                                                </tr>
                                         </cfloop>
                                     </cfif>
                                 </tbody>
@@ -6909,7 +6927,6 @@
                             </div>
                             <input type="hidden" id="idForUpdate" value="">
                             <input type="hidden" id="idForUpdateSampleReport" value="">
-                            <input type="hidden" id="idForUpdatetoxicology" value="">
                             <div class="col-lg-5 col-md-6 col-sm-12 col-xs-12 justify-content-end">
                                 <input type="button" class="btn btn-success" id="addNewLesion" value="Add New Lesion" onClick="AddNewLesion()"/>
                             </div>
@@ -7291,7 +7308,6 @@
                                                             <cfloop from="1" to="#ArrayLen(GearDeposition)#" index="j">
                                                                 <option value="#GearDeposition[j]#">#GearDeposition[j]#</option>
                                                             </cfloop>
-                                                            <option value="FAU Ocean Discovery Visitor's Center">FAU Ocean Discovery Visitor's Center</option>
                                                         </select>
                                                         <input type="hidden" name="gearDeposition" id="gearDeposition" value="">
                                                     </div>
@@ -7370,7 +7386,7 @@
                                                 </div>
                                             </form>
                                         </div>
-                                        <!--- <cfif (permissions eq "full_access")>
+                                             <!--- <cfif (permissions eq "full_access")>
                                             <div class="row mt-4 file-tabdesign-row">
                                                 <form id="myform" enctype="multipart/form-data" action="" method="post" >
                                                     <div class="col-lg-12 dis-flex just-center choose-file-tabdesign">
@@ -7669,7 +7685,21 @@
                                         <input class="input-style xl-width" type="text" value="#qgetHIDataa.PathologistAccession#" name="PathologistAccession" id="PathologistAccession">
                                     </div>
                                 </div>
-                            </div>     
+                            </div>                
+                            <!--- <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                <div class="form-group input-group flex-center">
+                                    <label class="lab-label">Diagnostic Lab</label>
+                                    <select class="form-control" name="LabSentto" id="LabSentto">
+                                        <option value="">Select Diagnostic Lab</option>
+                                        <cfloop query="#qgetDiagnosticLab#">
+                                            <cfif status eq 1>
+                                                <option value="#qgetDiagnosticLab.ID#"<cfif #qgetHIDataa.DiagnosticLab# eq #qgetDiagnosticLab.ID#>selected</cfif>>#qgetDiagnosticLab.Diagnostic#</option>
+                                            </cfif>
+                                        </cfloop>
+                                    </select>
+                                    <input type="hidden" value="" name="LabSentto" id="lsto">
+                                </div>
+                            </div>      --->
                                        
                             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                 <div class="form-group flex-center">
@@ -7692,7 +7722,7 @@
                                         <option value="">Select Sample</option>
                                         <cfloop query="qgetSampleType">
                                             <cfif status  neq 0>
-                                                <option value="#qgetSampleType.Type#">#qgetSampleType.Type#</option>
+                                                <option value="#qgetSampleType.ID#">#qgetSampleType.Type#</option>
                                             </cfif>
                                         </cfloop>
                                     </select>
@@ -7738,22 +7768,15 @@
                                         <th class="col-lg-4">Sample Type</th>
                                         <th>Diagnostic Lab</th>
                                         <th>Result</th>
-                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <cfif isDefined('qgetHistoSampleData')>
                                         <cfloop query="qgetHistoSampleData">
-                                            <tr id="SampleTypeForTable#ID#">
-                                                <td id="histoSTData#ID#">#qgetHistoSampleData.SampleType#</td>
-                                                <td id="STDiagnosticLab#ID#"><cfif #qgetHistoSampleData.DiagnosticLab# neq 0>#qgetHistoSampleData.DiagnosticLab#</cfif></td>
-                                                <td id="STSampleNote#ID#"><cfif #qgetHistoSampleData.SampleNote# neq 0>#qgetHistoSampleData.SampleNote#</cfif></td>
-                                                <td>
-                                                    <div class="tablebutn" style="display: inline-flex;">
-                                                        <input type="button" id="edit_histoST#ID#" value="Edit" class="edit" onclick="edit_histoST(#ID#)">
-                                                        <input type="button" value="Delete"  class="delete" onclick="delete_histoST(#ID#)" style="margin-left: 5%;"> 
-                                                    </div>
-                                                </td>
+                                            <tr>
+                                                <td>#qgetHistoSampleData.SampleType#</td>
+                                                <td><cfif #qgetHistoSampleData.DiagnosticLab# neq 0>#qgetHistoSampleData.DiagnosticLab#</cfif></td>
+                                                <td><cfif #qgetHistoSampleData.SampleNote# neq 0>#qgetHistoSampleData.SampleNote#</cfif></td>
                                             </tr>
                                         </cfloop>
                                     </cfif>
@@ -7782,7 +7805,7 @@
                         </div>
                     </div>
                 </cfif>
-
+                
                 
                 <!--- <cfif (permissions eq "full_access")>
                     <div class="row mt-4 file-tabdesign-row">
@@ -7821,7 +7844,7 @@
                     </div>
                 </cfif>--->
 
-            </div> 
+            </div>
             
             <!--- Start for blood value --->
             <div role="tabpanel" class="tab-pane" id="BloodValue">
@@ -10296,7 +10319,7 @@
                     <!--- <input type="hidden"  name="bloodvalue_fields" value="1">
                     <input type="hidden"  name="blood_toxi" value="1"> --->
                     <!--- <input type="hidden"  name="TissueTypeName" value="">  --->
-
+                    
 
                     <h5 class="mb-1"><strong>Documents</strong></h5>
                     <input type="hidden" name="toxipdfFiles" value="#qgetToxicologyData.pdfFiles#" id="toxipdfFiles">
@@ -10388,6 +10411,27 @@
                                 </div>
                             </div>  
                             <div class="row dry-result-row">
+                                <!-- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup">
+                                        <div class="input-group c-b">
+                                            <label class="">Dry Weight Fraction (gravimetry)</label>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup">
+                                        <div class="input-group c-b">
+                                            <label class="">Reference Range</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup">
+                                        <div class="input-group c-b">
+                                            <label class="">Sample Result</label>
+                                        </div>
+                                    </div>
+                                </div> --->      
                                 
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10404,7 +10448,27 @@
                                         </div>
                                     </div>
                                 </div>
-                                 
+                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup thre-rw">
+                                        <div class="input-group ">
+                                            <label class="">Reference Range</label>
+                                            <input class="Arsenic _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Arsenic_Reference_Range#" name="Arsenic_Reference_Range"  id="Arsenic_Reference_Range"><span>ug/g dry</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup">
+                                        <div class="input-group result-row">
+                                            <label class="county-label">Sample Result</label>
+                                            <select class="form-control" name="Arsenic_Sample_Result" id="Arsenic_Sample_Result">
+                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
+                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Arsenic_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div> --->
+    
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
                                         <div class="input-group ">
@@ -10413,7 +10477,27 @@
                                         </div>
                                     </div>
                                 </div>
-                                                               
+                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup thre-rw">
+                                        <div class="input-group ">
+                                            <label class="">Reference Range</label>
+                                            <input class="Cadmium _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Cadmium_Reference_Range#" name="Cadmium_Reference_Range"  id="Cadmium _Reference_Range"><span>ug/g dry</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup">
+                                        <div class="input-group result-row">
+                                            <label class="county-label">Sample Result</label>
+                                            <select class="form-control" name="Cadmium_Sample_Result" id="Cadmium_Sample_Result">
+                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
+                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Cadmium_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div> --->
+                                
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
                                         <div class="input-group ">
@@ -10422,7 +10506,27 @@
                                         </div>
                                     </div>
                                 </div>
-                                  
+                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup thre-rw">
+                                        <div class="input-group ">
+                                            <label class="">Reference Range</label>
+                                            <input class="Lead _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Lead_Reference_Range#" name="Lead_Reference_Range"  id="Lead _Reference_Range"><span>ug/g dry</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm- col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup">
+                                        <div class="input-group result-row">
+                                            <label class="county-label">Sample Result</label>
+                                            <select class="form-control" name="Lead_Sample_Result" id="Lead_Sample_Result">
+                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
+                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Lead_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div> --->
+    
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
                                         <div class="input-group ">
@@ -10431,7 +10535,26 @@
                                         </div>
                                     </div>
                                 </div>
-                             
+                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup thre-rw">
+                                        <div class="input-group ">
+                                            <label class="">Reference Range</label>
+                                            <input class="Mercury _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Mercury_Reference_Range#" name="Mercury_Reference_Range"  id="Mercury _Reference_Range"><span>ug/g dry</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup">
+                                        <div class="input-group result-row">
+                                            <label class="county-label">Sample Result</label>
+                                            <select class="form-control" name="Mercury_Sample_Result" id="Mercury_Sample_Result">
+                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
+                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Mercury_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div> --->
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10441,7 +10564,26 @@
                                         </div>
                                     </div>
                                 </div>
-                      
+                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup thre-rw">
+                                        <div class="input-group ">
+                                            <label class="">Reference Range</label>
+                                            <input class="Thallium _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Thallium_Reference_Range#" name="Thallium_Reference_Range"  id="Thallium _Reference_Range"><span>ug/g dry</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup">
+                                        <div class="input-group result-row">
+                                            <label class="county-label">Sample Result</label>
+                                            <select class="form-control" name="Thallium_Sample_Result" id="Thallium_Sample_Result">
+                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
+                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Thallium_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div> --->
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10451,7 +10593,26 @@
                                         </div>
                                     </div>
                                 </div>
-                           
+                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup thre-rw">
+                                        <div class="input-group ">
+                                            <label class="">Reference Range</label>
+                                            <input class="Selenium _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Selenium_Reference_Range#" name="Selenium_Reference_Range"  id="Selenium _Reference_Range"><span>ug/g dry</span> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup">
+                                        <div class="input-group result-row">
+                                            <label class="county-label">Sample Result</label>
+                                            <select class="form-control" name="Selenium_Sample_Result" id="Selenium_Sample_Result">
+                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
+                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Selenium_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div> --->
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10460,7 +10621,27 @@
                                             <input class="Iron" type="text" maxlength="8" value="#qgetToxitype.Iron#" name="Iron" onblur="checkValue(this)" id="Iron"><span>ug/g dry</span> 
                                         </div>
                                     </div>
-                                </div>                      
+                                </div>
+                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup thre-rw">
+                                        <div class="input-group ">
+                                            <label class="">Reference Range</label>
+                                            <input class="Iron _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Iron_Reference_Range#" name="Iron_Reference_Range"  id="Iron _Reference_Range"><span>ug/g dry</span> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup">
+                                        <div class="input-group result-row">
+                                            <label class="county-label">Sample Result</label>
+                                            <select class="form-control" name="Iron_Sample_Result" id="Iron_Sample_Result">
+                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
+                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Iron_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div> --->
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10470,6 +10651,26 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup thre-rw">
+                                        <div class="input-group ">
+                                            <label class="">Reference Range</label>
+                                            <input class="Copper _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Copper_Reference_Range#" name="Copper_Reference_Range"  id="Copper _Reference_Range"><span>ug/g dry</span> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup">
+                                        <div class="input-group result-row">
+                                            <label class="county-label">Sample Result</label>
+                                            <select class="form-control" name="Copper_Sample_Result" id="Copper_Sample_Result">
+                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
+                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Copper_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div> --->
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10479,6 +10680,26 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup thre-rw">
+                                        <div class="input-group ">
+                                            <label class="">Reference Range</label>
+                                            <input class="Zinc _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Zinc_Reference_Range#" name="Zinc_Reference_Range"  id="Zinc _Reference_Range"><span>ug/g dry</span> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                    <div class="form-group blood-from-froup">
+                                        <div class="input-group result-row">
+                                            <label class="county-label">Sample Result</label>
+                                            <select class="form-control" name="Zinc_Sample_Result" id="Zinc_Sample_Result">
+                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
+                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Zinc_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div> --->
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -10602,73 +10823,167 @@
                                 </cfif>
                                 <div id="Toxi"> </div>
                                 <input type="hidden" name="dynamic_Toxi" value="" id="dynamic_Toxi">
-                                <input type="button" id="Add_newtoxi" name="Add_new" class="btn btn-success m-rl-4 my-toxi-btn" value="Add New" onclick="newToxi()">
+                                <input type="button" id="Add_new" name="Add_new" class="btn btn-success m-rl-4 my-toxi-btn" value="Add New" onclick="newToxi()">
                                 <cfif isDefined('TissueTypeForTable')>                                
-                                    <div class="row mt-3" >
-                                        
-                                        <div class="col-lg-12" style="margin-top: 15px;">
-                                            <div class="simple-accession-table" style="overflow: auto;">
-                                                <div class="responsive-tale">
-                                                    <!--- <cfif isDefined('qAncillaryReportGet') AND #qAncillaryReportGet.recordcount# gt 0><cfelse> hidden</cfif> test--->
-                                                    <table class="table table-bordered table-hover" id="AncillaryTable2" >
-                                                        <thead>
-                                                            <tr>
-                                                                <th>ID</th>
-                                                                <th>Tissue Type</th>
-                                                                <th>Dry Weight Fraction</th>
-                                                                <th>Arsenic</th>
-                                                                <th>Cadmium</th> 
-                                                                <th>Lead</th> 
-                                                                <th>Mercury</th> 
-                                                                <th>Thallium</th> 
-                                                                <th>Selenium</th> 
-                                                                <th>Iron</th> 
-                                                                <th>Copper</th> 
-                                                                <th>Zinc</th> 
-                                                                <th>Molybdenum</th> 
-                                                                <th>Manganese</th> 
-                                                                <th>Cobalt</th> 
-                                                                <th>Action</th> 
-                                                            
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody> 
-                                                            <cfset tCount = '1' >
-                                                                <cfloop query="TissueTypeForTable">
-                                                                    <tr id="TissueTypeForTable#ID#">
-                                                                        <td>#tCount#</td>
-                                                                        <td id="toxiTypeName#ID#">#TissueTypeForTable.toxiTypeName#</td>
-                                                                        <td id="quantity_toxi#ID#">#TissueTypeForTable.quantity_toxi#</td>
-                                                                        <td id="Arsenic#ID#">#TissueTypeForTable.Arsenic#</td>
-                                                                        <td id="Cadmium#ID#">#TissueTypeForTable.Cadmium#</td> 
-                                                                        <td id="Lead#ID#">#TissueTypeForTable.Lead#</td> 
-                                                                        <td id="Mercury#ID#">#TissueTypeForTable.Mercury#</td> 
-                                                                        <td id="Thallium#ID#">#TissueTypeForTable.Thallium#</td> 
-                                                                        <td id="Selenium#ID#">#TissueTypeForTable.Selenium#</td> 
-                                                                        <td id="Iron#ID#">#TissueTypeForTable.Iron#</td> 
-                                                                        <td id="Copper#ID#">#TissueTypeForTable.Copper#</td> 
-                                                                        <td id="Zinc#ID#">#TissueTypeForTable.Zinc#</td> 
-                                                                        <td id="Molybdenum#ID#">#TissueTypeForTable.Molybdenum#</td> 
-                                                                        <td id="Manganese#ID#">#TissueTypeForTable.Manganese#</td> 
-                                                                        <td id="Cobalt#ID#">#TissueTypeForTable.Cobalt#</td> 
-                                                                        <td>
-                                                                            <div class="tablebutn" style="display: inline-flex;">
-                                                                                <input type="button" id="edit_taxicologyreport#ID#" value="Edit" class="edit" onclick="edit_taxicologyreport(#ID#)">
-                                                                                <input type="button" value="Delete"  class="delete" onclick="delete_taxicologyreport(#ID#)" style="margin-left: 5%;"> 
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr> 
-                                                                    <cfset tCount = tCount + 1 >                                                          
-                                                                </cfloop>                                                           
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                <div class="row mt-3" >
+                        
+                                    <div class="col-lg-12" style="margin-top: 15px;">
+                                        <div class="simple-accession-table" style="overflow: auto;">
+                                            <div class="responsive-tale">
+                                                <!--- <cfif isDefined('qAncillaryReportGet') AND #qAncillaryReportGet.recordcount# gt 0><cfelse> hidden</cfif> test--->
+                                                <table class="table table-bordered table-hover" id="AncillaryTable2" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Tissue Type</th>
+                                                            <th>Dry Weight Fraction</th>
+                                                            <th>Arsenic</th>
+                                                            <th>Cadmium</th> 
+                                                            <th>Lead</th> 
+                                                            <th>Mercury</th> 
+                                                            <th>Thallium</th> 
+                                                            <th>Selenium</th> 
+                                                            <th>Iron</th> 
+                                                            <th>Copper</th> 
+                                                            <th>Zinc</th> 
+                                                            <th>Molybdenum</th> 
+                                                            <th>Manganese</th> 
+                                                            <th>Cobalt</th> 
+                                                         
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody> 
+                                                        <cfset tCount = '1' >
+                                                            <cfloop query="TissueTypeForTable">
+                                                                <tr>
+                                                                    <td>#tCount#</td>
+                                                                    <td>#TissueTypeForTable.toxiTypeName#</td>
+                                                                    <td>#TissueTypeForTable.quantity_toxi#</td>
+                                                                    <td>#TissueTypeForTable.Arsenic#</td>
+                                                                    <td>#TissueTypeForTable.Cadmium#</td> 
+                                                                    <td>#TissueTypeForTable.Lead#</td> 
+                                                                    <td>#TissueTypeForTable.Mercury#</td> 
+                                                                    <td>#TissueTypeForTable.Thallium#</td> 
+                                                                    <td>#TissueTypeForTable.Selenium#</td> 
+                                                                    <td>#TissueTypeForTable.Iron#</td> 
+                                                                    <td>#TissueTypeForTable.Copper#</td> 
+                                                                    <td>#TissueTypeForTable.Zinc#</td> 
+                                                                    <td>#TissueTypeForTable.Molybdenum#</td> 
+                                                                    <td>#TissueTypeForTable.Manganese#</td> 
+                                                                    <td>#TissueTypeForTable.Cobalt#</td>
+                                                                </tr> 
+                                                                <cfset tCount = tCount + 1 >                                                          
+                                                            </cfloop>                                                           
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
-                                </cfif>
-                     
+                                </div>
+                              </cfif>
+                            <!--- <cfif isDefined('TissueTypeForTable')>                                
+                                <div class="row mt-3" >
                         
+                                    <div class="col-lg-12">
+                                        <div class="simple-accession-table">
+                                            <div class="responsive-tale">
+                                                <!--- <cfif isDefined('qAncillaryReportGet') AND #qAncillaryReportGet.recordcount# gt 0><cfelse> hidden</cfif> --->
+                                                <table class="table table-bordered table-hover" id="" >
+                                                    <thead>
+                                                        <tr>
+                                                            <!--- <th>ID</th> --->
+                                                            <th>Dry Weight Fraction</th>
+                                                            <th>Reference Range</th>
+                                                            <th>Sample Result</th>
+                                                         
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody> 
+                                                        <!--- <cfset tCount = '1' > --->
+                                                            <!--- <cfloop query="qgetToxitype"> --->
+                                                                <tr>
+                                                                    <!--- <td>1</td> --->
+                                                                    <td>#qgetToxitype.Arsenic#</td>
+                                                                    <td>#qgetToxitype.Arsenic_Reference_Range#</td>
+                                                                    <td>#qgetToxitype.Arsenic_Sample_Result#</td>
+                                                                </tr> 
+                                                                <tr>
+                                                                    <!--- <td>2</td> --->
+                                                                    <td>#qgetToxitype.Cadmium#</td>
+                                                                    <td>#qgetToxitype.Cadmium_Reference_Range#</td>
+                                                                    <td>#qgetToxitype.Cadmium_Sample_Result#</td>
+                                                                </tr> 
+                                                                <tr>
+                                                                    <!--- <td>3</td> --->
+                                                                    <td>#qgetToxitype.Lead#</td>
+                                                                    <td>#qgetToxitype.Lead_Reference_Range#</td>
+                                                                    <td>#qgetToxitype.Lead_Sample_Result#</td>
+                                                                </tr> 
+                                                                <tr>
+                                                                    <!--- <td>4</td> --->
+                                                                    <td>#qgetToxitype.Mercury#</td>
+                                                                    <td>#qgetToxitype.Mercury_Reference_Range#</td>
+                                                                    <td>#qgetToxitype.Mercury_Sample_Result#</td>
+                                                                </tr> 
+                                                                <tr>
+                                                                    <!--- <td>5</td> --->
+                                                                    <td>#qgetToxitype.Thallium#</td>
+                                                                    <td>#qgetToxitype.Thallium_Reference_Range#</td>
+                                                                    <td>#qgetToxitype.Thallium_Sample_Result#</td>
+                                                                </tr> 
+                                                                <tr>
+                                                                    <!--- <td>6</td> --->
+                                                                    <td>#qgetToxitype.Selenium#</td>
+                                                                    <td>#qgetToxitype.Selenium_Reference_Range#</td>
+                                                                    <td>#qgetToxitype.Selenium_Sample_Result#</td>
+                                                                </tr> 
+                                                                <tr>
+                                                                    <!--- <td>7</td> --->
+                                                                    <td>#qgetToxitype.Iron#</td>
+                                                                    <td>#qgetToxitype.Iron_Reference_Range#</td>
+                                                                    <td>#qgetToxitype.Iron_Sample_Result#</td>
+                                                                </tr> 
+                                                                <tr>
+                                                                    <!--- <td>8</td> --->
+                                                                    <td>#qgetToxitype.Copper#</td>
+                                                                    <td>#qgetToxitype.Copper_Reference_Range#</td>
+                                                                    <td>#qgetToxitype.Copper_Sample_Result#</td>
+                                                                </tr> 
+                                                                <tr>
+                                                                    <!--- <td>9</td> --->
+                                                                    <td>#qgetToxitype.Zinc#</td>
+                                                                    <td>#qgetToxitype.Zinc_Reference_Range#</td>
+                                                                    <td>#qgetToxitype.Zinc_Sample_Result#</td>
+                                                                </tr> 
+                                                                <tr>
+                                                                    <!--- <td>10</td> --->
+                                                                    <td>#qgetToxitype.Molybdenum#</td>
+                                                                    <td>#qgetToxitype.Molybdenum_Reference_Range#</td>
+                                                                    <td>#qgetToxitype.Molybdenum_Sample_Result#</td>
+                                                                </tr> 
+                                                                <tr>
+                                                                    <!--- <td>11</td> --->
+                                                                    <td>#qgetToxitype.Manganese#</td>
+                                                                    <td>#qgetToxitype.Manganese_Reference_Range#</td>
+                                                                    <td>#qgetToxitype.Manganese_Sample_Result#</td>
+                                                                </tr> 
+                                                                <tr>
+                                                                    <!--- <td>12</td> --->
+                                                                    <td>#qgetToxitype.Cobalt#</td>
+                                                                    <td>#qgetToxitype.Cobalt_Reference_Range#</td>
+                                                                    <td>#qgetToxitype.Cobalt_Sample_Result#</td>
+                                                                </tr> 
+
+                                                                <!--- <cfset tCount = tCount + 1 >                                                          
+                                                            </cfloop>                                                            --->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                              </cfif> --->
+                                <!--- Awan --->
                             </div>
                         </div>
                     </div>
@@ -10894,7 +11209,7 @@
                 </cfif>
                                 <!---  Following logic to get the data from the HI table and seting value to qgetSampleData variable --->
                     <!--- <cfset qgetSampleData=Application.Stranding.getSampleType_ten()> --->
-                    <input type="hidden"  name="ST_ID" id="ST_ID" value="#qgetSampleTypeDataSingle.ID#">
+                    <input type="hidden"  name="ST_ID" value="#qgetSampleTypeDataSingle.ID#">
                     <input type="hidden" name="fielnumb" value="" id="fielnumb">
     
                     <div class="form-holder">  
@@ -11131,7 +11446,7 @@
                                         <option value="">Select Lab Sent to</option>
                                         <cfloop query="#qgetDiagnosticLab#">
                                             <cfif status eq 1>
-                                                <option value="#qgetDiagnosticLab.Diagnostic#">#qgetDiagnosticLab.Diagnostic#</option>
+                                                <option value="#qgetDiagnosticLab.ID#">#qgetDiagnosticLab.Diagnostic#</option>
                                             </cfif>
                                         </cfloop>
                                     </select>
@@ -11184,7 +11499,7 @@
                                 <div class="input-group flex-center" >
                                     <label class="county-label">Sample Availability</label>
                                     <select class="form-control" id="subsample" >
-                                        <option value="0">Select Availability</option>
+                                        <option val="0">Select Availability</option>
                                         <cfloop from="1" to="#ArrayLen(Availbility)#" index="j">
                                             <option value="#Availbility[j]#">#Availbility[j]#</option>
                                         </cfloop>
@@ -11193,11 +11508,9 @@
                                 <input type="hidden" value="" name="subsample" id="Avail">
                             </div>
                         </div>
-                        <br>
-                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 row">
+                        
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                             <input type="button" class="btn btn-success ml-auto" id="SampleAr" value="Add New" onClick="AddNewRecordforSample()"/>
-
-                            <input type="button" id="SaveSampleAccession" name="SaveSampleAccession" class="btn btn-pink m-rl-4" value="Save" >
                         </div>
                     </div>
                     <br>
@@ -11232,7 +11545,7 @@
                                                         <td >#qgetSampleTypeDataSingle.SampleID#</td>
                                                         <td id="location#ID#">#qgetSampleDetailData.SampleLocation#</td>
                                                         <td id="track#ID#">#qgetSampleDetailData.SampleTracking#</td>
-                                                        <td id="labsent#ID#"><cfif #qgetSampleDetailData.LabSentto# neq 'Select Lab Sent to'>#qgetSampleDetailData.LabSentto#</cfif></td>
+                                                        <td id="labsent#ID#">#qgetSampleDetailData.LabSentto#</td>
                                                         <td id="samplenotes#ID#"><cfif #qgetSampleDetailData.SampleNote# neq 0>#qgetSampleDetailData.SampleNote#</cfif></td>
                                                         <td id="subdate#ID#"><cfif #qgetSampleDetailData.subsampleDate# neq 0>#qgetSampleDetailData.subsampleDate#</cfif></td>
                                                         <td id="availbility#ID#"><cfif #qgetSampleDetailData.Sample_available# neq 0 and #qgetSampleDetailData.Sample_available# neq 'Select Availability'>#qgetSampleDetailData.Sample_available#</cfif></td>
@@ -11494,7 +11807,7 @@
                                     </div>
                                 </div>
                             </div>
-                      
+
                             <div class="simple-button pt-15">
                                 <!--- <cfif isDefined('qgetCetaceanNecropsy')  and #qgetCetaceanNecropsy.Fnumber# neq "">
                             <cfdump var="#qgetCetaceanNecropsy.Fnumber#">                    
@@ -11696,7 +12009,7 @@
                         </div>
                     </div>
 
-                  
+
                     <!--- working end --->
               
 
@@ -14936,157 +15249,158 @@
             </div>
         </div>
            <!--- end for Necropsy --->
-             <!-- modal -->
-             <div class="modal fade" id="SampleReportUpdate" role="dialog">
-                <div class="modal-dialog">
-                
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title" >Update Sample Report</h4> 
-                        </div>
-                        <div class="modal-body">
-                            <div class="row rowbutton">
-                                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6"> 
-                                    <div class="form-input-holder">
-                                        <div class="form-group flex-center">
-                                            <label class="">Sample Date</label>
-                                            <div class="input-group date " id="datetimepicker_Date_samplerecord">
-                                                <input type="text" placeholder="mm/dd/yyyy" name="reportSample_Date" id="reportSample_Date"
-                                                    class="form-control" value='' />
-                                                    <span class="input-group-addon time-icon"> <span class="glyphicon glyphicon-calendar"></span> </span>
-                                            </div>
-                                            <!--- #DateTimeFormat(qgetSampleTypeDataSingle.Sample_Date, "MM/dd/YYYY")# --->
+           <!-- modal -->
+           <div class="modal fade" id="SampleReportUpdate" role="dialog">
+            <div class="modal-dialog">
+            
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" >Update Sample Report</h4> 
+                    </div>
+                    <div class="modal-body">
+                        <!--- nouman --->
+                        <div class="row rowbutton">
+                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6"> 
+                                <div class="form-input-holder">
+                                    <div class="form-group flex-center">
+                                        <label class="">Sample Date</label>
+                                        <div class="input-group date " id="datetimepicker_Date_samplerecord">
+                                            <input type="text" placeholder="mm/dd/yyyy" name="reportSample_Date" id="reportSample_Date"
+                                                class="form-control" value='' />
+                                                <span class="input-group-addon time-icon"> <span class="glyphicon glyphicon-calendar"></span> </span>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 offset-md-4 col-md-4 col-sm-6 col-xs-6">
-                                    <div class="form-input-holder">
-                                        <div class="form-group input-group flex-center">
-                                            <label class="">Sample Location</label>
-                                            <select class="form-control" name="reportSample_Location" id="reportSample_Location">
-                                                <option value="">Select Sample Location</option>
-                                                <cfloop query="#qgetSampleLocation#">
-                                                    <cfif status eq 1>
-                                                        <option value="#qgetSampleLocation.Location#">#qgetSampleLocation.Location#</option>
-                                                    </cfif>
-                                                </cfloop>
-                                            </select>
-                                        </div>
+                                        <!--- #DateTimeFormat(qgetSampleTypeDataSingle.Sample_Date, "MM/dd/YYYY")# --->
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-                                <div class="form-group">
-                                    <div class="input-group flex-center">
-                                        <label class="sample-label">Sample ID</label>
-                                        <input class="input-style xl-width" type="text" value="" name="SamplereportID" id="SamplereportID" >
-                                        <!--- will be require --->
-                                    </div>
-                                </div>
-                            </div> 
-                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-                                <div class="form-group">
-                                    <div class="input-group flex-center">
-                                        <label class="bin-label">Bin Number</label>
-                                        <select class="form-control" name="reportBinNumber" id="reportBinNumber">
-                                            <option value="">Select Bin Number</option>
-                                            <cfloop query="qgetBinNumber">
-                                                <cfif status  neq 0>
-                                                    <option value="#qgetBinNumber.Bin_Number#">#qgetBinNumber.Bin_Number#</option>
-                                                </cfif>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>                
-                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-                                <div class="form-group">
-                                    <div class="input-group flex-center">
-                                        <label class="county-label extra-w ">Sample Type</label>
-                                        <select class="form-control" name="reportSampleType" id="reportSampleType">
-                                            <option value="">Select Sample Type</option>
-                                            <cfloop query="qgetSampleType">
-                                                <cfif status  neq 0>
-                                                    <option value="#qgetSampleType.Type#">#qgetSampleType.Type#</option>
-                                                </cfif>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>                
-                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-                                <div class="form-group">
-                                    <div class="input-group flex-center">
-                                        <label class="county-label">Preservation Method</label>
-                                        <select class="form-control" name="reportPreservationMethod" id="reportPreservationMethod">
-                                            <option value="">Select Preservation Method</option>
-                                            <cfloop query="qgetPreservationMethod">
-                                                <cfif status  neq 0>
-                                                    <option value="#qgetPreservationMethod.Method#">#qgetPreservationMethod.Method#</option>
+                            <div class="col-lg-3 offset-md-4 col-md-4 col-sm-6 col-xs-6">
+                                <div class="form-input-holder">
+                                    <div class="form-group input-group flex-center">
+                                        <label class="">Sample Location</label>
+                                        <select class="form-control" name="reportSample_Location" id="reportSample_Location">
+                                            <option value="">Select Sample Location</option>
+                                            <cfloop query="#qgetSampleLocation#">
+                                                <cfif status eq 1>
+                                                    <option value="#qgetSampleLocation.Location#">#qgetSampleLocation.Location#</option>
                                                 </cfif>
                                             </cfloop>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-                                <div class="form-group">
-                                    <div class="input-group flex-center">
-                                        <label class="am-l">Amount of Sample</label>
-                                        <input class="input-style xl-width" type="number" value="" maxlength="6" name="reportAmountofSample" id="reportAmountofSample">
-                                    </div>
-                                </div>
-                            </div>  
-                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-                                <div class="form-group">
-                                    <div class="input-group flex-center">
-                                        <label class="county-label">Unit of Sample</label>
-                                        <select class="form-control" name="reportUnitofSample" id="reportUnitofSample">
-                                            <option value="">Select Unit of Sample</option>
-                                            <cfloop query="qgetUnitofsample">
-                                                <cfif status  neq 0>
-                                                    <option value="#qgetUnitofsample.Unit#">#qgetUnitofsample.Unit#</option>
-                                                </cfif>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>               
-                            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
-                                <div class="form-group">
-                                    <div class="input-group flex-center">
-                                        <label class="county-label extra">Storage Type</label>
-                                        <select class="form-control" name="reportStorageType" id="reportStorageType">
-                                            <cfloop from="1" to="#ArrayLen(StorageTypeArray)#" index="j">
-                                                <option value="#StorageTypeArray[j]#" <cfif #StorageTypeArray[j]# eq #qgetSampleTypeDataSingle.StorageType#>selected</cfif>>#StorageTypeArray[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 s-content">
-                                <div class="form-group flex-center">
-                                    <label class="scomment-label">Sample Comments</label>
-                                    <textarea class="form-control textareaCustomReset locations-textarea" name="reportSampleComments" id="reportSampleComments"
-                                        maxlength="75">#qgetSampleTypeDataSingle.SampleComments#</textarea>
-                                </div>
-                            </div> 
-                            </div> 
-                            
-                            
                         </div>
-                        <div class="modal-footer " style="display: flex;">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="updateReportData()">Update</button>
+                        <div class="row">
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <div class="input-group flex-center">
+                                    <label class="sample-label">Sample ID</label>
+                                    <input class="input-style xl-width" type="text" value="" name="SamplereportID" id="SamplereportID" >
+                                    <!--- will be require --->
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <div class="input-group flex-center">
+                                    <label class="bin-label">Bin Number</label>
+                                    <select class="form-control" name="reportBinNumber" id="reportBinNumber">
+                                        <option value="">Select Bin Number</option>
+                                        <cfloop query="qgetBinNumber">
+                                            <cfif status  neq 0>
+                                                <option value="#qgetBinNumber.Bin_Number#">#qgetBinNumber.Bin_Number#</option>
+                                            </cfif>
+                                        </cfloop>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>                
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <div class="input-group flex-center">
+                                    <label class="county-label extra-w ">Sample Type</label>
+                                    <select class="form-control" name="reportSampleType" id="reportSampleType">
+                                        <option value="">Select Sample Type</option>
+                                        <cfloop query="qgetSampleType">
+                                            <cfif status  neq 0>
+                                                <option value="#qgetSampleType.Type#">#qgetSampleType.Type#</option>
+                                            </cfif>
+                                        </cfloop>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>                
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <div class="input-group flex-center">
+                                    <label class="county-label">Preservation Method</label>
+                                    <select class="form-control" name="reportPreservationMethod" id="reportPreservationMethod">
+                                        <option value="">Select Preservation Method</option>
+                                        <cfloop query="qgetPreservationMethod">
+                                            <cfif status  neq 0>
+                                                <option value="#qgetPreservationMethod.Method#">#qgetPreservationMethod.Method#</option>
+                                            </cfif>
+                                        </cfloop>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <div class="input-group flex-center">
+                                    <label class="am-l">Amount of Sample</label>
+                                    <input class="input-style xl-width" type="number" value="" maxlength="6" name="reportAmountofSample" id="reportAmountofSample">
+                                </div>
+                            </div>
+                        </div>  
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <div class="input-group flex-center">
+                                    <label class="county-label">Unit of Sample</label>
+                                    <select class="form-control" name="reportUnitofSample" id="reportUnitofSample">
+                                        <option value="">Select Unit of Sample</option>
+                                        <cfloop query="qgetUnitofsample">
+                                            <cfif status  neq 0>
+                                                <option value="#qgetUnitofsample.Unit#">#qgetUnitofsample.Unit#</option>
+                                            </cfif>
+                                        </cfloop>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>               
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                            <div class="form-group">
+                                <div class="input-group flex-center">
+                                    <label class="county-label extra">Storage Type</label>
+                                    <select class="form-control" name="reportStorageType" id="reportStorageType">
+                                        <cfloop from="1" to="#ArrayLen(StorageTypeArray)#" index="j">
+                                            <option value="#StorageTypeArray[j]#" <cfif #StorageTypeArray[j]# eq #qgetSampleTypeDataSingle.StorageType#>selected</cfif>>#StorageTypeArray[j]#</option>
+                                        </cfloop>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 s-content">
+                            <div class="form-group flex-center">
+                                <label class="scomment-label">Sample Comments</label>
+                                <textarea class="form-control textareaCustomReset locations-textarea" name="reportSampleComments" id="reportSampleComments"
+                                    maxlength="75">#qgetSampleTypeDataSingle.SampleComments#</textarea>
+                            </div>
+                        </div> 
+                        </div> 
+                        
+                        
+                    </div>
+                    <div class="modal-footer " style="display: flex;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateReportData()">Update</button>
                     </div>
                 </div>
             </div>
+        </div>
 
-    
+        
     </cfoutput>
 
     <style>

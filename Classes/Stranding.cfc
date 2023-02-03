@@ -2228,7 +2228,30 @@
         <cfargument name="SampleNote" type="string" required="false">
         <cfargument name="DLID" type="string" required="false">
         <cfargument name="HI_ID" type="numeric" required="false">
-        <cfif len(trim(SampleType)) GT 0 >
+
+        <cfset SampleNote = deserializeJSON(SampleNote)>
+        <!--- <cfset myKeyList=structKeyArray(SampleNote)> --->
+        <cfset SampleType = deserializeJSON(SampleType)>
+        <cfset DLID = deserializeJSON(DLID)>
+
+        <!--- <cfdump var="#StructCount(SampleType)#" abort="true"> --->
+        <cfloop from="0" to = "#StructCount(SampleType) - 1#" index="i">   
+            <cfquery name="qInsertHistopathologySampleData" datasource="#variables.dsn#">
+                Insert into ST_HistoSampleData  (SampleType,SampleNote,DiagnosticLab,HI_ID)
+                 values
+                 (
+                     <cfqueryparam cfsqltype="cf_sql_varchar" value='#SampleType[i]#'>
+                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#SampleNote[i]#'>
+                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#DLID[i]#'>
+                     ,<cfqueryparam cfsqltype="cf_sql_integer" value='#HI_ID#'>
+                 )
+             </cfquery>
+        </cfloop>
+        <cfreturn True>
+
+        <!--- <cfdump var="#SampleNote#" abort="true"> --->
+
+        <!--- <cfif len(trim(SampleType)) GT 0 >
 			<cfloop from="1" to="#ListLen(SampleType)#" index="i">
                 <cfquery name="qInsertHistopathologySampleData" datasource="#variables.dsn#">
                    Insert into ST_HistoSampleData  (SampleType,SampleNote,DiagnosticLab,HI_ID)
@@ -2241,8 +2264,8 @@
                     )
                 </cfquery>
             </cfloop>
-		</cfif>
-		<cfreturn True>
+		</cfif> --->
+		<!--- <cfreturn True> --->
     </cffunction>
 
     <!--- get Histo Sample data --->
@@ -8395,5 +8418,46 @@
         <!--- <cfdump var="#qupdateLesions#"about="true"> --->
 		<cfreturn True>
     </cffunction>
+    
+    
+    <cffunction name="saveAccessionData" access="remote" >
+        
+        <!--- <cfdump var="#ListGetAt(SADate,'1')#" about="true"> --->
+            <!--- <cfargument name="SADate" type="string" required="false">
+            <cfargument name="SampleLocation" type="string" required="false">
+            <cfargument name="LabSentto" type="string" required="false">
+            <cfargument name="SampleArchiveNote" type="string" required="false">
+            <cfargument name="SampleTracking" type="string" required="false">
+            <cfargument name="subsample" type="string" required="false">
+            <cfargument name="Thawed" type="string" required="false">
+            <cfargument name="subsampleDate" type="string" required="false">
+            <cfargument name="ST_ID" type="numeric" required="false"> --->
+            
+            <cfif len(trim(SADate)) GT 0 >
+                <cfloop from="1" to="#ListLen(SADate)#" index="i">
+                             
+                    <cfquery name="qInsertSampleData" datasource="#Application.dsn#">
+                       Insert into ST_SampleDetail  (SADate,SampleLocation,LabSentto,SampleNote,SampleTracking,Sample_available,Thawed,subsampleDate,ST_ID)
+                        values
+                        (
+                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(SADate,i)#' null="#IIF(SADate EQ "", true, false)#">
+                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(SampleLocation,i)#'>
+                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(LabSentto,i)#'>
+                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(SampleArchiveNote,i)#'>
+                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(SampleTracking,i)#'>
+                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(subsample,i)#'>
+                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(Thawed,i)#'>
+                            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(subsampleDate,i)#' null="#IIF(subsampleDate EQ "", true, false)#">
+                            ,<cfqueryparam cfsqltype="cf_sql_integer" value='#ST_ID#'>
+                        )
+                    </cfquery>
+                </cfloop>
+               
+            </cfif>
+
+            <cfreturn True> 
+        
+    </cffunction>
+
 
 </cfcomponent>    

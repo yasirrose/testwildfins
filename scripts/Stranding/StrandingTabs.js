@@ -1672,8 +1672,7 @@ if($("#drugsNew").val() == "Update"){
 
 }else{
 
-  
-  
+    
   if(SampleTypeval != ''){
       if(SampleNote == ""){
           SampleNoteArray.push(0);
@@ -1686,14 +1685,25 @@ if($("#drugsNew").val() == "Update"){
           SampleDiagnosticLabArray.push(DiagnosticLabVal);
       }
       SampleTypeArray.push(SampleType);
+      // console.log(SampleNoteArray);
+      Snoteee = Object.assign({}, SampleNoteArray);
+      stypeee = Object.assign({}, SampleTypeArray);
+      DLIDDDD = Object.assign({}, SampleDiagnosticLabArray);
+      // console.log(test);
+      // $("#snoteeee").val('{"test":"re,,,123", "test":432}');
+      $("#snotes").val(JSON.stringify(Snoteee));
+      $("#stype").val(JSON.stringify(stypeee));
+      $("#DLID").val(JSON.stringify(DLIDDDD));
 
-      $("#snotes").val(SampleNoteArray);
-      $("#stype").val(SampleTypeArray);
-      $("#DLID").val(SampleDiagnosticLabArray);
+      
+      // $("#snotes").val(SampleNoteArray);
+      // $("#stype").val(SampleTypeArray);
+      // $("#DLID").val(SampleDiagnosticLabArray);
 
       $("#SampleNote").val("");
       $("#SampleType").val("");
       $("#diagnosticLabID").val("");
+      $('#SampleType').val('').trigger('change');
 
       $("#drugHistorya").show()   
       $("#drugHistorya > tbody").append("<tr><td>" + SampleType + "</td><td>" + DiagnosticLabVal + "</td><td>" + SampleNote + "</td></tr>");
@@ -1703,7 +1713,7 @@ if($("#drugsNew").val() == "Update"){
   }else{
       if(SampleTypeval == ""){
           
-          $("#stypee").html('*Sapmle type required');
+          $("#stypee").html('*Sample type required');
       }
   }
   }
@@ -2156,7 +2166,16 @@ function showFieldsOfSampleArchive() {
       // $("#subsamplee").hide();
       $("#Thawedd").hide();
       $("#subsampleDatee").hide();
+      no = $("#idForUpdate").val();
+      
+      $("#subsampleDate").val('');
+      $("#Thawed").val('0');
+      $("#subdate"+no).text("");
+      // $("#availbility"+no).text("");
+      $("#thawed"+no).text("");
   }
+
+
 }
 
 const SampleAccessionDateArray = [];
@@ -2175,7 +2194,7 @@ const subsampleDateArray = [];
 
 function AddNewRecordforSample() {
   buttonname=$("#SampleAr").val();
-  // alert();
+  // alert();nouman
   if(buttonname =='Add New'){
       // alert(buttonname);
 
@@ -2194,27 +2213,47 @@ function AddNewRecordforSample() {
       // console.log(SampleNote);
       // console.log(Thawed);
       // console.log(subsample);
-      if (SampleAccessionDate != '' && SampleLocation !='Select Sample Location' && SampleTracking != 'Select Sample Tracking' && LabSentto != 'Select Lab Sent to' ) {
+      if (SampleAccessionDate != '' && SampleLocation !='Select Sample Location' && SampleTracking != 'Select Sample Tracking') {
           // alert();
           SampleAccessionDateArray.push(SampleAccessionDate);
           SampleLocationArray.push(SampleLocation);
           SampleTrackingArray.push(SampleTracking);
-          LabSenttoArray.push(LabSentto);
+          // LabSenttoArray.push(LabSentto);
+          if(LabSentto != ''){
+            LabSenttoArray.push(LabSentto);
+          }else{
+            LabSenttoArray.push(0);
+            LabSentto = ' ';
+          }
+
+          if(LabSentto == 'Select Lab Sent to'){
+            LabSentto = ' ';
+          }
+
           if(SampleNote != ''){
               SampleArchiveNoteArray.push(SampleNote);
           }else{
               SampleArchiveNoteArray.push(0);
               SampleNote ='';
           }
-          if(SampleTracking == 'Subsampled' && subsample !='Select Availability' && Thawed !='Select Thawed' ){
-              subsampleArray.push(subsample);
+          if(subsample != ''){
+            subsampleArray.push(subsample);
+          }else{
+             subsampleArray.push(0);
+             subsample =' ';
+          }
+          if(subsample == '0'){
+            subsample =' ';
+          }
+          if(SampleTracking == 'Subsampled'  && Thawed !='Select Thawed' ){
+              // subsampleArray.push(subsample);
               SampleThawedArray.push(Thawed);
               subsampleDateArray.push(subsampleDate);
           }else{
-              subsampleArray.push(0);
+              // subsampleArray.push(0);
               SampleThawedArray.push(0);
               subsampleDateArray.push(0);
-              subsample ='';
+              // subsample ='';
               Thawed='';
               subsampleDate='';
           }
@@ -2374,11 +2413,19 @@ function edit_SampleRow(no)
       $("#SampleLocation option:contains("+c+")").attr('selected', 'selected');
   }
 
-  if($("#labsent"+no).text() != ''){
-      let e=$("#labsent"+no).text();
-      $("#LabSentto option:contains("+e+")").attr('selected', 'selected');
+  // if($("#labsent"+no).text() != ''){
+  //     let e=$("#labsent"+no).text();
+  //     $("#LabSentto option:contains("+e+")").attr('selected', 'selected');
+  // }
+  if($("#availbility"+no).text() != ''){
+      let e=$("#availbility"+no).text();
+      $("#subsample option:contains("+e+")").attr('selected', 'selected');
+  }else{
+    $("#subsample option:contains('0')").attr('selected', 'selected');
   }
 
+  $("#LabSenttoo").val($("#labsent"+no).text());
+  $("#subsample").val($("#availbility"+no).text());
   $("#SampleArchiveNote").val($("#samplenotes"+no).text());
 
   if($("#track"+no).text() != ''){
@@ -2386,7 +2433,7 @@ function edit_SampleRow(no)
       $("#SampleTracking option:contains("+d+")").attr('selected', 'selected');
 
       if(d == 'Subsampled'){
-          $("#subsamplee").show();
+          // $("#subsamplee").show();
           $("#Thawedd").show();
           $("#subsampleDatee").show();
           
@@ -2395,7 +2442,7 @@ function edit_SampleRow(no)
           $("#Thawedd").hide();
           $("#subsampleDatee").hide();
           $("#subdate"+no).text("");
-          $("#availbility"+no).text("");
+          // $("#availbility"+no).text("");
           $("#thawed"+no).text("");
           tttt=$("#Thawed").val("0");
           $("#subsample").val("0");
@@ -2406,18 +2453,29 @@ function edit_SampleRow(no)
   let g=$("#subdate"+no).text();
   let h=$("#availbility"+no).text();
   let i=$("#thawed"+no).text();
-  if(g != '' && h!= 'Select Availability' && h!= '' && i!= 'Select Thawed' && i!= ''){
+  if(h != ''){
+    $("#subsample option:contains("+h+")").attr('selected', 'selected');
+  }else{
+    $("#subsample option:contains('0')").attr('selected', 'selected');
+  }
+  if(g != ''){
       $("#subsampleDate ").val(g);
-      $("#subsample option:contains("+h+")").attr('selected', 'selected');
+  }
+  if(i != ''){
       $("#Thawed option:contains("+i+")").attr('selected', 'selected');
   }
+  // if(g != '' && h != '' &&i!= 'Select Thawed' && i!= ''){
+  //     $("#subsampleDate ").val(g);
+  //     $("#subsample option:contains("+h+")").attr('selected', 'selected');
+  //     $("#Thawed option:contains("+i+")").attr('selected', 'selected');
+  // }
  
 }
 
 function delete_sampleRow(no)
 {
   sampledetailID=no;
-  // console.log(sampledetailID);
+
   var ajaxData = new FormData();
   ajaxData.append('ID', sampledetailID);
   $.ajax({
@@ -2429,9 +2487,17 @@ function delete_sampleRow(no)
       data : ajaxData,
       success: function (response)
       {
-          // var pageURL = $(location).attr("href");
-          // window.location.href= pageURL;
-          $('#'+'tr_'+no).remove();
+        $('#'+'tr_'+no).remove();
+        $('#SampleAccessionDate').val('');
+        $('#SampleLocation').val('');
+        $('#SampleTracking').val('');
+        $('#LabSenttoo').val('');
+        $('#SampleArchiveNote').val('');
+        $('#subsampleDate').val('');
+        $('#Thawed').val('');
+        $('#subsample').val('');
+
+        $("#SampleAr").val("Add New");
       },
       error: function (response)
       {
@@ -5754,9 +5820,12 @@ function delete_histoST(no)
       processData: false,
       data : ajaxData,
       success: function (response)
-      {
-       
+      {       
           $('#'+'SampleTypeForTable'+no).remove();
+          $("#diagnosticLabID").val('');
+          $("#SampleNote").val('');
+          $('#SampleType').val('').trigger('change');
+          $("#drugsNew").val('Add New');
       },
       error: function (response)
       {
@@ -5788,3 +5857,56 @@ function edit_histoST(no)
   
  
 } 
+
+//sample Accession nouman
+
+$( "#SaveSampleAccession" ).click(function() {
+// alert($("#Fnumber").val());
+// $("#Fnumber").prop('required',true);
+// $('#Fnumber').attr('required', true); 
+// $('#requiredFnumber').removeClass()
+// if($("#Fnumber").val() == ""){
+  
+// }
+    SADate = $('#sad').val();
+    ST_ID = $('#ST_ID').val();
+    LabSentto = $('#lsto').val();
+    SampleLocation = $('#SL').val();
+    SampleTracking = $('#ST').val();
+    SampleArchiveNote = $('#samplenotes').val();
+    subsampleDate = $('#sub').val();
+    Thawed = $('#Thaw').val();
+    subsample = $('#Avail').val();
+
+
+    var ajaxData = new FormData();
+    ajaxData.append('ST_ID', ST_ID);
+    ajaxData.append('SADate', SADate);
+    ajaxData.append('LabSentto', LabSentto);
+    ajaxData.append('SampleLocation', SampleLocation);
+    ajaxData.append('SampleTracking', SampleTracking);
+    ajaxData.append('SampleArchiveNote', SampleArchiveNote);
+    ajaxData.append('subsampleDate', subsampleDate);
+    ajaxData.append('subsample', subsample);
+    ajaxData.append('Thawed', Thawed);
+    $.ajax({
+        url : application_root+"Stranding.cfc?method=saveAccessionData",
+        type: "POST",
+        cache: false,
+        contentType:false,
+        processData: false,
+        data : ajaxData,
+        success: function (response)
+        {
+          // alert(response)
+        
+            // $('#'+'SampleTypeForTable'+no).remove();
+        },
+        error: function (response)
+        {
+            alert(response);
+        }
+    });
+
+  
+});
