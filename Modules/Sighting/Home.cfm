@@ -164,6 +164,7 @@
     <cfset SurveyEnd=dummydate & SurveyEnd>
     <cfset Sightingstart=dummydate & Sightingstart>
     <cfset Sightingend=dummydate & Sightingend>
+ 
     <cfif SurveyStart gt SurveyEnd>
       <cfset error="Survey Start time must be less than Survey End Time">
       <cfelseif Sightingstart gt Sightingend>
@@ -1862,17 +1863,7 @@
   function sightingDelete() {
     $('#sightingDelete').submit();
   }
-  // function checkValue(elm){
-  //   value = elm.value;
-  //   value = value.replace('.....','.');
-  //   value = value.replace('....','.');
-  //   value = value.replace('...','.');
-  //   value = value.replace('..','.');
-  //   ID = elm.id;
-  //   $('#'+ID).val(value);
-  //   // alert(elm.id);
-  //   // return value;
-  // }
+
   function checkValue(elm){
     value = elm.value;
     num = value.match(/\./g).length;

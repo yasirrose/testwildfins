@@ -2616,9 +2616,8 @@ function showPictures() {
   }
 }
 function remov(element) {
- 
   ID = $("#form_id").val();
-  image = element.id;
+  image = element.id;  
   data = $("#imagesFile").val();
   data1 = data.split(",");
   var removeArrayValue = image;
@@ -4850,9 +4849,15 @@ function showPDFmodal(elem){
 // For ceteacen Exam
 // var cn=1;
 var PDFEXAMArray = [];
+var PDFExamNameArray = [];
 if($('#pdfFiles').val() != ''){
   PDFEXAMArray.push($('#pdfFiles').val());
 }
+//start for exampdfname
+if($('#pdfFilesname').val() != ''){
+  PDFExamNameArray.push($('#pdfFilesname').val());
+}
+//end for exampdfname
 function ceteacenExamImg(){
   // alert();
     cn = ++cn;
@@ -4866,6 +4871,12 @@ function ceteacenExamImg(){
             $('#ExamFiles').prop('disabled', true);
             var pdffile = new FormData();
             pdffile.append('pdf', f);
+
+            //start for exampdfname working12
+            PDFExamNameArray.push(f.name);
+            $('#pdfFilesname').val(PDFExamNameArray);
+            //end for exampdfname
+
             $.ajax({
                 url: application_root +"Stranding.cfc?method=uploadpdf",
                 type: "POST",
@@ -4876,7 +4887,7 @@ function ceteacenExamImg(){
                 success: function (data) {
                     if(data != ""){
                       PDFEXAMArray.push(data);
-                    // $('#pdfFiles').val(PDFArray);
+                    // $('#pdfFiles').val(PDFArray); 
                     var oldvalue = $('#pdfFiles').val();
                     var newvalue = data;
                     if(oldvalue){
@@ -4887,7 +4898,7 @@ function ceteacenExamImg(){
                     $('#pdfFiles').val(FullValue);
 
                     $('.spi').remove();
-                    $('#previousimagesExam').append('<span class="pip"><a data-toggle="modal" data-target="#myModalExam" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selected(this)"/></a><br/><span class="remove" id="'+data+'" onclick="remov(this)">Remove image</span></span>');
+                    $('#previousimagesExam').append('<span class="pip"><a data-toggle="modal" data-target="#myModalExam" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selected(this)"/></a><br/><span class="remove" id="'+data+'">'+f.name+'</span><br/><span class="remove" id="'+data+'" onclick="remov(this)">Remove image</span></span>');
                     $('#ExamFiles').prop('disabled', false);
                     }else{
                         alert('Selected file corrupted PDF');
@@ -4907,11 +4918,22 @@ function ceteacenExamImg(){
 }
 function remov(el){
   // alert();
+  console.log(el);
   ID = $('#form_id').val();
   var element = el;
   pdffile = element.id
-//   console.log(pdffile);
-// console.log(ID);
+  name = element.value;
+  // console.log(name);
+  // return false;
+
+  /////////
+  dataaa = $('#pdfFilesname').val();
+  data11 = dataaa.split(",");
+  data11.splice($.inArray(name, data11), 1);
+  data22 = data11.toString();
+  $('#pdfFilesname').val(data22);
+  /////////
+
   data = $('#pdfFiles').val();
 
   data1 = data.split(",");
@@ -4921,11 +4943,11 @@ function remov(el){
 
   $('#pdfFiles').val(data2);
 
-// console.log(ID);
+// console.log(ID); working
   $.ajax({
       url: application_root +"Stranding.cfc?method=removepdf",
       type: "POST",
-      data: { ID: ID, pdf: pdffile, imgValue: data2 },
+      data: { ID: ID, pdf: pdffile, imgValue: data2, filename:data22, },
       success: function (data) {
           // PDFArray = PDFArray.filter(e => e !== "Get_Started_With_Smallpdf20.pdf"); 
           // $('#pdfFiles').val(PDFArray);
@@ -4945,9 +4967,13 @@ function selected(elem) {
 
 // var cn=1;
 var HIPDFArray = [];
+var HIPDFNameArray = [];
 if($('#HIFormpdfFiles').val() != ''){
     HIPDFArray.push($('#HIFormpdfFiles').val());
 
+}
+if($('#HIFormpdfFilesName').val() != ''){
+  HIPDFNameArray.push($('#HIFormpdfFilesName').val());
 }
 function HIFormimg(){
   // alert();
@@ -4955,13 +4981,24 @@ function HIFormimg(){
     pr = cn - 1;
     var files = $('#files').prop('files');
     var f = files[0];
-    // console.log(f.size);
+
+
+    // console.log(f.size); 
     if(f.size < 10000000){
         if(f.type == 'application/pdf'){    
             $('#start').after('<span class="spi"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></span>');
             $('#files').prop('disabled', true);
             var pdffile = new FormData();
             pdffile.append('pdf', f);
+
+            console.log(f.name);
+             //start for hipdfname working12
+             HIPDFNameArray.push(f.name);
+             $('#HIFormpdfFilesName').val(HIPDFNameArray);
+             //end for hipdfname
+            
+
+
             $.ajax({
                 url: application_root +"Stranding.cfc?method=uploadpdf",
                 type: "POST",
@@ -4983,8 +5020,9 @@ function HIFormimg(){
                         var FullValue = newvalue;
                     }
                     $('#HIFormpdfFiles').val(FullValue);
+
                     $('.spi').remove();
-                    $('#HIFormPreviousimages').append('<span class="pip"><a data-toggle="modal" data-target="#myHiFormModal" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selectedHIForm(this)"/></a><br/><span class="remove" id="'+data+'" onclick="removeHiFormPDF(this)">Remove image</span></span>');
+                    $('#HIFormPreviousimages').append('<span class="pip"><a data-toggle="modal" data-target="#myHiFormModal" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selectedHIForm(this)"/></a><span class="remove" >'+f.name+'</span><br/><span class="remove" id="'+data+'" onclick="removeHiFormPDF(this)">Remove image</span></span>');
                     $('#files').prop('disabled', false);
                     }else{
                         alert('Selected file corrupted PDF');
@@ -5019,7 +5057,19 @@ function removeHiFormPDF(el){
   var element = el;
   pdffile = element.id
 //   console.log(pdffile);
-// console.log(ID);
+// console.log(ID); working12
+
+name = element.value;
+
+/////////
+fileName = $('#HIFormpdfFilesName').val();
+FilenameSplit = fileName.split(",");
+FilenameSplit.splice($.inArray(name, FilenameSplit), 1);
+fileNames = FilenameSplit.toString();
+$('#HIFormpdfFilesName').val(fileNames);
+/////////
+
+
   data = $('#HIFormpdfFiles').val();
 
   data1 = data.split(",");
@@ -5033,7 +5083,7 @@ function removeHiFormPDF(el){
   $.ajax({
       url: application_root +"Stranding.cfc?method=removepdfHIForm",
       type: "POST",
-      data: { ID: ID, pdf: pdffile, imgValue: data2 },
+      data: { ID: ID, pdf: pdffile, imgValue: data2, fileName:fileNames },
       success: function (data) {
           // PDFArray = PDFArray.filter(e => e !== "Get_Started_With_Smallpdf20.pdf"); 
           // $('#pdfFiles').val(PDFArray);

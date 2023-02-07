@@ -6103,7 +6103,7 @@
                                         <div class="col-lg-12" style="margin-top: 15px;">
                                             <div class="form-group brief-history">
                                                 <label class="history-label">Brief History </label>
-                                                <textarea class="form-control textareaCustomReset locations-textarea" onblur="headerDataSave()" name="BriefHistory" id="BriefHistory" style="resize: auto;"><cfif isDefined('qLCEDataa.BriefHistory')>#qLCEDataa.BriefHistory#</cfif> </textarea>
+                                                <textarea class="form-control textareaCustomReset locations-textarea" onblur="headerDataSave()" name="BriefHistory" id="BriefHistory"  maxlength="2084" style="resize: auto;"><cfif isDefined('qLCEDataa.BriefHistory')>#qLCEDataa.BriefHistory#</cfif> </textarea>
                                             </div>
                                         </div> 
                                     </div>
@@ -6137,6 +6137,7 @@
                         <input type="hidden" name="codeID" value="#qLCEDataa.code#" id="codeID">
                         <h5 class="mb-1"><strong>Documents</strong></h5>
                         <input type="hidden" name="pdfFiles" value="#qLCEData.pdfFiles#" id="pdfFiles">
+                        <input type="hidden" name="pdfFilesname" value="#qLCEData.pdfFilesname#" id="pdfFilesname">
                         <div class="form-holder">  
                             <div class="form-group" id="find">
                                 <div class="row" id="startExam">
@@ -6149,9 +6150,32 @@
                                         </div>
                                     </div>
                                 </div>
-                                <cfset imgss = ValueList(qLCEData.pdfFiles,",")>
+                                <!---<cfset imgss = ValueList(qLCEData.pdfFiles,",")>
+                                 <cfset imgsname = ValueList(qLCEData.pdfFilesname,",")> --->
+                                <!--- <cfset dataa = "#qLCEData.pdfFiles#"> --->
+                                <cfset arrss = listToArray (qLCEData.pdfFiles, ",",false,true)>
+                                <cfset imgsname = listToArray (qLCEData.pdfFilesname, ",",false,true)>
+                                <!--- <cfset arrss = ToString(qLCEData.pdfFiles)> --->
+                                <!--- <cfdump var="#arrss#" abort="true"> working12--->
                                 <div id="previousimagesExam">
-                                    <CFIF listLen(imgss)> 
+                                    <cfif arrayLen(arrss)>
+                                    <cfloop array="#arrss#" item="item" index="j">
+                                        <!--- <span class="pip">
+                                            <a data-toggle="modal" data-target="##myModalExam" href="##" title="#Application.CloudRoot##arrss[j]#" target="blank">
+                                                <img  class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#arrss[j]#" onclick="selected(this)"/>
+                                            </a>
+                                            <cfif arrayLen(imgsname)>
+                                            <br/>
+                                            <span class="remove" value="#imgsname[j]#" id="pdfFileName">#imgsname[j]#</span>
+                                            </cfif>
+                                            <br/>
+                                            <cfif findNoCase("Read only ST", permissions) eq 0>
+                                                <button type="button" class="remove" value="#imgsname[j]#" name="#imgsname[j]#"  onclick="remov(this)" id="#arrss[j]#">Remove image</button>
+                                            </cfif> --->
+                                        </span>
+                                    </cfloop>
+                                </cfif>
+                                    <!--- <CFIF listLen(imgss)> 
                                         <cfloop list="#imgss#" item="item" index="index">
                         
                                             <span class="pip">
@@ -6162,9 +6186,11 @@
                                                 <cfif findNoCase("Read only ST", permissions) eq 0>
                                                     <span class="remove" onclick="remov(this)" id="#item#">Remove image</span>
                                                 </cfif>
+                                                <br/>
+                                                <span class="remove" id="#item#">#item#</span>
                                             </span>
                                         </cfloop>
-                                    </cfif>	
+                                    </cfif>	 --->
                                 </div>
                             </div>
                         </div>
@@ -6925,37 +6951,37 @@
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 mb-2">
                                 <div class="input-group">
                                     <label class="">General</label>
-                                    <textarea class="form-control textareaCustomReset" name="General">#qLCEData.General#</textarea>
+                                    <textarea class="form-control textareaCustomReset" maxlength="512" name="General">#qLCEData.General#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 mb-2">
                                 <div class="input-group">
                                     <label class="">Scars and Natural Markings</label>
-                                    <textarea class="form-control textareaCustomReset" name="SNM">#qLCEData.SNM#</textarea>
+                                    <textarea class="form-control textareaCustomReset" maxlength="512" name="SNM">#qLCEData.SNM#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 mb-2">
                                 <div class="input-group">
                                     <label class="">Mentation</label>
-                                    <textarea class="form-control textareaCustomReset" name="Mentation">#qLCEData.Mentation#</textarea>
+                                    <textarea class="form-control textareaCustomReset" maxlength="512"name="Mentation">#qLCEData.Mentation#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 mb-2">
                                 <div class="input-group">
                                     <label class="">Palpation</label>
-                                    <textarea class="form-control textareaCustomReset" name="Palpation">#qLCEData.Palpation#</textarea>
+                                    <textarea class="form-control textareaCustomReset" maxlength="512" name="Palpation">#qLCEData.Palpation#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 mb-2">
                                 <div class="input-group">
                                     <label class="">Proprioception</label>
-                                    <textarea class="form-control textareaCustomReset" name="Proprioception">#qLCEData.Proprioception#</textarea>
+                                    <textarea class="form-control textareaCustomReset" maxlength="512" name="Proprioception">#qLCEData.Proprioception#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 mb-2" id="needcopy">
                                 <div class="input-group">
                                     <label class="">Reflexes</label>
-                                    <textarea class="form-control textareaCustomReset" name="Reflexes" id="Reflexes">#qLCEData.Reflexes#</textarea>
+                                    <textarea class="form-control textareaCustomReset" name="Reflexes" maxlength="512" id="Reflexes">#qLCEData.Reflexes#</textarea>
                                 </div>
                                 <br>
                             </div>
@@ -6965,7 +6991,7 @@
                                     <div class="col-lg-12" id="needco#qgetNewSectionData.currentrow#"><br>
                                         <div class="input-group" id="needcopytoo#qgetNewSectionData.currentrow#">
                                             <label class="">New Section #qgetNewSectionData.currentrow# </label>
-                                            <textarea class="form-control textareaCustomReset" id="extraNotes#qgetNewSectionData.currentrow#"name="extraNotes#qgetNewSectionData.currentrow#">#qgetNewSectionData.New_Secion#</textarea>
+                                            <textarea class="form-control textareaCustomReset" maxlength="512" id="extraNotes#qgetNewSectionData.currentrow#"name="extraNotes#qgetNewSectionData.currentrow#">#qgetNewSectionData.New_Secion#</textarea>
                                         </div>
                                     </div>
                                 </cfloop>
@@ -7078,7 +7104,7 @@
                 
                                         <div class="col-lg-4 col-md-12">
                                             <div class="form-holder p-0">
-                                                <textarea class="form-control textareaCustomReset release-textarea" name="RLD" placeholder="Release Location Description" style="font-style: normal;">#qLCEData.RLD#</textarea> 
+                                                <textarea class="form-control textareaCustomReset release-textarea" name="RLD" maxlength="450" placeholder="Release Location Description" style="font-style: normal;">#qLCEData.RLD#</textarea> 
                                             </div>
                                         </div>
                 
@@ -7143,6 +7169,7 @@
                     
                         <h5 class="mb-1"><strong>Documents</strong></h5>
                          <input type="hidden" name="HIFormpdfFiles" value="#qgetHIData.pdfFiles#" id="HIFormpdfFiles">
+                         <input type="hidden" name="HIFormpdfFilesName" value="#qgetHIData.pdfFilesname#" id="HIFormpdfFilesName">
                          <div class="form-holder">  
                             <div class="form-group" id="find">
                                 <div class="row" id="start">
@@ -7156,10 +7183,30 @@
                                         </div>
                                     </div>
                                 </div>
-                                <cfset imgss = ValueList(qgetHIData.pdfFiles,",")>
+                                <!--- <cfset imgss = ValueList(qgetHIData.pdfFiles,",")> --->
+                                <cfset arrss = listToArray (qgetHIData.pdfFiles, ",",false,true)>
+	                            <cfset imgsname = listToArray (qgetHIData.pdfFilesname, ",",false,true)>
                                 <div id="HIFormPreviousimages">
-                                    <CFIF listLen(imgss)> 
-                                        <cfloop list="#imgss#" item="item" index="index">
+
+                                    <cfif arrayLen(arrss)>
+                                        <cfloop array="#arrss#" item="item" index="j">
+                                            <span class="pip">
+                                                <a data-toggle="modal" data-target="##myModalExam" href="##" title="#Application.CloudRoot##arrss[j]#" target="blank">
+                                                    <img  class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#arrss[j]#" onclick="selectedHIForm(this)"/>
+                                                </a>
+                                                
+                                                <br/>
+                                                <span class="remove" value="#imgsname[j]#" >#imgsname[j]#</span>
+                                                
+                                                <br/>
+                                                <cfif findNoCase("Read only ST", permissions) eq 0>
+                                                    <button type="button" class="remove" value="#imgsname[j]#" name="#imgsname[j]#"  onclick="removeHiFormPDF(this)" id="#arrss[j]#">Remove image</button>
+                                                </cfif>
+                                            </span>
+                                        </cfloop>
+                                    </cfif>
+                                    <!---<CFIF listLen(imgss)> 
+                                         <cfloop list="#imgss#" item="item" index="index">
                         
                                             <span class="pip">
                                                 <a data-toggle="modal" data-target="##myHiFormModal" href="##" title="#Application.CloudRoot##item#" target="blank">
@@ -7169,7 +7216,7 @@
                                                 <span class="remove" onclick="removeHiFormPDF(this)" id="#item#">Remove image</span>
                                             </span>
                                         </cfloop>
-                                    </cfif>	
+                                    </cfif>	 --->
                                 </div>
                             </div>
                         </div>  
@@ -7478,7 +7525,7 @@
                                     <div class="form-group flex-center">
                                         <label >Comment</label>
                                         <textarea class="form-control textareaCustomReset locations-textarea" name="ILADComment"
-                                            maxlength="2084">#qgetLevelAData.ILADComment#</textarea>
+                                            maxlength="2048">#qgetLevelAData.ILADComment#</textarea>
                                     </div>
                                 </div> 
                                 <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
@@ -7674,7 +7721,7 @@
                             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                 <div class="form-group flex-center">
                                     <label class="scomment-label">Remarks</label>
-                                    <textarea class="form-control textareaCustomReset locations-textarea" id="SampleCommentsID" name="SampleCommentss">#trim(qgetHIDataa.SampleComments)#</textarea>
+                                    <textarea class="form-control textareaCustomReset locations-textarea" maxlength="512" id="SampleCommentsID" name="SampleCommentss">#trim(qgetHIDataa.SampleComments)#</textarea>
                                 </div>
                             </div>             
                         </div>
@@ -7720,7 +7767,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                             <div class="form-group flex-center">
                                 <label class="snotes-label">Results</label>
-                                <textarea type="text" class="form-control textareaCustomReset locations-textarea" id="SampleNote" maxlength="2084"></textarea>
+                                <textarea type="text" class="form-control textareaCustomReset locations-textarea" id="SampleNote" maxlength="512"></textarea>
                                 <input type="hidden" name="SampleNote" id="snotes">
                             </div>
                         </div>
@@ -7900,7 +7947,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="wbc_comment" id="wbc_comment"
-                                     >#qgetCBC_Data.wbc_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.wbc_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -7927,7 +7974,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="RBC_count_comment" id="RBC_count_comment"
-                                         >#qgetCBC_Data.RBC_count_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.RBC_count_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -7954,7 +8001,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Hemoglobin_comment" id="Hemoglobin_comment"
-                                         >#qgetCBC_Data.Hemoglobin_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.Hemoglobin_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -7981,7 +8028,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Hematocrit_comment" id="Hematocrit_comment"
-                                         >#qgetCBC_Data.Hematocrit_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.Hematocrit_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8008,7 +8055,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="MCV_comment" id="MCV_comment"
-                                         >#qgetCBC_Data.MCV_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.MCV_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8035,7 +8082,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="MCH_comment" id="MCH_comment"
-                                         >#qgetCBC_Data.MCH_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.MCH_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8062,7 +8109,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="MCHC_comment" id="MCHC_comment"
-                                         >#qgetCBC_Data.MCHC_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.MCHC_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8089,7 +8136,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Segmented_comment" id="Segmented_comment"
-                                         >#qgetCBC_Data.Segmented_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.Segmented_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8116,7 +8163,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Band_Neutrophils_comment" id="Neutrophils_comment"
-                                         >#qgetCBC_Data.Band_Neutrophils_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.Band_Neutrophils_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8143,7 +8190,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Lymphocytes_comment" id="Lymphocytes_comment"
-                                         >#qgetCBC_Data.Lymphocytes_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.Lymphocytes_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8170,7 +8217,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Monocytes_comment" id="Monocytes_comment"
-                                         >#qgetCBC_Data.Monocytes_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.Monocytes_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8197,7 +8244,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Eosinophils_comment" id="Eosinophils_comment"
-                                     >#qgetCBC_Data.Eosinophils_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.Eosinophils_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8224,7 +8271,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Basophils_comment" id="Basophils_comment"
-                                         >#qgetCBC_Data.Basophils_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.Basophils_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8251,7 +8298,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="NRBC_comment" id="NRBC_comment"
-                                         >#qgetCBC_Data.NRBC_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.NRBC_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8285,7 +8332,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="RBC_comment" id="RBC_comment"
-                                         >#qgetCBC_Data.RBC_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.RBC_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8312,7 +8359,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Platelet_Count_comment" id="Platelet_Count_comment"
-                                         >#qgetCBC_Data.Platelet_Count_comment#</textarea>
+                                    maxlength="250" >#qgetCBC_Data.Platelet_Count_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8346,7 +8393,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Platelet_comment" id="Platelet_comment"
-                                         >#qgetCBC_Data.Platelet_comment#</textarea>
+                                    maxlength="250"  >#qgetCBC_Data.Platelet_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
@@ -8380,7 +8427,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="WBCMorphology_comment" id="WBCMorphology_comment"
-                                         >#qgetCBC_Data.WBCMorphology_comment#</textarea>
+                                    maxlength="250"  >#qgetCBC_Data.WBCMorphology_comment#</textarea>
                                 </div>
                             </div>
                             <cfif findNoCase("Read only ST", permissions) eq 0>
@@ -8422,7 +8469,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Fibrinogen_comment" id="Fibrinogen_comment"
-                                         >#qgetFibrinogen.Fibrinogen_comment#</textarea>
+                                    maxlength="250"  >#qgetFibrinogen.Fibrinogen_comment#</textarea>
                                 </div>
                             </div>
                             <cfif findNoCase("Read only ST", permissions) eq 0>
@@ -8464,7 +8511,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="protein_refractometer_comment" id="protein_refractometer_comment"
-                                         >#qgetchemistry.protein_refractometer_comment#</textarea>
+                                    maxlength="250"  >#qgetchemistry.protein_refractometer_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8498,7 +8545,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Hemolysis_comment" id="Hemolysis_comment"
-                                         >#qgetchemistry.Hemolysis_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Hemolysis_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8532,7 +8579,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Lipemia_comment" id="Lipemia_comment"
-                                         >#qgetchemistry.Lipemia_comment#</textarea>
+                                    maxlength="250"  >#qgetchemistry.Lipemia_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8559,7 +8606,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Glucose_comment" id="Glucose_comment"
-                                         >#qgetchemistry.Glucose_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Glucose_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8586,7 +8633,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="BUNf_comment" id="BUNf_comment"
-                                         >#qgetchemistry.BUNf_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.BUNf_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8613,7 +8660,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="CREA_comment" id="CREA_comment"
-                                         >#qgetchemistry.CREA_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.CREA_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8640,7 +8687,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="BUN_CREA_comment" id="BUN_CREA_comment"
-                                         >#qgetchemistry.BUN_CREA_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.BUN_CREA_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8667,7 +8714,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Sodium_comment" id="Sodium_comment"
-                                         >#qgetchemistry.Sodium_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Sodium_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8694,7 +8741,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Potassium_comment" id="Potassium_comment"
-                                         >#qgetchemistry.Potassium_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Potassium_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8721,7 +8768,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Chloride_comment" id="Chloride_comment"
-                                         >#qgetchemistry.Chloride_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Chloride_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8748,7 +8795,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Magnesium_comment" id="Magnesium_comment"
-                                         >#qgetchemistry.Magnesium_comment#</textarea>
+                                    maxlength="250"  >#qgetchemistry.Magnesium_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8775,7 +8822,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Calcium_comment" id="Calcium_comment"
-                                         >#qgetchemistry.Calcium_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Calcium_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8802,7 +8849,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Phosphorus_comment" id="Phosphorus_comment"
-                                         >#qgetchemistry.Phosphorus_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Phosphorus_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8829,7 +8876,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Ca_Phos_comment" id="Ca_Phos_comment"
-                                         >#qgetchemistry.Ca_Phos_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Ca_Phos_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8856,7 +8903,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="CO_comment" id="CO_comment"
-                                         >#qgetchemistry.CO_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.CO_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8883,7 +8930,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Amylase_comment" id="Amylase_comment"
-                                         >#qgetchemistry.Amylase_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Amylase_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8910,7 +8957,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Lipase_comment" id="Lipase_comment"
-                                         >#qgetchemistry.Lipase_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Lipase_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8937,7 +8984,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Cholesterol_comment" id="Cholesterol_comment"
-                                         >#qgetchemistry.Cholesterol_comment#</textarea>
+                                    maxlength="250"  >#qgetchemistry.Cholesterol_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8964,7 +9011,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Uric_comment" id="Uric_comment"
-                                         >#qgetchemistry.Uric_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Uric_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -8991,7 +9038,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Protein2_comment" id="Protein2_comment"
-                                         >#qgetchemistry.Protein2_comment#</textarea>
+                                    maxlength="250"  >#qgetchemistry.Protein2_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9018,7 +9065,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Albumin_comment" id="Albumin_comment"
-                                         >#qgetchemistry.Albumin_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Albumin_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9045,7 +9092,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="A_G_comment" id="A_G_comment"
-                                         >#qgetchemistry.A_G_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.A_G_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9072,7 +9119,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="AST_comment" id="AST_comment"
-                                         >#qgetchemistry.AST_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.AST_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9099,7 +9146,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="ALT_comment" id="ALT_comment"
-                                         >#qgetchemistry.ALT_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.ALT_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9126,7 +9173,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="LDH_comment" id="LDH_comment"
-                                         >#qgetchemistry.LDH_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.LDH_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9153,7 +9200,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="CPK_comment" id="CPK_comment"
-                                         >#qgetchemistry.CPK_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.CPK_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9180,7 +9227,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Alkaline_comment" id="Alkaline_comment"
-                                         >#qgetchemistry.Alkaline_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Alkaline_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9207,7 +9254,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="GGT_comment" id="GGT_comment"
-                                         >#qgetchemistry.GGT_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.GGT_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9234,7 +9281,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Bilirubin_comment" id="Bilirubin_comment"
-                                         >#qgetchemistry.Bilirubin_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.Bilirubin_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9261,7 +9308,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="D_Bilirubin_comment" id="D_Bilirubin_comment"
-                                         >#qgetchemistry.D_Bilirubin_comment#</textarea>
+                                    maxlength="250" >#qgetchemistry.D_Bilirubin_comment#</textarea>
                                 </div>
                             </div>
                             <cfif findNoCase("Read only ST", permissions) eq 0>
@@ -9303,7 +9350,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Total_Protein_cap_comment" id="Total_Protein_cap_comment"
-                                     >#qgetCapillary.Total_Protein_cap_comment#</textarea>
+                                    maxlength="250" >#qgetCapillary.Total_Protein_cap_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9330,7 +9377,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="A_G_ration_comment" id="A_G_ration_comment"
-                                     >#qgetCapillary.A_G_ration_comment#</textarea>
+                                    maxlength="250" >#qgetCapillary.A_G_ration_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9357,7 +9404,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Pre_Albumin_comment" id="Pre_Albumin_comment"
-                                     >#qgetCapillary.Pre_Albumin_comment#</textarea>
+                                    maxlength="250" >#qgetCapillary.Pre_Albumin_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9384,7 +9431,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Albumin2_comment" id="Albumin2_comment"
-                                     >#qgetCapillary.Albumin2_comment#</textarea>
+                                    maxlength="250" >#qgetCapillary.Albumin2_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9438,7 +9485,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Alpha_2_comment" id="Alpha_2_comment"
-                                     >#qgetCapillary.vAlpha_2_comment#</textarea>
+                                    maxlength="250" >#qgetCapillary.vAlpha_2_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9465,7 +9512,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Beta_1_comment" id="Beta_1_comment"
-                                     >#qgetCapillary.Beta_1_comment#</textarea>
+                                    maxlength="250" >#qgetCapillary.Beta_1_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9492,7 +9539,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Beta_2_comment" id="Beta_2_comment"
-                                     >#qgetCapillary.Beta_2_comment#</textarea>
+                                    maxlength="250"  >#qgetCapillary.Beta_2_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9519,7 +9566,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Beta_Total_comment" id="Beta_Total_comment"
-                                     >#qgetCapillary.Beta_Total_comment#</textarea>
+                                    maxlength="250" >#qgetCapillary.Beta_Total_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9546,7 +9593,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Gamma_comment" id="Gamma_comment"
-                                     >#qgetCapillary.Gamma_comment#</textarea>
+                                    maxlength="250" >#qgetCapillary.Gamma_comment#</textarea>
                                 </div>
                             </div>
                             <cfif findNoCase("Read only ST", permissions) eq 0>
@@ -9588,7 +9635,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Dolphin_SAA_comment" id="Dolphin_SAA_comment"
-                                     >#qgetDolphin.Dolphin_SAA_comment#</textarea>
+                                    maxlength="250" >#qgetDolphin.Dolphin_SAA_comment#</textarea>
                                 </div>
                             </div>
                             <cfif findNoCase("Read only ST", permissions) eq 0>
@@ -9664,7 +9711,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Na_comment" id="Na_comment"
-                                     >#qgetiSTAT_Chem.Na_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_Chem.Na_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9691,7 +9738,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="K_comment" id="K_comment"
-                                     >#qgetiSTAT_Chem.K_comment#</textarea>
+                                    maxlength="250"  >#qgetiSTAT_Chem.K_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9718,7 +9765,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Cl_comment" id="Cl_comment"
-                                     >#qgetiSTAT_Chem.Cl_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_Chem.Cl_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9745,7 +9792,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="iCa_comment" id="iCa_comment"
-                                     >#qgetiSTAT_Chem.iCa_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_Chem.iCa_comment#</textarea>
                                 </div>
                             </div>
 
@@ -9773,7 +9820,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="TCO2_comment" id="TCO2_comment"
-                                     >#qgetiSTAT_Chem.TCO2_comment#</textarea>
+                                    maxlength="250"  >#qgetiSTAT_Chem.TCO2_comment#</textarea>
                                 </div>
                             </div>
 
@@ -9801,7 +9848,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Glu_comment" id="Glu_comment"
-                                     >#qgetiSTAT_Chem.Glu_comment#</textarea>
+                                    maxlength="250"  >#qgetiSTAT_Chem.Glu_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9828,7 +9875,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="BUN_comment" id="BUN_comment"
-                                     >#qgetiSTAT_Chem.BUN_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_Chem.BUN_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9882,7 +9929,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Hct_comment" id="Hct_comment"
-                                     >#qgetiSTAT_Chem.Hct_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_Chem.Hct_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9909,7 +9956,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Hb_comment" id="Hb_comment"
-                                     >#qgetiSTAT_Chem.Hb_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_Chem.Hb_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -9936,7 +9983,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="AnGap_comment" id="AnGap_comment"
-                                     >#qgetiSTAT_Chem.AnGap_comment#</textarea>
+                                    maxlength="250"  >#qgetiSTAT_Chem.AnGap_comment#</textarea>
                                 </div>
                             </div>
                             <cfif findNoCase("Read only ST", permissions) eq 0>
@@ -10012,7 +10059,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Temperature_comment" id="Temperature_comment"
-                                     >#qgetiSTAT_CG4.Temperature_comment#</textarea>
+                                    maxlength="250"  >#qgetiSTAT_CG4.Temperature_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -10039,7 +10086,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="pH_comment" id="pH_comment"
-                                     >#qgetiSTAT_CG4.pH_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_CG4.pH_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -10066,7 +10113,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="PCO2_comment" id="PCO2_comment"
-                                     >#qgetiSTAT_CG4.PCO2_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_CG4.PCO2_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -10093,7 +10140,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="PO2_comment" id="PO2_comment"
-                                     >#qgetiSTAT_CG4.PO2_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_CG4.PO2_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -10120,7 +10167,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="BEecf_comment" id="BEecf_comment"
-                                     >#qgetiSTAT_CG4.BEecf_comment#</textarea>
+                                    maxlength="250"  >#qgetiSTAT_CG4.BEecf_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -10147,7 +10194,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="HCO3_comment" id="HCO3_comment"
-                                     >#qgetiSTAT_CG4.HCO3_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_CG4.HCO3_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -10174,7 +10221,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="TCO2cg_comment" id="TCO2cg_comment"
-                                     >#qgetiSTAT_CG4.TCO2cg_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_CG4.TCO2cg_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -10201,7 +10248,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="sO2_comment" id="sO2_comment"
-                                     >#qgetiSTAT_CG4.sO2_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_CG4.sO2_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -10228,7 +10275,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Lac_comment" id="Lac_comment"
-                                     >#qgetiSTAT_CG4.Lac_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_CG4.Lac_comment#</textarea>
                                 </div>
                             </div>
                             <cfif findNoCase("Read only ST", permissions) eq 0>
@@ -11429,7 +11476,7 @@
                             </div>
                             <div class="cust-inp">
                                 <!-- <input type="text" name="Tentative" placeholder="Expandable field to multi-line" value="#qgetCetaceanNecropsy.Tentative#"class="text-field"> -->
-                                <textarea id="top-area" name="Tentative" rows="1" class="text-field" cols="50">#qgetCetaceanNecropsy.Tentative#</textarea>
+                                <textarea id="top-area" name="Tentative" rows="1" class="text-field" cols="50"  maxlength="250" >#qgetCetaceanNecropsy.Tentative#</textarea>
                             </div>
                             </div>
                         </div>
@@ -11439,7 +11486,7 @@
                                 </div>
                                 <div class="cust-inp">
                                     <!-- <input type="text" name="deathcause" placeholder="Expandable field to multi-line" value="#qgetCetaceanNecropsy.deathcause#"class="text-field"> -->
-                                    <textarea id="top-area" name="deathcause" rows="1" class="text-field" cols="50">#qgetCetaceanNecropsy.deathcause#</textarea>
+                                    <textarea id="top-area" name="deathcause" rows="1" class="text-field" cols="50"  maxlength="512" >#qgetCetaceanNecropsy.deathcause#</textarea>
                                 </div>
                             </div>
                         </div>
@@ -11527,7 +11574,7 @@
                     <div class="row pt-15">
                         <div class="col-lg-8 fldarea">
                             <label class="fl-lbl">Histopathology Remarks / Diagnosis</label>
-                            <textarea id="top-area" name="historemark" rows="4" cols="50">#qgetCetaceanNecropsy.historemark#</textarea>
+                            <textarea id="top-area" name="historemark" rows="4" cols="50"  maxlength="512" >#qgetCetaceanNecropsy.historemark#</textarea>
                         </div>
             
                         <!---             working strat --->
@@ -11813,7 +11860,7 @@
         </div>
         <div class="col-lg-12 fldarea">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="lessioncomments" rows="12" cols="120">#qgetCetaceanNecropsy.lessioncomments#</textarea>
+            <textarea id="top-area" name="lessioncomments" rows="12" cols="120" maxlength="512" >#qgetCetaceanNecropsy.lessioncomments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input  type="checkbox"name="lessionphototaken" id="lessionphototaken" onclick="lessionphotos()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.lessionphototaken') and  qgetCetaceanNecropsy.lessionphototaken  eq 'on'>checked</cfif>>
@@ -11956,7 +12003,7 @@
         </div>
         <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="internal_comments" rows="12" cols="120">#qgetCetaceanNecropsy.internal_comments#</textarea>
+            <textarea id="top-area" name="internal_comments" rows="12" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.internal_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="internal_phototaken" id="internal_phototaken" onclick="internalPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.internal_phototaken') and  qgetCetaceanNecropsy.internal_phototaken  eq 'on'>checked</cfif>>
@@ -12106,7 +12153,7 @@
         </div>
         <div class="col-lg-5 mt-5">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="muscular_comments" rows="10" cols="120">#qgetCetaceanNecropsy.muscular_comments#</textarea>
+            <textarea id="top-area" name="muscular_comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.muscular_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox"name="muscular_phototaken" id="muscular_phototaken" onclick="muscularPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.muscular_phototaken') and  qgetCetaceanNecropsy.muscular_phototaken  eq 'on'>checked</cfif>>
@@ -12216,7 +12263,7 @@
         </div>
         <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="thoratic_comments" rows="10" cols="120">#qgetCetaceanNecropsy.thoratic_comments#</textarea>
+            <textarea id="top-area" name="thoratic_comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.thoratic_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="thoratic_phototaken" id="thoratic_phototaken" onclick="thoraticPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.thoratic_phototaken') and  qgetCetaceanNecropsy.thoratic_phototaken  eq 'on'>checked</cfif>
@@ -12327,7 +12374,7 @@
         </div>
     <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="abdominal_comments" rows="10" cols="120">#qgetCetaceanNecropsy.abdominal_comments#</textarea>
+            <textarea id="top-area" name="abdominal_comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.abdominal_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="abdominal_phototaken" id="abdominal_phototaken" onclick="abdominalPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.abdominal_phototaken') and  qgetCetaceanNecropsy.abdominal_phototaken  eq 'on'>checked</cfif>
@@ -12416,7 +12463,7 @@
     </div>
     <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="hepatobiliary_comments" rows="10" cols="120">#qgetCetaceanNecropsy.hepatobiliary_comments#</textarea>
+            <textarea id="top-area" name="hepatobiliary_comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.hepatobiliary_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="hepatobiliary_phototaken" id="hepatobiliary_phototaken" onclick="hepatobiliaryPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.hepatobiliary_phototaken') and  qgetCetaceanNecropsy.hepatobiliary_phototaken  eq 'on'>checked</cfif>
@@ -12535,7 +12582,7 @@
     </div>
     <div class="col-lg-7">
         <label class="fl-lbl">Comments</label>
-        <textarea id="top-area" name="cardio_comments" rows="10" cols="120">#qgetCetaceanNecropsy.cardio_comments#</textarea>
+        <textarea id="top-area" name="cardio_comments" rows="10" cols="120" maxlength="512" >#qgetCetaceanNecropsy.cardio_comments#</textarea>
         <div class="area-check align-right">
             <label class="check-cust-fld">Photographs Taken</label>
             <input type="checkbox" name="cardio_phototaken" id="cardio_phototaken" onclick="cardioPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.cardio_phototaken') and  qgetCetaceanNecropsy.cardio_phototaken  eq 'on'>checked</cfif>
@@ -12675,7 +12722,7 @@
         </div>
     <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="pulmonary_comments" rows="10" cols="120">#qgetCetaceanNecropsy.pulmonary_comments#</textarea>
+            <textarea id="top-area" name="pulmonary_comments" rows="10" cols="120" maxlength="512" >#qgetCetaceanNecropsy.pulmonary_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="pulmonary_phototaken" id="pulmonary_phototaken" onclick="pulmonaryPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.pulmonary_phototaken') and  qgetCetaceanNecropsy.pulmonary_phototaken  eq 'on'>checked</cfif>
@@ -12720,7 +12767,7 @@
                 <div class="cust-fld"><label class="fl-lbl"></label>
                 </div>
                 <div class="cust-inp">
-                    <textarea id="top-area" name="pulmonary_textarea" rows="5" cols="50" spellcheck="false">#qgetCetaceanNecropsy.pulmonary_textarea#</textarea>
+                    <textarea id="top-area" name="pulmonary_textarea" maxlength="512"  rows="5" cols="50" spellcheck="false">#qgetCetaceanNecropsy.pulmonary_textarea#</textarea>
                 </div>
             </div>
         </div>
@@ -12913,7 +12960,7 @@
         </div>
     <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="lympho_comments" rows="10" cols="120">#qgetCetaceanNecropsy.lympho_comments#</textarea>
+            <textarea id="top-area" name="lympho_comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.lympho_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox"name="lympho_phototaken" id="lympho_phototaken" onclick="lymphoPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.lympho_phototaken') and  qgetCetaceanNecropsy.lympho_phototaken  eq 'on'>checked</cfif>>
@@ -13097,7 +13144,7 @@
         <div class="col-lg-5"></div>
     <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="endocrine_comments" rows="10" cols="120">#qgetCetaceanNecropsy.endocrine_comments#</textarea>
+            <textarea id="top-area" name="endocrine_comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.endocrine_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox"name="endocrine_phototaken" id="endocrine_phototaken" onclick="endocrinePhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.endocrine_phototaken') and  qgetCetaceanNecropsy.endocrine_phototaken  eq 'on'>checked</cfif>>
@@ -13467,7 +13514,7 @@
         <div class="col-lg-5"></div>
     <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="UROGENITAL_Comments" rows="10" cols="120">#qgetCetaceanNecropsy.UROGENITAL_Comments#</textarea>
+            <textarea id="top-area" name="UROGENITAL_Comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.UROGENITAL_Comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="UROGENITAL_phototaken" id="UROGENITAL_phototaken" onclick="UROGENITALPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.UROGENITAL_phototaken') and  qgetCetaceanNecropsy.UROGENITAL_phototaken  eq 'on'>checked</cfif>>
@@ -14284,7 +14331,7 @@
     <div class="row">
     <div class="col-lg-12">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="Parasitecomments" rows="10" cols="120">#qgetCetaceanNecropsy.Parasitecomments#</textarea>
+            <textarea id="top-area" name="Parasitecomments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.Parasitecomments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="Parasite_phototaken" id="Parasite_phototaken" onclick="ParasitePhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.Parasite_phototaken') and  qgetCetaceanNecropsy.Parasite_phototaken  eq 'on'>checked</cfif>
@@ -14424,7 +14471,7 @@
         <div class="col-lg-5"></div>
         <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="nervoussystemcomments" rows="10" cols="120" spellcheck="false">#qgetCetaceanNecropsy.nervoussystemcomments#</textarea>
+            <textarea id="top-area" maxlength="512" name="nervoussystemcomments" rows="10" cols="120" spellcheck="false">#qgetCetaceanNecropsy.nervoussystemcomments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox"name="nervoussystemphototaken" onclick="centralNervous()" id="centralNervousCheck" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.nervoussystemphototaken') and  qgetCetaceanNecropsy.nervoussystemphototaken  eq 'on'>checked</cfif>
@@ -15070,7 +15117,7 @@
                             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 s-content">
                                 <div class="form-group flex-center">
                                     <label class="scomment-label">Sample Comments</label>
-                                    <textarea class="form-control textareaCustomReset locations-textarea" name="reportSampleComments" id="reportSampleComments"
+                                    <textarea class="form-control maxlength="512" textareaCustomReset locations-textarea" name="reportSampleComments" id="reportSampleComments"
                                         maxlength="75">#qgetSampleTypeDataSingle.SampleComments#</textarea>
                                 </div>
                             </div> 

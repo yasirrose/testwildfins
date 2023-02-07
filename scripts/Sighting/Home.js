@@ -1528,6 +1528,19 @@ $(document).ready(function () {
         $("#EngineOn").val('');
         $("#EngineOff").val('');
     }
+
+    // const fv = $('#ResetMe').data('formValidation');
+    //  fv = $('#ResetMe').formValidation(disableSubmitButtons, parameters);
+    // console.log(fv);
+    // $("#ResetMe").formValidation({
+    //     disableSubmitButtons: function(disabled) {
+    //     //   $(form).ajaxSubmit();
+    //     alert('nouman');
+    //     }
+    //   });
+    
+
+
     
 });
 function deleteRecordzoneBefore(zoneID) {
@@ -1677,20 +1690,25 @@ function EngOnOff()
     }
 }
 function validateMyForm(e){
-
+    
     var stsur = $("#datetimepicker_srvystrt").find("input").val();
     st = stsur.split(':');
     var ensur = $("#datetimepicker_srvyend").find("input").val();
     en = ensur.split(':');
+
     if(st[0] > en[0]){
         console.log('if');
         alert('Survey Start time must be less than Survey End Time');
         $('html, body').animate({scrollTop : 0},800);
+        $(".after_add_survey").removeAttr("disabled");
+        $(".after_add_survey").removeClass("disabled");
         e.preventDefault(e);
     }else if(st[0] == en[0] && st[1] >= en[1]){
         console.log('esleif');
         alert('Survey Start time must be less than Survey End Time');
         $('html, body').animate({scrollTop : 0},800);
+        $(".after_add_survey").removeAttr("disabled");
+        $(".after_add_survey").removeClass("disabled");
         e.preventDefault(e);
     }
     else{
@@ -1698,3 +1716,75 @@ function validateMyForm(e){
         $('#ResetMe').submit();
     }
 }
+
+// const fv = $('#demoForm').data('formValidation');
+// $('#ResetMe').formValidation({
+//     framework: 'bootstrap',
+//     err: {
+//         container: 'tooltip'
+//     },
+    
+//     // icon: {
+//     //     valid: 'glyphicon glyphicon-ok',
+//     //     invalid: 'glyphicon glyphicon-remove',
+//     //     validating: 'glyphicon glyphicon-refresh'
+//     // },
+//     // fields: {
+//     //     Email: {
+//     //         validators: {
+//     //             notEmpty: {
+//     //                 message: 'Please Enter email'
+//     //             },
+//     //             emailAddress: {
+//     //                 message: 'This email address is not valid Emial Address'
+//     //             }
+//     //         }
+//     //     },
+//     //     Password: {
+//     //         validators: {
+//     //             notEmpty: {
+//     //                 message: 'Please Enter email'
+//     //             }
+//     //         }
+//     //     }
+
+//     // }
+
+// });
+
+// document.addEventListener('DOMContentLoaded', function(e) {
+//     FormValidation.formValidation(
+//         document.getElementById('ResetMe'),
+//         {
+//             fields: {
+               
+//             },
+//             plugins: {
+//                 submitButton: new FormValidation.plugins.SubmitButton({
+//                     disabled
+//                     // Optional setting:
+//                     // Set it to true if you are using a traditional ASP.Net form
+//                     // and there is a custom handler for the submit button
+//                     // aspNetButton: false,
+//                 }),
+//                 // submitButton: new FormValidation.plugins.SubmitButton(),
+              
+//             },
+//         }
+//     );
+// });
+
+// FormValidation.formValidation('formElement', {
+//     fields: {
+//         // ...
+//     },
+//     plugins: {
+//         // ...
+//     },
+// })
+// .on('core.validator.enabled', (e) => {
+//     // Triggered after a validator is enabled
+// })
+// .on('core.validator.disabled', (e) => {
+//     // Triggered after a validator is disabled
+// });
