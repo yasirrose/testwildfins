@@ -600,7 +600,7 @@
             <cfset form.bloodValue_ID = "#BV_ID#">
             <!--- inserting CBC form --->
             <cfset CBC_ID = Application.stranding.CBCInsert(argumentcollection="#Form#")> 
-            <!--- Inserting Fibrinogen Form --->
+            <!--- Inserting Fibrinogen Form nouman--->
             <cfset Fib_ID = Application.stranding.Fibrinogeninsert(argumentcollection="#Form#")>
             <cfset Chem_ID = Application.stranding.Chemistryinsert(argumentcollection="#Form#")>
             <cfset Chap_ID = Application.stranding.Capillaryinsert(argumentcollection="#Form#")>
@@ -6137,7 +6137,6 @@
                         <input type="hidden" name="codeID" value="#qLCEDataa.code#" id="codeID">
                         <h5 class="mb-1"><strong>Documents</strong></h5>
                         <input type="hidden" name="pdfFiles" value="#qLCEData.pdfFiles#" id="pdfFiles">
-                        <input type="hidden" name="pdfFilesname" value="#qLCEData.pdfFilesname#" id="pdfFilesname">
                         <div class="form-holder">  
                             <div class="form-group" id="find">
                                 <div class="row" id="startExam">
@@ -6150,32 +6149,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!---<cfset imgss = ValueList(qLCEData.pdfFiles,",")>
-                                 <cfset imgsname = ValueList(qLCEData.pdfFilesname,",")> --->
-                                <!--- <cfset dataa = "#qLCEData.pdfFiles#"> --->
-                                <cfset arrss = listToArray (qLCEData.pdfFiles, ",",false,true)>
-                                <cfset imgsname = listToArray (qLCEData.pdfFilesname, ",",false,true)>
-                                <!--- <cfset arrss = ToString(qLCEData.pdfFiles)> --->
-                                <!--- <cfdump var="#arrss#" abort="true"> working12--->
-                                <div id="previousimagesExam">
-                                    <cfif arrayLen(arrss)>
-                                    <cfloop array="#arrss#" item="item" index="j">
-                                        <!--- <span class="pip">
-                                            <a data-toggle="modal" data-target="##myModalExam" href="##" title="#Application.CloudRoot##arrss[j]#" target="blank">
-                                                <img  class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#arrss[j]#" onclick="selected(this)"/>
-                                            </a>
-                                            <cfif arrayLen(imgsname)>
-                                            <br/>
-                                            <span class="remove" value="#imgsname[j]#" id="pdfFileName">#imgsname[j]#</span>
-                                            </cfif>
-                                            <br/>
-                                            <cfif findNoCase("Read only ST", permissions) eq 0>
-                                                <button type="button" class="remove" value="#imgsname[j]#" name="#imgsname[j]#"  onclick="remov(this)" id="#arrss[j]#">Remove image</button>
-                                            </cfif> --->
-                                        </span>
-                                    </cfloop>
-                                </cfif>
-                                    <!--- <CFIF listLen(imgss)> 
+                                <cfset imgss = ValueList(qLCEData.pdfFiles,",")>
+                                <div id="previousimagesExam" class="PDFInline">
+                                    <CFIF listLen(imgss)> 
                                         <cfloop list="#imgss#" item="item" index="index">
                         
                                             <span class="pip">
@@ -6184,13 +6160,13 @@
                                                 </a>
                                                 <br/>
                                                 <cfif findNoCase("Read only ST", permissions) eq 0>
-                                                    <span class="remove" onclick="remov(this)" id="#item#">Remove image</span>
+                                                    <span class="remove" onclick="remov(this)" id="#item#">Remove File</span>
                                                 </cfif>
                                                 <br/>
                                                 <span class="remove" id="#item#">#item#</span>
                                             </span>
                                         </cfloop>
-                                    </cfif>	 --->
+                                    </cfif>	
                                 </div>
                             </div>
                         </div>
@@ -7169,7 +7145,6 @@
                     
                         <h5 class="mb-1"><strong>Documents</strong></h5>
                          <input type="hidden" name="HIFormpdfFiles" value="#qgetHIData.pdfFiles#" id="HIFormpdfFiles">
-                         <input type="hidden" name="HIFormpdfFilesName" value="#qgetHIData.pdfFilesname#" id="HIFormpdfFilesName">
                          <div class="form-holder">  
                             <div class="form-group" id="find">
                                 <div class="row" id="start">
@@ -7183,40 +7158,22 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <cfset imgss = ValueList(qgetHIData.pdfFiles,",")> --->
-                                <cfset arrss = listToArray (qgetHIData.pdfFiles, ",",false,true)>
-	                            <cfset imgsname = listToArray (qgetHIData.pdfFilesname, ",",false,true)>
-                                <div id="HIFormPreviousimages">
-
-                                    <cfif arrayLen(arrss)>
-                                        <cfloop array="#arrss#" item="item" index="j">
-                                            <span class="pip">
-                                                <a data-toggle="modal" data-target="##myModalExam" href="##" title="#Application.CloudRoot##arrss[j]#" target="blank">
-                                                    <img  class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#arrss[j]#" onclick="selectedHIForm(this)"/>
-                                                </a>
-                                                
-                                                <br/>
-                                                <span class="remove" value="#imgsname[j]#" >#imgsname[j]#</span>
-                                                
-                                                <br/>
-                                                <cfif findNoCase("Read only ST", permissions) eq 0>
-                                                    <button type="button" class="remove" value="#imgsname[j]#" name="#imgsname[j]#"  onclick="removeHiFormPDF(this)" id="#arrss[j]#">Remove image</button>
-                                                </cfif>
-                                            </span>
-                                        </cfloop>
-                                    </cfif>
-                                    <!---<CFIF listLen(imgss)> 
-                                         <cfloop list="#imgss#" item="item" index="index">
+                                <cfset imgss = ValueList(qgetHIData.pdfFiles,",")>
+                                <div id="HIFormPreviousimages" class="PDFInline">
+                                    <CFIF listLen(imgss)> 
+                                        <cfloop list="#imgss#" item="item" index="index">
                         
                                             <span class="pip">
                                                 <a data-toggle="modal" data-target="##myHiFormModal" href="##" title="#Application.CloudRoot##item#" target="blank">
                                                     <img  class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#item#" onclick="selectedHIForm(this)"/>
                                                 </a>
                                                 <br/>
-                                                <span class="remove" onclick="removeHiFormPDF(this)" id="#item#">Remove image</span>
+                                                <span class="remove" onclick="removeHiFormPDF(this)" id="#item#">Remove File</span>
+                                                <br/>
+                                                <span class="remove" id="#item#">#item#</span>
                                             </span>
                                         </cfloop>
-                                    </cfif>	 --->
+                                    </cfif>	
                                 </div>
                             </div>
                         </div>  
@@ -7475,7 +7432,7 @@
                                  </div> --->
                              </div>
                              <cfset imgss = ValueList(qgetLevelAData.pdfFiles,",")>
-                             <div id="LevelAFormpreviousimages">
+                             <div id="LevelAFormpreviousimages" class="PDFInline">
                                  <CFIF listLen(imgss)> 
                                      <cfloop list="#imgss#" item="item" index="index">
                      
@@ -7483,8 +7440,11 @@
                                              <a data-toggle="modal" data-target="##myHiFormModal" href="##" title="#Application.CloudRoot##item#" target="blank">
                                                  <img  class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#item#" onclick="selectedHIForm(this)"/>
                                              </a>
+                                             
                                              <br/>
-                                             <span class="remove" onclick="LevelAFormremove(this)" id="#item#">Remove image</span>
+                                             <span class="remove" onclick="LevelAFormremove(this)" id="#item#">Remove File</span>
+                                            </br>
+                                             <span class="remove" id="#item#">#item#</span>
                                          </span>
                                      </cfloop>
                                  </cfif>	
@@ -8548,6 +8508,9 @@
                                     maxlength="250" >#qgetchemistry.Hemolysis_comment#</textarea>
                                 </div>
                             </div>
+                            <!--- new --->
+
+
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group cust-blod">
@@ -10358,7 +10321,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-2 col-md-4 col-sm-6 col-xs-6" nouman>
+                                <!--- <div class="col-lg-2 col-md-4 col-sm-6 col-xs-6">
                                     <div class="form-group">
                                         <div class="input-group flex-center">
                                             <label class="">NRT Report Field</label>
@@ -10368,7 +10331,7 @@
                                 </div> --->
                             </div>
                             <cfset imgss = ValueList(qgetToxicologyData.pdfFiles,",")>
-                            <div id="Toxipreviousimages">
+                            <div id="Toxipreviousimages" class="PDFInline">
                                 <CFIF listLen(imgss)> 
                                     <cfloop list="#imgss#" item="item" index="index">
                     
@@ -10376,8 +10339,11 @@
                                             <a data-toggle="modal" data-target="##myHiFormModal" href="##" title="#Application.CloudRoot##item#" target="blank">
                                                 <img  class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#item#" onclick="selectedHIForm(this)"/>
                                             </a>
+                                            
                                             <br/>
-                                            <span class="remove" onclick="toxifileremove(this)" id="#item#">Remove image</span>
+                                            <span class="remove" onclick="toxifileremove(this)" id="#item#">Remove File</span>
+                                            <br/>
+                                            <span class="remove" id="#item#">#item#</span>
                                         </span>
                                     </cfloop>
                                 </cfif>	
@@ -10878,6 +10844,9 @@
                                                                 <a data-toggle="modal" data-target="##myModalAA" href="##" title="#Application.CloudRoot##qAncillaryReportGet.pdfFiles#" target="blank">
                                                                     <img  class="imageThumb" id="imagetitle_#ID#" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#qAncillaryReportGet.pdfFiles#" onclick="showPDFmodal(this)"/>
                                                                 </a>
+                                                            </br>
+                                                            <span class="remove" id="">#qAncillaryReportGet.pdfFiles#</span>
+                                                                
                                                             </span>
                                                             </cfif>
                                                         </td>
@@ -11513,10 +11482,13 @@
                                             <a data-toggle="modal" data-target="##myModala" href="##" title="#Application.CloudRoot##item#" target="blank">
                                                 <img  class="imageThumb imageTh" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#item#" onclick="pdfselected(this)"/>                                  
                                             </a>
+                                            
                                             <br/>
                                             <cfif findNoCase("Read only ST", permissions) eq 0>
-                                                <span class="remove rem" onclick="histoPdfRemove(this)" id="#item#">Remove image</span>
+                                                <span class="remove rem" onclick="histoPdfRemove(this)" id="#item#">Remove File</span>
                                             </cfif>
+                                            <br/>
+                                            <span class="remove" style="width: 80px;" id="#item#">#item#</span>
                                         </span>
                                     </cfloop>
                                 </cfif>
@@ -15141,7 +15113,9 @@
         .quantity-toxi-field {
             width: 100%;
         }
-
+        .PDFInline{
+            display: flex;
+        }
         @media (max-width: 1199px) {
             .dry-weight-row {
                 display: flex;
@@ -16873,6 +16847,8 @@ border: 1px solid black;
 color: white;
 text-align: center;
 cursor: pointer;
+word-break: break-word;
+width: 132px;
 }
 .remove:hover {
 background: white;

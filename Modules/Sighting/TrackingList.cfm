@@ -7,7 +7,6 @@
 <cfset getCetacean=Application.Cetaceans.getsingl_Cetacean(argumentCollection="#Form#")>
 <cfset qgetCategory= Application.StaticDataNew.getCategory()>
 <cfif isdefined('FORM.addTracking')>
-
     <cfset qTrackinInsert = Application.StaticDataNew.TrackinInsert(argumentCollection="#Form#")>   
 </cfif>
 
@@ -141,7 +140,7 @@
                                                         <label class="control-label">Active</label>
                                                     </div>
                                                     <div class="radio-item">
-                                                        <input type="radio" id="inactive" name="status" value="0"/>
+                                                        <input type="radio" id="inactive" checked="checked" name="status" value="0"/>
                                                         <label  class="control-label">Inactive</label>
                                                     </div>
                                                 </div>

@@ -101,10 +101,9 @@
 <cfparam name="message" default="">
 <cfif isdefined('FORM.insertDscore')>
  <cfset qinsertFinFluke = Application.Sighting.insertFinFluke(argumentCollection="#Form#")>
-    
  <!-------- image upload rename/extention changing .direcrtory create.image delete  --->
    
-        <cftry>
+    <cftry>
    <cfif len(trim(form.image))>
       <cffile action="upload"
      fileField="image"
@@ -162,12 +161,15 @@
       <!-- begin row -->
       <div class="main-form-section">
       <div class="row">
-        <cfif isdefined('qinsertFinFluke') and qinsertFinFluke.recordcount eq 1  >
+      
+        
+        <cfif isdefined('qinsertFinFluke') and qinsertFinFluke eq 1  >
           <div class="alert alert-success fade in m-b-10" id="sucess-div">
-              <strong>Successfully Inserted! <cfif len(trim(message)) GT 0> </cfif> </strong>
+              <strong>Successfully Inserted! </strong>
               <span data-dismiss="alert" class="close"><i class="icon-remove"></i></span>
           </div>
         </cfif> 
+        
          <div class="alert alert-success fade in m-b-10 delete-message">
               <strong>Successfully Deleted! </strong>
               <span data-dismiss="alert" class="close"><i class="icon-remove"></i></span>
@@ -182,12 +184,13 @@
            <form role="form"  method="post" action="" enctype="multipart/form-data">
             <div class="col-md-4 finchange-col">
                 <label for="sel1">Species</label>
-                <select class="form-control search-box" required id="species" name="Species" >
+                <select class="form-control search-box" required id="species" name="Species" required="">
                   <option value="">Select Species</option>
                   <cfloop query="cetaceanSpeciesList">
                     <option value="#cetaceanSpeciesList.id#">  #cetaceanSpeciesList.CETACEANSPECIESNAME#</option>
                   </cfloop>
                 </select>
+                
                 <label for="sel1">Cetacean</label>
                 <select class="form-control get_cetacean_id search-box" required id="cetacean_list" name="CetaceanCode" >
                   <option value="">Select Cetaceans</option>
@@ -204,7 +207,7 @@
                   
                   <div class="form-group">
                     <label for="email">Cetacean ID:</label>
-                    <input type="text" class="form-control cetacean_id" name="CetaceanId" id="CetaceanId"  readonly="readonly" value="">
+                    <input type="text" class="form-control cetacean_id " name="CetaceanId" id="CetaceanId"  readonly="readonly" value="">
                   </div>
                   <br/>
                   <!---<div class="form-group">--->

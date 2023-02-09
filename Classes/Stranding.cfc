@@ -129,7 +129,6 @@
             ,affiliatedID
             ,actualClass
             ,euthanizedCB
-            ,pdfFilesname
             ) 
             VALUES
             (
@@ -198,7 +197,6 @@
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.affiliatedID#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
-            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.pdfFilesname#'>
             )
         </cfquery>
         <cfcatch type="any">
@@ -334,7 +332,6 @@
            ,affiliatedID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.affiliatedID#'>
            ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
            ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
-           ,pdfFilesname = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.pdfFilesname#'>
 
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.ID#'>
@@ -715,13 +712,12 @@
         <cfquery name="removePdfFiles" datasource="#Application.dsn#" result = "results">
                 update ST_LiveCetaceanExam set
                 pdfFiles=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                pdfFilesname=<cfqueryparam cfsqltype="cf_sql_varchar" value='#filename#' >
         
                     where
                     ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
                     
                 </cfquery>
-                        <!--- <cfdump var=#results# abort="true"> working12--->
+                        <!--- <cfdump var=#results# abort="true"> --->
                
         <cfif len(trim(#pdf#))>
             <cfif FileExists("#Application.CloudDirectory&pdf#")>
@@ -734,7 +730,6 @@
         <cfquery name="removePdfFiles" datasource="#Application.dsn#" result = "results">
                 update ST_HIForm set
                 pdfFiles=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                pdfFilesname=<cfqueryparam cfsqltype="cf_sql_varchar" value='#fileName#' >
         
                     where
                     ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>

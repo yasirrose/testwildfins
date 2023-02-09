@@ -2752,7 +2752,8 @@
 
             <cfset setOldImage = "">
             <cfset setSecOldImage = "">
-            
+            <cfif isDefined('CetaceanCode') and CetaceanCode neq ''>
+
             <cfquery name="qcode" datasource="#variables.dsn#">
                 SELECT Code FROM Cetaceans WHERE ID = #FORM.CetaceanId#
             </cfquery>
@@ -2815,9 +2816,12 @@
                      
                     where ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#Form.CetaceanId#'>
             </cfquery>
+            <cfreturn '1'>
+        <cfelse>
+            <cfreturn '0'>
+        </cfif>
 
 
-            <cfreturn getresult>
         </cffunction>
 
         <cffunction name="getFin_Fluke" returntype="any" output="true" access="remote" >
