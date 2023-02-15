@@ -5758,7 +5758,7 @@
                                 <div class="cetaceanExam-date-form form-group m-0 blue-bg-l">
                                     <div class="cetacean-exam-form">
                                         <div class="cetacean-exam-wrap row">
-                                            <!--- working start --->
+
                                             <div class="col-sm-6 "> 
                                                 <div class="form-group">
                                                     <div class="input-group">
@@ -5983,7 +5983,6 @@
                                             </div>
                                         </div> 
                                         
-                                  <!--- working end --->
                                         </div>
                                     </div>
                                 </div>
@@ -7304,7 +7303,7 @@
                                             <input type="hidden" id="idForUpdateHiExam" value="">
                                             <!--- <button type="button" id="addNewHiExam" value="Add New" onclick="AddNewHiExam(this)" class="float-right">Add New</button> --->
                                             <input type="button" class="btn btn-success sbtn" id="addNewHiExam" value="Add New" onClick="AddNewHiExam()"/>
-                                            <!--- working start --->
+
                                             <div class="col-lg-8 col-md-9 col-sm-12 col-xs-12">
                                             <table class="table table-bordered table-hover" id="HiForm" <cfif isDefined('qgetHiExamData') AND #qgetHiExamData.recordcount# gt 0><cfelse> hidden</cfif>>
                                                 <thead>
@@ -8508,9 +8507,827 @@
                                     maxlength="250" >#qgetchemistry.Hemolysis_comment#</textarea>
                                 </div>
                             </div>
-                            <!--- new --->
 
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Alkaline Phosphatase</label>
+                                        <input class="Alkaline_Phosphatase" type="text" maxlength="8" value="#qgetchemistry.Alkaline_Phosphatase#" name="Alkaline_Phosphatase" onblur="checkValue(this)" id="Alkaline_Phosphatase"><span> U/L <span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Alkaline_report" id="Alkaline_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Alkaline_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Alkaline_comment" id="Alkaline_comment"
+                                    maxlength="250" >#qgetchemistry.Alkaline_comment#</textarea>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">ALT</label>
+                                        <input class="ALT" type="text" maxlength="8" value="#qgetchemistry.ALT#" name="ALT" onblur="checkValue(this)" id="ALT"><span> U/L </span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="ALT_report" id="ALT_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.ALT_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="ALT_comment" id="ALT_comment"
+                                    maxlength="250" >#qgetchemistry.ALT_comment#</textarea>
+                                </div>
+                            </div>
 
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Amylase</label>
+                                        <input class="Amylase" type="text" maxlength="8" value="#qgetchemistry.Amylase#" onblur="checkValue(this)" name="Amylase" id="Amylase"><span>U/L</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Amylase_report" id="Amylase_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Amylase_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Amylase_comment" id="Amylase_comment"
+                                    maxlength="250" >#qgetchemistry.Amylase_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">AST</label>
+                                        <input class="AST" type="text" maxlength="8" onblur="checkValue(this)" value="#qgetchemistry.AST#" name="AST"  id="AST"><span> U/L </span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="AST_report" id="AST_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.AST_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="AST_comment" id="AST_comment"
+                                    maxlength="250" >#qgetchemistry.AST_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Calcium</label>
+                                        <input class="Calcium" type="text" maxlength="8" value="#qgetchemistry.Calcium#" name="Calcium" onblur="checkValue(this)" id="Calcium"><span>mg/dL</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Calcium_report" id="Calcium_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Calcium_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Calcium_comment" id="Calcium_comment"
+                                    maxlength="250" >#qgetchemistry.Calcium_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Phosphorus</label>
+                                        <input class="Phosphorus" type="text" maxlength="8" value="#qgetchemistry.Phosphorus#" name="Phosphorus" onblur="checkValue(this)" id="Phosphorus"><span>mg/dL</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Phosphurs_report" id="Phosphurs_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Phosphurs_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Phosphorus_comment" id="Phosphorus_comment"
+                                    maxlength="250" >#qgetchemistry.Phosphorus_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Ca/Phos Ratio</label>
+                                        <input class="Ca_Phos" type="text" maxlength="8" value="#qgetchemistry.Ca_Phos#" name="Ca_Phos" onblur="checkValue(this)" id="Ca_Phos"> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Ca_Phos_report" id="Ca_Phos_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Ca_Phos_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Ca_Phos_comment" id="Ca_Phos_comment"
+                                    maxlength="250" >#qgetchemistry.Ca_Phos_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Cholesterol</label>
+                                        <input class="Cholesterol" type="text" maxlength="8" value="#qgetchemistry.Cholesterol#" name="Cholesterol" onblur="checkValue(this)" id="Cholesterol"><span>mg/dL </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Cholesterol_report" id="Cholesterol_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Cholesterol_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Cholesterol_comment" id="Cholesterol_comment"
+                                    maxlength="250"  >#qgetchemistry.Cholesterol_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">CPK</label>
+                                        <input class="CPK" type="text" maxlength="8" value="#qgetchemistry.CPK#" name="CPK" onblur="checkValue(this)" id="CPK"><span> U/L <span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="CPK_report" id="CPK_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.CPK_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="CPK_comment" id="CPK_comment"
+                                    maxlength="250" >#qgetchemistry.CPK_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">CREA</label>
+                                        <input class="CREA" type="text" maxlength="8" value="#qgetchemistry.CREA#" name="CREA" onblur="checkValue(this)" id="CREA"><span> mg/dL</span>  
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="CREA_report" id="CREA_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.CREA_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="CREA_comment" id="CREA_comment"
+                                    maxlength="250" >#qgetchemistry.CREA_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">GGT</label>
+                                        <input class="GGT" type="text" maxlength="8" value="#qgetchemistry.GGT#" name="GGT" onblur="checkValue(this)" id="GGT"><span> U/L </span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="GGT_report" id="GGT_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.GGT_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="GGT_comment" id="GGT_comment"
+                                    maxlength="250" >#qgetchemistry.GGT_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Potassium</label>
+                                        <input class="Potassium" type="text" maxlength="8" value="#qgetchemistry.Potassium#" name="Potassium" onblur="checkValue(this)" id="Potassium"><span>mmol/L</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Potassium_report" id="Potassium_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Potassium_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Potassium_comment" id="Potassium_comment"
+                                    maxlength="250" >#qgetchemistry.Potassium_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">LDH</label>
+                                        <input class="LDH" type="text" maxlength="8" value="#qgetchemistry.LDH#" name="LDH" onblur="checkValue(this)" id="LDH"><span> U/L</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="LDH_report" id="LDH_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.LDH_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="LDH_comment" id="LDH_comment"
+                                    maxlength="250" >#qgetchemistry.LDH_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Lipase </label>
+                                        <input class="Lipase " type="text" maxlength="8" value="#qgetchemistry.Lipase#" onblur="checkValue(this)" name="Lipase"  id="Lipase"><span>U/L</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Lipase_report" id="Lipase_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Lipase_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Lipase_comment" id="Lipase_comment"
+                                    maxlength="250" >#qgetchemistry.Lipase_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Magnesium</label>
+                                        <input class="Magnesium" type="text" maxlength="8" value="#qgetchemistry.Magnesium#" name="Magnesium" onblur="checkValue(this)" id="Magnesium"><span>mg/dL</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Magnesium_report" id="Magnesium_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Magnesium_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Magnesium_comment" id="Magnesium_comment"
+                                    maxlength="250"  >#qgetchemistry.Magnesium_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Total Bilirubin</label>
+                                        <input class="Total_Bilirubin" type="text" maxlength="8" value="#qgetchemistry.Total_Bilirubin#" name="Total_Bilirubin" onblur="checkValue(this)" id="Total_Bilirubin"><span>mg/dL</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Bilirubin_report" id="Bilirubin_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Bilirubin_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Bilirubin_comment" id="Bilirubin_comment"
+                                    maxlength="250" >#qgetchemistry.Bilirubin_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Total Protein</label>
+                                        <input class="Total_Protein" type="text" maxlength="8" value="#qgetchemistry.Total_Protein#" name="Total_Protein" onblur="checkValue(this)" id="Total_Protein"><span>g/dL</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Protein2_report" id="Protein2_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Protein2_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Protein2_comment" id="Protein2_comment"
+                                    maxlength="250"  >#qgetchemistry.Protein2_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Albumin</label>
+                                        <input class="Albumin" type="text" maxlength="8" value="#qgetchemistry.Albumin#" name="Albumin" onblur="checkValue(this)" id="Albumin"><span>g/dL</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Albumin_report" id="Albumin_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Albumin_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Albumin_comment" id="Albumin_comment"
+                                    maxlength="250" >#qgetchemistry.Albumin_comment#</textarea>
+                                </div>
+                            </div>
+                            <!--- need to add Globulin --->
+
+                              <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Globulin</label>
+                                        <input class="Albumin" type="text" maxlength="8" value="#qgetchemistry.Globulin#" name="Globulin" onblur="checkValue(this)" id="Globulin">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Globulin_report" id="Globulin_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Globulin_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Globulin_comment" id="Globulin_comment"
+                                    maxlength="250" >#qgetchemistry.Globulin_comment#</textarea>
+                                </div>
+                            </div>
+                            
+                            
+                            <!--- need to add Globulin --->
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">A/G Ratio</label>
+                                        <input class="A_G" type="text" maxlength="8" value="#qgetchemistry.A_G#" name="A_G" onblur="checkValue(this)" id="A_G"> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="A_G_report" id="A_G_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.A_G_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="A_G_comment" id="A_G_comment"
+                                    maxlength="250" >#qgetchemistry.A_G_comment#</textarea>
+                                </div>
+                            </div>
+                            <!--- need to add Triglycerides --->
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Triglycerides</label>
+                                        <input class="Albumin" type="text" maxlength="8" value="#qgetchemistry.Triglycerides#" name="Triglycerides" onblur="checkValue(this)" id="Triglycerides"><span>mg/dL</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Triglycerides_report" id="Triglycerides_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Triglycerides_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control" name="Triglycerides_comment" id="Triglycerides_comment"
+                                    maxlength="250" >#qgetchemistry.Triglycerides_comment#</textarea>
+                                </div>
+                            </div>
+                            
+                            <!--- need to add Triglycerides --->
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Sodium</label>
+                                        <input class="Sodium" type="text" maxlength="8" value="#qgetchemistry.Sodium#" name="Sodium" onblur="checkValue(this)" id="Sodium"><span>mmol/L</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Sodium_report" id="Sodium_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Sodium_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Sodium_comment" id="Sodium_comment"
+                                    maxlength="250" >#qgetchemistry.Sodium_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Chloride</label>
+                                        <input class="Chloride" type="text" maxlength="8" value="#qgetchemistry.Chloride#" name="Chloride" onblur="checkValue(this)" id="Chloride"><span>mmol/L</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Chloride_report" id="Chloride_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Chloride_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Chloride_comment" id="Chloride_comment"
+                                    maxlength="250" >#qgetchemistry.Chloride_comment#</textarea>
+                                </div>
+                            </div>
+                            <!--- need to add CO2  --->
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">CO<sup>2</sup></label>
+                                        <input class="CO" type="text" maxlength="8" value="#qgetchemistry.CO#" name="CO" onblur="checkValue(this)" id="CO"><span>mmol/L </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Co_report" id="Co_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Co_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="CO_comment" id="CO_comment"
+                                    maxlength="250" >#qgetchemistry.CO_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Glucose</label>
+                                        <input class="Glucose" type="text" maxlength="8" value="#qgetchemistry.Glucose#" name="Glucose" onblur="checkValue(this)" id="Glucose"><span>mg/dL</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Glucose_report" id="Glucose_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Glucose_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Glucose_comment" id="Glucose_comment"
+                                    maxlength="250" >#qgetchemistry.Glucose_comment#</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">BUN</label>
+                                        <input class="BUNf" type="text" maxlength="8" value="#qgetchemistry.BUNf#" name="BUNf" onblur="checkValue(this)" id="BUNf"><span>mg/dL</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Bunf_report" id="Bunf_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Bunf_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="BUNf_comment" id="BUNf_comment"
+                                    maxlength="250" >#qgetchemistry.BUNf_comment#</textarea>
+                                </div>
+                            </div>
+                            <!--- need to add Anion Gap  --->
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Anion Gap</label>
+                                        <input class="Albumin" type="text" maxlength="8" value="#qgetchemistry.Anion#" name="Anion" onblur="checkValue(this)" id="Anion"><span>mmol/L</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Anion_report" id="Anion_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Anion_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Anion_comment" id="Anion_comment"
+                                    maxlength="250" >#qgetchemistry.Anion_comment#</textarea>
+                                </div>
+                            </div>
+                            <!--- need to add Anion Gap  --->
+                            <!--- need to add Osmolality  --->
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Osmolality (Calc)</label>
+                                        <input class="Albumin" type="text" maxlength="10" value="#qgetchemistry.Osmolality#" name="Osmolality" onblur="checkValue(this)" id="Osmolality">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Osmolality_report" id="Osmolality_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Osmolality_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Osmolality_comment" id="Osmolality_comment"
+                                    maxlength="250" >#qgetchemistry.Osmolality_comment#</textarea>
+                                </div>
+                            </div>
+                            <!--- need to add Osmolality  --->
+                            <!--- need to add iron  --->
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group cust-blod">
+                                        <label class="">Iron</label>
+                                        <input class="Albumin" type="text" maxlength="8" value="#qgetchemistry.Iron#" name="Iron" onblur="checkValue(this)" id="Iron"><span>&mu;g/dl</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                                <div class="form-group blood-from-froup">
+                                    <div class="input-group ">
+                                        <label class="county-label">Select Option</label>
+                                        <select class="form-control" name="Iron_report" id="Iron_report">
+                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
+                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Iron_report#>selected</cfif>>#Selectoptions[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                                <div class="form-group blood-from-froup">
+                                    <label class="scomment-label">Comments</label>
+                                    <textarea class="form-control   " name="Iron_comment" id="Iron_comment"
+                                    maxlength="250" >#qgetchemistry.Iron_comment#</textarea>
+                                </div>
+                            </div>
+                            <!--- need to add iron  --->
+                            
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group cust-blod">
@@ -8545,87 +9362,9 @@
                                     maxlength="250"  >#qgetchemistry.Lipemia_comment#</textarea>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Glucose</label>
-                                        <input class="Glucose" type="text" maxlength="8" value="#qgetchemistry.Glucose#" name="Glucose" onblur="checkValue(this)" id="Glucose"><span>mg/dL</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Glucose_report" id="Glucose_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Glucose_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Glucose_comment" id="Glucose_comment"
-                                    maxlength="250" >#qgetchemistry.Glucose_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">BUN</label>
-                                        <input class="BUNf" type="text" maxlength="8" value="#qgetchemistry.BUNf#" name="BUNf" onblur="checkValue(this)" id="BUNf"><span>mg/dL</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Bunf_report" id="Bunf_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Bunf_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="BUNf_comment" id="BUNf_comment"
-                                    maxlength="250" >#qgetchemistry.BUNf_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">CREA</label>
-                                        <input class="CREA" type="text" maxlength="8" value="#qgetchemistry.CREA#" name="CREA" onblur="checkValue(this)" id="CREA"><span> mg/dL</span>  
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="CREA_report" id="CREA_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.CREA_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="CREA_comment" id="CREA_comment"
-                                    maxlength="250" >#qgetchemistry.CREA_comment#</textarea>
-                                </div>
-                            </div>
+                 
+                      
+                     
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group cust-blod">
@@ -8653,303 +9392,7 @@
                                     maxlength="250" >#qgetchemistry.BUN_CREA_comment#</textarea>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Sodium</label>
-                                        <input class="Sodium" type="text" maxlength="8" value="#qgetchemistry.Sodium#" name="Sodium" onblur="checkValue(this)" id="Sodium"><span>mmol/L</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Sodium_report" id="Sodium_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Sodium_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Sodium_comment" id="Sodium_comment"
-                                    maxlength="250" >#qgetchemistry.Sodium_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Potassium</label>
-                                        <input class="Potassium" type="text" maxlength="8" value="#qgetchemistry.Potassium#" name="Potassium" onblur="checkValue(this)" id="Potassium"><span>mmol/L</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Potassium_report" id="Potassium_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Potassium_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Potassium_comment" id="Potassium_comment"
-                                    maxlength="250" >#qgetchemistry.Potassium_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Chloride</label>
-                                        <input class="Chloride" type="text" maxlength="8" value="#qgetchemistry.Chloride#" name="Chloride" onblur="checkValue(this)" id="Chloride"><span>mmol/L</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Chloride_report" id="Chloride_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Chloride_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Chloride_comment" id="Chloride_comment"
-                                    maxlength="250" >#qgetchemistry.Chloride_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Magnesium</label>
-                                        <input class="Magnesium" type="text" maxlength="8" value="#qgetchemistry.Magnesium#" name="Magnesium" onblur="checkValue(this)" id="Magnesium"><span>mg/dL</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Magnesium_report" id="Magnesium_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Magnesium_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Magnesium_comment" id="Magnesium_comment"
-                                    maxlength="250"  >#qgetchemistry.Magnesium_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Calcium</label>
-                                        <input class="Calcium" type="text" maxlength="8" value="#qgetchemistry.Calcium#" name="Calcium" onblur="checkValue(this)" id="Calcium"><span>mg/dL</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Calcium_report" id="Calcium_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Calcium_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Calcium_comment" id="Calcium_comment"
-                                    maxlength="250" >#qgetchemistry.Calcium_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Phosphorus</label>
-                                        <input class="Phosphorus" type="text" maxlength="8" value="#qgetchemistry.Phosphorus#" name="Phosphorus" onblur="checkValue(this)" id="Phosphorus"><span>mg/dL</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Phosphurs_report" id="Phosphurs_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Phosphurs_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Phosphorus_comment" id="Phosphorus_comment"
-                                    maxlength="250" >#qgetchemistry.Phosphorus_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Ca/Phos Ratio</label>
-                                        <input class="Ca_Phos" type="text" maxlength="8" value="#qgetchemistry.Ca_Phos#" name="Ca_Phos" onblur="checkValue(this)" id="Ca_Phos"> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Ca_Phos_report" id="Ca_Phos_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Ca_Phos_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Ca_Phos_comment" id="Ca_Phos_comment"
-                                    maxlength="250" >#qgetchemistry.Ca_Phos_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">CO<sup>2</sup></label>
-                                        <input class="CO" type="text" maxlength="8" value="#qgetchemistry.CO#" name="CO" onblur="checkValue(this)" id="CO"><span>mmol/L </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Co_report" id="Co_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Co_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="CO_comment" id="CO_comment"
-                                    maxlength="250" >#qgetchemistry.CO_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Amylase</label>
-                                        <input class="Amylase" type="text" maxlength="8" value="#qgetchemistry.Amylase#" onblur="checkValue(this)" name="Amylase" id="Amylase"><span>U/L</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Amylase_report" id="Amylase_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Amylase_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Amylase_comment" id="Amylase_comment"
-                                    maxlength="250" >#qgetchemistry.Amylase_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Lipase </label>
-                                        <input class="Lipase " type="text" maxlength="8" value="#qgetchemistry.Lipase#" onblur="checkValue(this)" name="Lipase"  id="Lipase"><span>U/L</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Lipase_report" id="Lipase_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Lipase_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Lipase_comment" id="Lipase_comment"
-                                    maxlength="250" >#qgetchemistry.Lipase_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Cholesterol</label>
-                                        <input class="Cholesterol" type="text" maxlength="8" value="#qgetchemistry.Cholesterol#" name="Cholesterol" onblur="checkValue(this)" id="Cholesterol"><span>mg/dL </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Cholesterol_report" id="Cholesterol_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Cholesterol_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Cholesterol_comment" id="Cholesterol_comment"
-                                    maxlength="250"  >#qgetchemistry.Cholesterol_comment#</textarea>
-                                </div>
-                            </div>
+                       
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group cust-blod">
@@ -8977,276 +9420,7 @@
                                     maxlength="250" >#qgetchemistry.Uric_comment#</textarea>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Total Protein</label>
-                                        <input class="Total_Protein" type="text" maxlength="8" value="#qgetchemistry.Total_Protein#" name="Total_Protein" onblur="checkValue(this)" id="Total_Protein"><span>g/dL</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Protein2_report" id="Protein2_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Protein2_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Protein2_comment" id="Protein2_comment"
-                                    maxlength="250"  >#qgetchemistry.Protein2_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Albumin</label>
-                                        <input class="Albumin" type="text" maxlength="8" value="#qgetchemistry.Albumin#" name="Albumin" onblur="checkValue(this)" id="Albumin"><span>g/dL</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Albumin_report" id="Albumin_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Albumin_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Albumin_comment" id="Albumin_comment"
-                                    maxlength="250" >#qgetchemistry.Albumin_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">A/G Ratio</label>
-                                        <input class="A_G" type="text" maxlength="8" value="#qgetchemistry.A_G#" name="A_G" onblur="checkValue(this)" id="A_G"> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="A_G_report" id="A_G_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.A_G_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="A_G_comment" id="A_G_comment"
-                                    maxlength="250" >#qgetchemistry.A_G_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">AST</label>
-                                        <input class="AST" type="text" maxlength="8" onblur="checkValue(this)" value="#qgetchemistry.AST#" name="AST"  id="AST"><span> U/L </span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="AST_report" id="AST_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.AST_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="AST_comment" id="AST_comment"
-                                    maxlength="250" >#qgetchemistry.AST_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">ALT</label>
-                                        <input class="ALT" type="text" maxlength="8" value="#qgetchemistry.ALT#" name="ALT" onblur="checkValue(this)" id="ALT"><span> U/L </span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="ALT_report" id="ALT_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.ALT_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="ALT_comment" id="ALT_comment"
-                                    maxlength="250" >#qgetchemistry.ALT_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">LDH</label>
-                                        <input class="LDH" type="text" maxlength="8" value="#qgetchemistry.LDH#" name="LDH" onblur="checkValue(this)" id="LDH"><span> U/L</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="LDH_report" id="LDH_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.LDH_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="LDH_comment" id="LDH_comment"
-                                    maxlength="250" >#qgetchemistry.LDH_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">CPK</label>
-                                        <input class="CPK" type="text" maxlength="8" value="#qgetchemistry.CPK#" name="CPK" onblur="checkValue(this)" id="CPK"><span> U/L <span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="CPK_report" id="CPK_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.CPK_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="CPK_comment" id="CPK_comment"
-                                    maxlength="250" >#qgetchemistry.CPK_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Alkaline Phosphatase</label>
-                                        <input class="Alkaline_Phosphatase" type="text" maxlength="8" value="#qgetchemistry.Alkaline_Phosphatase#" name="Alkaline_Phosphatase" onblur="checkValue(this)" id="Alkaline_Phosphatase"><span> U/L <span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Alkaline_report" id="Alkaline_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Alkaline_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Alkaline_comment" id="Alkaline_comment"
-                                    maxlength="250" >#qgetchemistry.Alkaline_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">GGT</label>
-                                        <input class="GGT" type="text" maxlength="8" value="#qgetchemistry.GGT#" name="GGT" onblur="checkValue(this)" id="GGT"><span> U/L </span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="GGT_report" id="GGT_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.GGT_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="GGT_comment" id="GGT_comment"
-                                    maxlength="250" >#qgetchemistry.GGT_comment#</textarea>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group cust-blod">
-                                        <label class="">Total Bilirubin</label>
-                                        <input class="Total_Bilirubin" type="text" maxlength="8" value="#qgetchemistry.Total_Bilirubin#" name="Total_Bilirubin" onblur="checkValue(this)" id="Total_Bilirubin"><span>mg/dL</span> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                <div class="form-group blood-from-froup">
-                                    <div class="input-group ">
-                                        <label class="county-label">Select Option</label>
-                                        <select class="form-control" name="Bilirubin_report" id="Bilirubin_report">
-                                            <cfloop from="1" to="#ArrayLen(Selectoptions)#" index="j">
-                                                <option value="#Selectoptions[j]#" <cfif #Selectoptions[j]# eq #qgetchemistry.Bilirubin_report#>selected</cfif>>#Selectoptions[j]#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
-                                <div class="form-group blood-from-froup">
-                                    <label class="scomment-label">Comments</label>
-                                    <textarea class="form-control   " name="Bilirubin_comment" id="Bilirubin_comment"
-                                    maxlength="250" >#qgetchemistry.Bilirubin_comment#</textarea>
-                                </div>
-                            </div>
+                       
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group cust-blod">
@@ -9274,6 +9448,7 @@
                                     maxlength="250" >#qgetchemistry.D_Bilirubin_comment#</textarea>
                                 </div>
                             </div>
+
                             <cfif findNoCase("Read only ST", permissions) eq 0>
                                 <div class="flex-center flex-row flex-wrap d-flex">
                                     <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
@@ -10350,9 +10525,7 @@
                             </div>
                         </div>
                     </div>   
-
-                    <!--- working end --->                
-
+           
 
                     <h5 class="mb-1"><strong>Toxicology</strong></h5>
                     <div class="form-holder blood-form-holder Toxi-sec">  
@@ -11342,7 +11515,6 @@
                                                     <div class="tablebutn" style="display: inline-flex;">
                                                         <input type="button" id="edit_SampleReport#ID#" value="Edit" class="edit" onclick="edit_SampleReport(#ID#)">
                                                         <input type="button" value="Delete"  class="delete" onclick="delete_SampleReport(#ID#)" style="margin-left: 5%;">
-                                                        <!--- Working here --->
                                                     </div>
                                                 </td>
 
@@ -11445,7 +11617,7 @@
                             </div>
                             <div class="cust-inp">
                                 <!-- <input type="text" name="Tentative" placeholder="Expandable field to multi-line" value="#qgetCetaceanNecropsy.Tentative#"class="text-field"> -->
-                                <textarea id="top-area" name="Tentative" rows="1" class="text-field" cols="50"  maxlength="250" >#qgetCetaceanNecropsy.Tentative#</textarea>
+                                <textarea id="top-area" name="Tentative" rows="1" class="text-field" cols="50" >#qgetCetaceanNecropsy.Tentative#</textarea>
                             </div>
                             </div>
                         </div>
@@ -11455,7 +11627,7 @@
                                 </div>
                                 <div class="cust-inp">
                                     <!-- <input type="text" name="deathcause" placeholder="Expandable field to multi-line" value="#qgetCetaceanNecropsy.deathcause#"class="text-field"> -->
-                                    <textarea id="top-area" name="deathcause" rows="1" class="text-field" cols="50"  maxlength="512" >#qgetCetaceanNecropsy.deathcause#</textarea>
+                                    <textarea id="top-area" name="deathcause" rows="1" class="text-field" cols="50"  maxlength="1024" >#qgetCetaceanNecropsy.deathcause#</textarea>
                                 </div>
                             </div>
                         </div>
@@ -11546,11 +11718,9 @@
                     <div class="row pt-15">
                         <div class="col-lg-8 fldarea">
                             <label class="fl-lbl">Histopathology Remarks / Diagnosis</label>
-                            <textarea id="top-area" name="historemark" rows="4" cols="50"  maxlength="512" >#qgetCetaceanNecropsy.historemark#</textarea>
+                            <textarea id="top-area" name="historemark" rows="4" cols="50"  maxlength="4000" >#qgetCetaceanNecropsy.historemark#</textarea>
                         </div>
-            
-                        <!---             working strat --->
-                        
+                                   
 
                     </div>
                     <div class="examination-sec">
@@ -11714,10 +11884,7 @@
                             </div>
                         </div>
                     </div>
-
-                  
-                    <!--- working end --->
-              
+             
 
 
     <div class="examination-sec">
@@ -11832,13 +11999,13 @@
         </div>
         <div class="col-lg-12 fldarea">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="lessioncomments" rows="12" cols="120" maxlength="512" >#qgetCetaceanNecropsy.lessioncomments#</textarea>
+            <textarea id="top-area" name="lessioncomments" rows="12" cols="120" maxlength="4000" >#qgetCetaceanNecropsy.lessioncomments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input  type="checkbox"name="lessionphototaken" id="lessionphototaken" onclick="lessionphotos()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.lessionphototaken') and  qgetCetaceanNecropsy.lessionphototaken  eq 'on'>checked</cfif>>
             </div>
         </div>
-        <!--- working start --->
+        
         <div class="col-lg-5" id="integumentdiv" style="display: block;">
             <div class="cust-row btn-rw startSpinner">
                 <div class="cust-inp cust-inpts">
@@ -11869,8 +12036,6 @@
                     </cfif>	
                 </div> 
         </div>
-
-        <!--- working end --->
     
 
     </div>
@@ -11975,7 +12140,7 @@
         </div>
         <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="internal_comments" rows="12" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.internal_comments#</textarea>
+            <textarea id="top-area" name="internal_comments" rows="12" cols="120"  maxlength="2048" >#qgetCetaceanNecropsy.internal_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="internal_phototaken" id="internal_phototaken" onclick="internalPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.internal_phototaken') and  qgetCetaceanNecropsy.internal_phototaken  eq 'on'>checked</cfif>>
@@ -12088,8 +12253,6 @@
                 </div>
             </div>
 
-
-        <!--- working start --->
         <div class="col-lg-12" id="musculoskeletalDiv">
             <div class="cust-row btn-rw startSpinner">
                 <div class="cust-inp cust-inpts">
@@ -12121,11 +12284,10 @@
                 </div> 
         </div>
 
-        <!--- working end --->
         </div>
         <div class="col-lg-5 mt-5">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="muscular_comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.muscular_comments#</textarea>
+            <textarea id="top-area" name="muscular_comments" rows="10" cols="120"  maxlength="4000" >#qgetCetaceanNecropsy.muscular_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox"name="muscular_phototaken" id="muscular_phototaken" onclick="muscularPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.muscular_phototaken') and  qgetCetaceanNecropsy.muscular_phototaken  eq 'on'>checked</cfif>>
@@ -12199,7 +12361,6 @@
                 </div>
             </div>
          
-                    <!--- working start --->
                     <div class="col-lg-12" id="thoracicphotoDiv">
                         <div class="cust-row btn-rw startSpinner">
                             <div class="cust-inp cust-inpts">
@@ -12231,11 +12392,10 @@
                             </div> 
                     </div>
             
-                    <!--- working end --->
         </div>
         <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="thoratic_comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.thoratic_comments#</textarea>
+            <textarea id="top-area" name="thoratic_comments" rows="10" cols="120"  maxlength="2048" >#qgetCetaceanNecropsy.thoratic_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="thoratic_phototaken" id="thoratic_phototaken" onclick="thoraticPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.thoratic_phototaken') and  qgetCetaceanNecropsy.thoratic_phototaken  eq 'on'>checked</cfif>
@@ -12310,7 +12470,6 @@
                 </div>
             </div>
               
-                    <!--- working start --->
                     <div class="col-lg-12" id="abdominalDiv">
                         <div class="cust-row btn-rw startSpinner">
                             <div class="cust-inp cust-inpts">
@@ -12342,11 +12501,11 @@
                             </div> 
                     </div>
             
-                    <!--- working end --->
+                
         </div>
     <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="abdominal_comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.abdominal_comments#</textarea>
+            <textarea id="top-area" name="abdominal_comments" rows="10" cols="120"  maxlength="2048" >#qgetCetaceanNecropsy.abdominal_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="abdominal_phototaken" id="abdominal_phototaken" onclick="abdominalPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.abdominal_phototaken') and  qgetCetaceanNecropsy.abdominal_phototaken  eq 'on'>checked</cfif>
@@ -12399,7 +12558,7 @@
                 </div>
             </div>
             
-<!--- working start --->
+
 <div class="col-lg-12" id="hepatobiliaryDiv">
     <div class="cust-row btn-rw startSpinner">
         <div class="cust-inp cust-inpts">
@@ -12431,11 +12590,10 @@
         </div> 
 </div>
 
-<!--- working end --->
     </div>
     <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="hepatobiliary_comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.hepatobiliary_comments#</textarea>
+            <textarea id="top-area" name="hepatobiliary_comments" rows="10" cols="120"  maxlength="2048" >#qgetCetaceanNecropsy.hepatobiliary_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="hepatobiliary_phototaken" id="hepatobiliary_phototaken" onclick="hepatobiliaryPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.hepatobiliary_phototaken') and  qgetCetaceanNecropsy.hepatobiliary_phototaken  eq 'on'>checked</cfif>
@@ -12516,7 +12674,6 @@
                     </div>
                 </div>
                
-               <!--- working start --->
                <div class="col-lg-12" id="cardiovascularDiv">
                    <div class="cust-row btn-rw startSpinner">
                        <div class="cust-inp cust-inpts">
@@ -12548,13 +12705,13 @@
                        </div> 
                </div>
        
-               <!--- working end --->
+               
         </div>
     
     </div>
     <div class="col-lg-7">
         <label class="fl-lbl">Comments</label>
-        <textarea id="top-area" name="cardio_comments" rows="10" cols="120" maxlength="512" >#qgetCetaceanNecropsy.cardio_comments#</textarea>
+        <textarea id="top-area" name="cardio_comments" rows="10" cols="120" maxlength="4000" >#qgetCetaceanNecropsy.cardio_comments#</textarea>
         <div class="area-check align-right">
             <label class="check-cust-fld">Photographs Taken</label>
             <input type="checkbox" name="cardio_phototaken" id="cardio_phototaken" onclick="cardioPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.cardio_phototaken') and  qgetCetaceanNecropsy.cardio_phototaken  eq 'on'>checked</cfif>
@@ -12694,7 +12851,7 @@
         </div>
     <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="pulmonary_comments" rows="10" cols="120" maxlength="512" >#qgetCetaceanNecropsy.pulmonary_comments#</textarea>
+            <textarea id="top-area" name="pulmonary_comments" rows="10" cols="120" maxlength="4000" >#qgetCetaceanNecropsy.pulmonary_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="pulmonary_phototaken" id="pulmonary_phototaken" onclick="pulmonaryPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.pulmonary_phototaken') and  qgetCetaceanNecropsy.pulmonary_phototaken  eq 'on'>checked</cfif>
@@ -12739,12 +12896,12 @@
                 <div class="cust-fld"><label class="fl-lbl"></label>
                 </div>
                 <div class="cust-inp">
-                    <textarea id="top-area" name="pulmonary_textarea" maxlength="512"  rows="5" cols="50" spellcheck="false">#qgetCetaceanNecropsy.pulmonary_textarea#</textarea>
+                    <textarea id="top-area" name="pulmonary_textarea" maxlength="2048"  rows="5" cols="50" spellcheck="false">#qgetCetaceanNecropsy.pulmonary_textarea#</textarea>
                 </div>
             </div>
         </div>
 
-                       <!--- working start --->
+                     
                        <div class="col-lg-5" id="pulmonaryDiv">
                         <div class="cust-row btn-rw startSpinner">
                             <div class="cust-inp cust-inpts">
@@ -12776,7 +12933,6 @@
                             </div> 
                     </div>
             
-                    <!--- working end --->
     </div>
     </div>
     <!--- 9 --->
@@ -12932,14 +13088,14 @@
         </div>
     <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="lympho_comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.lympho_comments#</textarea>
+            <textarea id="top-area" name="lympho_comments" rows="10" cols="120"  maxlength="4000" >#qgetCetaceanNecropsy.lympho_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox"name="lympho_phototaken" id="lympho_phototaken" onclick="lymphoPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.lympho_phototaken') and  qgetCetaceanNecropsy.lympho_phototaken  eq 'on'>checked</cfif>>
             </div>
         </div>
     </div>
-                   <!--- working start --->
+                
               <div class="col-lg-5" id="lymphoreticularDiv">
                 <div class="cust-row btn-rw startSpinner">
                     <div class="cust-inp cust-inpts">
@@ -12971,8 +13127,7 @@
                     </div> 
             </div>
     
-            <!--- working end --->
-    <!--- 10 --->
+         <!--- 10 --->
     <div class="row pt-30">
         <div class="col-lg-12">
         <div class="col-lg-4">
@@ -13116,7 +13271,7 @@
         <div class="col-lg-5"></div>
     <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="endocrine_comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.endocrine_comments#</textarea>
+            <textarea id="top-area" name="endocrine_comments" rows="10" cols="120"  maxlength="2048" >#qgetCetaceanNecropsy.endocrine_comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox"name="endocrine_phototaken" id="endocrine_phototaken" onclick="endocrinePhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.endocrine_phototaken') and  qgetCetaceanNecropsy.endocrine_phototaken  eq 'on'>checked</cfif>>
@@ -13124,7 +13279,7 @@
         </div>
     </div>
 
-                  <!--- working start --->
+                  
               <div class="col-lg-5" id="endocrineDiv">
                 <div class="cust-row btn-rw startSpinner">
                     <div class="cust-inp cust-inpts">
@@ -13156,7 +13311,7 @@
                     </div> 
             </div>
     
-            <!--- working end --->
+           
     <!--- 11 --->
     <div class="row pt-30">
         <div class="col-lg-12">
@@ -13486,14 +13641,14 @@
         <div class="col-lg-5"></div>
     <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="UROGENITAL_Comments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.UROGENITAL_Comments#</textarea>
+            <textarea id="top-area" name="UROGENITAL_Comments" rows="10" cols="120"  maxlength="4000" >#qgetCetaceanNecropsy.UROGENITAL_Comments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="UROGENITAL_phototaken" id="UROGENITAL_phototaken" onclick="UROGENITALPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.UROGENITAL_phototaken') and  qgetCetaceanNecropsy.UROGENITAL_phototaken  eq 'on'>checked</cfif>>
             </div>
         </div>
     </div>
-                   <!--- working start --->
+                   
               <div class="col-lg-5" id="urogenitalDiv">
                 <div class="cust-row btn-rw startSpinner">
                     <div class="cust-inp cust-inpts">
@@ -13525,7 +13680,6 @@
                     </div> 
             </div>
     
-            <!--- working end --->
     <!--- 12 --->
     <div class="row pt-30">
         <div class="col-lg-12">
@@ -14130,7 +14284,7 @@
             <h3 class="sys-title">Describe</h3>
         </div>
         <div class="sys-colum-right">
-            <textarea id="top-area" name="InjuryLesionAssociatedContents" rows="10" cols="120">#qgetCetaceanNecropsy.InjuryLesionAssociatedContents#</textarea>
+            <textarea id="top-area" name="InjuryLesionAssociatedContents" rows="10" maxlength="2048" cols="120">#qgetCetaceanNecropsy.InjuryLesionAssociatedContents#</textarea>
         </div>
     </div>
     <div class="row pt-30">
@@ -14303,7 +14457,7 @@
     <div class="row">
     <div class="col-lg-12">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" name="Parasitecomments" rows="10" cols="120"  maxlength="512" >#qgetCetaceanNecropsy.Parasitecomments#</textarea>
+            <textarea id="top-area" name="Parasitecomments" rows="10" cols="120"  maxlength="4000" >#qgetCetaceanNecropsy.Parasitecomments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox" name="Parasite_phototaken" id="Parasite_phototaken" onclick="ParasitePhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.Parasite_phototaken') and  qgetCetaceanNecropsy.Parasite_phototaken  eq 'on'>checked</cfif>
@@ -14311,7 +14465,7 @@
             </div>
         </div>
     </div>
-               <!--- working start --->
+              
               <div class="col-lg-5" id="alimentaryphotoDiv">
                 <div class="cust-row btn-rw startSpinner">
                     <div class="cust-inp cust-inpts">
@@ -14343,7 +14497,6 @@
                     </div> 
             </div>
     
-            <!--- working end --->
     <!-- 13 -->
     <div class="row pt-30">
     <div class="">
@@ -14443,26 +14596,13 @@
         <div class="col-lg-5"></div>
         <div class="col-lg-7">
             <label class="fl-lbl">Comments</label>
-            <textarea id="top-area" maxlength="512" name="nervoussystemcomments" rows="10" cols="120" spellcheck="false">#qgetCetaceanNecropsy.nervoussystemcomments#</textarea>
+            <textarea id="top-area" maxlength="2048" name="nervoussystemcomments" rows="10" cols="120" spellcheck="false">#qgetCetaceanNecropsy.nervoussystemcomments#</textarea>
             <div class="area-check align-right">
                 <label class="check-cust-fld">Photographs Taken</label>
                 <input type="checkbox"name="nervoussystemphototaken" onclick="centralNervous()" id="centralNervousCheck" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.nervoussystemphototaken') and  qgetCetaceanNecropsy.nervoussystemphototaken  eq 'on'>checked</cfif>
                 >
             </div>
-
-            <!--- working start --->
-            
-
-
-
-
-
-    
-            <!--- working end --->
-            
-
-
-
+          
 
         </div>
         <div class="col-lg-5" id="centralNervousdiv">

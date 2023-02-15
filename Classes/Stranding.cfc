@@ -3271,6 +3271,21 @@
                 ,Direct_Bilirubin = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Direct_Bilirubin#'>
                 ,D_Bilirubin_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.D_Bilirubin_report#'>
                 ,D_Bilirubin_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.D_Bilirubin_comment#'>
+                ,Globulin = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Globulin#'>
+                ,Globulin_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Globulin_report#'>
+                ,Globulin_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Globulin_comment#'>
+                ,Triglycerides = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Triglycerides#'>
+                ,Triglycerides_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Triglycerides_report#'>
+                ,Triglycerides_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Triglycerides_comment#'>
+                ,Anion = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Anion#'>
+                ,Anion_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Anion_report#'>
+                ,Anion_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Anion_comment#'>
+                ,Osmolality = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Osmolality#'>
+                ,Osmolality_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Osmolality_report#'>
+                ,Osmolality_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Osmolality_comment#'>
+                ,Iron = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Iron#'>
+                ,Iron_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Iron_report#'>
+                ,Iron_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Iron_comment#'>
                 WHERE
                 BV_ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.bloodValue_ID#'>
             </cfquery>
@@ -3695,6 +3710,21 @@
                     ,D_Bilirubin_comment
                     ,LCE_ID
                     ,BV_ID
+                    ,Globulin
+                    ,Globulin_report
+                    ,Globulin_comment
+                    ,Triglycerides
+                    ,Triglycerides_report
+                    ,Triglycerides_comment
+                    ,Anion
+                    ,Anion_report
+                    ,Anion_comment
+                    ,Osmolality
+                    ,Osmolality_report
+                    ,Osmolality_comment
+                    ,Iron
+                    ,Iron_report
+                    ,Iron_comment
                 ) 
                 VALUES
                 (
@@ -3790,6 +3820,21 @@
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.D_Bilirubin_comment#">
                     ,<cfqueryparam cfsqltype="cf_sql_integer" value="#form.LCE_ID#">
                     ,<cfqueryparam cfsqltype="cf_sql_integer" value="#form.BV_ID#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Globulin#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Globulin_report#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Globulin_comment#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Triglycerides#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Triglycerides_report#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Triglycerides_comment#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Anion#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Anion_report#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Anion_comment#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Osmolality#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Osmolality_report#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Osmolality_comment#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Iron#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Iron_report#">
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Iron_comment#">
                 )
             </cfquery>
         <cfcatch type="any">
