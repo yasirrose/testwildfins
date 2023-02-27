@@ -1658,7 +1658,7 @@ if($("#drugsNew").val() == "Update"){
         $("#diagnosticLabID").val('');
         $("#SampleNote").val('');
         $('#SampleType').val('').trigger('change');
-        // $("#Cadmium").val('');
+        
 
   
       },
