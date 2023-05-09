@@ -129,6 +129,7 @@
             ,affiliatedID
             ,actualClass
             ,euthanizedCB
+            ,headerImages
             ) 
             VALUES
             (
@@ -197,6 +198,7 @@
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.affiliatedID#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
             )
         </cfquery>
         <cfcatch type="any">
@@ -332,6 +334,7 @@
            ,affiliatedID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.affiliatedID#'>
            ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
            ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+           ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
 
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.ID#'>
@@ -866,6 +869,7 @@
             ,actualClass
             ,LCE_ID            
             ,euthanizedCB            
+            ,headerImages            
             ) 
             VALUES
             (
@@ -900,6 +904,7 @@
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
             ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.LCE_ID#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
             )
         </cfquery>
 
@@ -1423,6 +1428,7 @@
             ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
             ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
             ,Deleted = <cfqueryparam cfsqltype="cf_sql_varchar" value='0'>
+            ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#headerImagesFile#'>
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.HIForm_ID#'>
         </cfquery>
@@ -1591,6 +1597,7 @@
                 ,LCE_ID
                 ,actualClass
                 ,euthanizedCB
+                ,headerImages
                 ) 
                 VALUES
                 (
@@ -1632,6 +1639,7 @@
                 ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.LCE_ID#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
                 )
             </cfquery>
         <cfcatch type="any">
@@ -1720,6 +1728,7 @@
             ,affiliatedID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.affiliatedID#'>
             ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
             ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+            ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
             ,Deleted = <cfqueryparam cfsqltype="cf_sql_varchar" value='0'>
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.LA_ID#'>
@@ -2086,6 +2095,7 @@
                 ,actualClass
                 ,BriefHistory
                 ,euthanizedCB
+                ,headerImages
                 ) 
                 VALUES
                 (
@@ -2118,6 +2128,7 @@
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
                 )
             </cfquery>
         <cfcatch type="any">
@@ -2206,6 +2217,7 @@
             ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
             ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
             ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+            ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
 
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.Histo_ID#'>
@@ -8504,5 +8516,39 @@
         
     </cffunction>
 
+    <cffunction name="getPdfFiles" returntype="any" output="false" access="public" >
+		
+        <cfquery name="qgetPdfFiles" datasource="#variables.dsn#"  >
+            SELECT pdfFiles,id from ST_LiveCetaceanExam where Fnumber = '#Fnumber#' 
+            UNION
+            SELECT pdfFiles,id from ST_HIForm where Fnumber = '#Fnumber#' 
+            UNION
+            SELECT pdfFiles,id from ST_LevelAForm where Fnumber = '#Fnumber#' 
+            UNION
+            SELECT pdfFiles,id from ST_Toxicology where Fnumber = '#Fnumber#' 
 
+        </cfquery>
+        <cfreturn qgetPdfFiles>
+    </cffunction>
+
+    <cffunction name="removeHeaderImage" returntype="string" output="false" access="remote" returnformat="plain">
+        <!--- <cfdump var=#ID# abort="true"> --->
+        <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+        update ST_LiveCetaceanExam set
+        headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+
+            where
+            ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+
+ </cfquery>
+         <!--- <cfdump var=#results# abort="true"> --->
+        <cfif len(trim(#image#))>
+            <cfif FileExists("#Application.CloudDirectory&image#")>
+                <cffile action = "delete" file = "#Application.CloudDirectory&image#">
+            </cfif>
+        </cfif>
+        <cfreturn True>
+    </cffunction>
+
+    
 </cfcomponent>    

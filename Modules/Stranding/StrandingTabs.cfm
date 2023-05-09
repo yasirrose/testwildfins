@@ -237,9 +237,7 @@
             <cfset LCE = Application.Stranding.HIFormUpdate(argumentCollection="#Form#")>
             
             <cfset form.HI_ID = form.HIForm_ID>
-            
             <cfset form.LCE= form.HIForm_ID>
-            <!--- <cfdump var="#form.LCE#" abort="true"> --->
             
             <cfset Application.Stranding.InsertHiExampData(argumentCollection="#Form#")>
         
@@ -250,9 +248,7 @@
             <cfset LCE = Application.Stranding.HIFormInsert(argumentCollection="#Form#")>
 
             <cfset Session.HIForm = #LCE#>
-
             <cfset form.HI_ID = LCE>
-            <!--- <cfdump var="#LCE#" abort="true"> --->
 
             <cfif form.HiType neq "">
                 <cfset form.LCE= LCE>
@@ -484,8 +480,7 @@
 
     <cfif isDefined('HistoSaveAndNew') OR isDefined('SaveandgotoBloodForm') OR isDefined('SaveAndClose')>
         <cfset form.check = "1">
-        <!--- <cfset SampleNote = deserializeJSON(form.SampleNote)>
-        <cfdump var="#SampleNote.0#" abort="true"> --->
+     
         <!--- If updating existing data --->
         <cfif  isDefined('form.Histo_ID') and form.Histo_ID neq "">
             <!--- if sampletype field is not empty then insert Histo sample form's data which can be multiple at single time --->
@@ -574,11 +569,10 @@
             <cfset Session.bloodValue = #form.bloodValues_ID#>
             <cfset form.ID = form.bloodValues_ID>
             <cfset form.bloodValue_ID = "#form.bloodValues_ID#">
+
             <cfset CBCUpdate = Application.Stranding.CBCUpdate(argumentCollection="#Form#")>
-            <!--- <cfdump var="#CBCUpdate#" abort="true"> --->
-            
             <cfset Application.Stranding.FibrinogenUpdate(argumentCollection="#Form#")>
-            <!--- <cfdump var="#CBCUpdate#" abort="true"> --->
+        
             <cfset Application.Stranding.ChemisteryUpdate(argumentCollection="#Form#")>
             <cfset Application.Stranding.CapillaryUpdate(argumentCollection="#Form#")>
             <cfset Application.Stranding.DolphinUpdate(argumentCollection="#Form#")>
@@ -600,7 +594,7 @@
             <cfset form.bloodValue_ID = "#BV_ID#">
             <!--- inserting CBC form --->
             <cfset CBC_ID = Application.stranding.CBCInsert(argumentcollection="#Form#")> 
-            <!--- Inserting Fibrinogen Form nouman--->
+            <!--- Inserting Fibrinogen Form --->
             <cfset Fib_ID = Application.stranding.Fibrinogeninsert(argumentcollection="#Form#")>
             <cfset Chem_ID = Application.stranding.Chemistryinsert(argumentcollection="#Form#")>
             <cfset Chap_ID = Application.stranding.Capillaryinsert(argumentcollection="#Form#")>
@@ -1113,7 +1107,7 @@
             </cfquery>
         </cfif>
 
-        <!--- Today --->
+        
         <cfquery name="qgetSampleDataByLCE" datasource="#Application.dsn#" maxRows = "1">
             SELECT ID from ST_SampleArchive where Fnumber = '#qgetLiveCetaceanExam.Fnumber#'
         </cfquery>
@@ -2665,12 +2659,11 @@
             <cfset Application.Stranding.DynamicLymphoreticularinsert(argumentCollection="#Form#")>
             <cfset Application.Stranding.DynamicParasitesinsert(argumentCollection="#Form#")>
             <cfset form.Nfieldnumber = '#form.Fnumber#'>
-            <!--- <cfdump var="#form.Nfieldnumber#"><cfabort> --->
-          
+             
         </cfif>
         
     <cfelseif isDefined('deleteNecropsyRecord')>
-        <!--- <cfdump var="#Form#"><cfabort> --->
+        
         <cfset Application.Stranding.deletcetaceannecropsy("#form#")>
     <cfelseif isDefined('deletCetaceanNecropsyAllRecord')>
         <cfset Application.Stranding.deletCetaceanNecropsyAllRecord()>
@@ -2680,15 +2673,16 @@
     <!--- <cfdump var="#qgetallfieldnumbers.Fnumber#" abort="true"> --->
 
     <cfif isDefined('form.Nfieldnumber') and Nfieldnumber neq "">
+
         <cfif Session.CetaceanNecropsy NEQ form.Nfieldnumber>
             <cfset Session.CetaceanNecropsy = ''>  
        </cfif>
         <cfset form.field = form.Nfieldnumber>
-        <!--- <cfdump var="#form.field#">--->
+<!---         <cfdump var="#form.Nfieldnumber#" abort="true"> --->
             <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>          
             <cfset qLCEDataa=Application.Stranding.getCetaceanNecropsy("#form.field#")>
             <cfset qgetcetaceanDate.CNRDATE= qLCEDataa.CNRDATE>
-            <!--- <cfdump var="#qLCEDataa#"><cfabort>  --->
+
         <cfset qgetAllData=Application.Stranding.getAllData("#form.field#")>
         
         <cfset qgetNutritional=Application.Stranding.getNutritional("#form.field#")>     
@@ -2713,8 +2707,3419 @@
         <cfset qgetParasites=Application.Stranding.getParasites_ten()>
        
     </cfif>
+     <!---         TodayWorking2  --->
+    <cfif isDefined('caseReport')>
+        <cfset form.field = form.Fnumber>
+        <cfset form.Fnumber = form.Fnumber>
+
+        <cfset qgetPdfFiles=Application.Stranding.getPdfFiles("#form.Fnumber#")> 
+        <cfdump var="#qgetPdfFiles#"><cfabort>
+
+        <cfset image = "internalExam_download%20(1)23.jfif"> 
+        <cfset imageSrc = "http://cloud.wildfins.org/#image#"> 
+
+        <cfhtmltopdf destination="#Application.CloudDirectory#mypdf.pdf" overwrite = "yes">
+            <cfoutput>
+                <img src="#imageSrc#" alt="Image" width="100" height="100">
+                <img src="#imageSrc#" alt="Image" width="100" height="100">
+                <img src="#imageSrc#" alt="Image" width="100" height="100">
+            </cfoutput>
+        </cfhtmltopdf>
+
+        
+        <cfset pdfPath = '#Application.CloudDirectory#mypdf.pdf'>
+        <cfif fileExists(pdfPath)>
+            <cfset pdfList = "http://cloud.wildfins.org/sample81.pdf,http://cloud.wildfins.org/sample80.pdf,http://cloud.wildfins.org/APPRAISAL FORM Guidelines204.pdf,http://cloud.wildfins.org/mypdf.pdf">
+            <cfpdf action="merge" overwrite = "yes"  source="#pdfList#" destination="#Application.CloudDirectory#/output.pdf" /> 
+            <cfset pdfPathforall = '#Application.CloudDirectory#output.pdf'>
+            <cfheader name="Content-Disposition" value="attachment;filename=mypdf.pdf">
+            <cfcontent type="application/pdf" file="#pdfPathforall#">
+
+        <cfelse>
+            <cfdump var="Error uploading file" abort="true">
+        </cfif>
+                   
+<!---          <cfoutput> 
+            <cfheader name="Content-Disposition" value="attachment; filename=mydownload.pdf">
+            <cfcontent type="application/pdf" variable="#toBinary(mypdf)#">
+        </cfoutput> --->
+    </cfif>
+
+    <!---         TodayWorking  --->
+    <cfif isDefined('createPdf')>
+        <cfset form.field = form.Fnumber>
+        <cfset form.Nfieldnumber = form.Fnumber>
+        <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.Nfieldnumber#")> 
+        <!---         <cfdump var="#qLCEDataa#"><cfabort> --->
+    <cfoutput>
+    <cfsavecontent variable="myVariableName">
+        <div class="form-wrapper cetacean-exam-wrapper">  
+            <div class="row cetacean-exam-holder">
+                <div class="col-lg-6">
+                    <div class="form-holder blue-bg pb-2">  
+                        <div class="cetaceanExam-date-form form-group m-0 blue-bg-l">
+                            <div class="cetacean-exam-form">
+                                <div class="cetacean-exam-wrap row">
+
+                                    <div class="col-sm-6 "> 
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <label class="field-number" for='necropsyfieldnumber'>Field Number</label>
+                                                <div class="input">
+                                                    <input type="text" value="#qgetCetaceanNecropsy.Fnumber#" class="form-control" name="" id="" required>
+                                                </div>
+                                                <span style="color:red; display:none;" id="requiredFnumber">This field is required</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 apend"> 
+                                        <div class="form-group m-0">
+                                            <div class="input-group">
+                                                <label class="">Standing Agreement or Authority</label>
+                                                <div class="input">
+                                                    <input class="input input-style" type="text" value="<cfif isDefined('qgetCetaceanNecropsy.NAA')  and #qgetCetaceanNecropsy.NAA# neq "">#qgetCetaceanNecropsy.NAA#</cfif>"name="" id="" onblur="headerDataSave()">
+                                                </div>
+                                            </div>                                                    
+                                        </div>
+                                    </div> 
+                                    <div class="col-sm-6"> 
+                                        <div class="form-group">
+                                            <label class="date-padd">Stranding Date</label>
+                                                <div class="input-group date " id="datetimepicker_Date">
+                                                    <input type="text" placeholder="mm/dd/yyyy" name="" id=""
+                                                        class="form-control" value='<cfif isDefined('qgetCetaceanNecropsy.Date') and #qgetCetaceanNecropsy.Date# neq "" >#DateTimeFormat(qgetCetaceanNecropsy.Date, "MM/dd/YYYY")#</cfif>' required/>
+                                                        <span class="input-group-addon time-icon"> <span class="glyphicon glyphicon-calendar"></span> </span>
+                                                </div>
+                                                
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 "> 
+                                        <div class="form-group">
+                                            <label class="date-padd">Necropsy Date</label>
+                                                <div class="input-group date " id="datetimepicker_NDate">
+                                                    <input type="text" placeholder="mm/dd/yyyy" name="necropsyDateID" id="necropsyDateID"
+                                                        class="form-control" value='<cfif isDefined('qgetcetaceanDate.CNRDATE') and #DateTimeFormat(qgetcetaceanDate.CNRDATE, "MM/DD/YYYY")# neq "" >#DateTimeFormat(qgetcetaceanDate.CNRDATE, "MM/dd/YYYY")# </cfif>' readonly/>
+                                                        <span class="input-group-addon time-icon"> <span class="glyphicon glyphicon-calendar"></span> </span>
+                                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 "> 
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <label class="">NMFS Regional ##</label>
+                                                <input class="input-style xl-width" onblur="headerDataSave()" type="text" value="<cfif isDefined('qgetCetaceanNecropsy.NMFS') and #qgetCetaceanNecropsy.NMFS# neq "" >#qgetCetaceanNecropsy.NMFS#</cfif>" name="NMFS" id="NMFS">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 "> 
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <label class="">National Database ##</label>
+                                                <input class="input-style xl-width" type="text" onblur="headerDataSave()" value="<cfif isDefined('qgetCetaceanNecropsy.NDB') and #qgetCetaceanNecropsy.NDB# neq "" >#qgetCetaceanNecropsy.NDB#</cfif>" name="NDB" id="NDB">
+                                            </div>
+                                        </div>
+                                    </div> 
+                             
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                        <div class="input-group">
+                                            <label class="code-padd">Code</label>                                               
+                                            <select class="form-control" name="code" id="code" onChange="getFbAndSex()">
+                                                <option value="">Select Code</option>
+                                                <!---  <cfif isDefined('qgetCetaceanNecropsy.species') and                   #qgetCetaceanNecropsy.species# neq "" > 
+                                                        <option value="#getCetaceansCode.id#" >
+                                                                #getCetaceansCode.code# </option>
+                                                   
+                                                </cfif>   --->                                             
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6"> 
+                                    <div class="form-group m-0">
+                                        <div class="input-group">
+                                            <label class="AI-label">Additional Identifier</label>
+                                            <div class="input">
+                                                <input class="input input-style" onblur="headerDataSave()" type="text" name="affiliatedID" id="affiliatedID" value="#qgetCetaceanNecropsy.affiliatedID#" maxlength="80">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <label class="">HERA/FB No.</label>
+                                            <input class="input-style xl-width" type="text" onblur="headerDataSave()" value="<cfif isDefined('qgetCetaceanNecropsy.hera')>#qgetCetaceanNecropsy.hera#</cfif> " name="hera" id="hera">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <label class="sex-label">Sex</label>
+                                            <select class="form-control" name="sex" id="sex" onChange="headerDataSave()">
+                                                <option value="">Select Sex</option>
+                                                <cfloop from="1" to="#ArrayLen(sex)#" index="j">
+                                                    <cfif isDefined('qgetCetaceanNecropsy.sex')>
+                                                        <option value="#sex[j]#" <cfif #sex[j]# eq #qgetCetaceanNecropsy.sex#>selected</cfif>>#sex[j]#</option>
+                                                    </cfif>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <label class="ageclass-label">Age Class</label>
+                                            <select class="form-control" name="ageClass" id="ageClass" onChange="headerDataSave()">
+                                                <option value="">Select Age Class</option>
+                                                <cfloop from="1" to="#ArrayLen(ageClass)#" index="j">
+                                                    <cfif isDefined('qgetCetaceanNecropsy.ageClass')>
+                                                    <option value="#ageClass[j]#" <cfif #ageClass[j]# eq #qgetCetaceanNecropsy.ageClass#>selected</cfif>>#ageClass[j]#</option>
+                                                </cfif>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <label class="ageclass-label">Actual Age</label>
+                                            <div class="input">
+                                                <input class="input input-style" type="text" onblur="headerDataSave()" name="actualClass" id="actualClass" value="#qgetCetaceanNecropsy.actualClass#" maxlength="80">
+                                            </div>
+                                 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 ">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <label class="">Initial Condition</label>
+                                            <select class="form-control" name="InitialCondition" id="InitialCondition" onChange="headerDataSave()">
+                                                <option value="">Select Initial Condition</option>
+                                                <cfloop array="#Conditions#" item="item" index="j">
+                                                    <cfif isDefined('qgetCetaceanNecropsy.InitialCondition')>
+                                                    <option value="#item#" <cfif #item# eq #qgetCetaceanNecropsy.InitialCondition#>selected</cfif>>#ConditionsValue[j]#-#item#</option>
+                                                    </cfif>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 ">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <label class="">Final Condition</label>
+                                            <select class="form-control" name="FinalCondition" id="FinalCondition" onChange="headerDataSave()">
+                                                <option value="">Select Final Condition</option>
+                                                <cfloop array="#Conditions#" item="item" index="j">
+                                                    <cfif isDefined('qgetCetaceanNecropsy.FinalCondition')>
+                                                    <option value="#item#" <cfif #item# eq #qgetCetaceanNecropsy.FinalCondition#>selected</cfif>>#ConditionsValue[j]#-#item#</option>
+                                                    </cfif>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="col-sm-12" style="margin-bottom: 10px;">
+                                    <label>Location</label>
+                                    <textarea class="form-control textareaCustomReset locations-textarea" onblur="headerDataSave()" id="Location" name="Location"
+                                        maxlength="75"><cfif isDefined('qgetCetaceanNecropsy.Location')>#qgetCetaceanNecropsy.Location#</cfif></textarea>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <label class="lat-one">Lat</label>
+                                            <input class="input-style xl-width" onblur="headerDataSave()" onfocusout="checkValue(this)" type="text" value="<cfif isDefined('qgetCetaceanNecropsy.lat')>#qgetCetaceanNecropsy.lat#</cfif>" name="lat" id="AtLatitude">
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="col-sm-6">
+                                    <div class="form-group ">
+                                        <div class="input-group">
+                                            <label class="lon-one">Lon</label>
+                                            <input class="input-style xl-width" onblur="headerDataSave()" onfocusout="checkValue(this)" type="text" value="<cfif isDefined('qgetCetaceanNecropsy.lon')>#qgetCetaceanNecropsy.lon#</cfif>" name="lon" id="AtLongitude">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group justify-content-end">
+                                        <input type="button" id="verifyLocation" class="btn btn-skyblue" value="Verify" onclick="checkLatLng()">
+                                    </div>
+                                </div> 
+                                <div class=" col-sm-6 ">
+                                    <div class="form-group">
+                                        <div class="input-group flex-center">
+                                            <label class="county-label">County</label>
+                                            <select class="form-control" name="county" id="county" onChange="headerDataSave()">
+                                                <option value="">Select County</option>
+                                                <cfloop query="qgetIR_CountyLocation">
+                                                    <cfif active  neq 0>
+                                                        <option value="#qgetIR_CountyLocation.IR_CountyLocation#" <cfif #qgetIR_CountyLocation.IR_CountyLocation# eq #qgetCetaceanNecropsy.county#>selected</cfif>>#qgetIR_CountyLocation.IR_CountyLocation#</option>
+                                                    </cfif>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>   
+                                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <div class="input-group flex-center">
+                                            <label class="">Euthanized</label>
+                                            <input class="input-style xl-width" type="checkbox" value="1" name="euthanizedCB" id="euthanizedCB" <cfif (isdefined('qgetCetaceanNecropsy.euthanizedCB') and  qgetCetaceanNecropsy.euthanizedCB eq '1') || (isdefined('qgetCetaceanNecropsy.euthanizedCB') and  qgetCetaceanNecropsy.euthanizedCB eq 'Yes')>checked</cfif>>
+                                        </div>                                          
+                                    </div>
+                                </div> 
+                                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="form-holder blue-bg pb-2">  
+                        <div class="form-group m-0">
+                            <div class="row">
+                                <div class="col-lg-12 p-0 green-labels">
+                                    <div class="col-lg-12">
+                                        <div class="form-group input-group flex-center">
+                                            <label>Team Members</label>
+                                            <div class="input"> 
+
+                                                    <select class="form-control search-box" multiple="multiple" name=""
+                                                    id="">
+                                                    <cfloop query="getTeams">
+                                                            <option value="#getTeams.RT_ID#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.ResearchTeam,","),getTeams.RT_ID)>selected</cfif>>#getTeams.RT_MemberName#</option>  
+                                                    </cfloop>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group input-group flex-center">
+                                            <label class="veterinarian">Veterinarian</label>
+                                            <div class="input">
+                                                <select class="form-control search-box" multiple="multiple" name="" id="" onclick ="removeOptions()">
+                                                   
+                                                    <cfloop query="qgetVeterinarians">
+                                                        
+                                                            <option value="#qgetVeterinarians.ID#" 
+                                                            <cfif ListFind(ValueList(qgetCetaceanNecropsy.Veterinarian,","),
+                                                                                    qgetVeterinarians.ID)>selected
+                                                            </cfif>
+                                                            >#qgetVeterinarians.Veterinarians#</option>  
+                                                       
+                                                    </cfloop>
+                                                </select>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12"> 
+                                        <div class="form-group">
+                                            <div class="input-group flex-center">
+                                                <label class="">Body of Water</label>
+                                                <div class="input">
+                                                    <select class="combobox form-control search-box" multiple="multiple" name="BodyOfWater" id="BodyOfWater">
+                                                        <cfloop query="getSurveyAreaData">
+                                                                <option value="#getSurveyAreaData.ID#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.BodyOfWater,","),getSurveyAreaData.ID)>selected</cfif>>#getSurveyAreaData.AreaName#</option>
+                                                        </cfloop>                                                               
+                                                
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group flex-center">
+                                            <label class="">Species</label>
+                                            <div class="input">
+                                                <select class="form-control selectCustomReset" name="species" id="species"
+                                                    onChange="getCode()">
+                                                    <option value=""></option>
+                                                    <cfloop query="qgetCetaceanSpecies">
+                                                            <option value="#qgetCetaceanSpecies.id#" <cfif #qgetCetaceanSpecies.id# eq #qgetCetaceanNecropsy.species#>selected</cfif>>
+                                                                #qgetCetaceanSpecies.CetaceanSpeciesName# </option>
+                                                    </cfloop>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group input-group flex-center">
+                                            <label class="veterinarian">Stranding Type</label>
+                                            <div class="input">
+                                                <select class="form-control" name="StTpye" id="StTpye">
+                                                    <option value="">Select Stranding Type</option>
+                                                    <cfloop query="qgetStrandingType">
+                                                        <cfif status eq 1>
+                                                            <option value="#qgetStrandingType.ID#" <cfif #qgetStrandingType.ID# eq #qgetCetaceanNecropsy.StTpye#>selected</cfif>>#qgetStrandingType.type#</option>
+                                                        </cfif>
+                                                    </cfloop>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12"> 
+                                        <div class="form-group m-0">
+                                            <div class="input-group flex-center">
+                                                <label class="">NOAA Stock</label>
+                                                <div class="input">
+                                                    <select class="combobox form-control search-box" multiple="multiple" name="NOAAStock" id="stock_value">
+                                                        <option value="">Select NOAA Stock</option>
+                                                        <cfloop query="getStock">
+                                                            <cfif active eq 1>
+                                                                <option class="stock_value" value="#getStock.ID#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.NOAAStock,","),getStock.ID)>selected</cfif>>
+                                                                    #getStock.StockName#</option>
+                                                            </cfif>
+                                                        </cfloop>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12" style="margin-top: 15px;">
+                                    <div class="form-group brief-history">
+                                        <label class="history-label">Brief History 1 </label>
+                                        <textarea class="form-control textareaCustomReset locations-textarea" onblur="headerDataSave()" name="BriefHistory" id="BriefHistory"  maxlength="2084" style="resize: auto;"><cfif isDefined('qgetCetaceanNecropsy.BriefHistory')>#qgetCetaceanNecropsy.BriefHistory#</cfif> </textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!---TodayWorking2 --->
+
+    <div class="sec-two">    
+        <div class="row">
+            <div class="col-lg-5">
+            <div class="cust-row">
+                <div class="cust-fld"><label class="fl-lbl">Attending Veterinarian</label>
+                </div>
+                <div class="cust-inp">
+                    <select class="stl-op search-box" multiple="multiple" name="" id="">
+                        <cfloop query="qgetVeterinarians">
+                            <option value="#qgetVeterinarians.ID#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.attendingVeterinarian,","),#qgetVeterinarians.ID#)>selected</cfif>>#qgetVeterinarians.Veterinarians#</option>
+                        </cfloop>
+                    </select>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="row pt-15">
+            <div class="col-lg-5">
+            <div class="cust-row">
+                <div class="cust-fld"><label class="fl-lbl">Prosectors</label>
+                </div>
+                <div class="cust-inp">
+                    <select class="stl-op search-box" multiple="multiple" name="Prosectors" id="Prosectors">
+                        <cfloop query="getTeams">
+                                <option value="#getTeams.RT_ID#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.Prosectors,","),#getTeams.RT_ID#)>selected</cfif>>#getTeams.RT_MemberName#</option>
+                        </cfloop>
+                    </select>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="row pt-15">
+            <div class="col-lg-12">
+            <div class="cust-row panel-rw">
+                <div class="cust-fld"><label class="fl-lbl">Tentative Gross Diagnosis</label>
+                </div>
+                <div class="cust-inp">
+                    <!-- <input type="text" name="Tentative" placeholder="Expandable field to multi-line" value="#qgetCetaceanNecropsy.Tentative#"class="text-field"> -->
+                    <textarea id="top-area" name="Tentative" rows="1" class="text-field" cols="50" >#qgetCetaceanNecropsy.Tentative#</textarea>
+                </div>
+                </div>
+            </div>
+            <div class="col-lg-12 mt-15">
+                <div class="cust-row panel-rw">
+                    <div class="cust-fld"><label class="fl-lbl">Cause of Death</label>
+                    </div>
+                    <div class="cust-inp">
+                        <!-- <input type="text" name="deathcause" placeholder="Expandable field to multi-line" value="#qgetCetaceanNecropsy.deathcause#"class="text-field"> -->
+                        <textarea id="top-area" name="deathcause" rows="1" class="text-field" cols="50"  maxlength="1024" >#qgetCetaceanNecropsy.deathcause#</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 mt-15">
+                <div class="btn-rw cust-row mt-30 cst-rows">
+                <div class="cust-inp cust-inpts">
+                    <div class="cust-inp test" id="histoSpinner">
+                    <input type="file" placeholder="pdf Path" name="histofile" id="histofile" class="text-field text-fields" accept="application/pdf">
+                </div>
+                <div class="cust-fld"><button type="button" onclick="histoUploadshowPictures()" name="histoUpload"class="upld-btn upld-btns">Upload</button></div>
+                </div>
+
+
+                <cfset HistoImagess = ValueList(qgetCetaceanNecropsy.HistoImages,",")> 
+                <!--- <input type="hidden" name="imagesFile2" value="#imgss#" id="imagesFile2"> --->
+                <input type="hidden" name="histoImages" value="#HistoImagess#" id="histoImages">
+        
+                <div id="histoUpload" >
+                 <CFIF listLen(HistoImagess)>  
+                        <cfloop list="#HistoImagess#" item="item" index="index">
+        
+                            <span class="pip pipw" style="width: 30%;">
+                                <a data-toggle="modal" data-target="##myModala" href="##" title="#Application.CloudRoot##item#" target="blank">
+                                    <img  class="imageThumb imageTh" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#item#" onclick="pdfselected(this)"/>                                  
+                                </a>
+                                
+                                <br/>
+                                <cfif findNoCase("Read only ST", permissions) eq 0>
+                                    <span class="remove rem" onclick="histoPdfRemove(this)" id="#item#">Remove File</span>
+                                </cfif>
+                                <br/>
+                                <span class="remove" style="width: 80px;" id="#item#">#item#</span>
+                            </span>
+                        </cfloop>
+                    </cfif>
+                </div>  
+
+                <!-- modal -->
+                <div class="modal fade" id="myModala" role="dialog">
+                    <div class="modal-dialog">
+                    
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="pdfname"></h4>
+                            </div>
+                            <div class="modal-body">
+                                <embed id="embe" src="" width="98%" height="500" type="application/pdf" title="test.pdf">
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          
+    
+            </div>
+            </div>
+        </div>
+        <div class="row pt-15">
+            <div class="col-lg-8 fldarea">
+                <label class="fl-lbl">Histopathology Remarks / Diagnosis</label>
+                <textarea id="top-area" name="historemark" rows="4" cols="50"  maxlength="4000" >#qgetCetaceanNecropsy.historemark#</textarea>
+            </div>
+                       
+
+        </div>
+        <div class="examination-sec">
+            <div class="sec-title"><h2>External Examination</h2><span></span></div>
+            <div class="row pt-30">
+            <div class="col-lg-12">
+                <div class="col-lg-5">
+                    <div class="cust-row">
+                        <div class="cust-fld"><label class="fl-lbl">Condition at Necropsy</label>
+                        </div>
+                        <div class="cust-inp">
+                            <select class="stl-op" name="Necropsycondition" id="Necropsy_condition">
+                                <option value="">Select</option>
+                                <cfset coutt = "2">
+                                <cfloop array="#Condition_at_Necropsy#" item="item" index="j">
+                                    <option value="#item#"<cfif isdefined('qgetCetaceanNecropsy.Necropsycondition') and  qgetCetaceanNecropsy.Necropsycondition  eq #item#>selected</cfif>>#coutt#-#item#</option>
+                                    <cfset coutt = coutt +1>
+                                </cfloop>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 mt-10">
+                <div class="col-lg-5">
+                    <div class="cust-row">
+                        <div class="cust-fld">
+                            <label class="fl-lbl">Euthanized</label>
+                        </div>
+                        <div class="cust-inp">
+                            <select class="stl-op" name="Euthanized" id="Euthanized">
+                                <option value="">Select</option>
+                                <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.Euthanized') and  qgetCetaceanNecropsy.Euthanized  eq 'Yes'>selected</cfif>>Yes</option>
+                                <option value"No" <cfif isdefined('qgetCetaceanNecropsy.Euthanized') and  qgetCetaceanNecropsy.Euthanized  eq 'No'>selected</cfif>>No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 mt-10">
+                <div class="col-lg-8">
+                    <div class="cust-row exam-rw">
+                        <div class="cust-fld">
+                            <label class="fl-lbl">General Body Condition</label>
+                        </div>
+                        <div class="cust-inp">
+                            <input type="text"  name="NecropsyBodycondition" class="text-field" value="#qgetCetaceanNecropsy.Bodycondition#">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 mt-10">
+                <div class="col-lg-5">
+                    <div class="cust-row">
+                        <div class="cust-fld"><label class="fl-lbl">Level A Date</label>
+                        </div>
+                        <div class="cust-inp input-group date"id="LevelA_Date">
+                            <input type="text" id="Level_A_Date" name="LevelADate" value='#DateTimeFormat(qgetCetaceanNecropsy.LevelADate, "MM/dd/YYYY")#' placeholder="mm/dd/yyyy"class="text-field"> 
+                            <span class="input-group-addon time-icon"> <span class="glyphicon glyphicon-calendar"></span> </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="cust-row">
+                        <div class="cust-fld"><label class="fl-lbl">Animal Renderings</label>
+                        </div>
+                        <div class="cust-inp">
+                            <select class="stl-op" name="AnimalRenderings" id="Animal_Renderings">
+                                <option value="">Select</option>
+                                <cfloop from="1" to="#ArrayLen(Animal_Renderings)#" index="j">
+                                    <option value="#Animal_Renderings[j]#" <cfif isdefined('qgetCetaceanNecropsy.AnimalRenderings') and  qgetCetaceanNecropsy.AnimalRenderings  eq #Animal_Renderings[j]#>selected</cfif>>#Animal_Renderings[j]#</option>
+                                </cfloop>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 mt-10">
+          
+                <div class="col-lg-5">
+                    <div class="cust-row">
+                        <div class="cust-fld"><label class="fl-lbl">Nx Location</label>
+                        </div>
+                        <div class="cust-inp">
+                            <select class="stl-op search-box" multiple="multiple" name="NxLocation" id="NxLocation">
+                                <cfloop query="qgetNxLocation">
+                                    <cfif status eq 1>
+                                        <option value="#qgetNxLocation.ID#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.NxLocation,","),#qgetNxLocation.ID#)>selected</cfif>>#qgetNxLocation.location#</option>
+                                    </cfif>
+                                </cfloop>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="col-lg-5" id="ExternalExamDiv" style="display: none;">
+                <div class="cust-row btn-rw startSpinner" >
+                    <div class="cust-inp test" id="start">                    
+                        <input type="file" placeholder="image Path" name="ExternalExamphoto" id="ExternalExamphoto" class="text-field text-fields" accept="image/*">
+                    </div>
+                    <div class="cust-fld"><button type="button"  onclick="showPictures()" class="upld-btn upld-btns">Upload</button></div>
+                </div>
+            </div>
+                <div class="choose-images">
+                    <cfset imgss = ValueList(qgetCetaceanNecropsy.images,",")>
+                    <input type="hidden" name="imagesFile" value="#imgss#" id="imagesFile">
+            
+                    <div id="previousimages"  class="choose-images-detail">
+                     
+                        
+                        <CFIF listLen(imgss)> 
+    
+                            <cfloop list="#imgss#" item="item" index="index">
+            
+                                <span class="pip pipwse" >
+                                    <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                                        <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                                    </a>
+                                    <br/>
+                                    <cfif findNoCase("Read only ST", permissions) eq 0>
+                                        <span class="remove rms" onclick="ExternalExamphotoremove(this)" id="#item#">Remove image</span>
+                                    </cfif>
+                                </span>
+                            </cfloop>
+                        </cfif>	
+                    </div>
+                </div>        
+            </div>
+        </div>
+    
+                <!--- modal --->
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+            
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="pdfname"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <img id="emb" src="" width="98%" height="500" type="application/jpeg" title="test.jpeg">
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+
+
+<div class="examination-sec">
+<div class="sec-title"><h2>Integument</h2><span></span></div>
+<div class="row pt-30">
+<div class="col-lg-5">
+<div class="col-lg-6">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Skin Lesion Form</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Lesionform" id="Lesion_Form">
+                <option value="">Select</option>
+                <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.Lesionform') and  qgetCetaceanNecropsy.Lesionform  eq 'Yes'>selected</cfif>>Yes</option>
+                <option value"No" <cfif isdefined('qgetCetaceanNecropsy.Lesionform') and  qgetCetaceanNecropsy.Lesionform  eq 'No'>selected</cfif>>No</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-6">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">HI Form</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="HIForm" id="HI_Form">
+                <option value="">Select</option>
+                <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.HIForm') and  qgetCetaceanNecropsy.HIForm  eq 'Yes'>selected</cfif>>Yes</option>
+                <option value"No" <cfif isdefined('qgetCetaceanNecropsy.HIForm') and  qgetCetaceanNecropsy.HIForm  eq 'No'>selected</cfif>>No</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Number of Cookie Cutter Wounds</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text" value="#qgetCetaceanNecropsy.cutterwounds#"name="cutterwounds"class="text-field">
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Number of Cookie Cutter Scars</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text" value="#qgetCetaceanNecropsy.cutterscars#" name="cutterscars"class="text-field">
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Eye Findings LEFT</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op search-box" multiple="multiple" name="eyeleft" id="eye_left">
+                
+                <cfloop from="1" to="#ArrayLen(Eye_Finding)#" index="j">
+                    <option value="#Eye_Finding[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.eyeleft,","),#Eye_Finding[j]#)>selected</cfif>>#Eye_Finding[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Eye Findings RIGHT</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op search-box" multiple="multiple" name="eyeright" id="eye_right">
+     
+                <cfloop from="1" to="#ArrayLen(Eye_Finding)#" index="j">
+                    <option value="#Eye_Finding[j]#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.eyeright,","),#Eye_Finding[j]#)>selected</cfif>>#Eye_Finding[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+
+    <cfif isDefined('qgetCetaceanNecropsy.Fnumber')  and #qgetCetaceanNecropsy.Fnumber# neq "empty">
+    
+        <cfquery name="qgetLCEID" datasource="#Application.dsn#"  result="return_data" >
+            SELECT ID from ST_LiveCetaceanExam where deleted != '1' and Fnumber = '#qgetCetaceanNecropsy.Fnumber#' 
+        </cfquery>
+        <cfif  #qgetLCEID.ID# eq " ">
+            <cfset form.CetaceanID= "0">
+        <cfelse>
+            <cfset form.CetaceanID= "#qgetLCEID.ID#">
+        </cfif>
+        
+    </cfif>
+ 
+</div>
+</div>
+<div class="col-lg-7">
+<label class="fl-lbl">If skin lesion present, please describe</label>
+<textarea id="top-area" name="lessiondescribe" rows="12" cols="120">#qgetCetaceanNecropsy.lessiondescribe#</textarea>
+</div>
+<div class="col-lg-12 fldarea">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" name="lessioncomments" rows="12" cols="120" maxlength="4000" >#qgetCetaceanNecropsy.lessioncomments#</textarea>
+<div class="area-check align-right">
+    <label class="check-cust-fld">Photographs Taken</label>
+    <input  type="checkbox"name="lessionphototaken" id="lessionphototaken" onclick="lessionphotos()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.lessionphototaken') and  qgetCetaceanNecropsy.lessionphototaken  eq 'on'>checked</cfif>>
+</div>
+</div>
+
+<div class="col-lg-5" id="integumentdiv" style="display: block;">
+<div class="cust-row btn-rw startSpinner">
+    <div class="cust-inp cust-inpts">
+        <div class="cust-inp test" id="startSpinner">
+            <input type="file" placeholder="image Path" name="Integumentphoto" id="Integumentphoto" class="text-field text-fields" accept="image/*">
+        </div>
+        <div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="integumentshowPictures()">Upload</button></div>
+    </div>
+</div>
+</div>
+<div class="choose-images">
+<cfset imgs = ValueList(qgetCetaceanNecropsy.integumentImages,",")>
+    <input type="hidden" name="integumentImagesFile" value="#imgs#" id="integumentImagesFile">
+    <div id="IntegumentPreviousimages" class="choose-images-detail">
+        <CFIF listLen(imgs)> 
+            <cfloop list="#imgs#" item="item" index="index">
+
+                <span class="pip pipws">
+                    <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                        <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                    </a>
+                    <br/>
+                    <cfif findNoCase("Read only ST", permissions) eq 0>
+                        <span class="remove rms" onclick="integumentImageremove(this)" id="#item#">Remove image</span>
+                    </cfif>
+                </span>
+            </cfloop>
+        </cfif>	
+    </div> 
+</div>
+
+
+</div>
+</div>
+<div class="my-examination-sec">
+<div class="sec-title"><h2>Internal Examination</h2><span></span></div>
+<div class="mid-t"><h3>NUTRITIONAL CONDITION - INTERNAL</h3></div>
+<div class="row pt-30">
+<div class="col-lg-5">
+<div class="col-lg-12">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Fat/Blubber Status</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Fat_Blubber" id="Fat_Blubber">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Fat_Blubber)#" index="j">
+                    <option value="#Fat_Blubber[j]#" <cfif isdefined('qgetCetaceanNecropsy.Fat_Blubber') and  qgetCetaceanNecropsy.Fat_Blubber  eq '#Fat_Blubber[j]#'>selected</cfif>>#Fat_Blubber[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl"></label>
+        </div>
+        <div class="cust-fld"><label class="fl-lbl"><strong>Fat Around Organs</strong></label>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Heart</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="heart" id="heart">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Fat_Blubber)#" index="j">
+                    <option value="#Fat_Blubber[j]#" <cfif isdefined('qgetCetaceanNecropsy.heart') and  qgetCetaceanNecropsy.heart  eq '#Fat_Blubber[j]#'>selected</cfif>>#Fat_Blubber[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Mesentery</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="mesentery" id="mesentery">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Fat_Blubber)#" index="j">
+                    <option value="#Fat_Blubber[j]#" <cfif isdefined('qgetCetaceanNecropsy.mesentery') and  qgetCetaceanNecropsy.mesentery  eq '#Fat_Blubber[j]#'>selected</cfif>>#Fat_Blubber[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw ">
+        <div class="cust-fld"><label class="fl-lbl">Kidneys</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="kidney" id="kidney">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Fat_Blubber)#" index="j">
+                    <option value="#Fat_Blubber[j]#" <cfif isdefined('qgetCetaceanNecropsy.kidney') and  qgetCetaceanNecropsy.kidney  eq '#Fat_Blubber[j]#'>selected</cfif>>#Fat_Blubber[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <cfif isDefined('qgetNutritional') AND #qgetNutritional.recordcount# gt 0>
+        <input type="hidden" id="dynamicone" value="#qgetNutritional.recordcount#" name="count">
+        <cfloop query="qgetNutritional">
+            <div class="cust-row ingm-rw kidneyClass">
+                <cfif isDefined('qgetNutritional.organs_label')>
+                <div class="cust-fld"><label class="fl-lbl"><input name="organlabel#qgetNutritional.ID#" type="text" value="#qgetNutritional.organs_label#" class="text-field"></label>
+                </div>
+            
+                <div class="cust-inp">
+                    <select class="stl-op" name="NUTRI#qgetNutritional.ID#">
+                        <option value="">Select</option>
+                        <cfloop from="1" to="#ArrayLen(Fat_Blubber)#" index="j">
+                            <option value="#Fat_Blubber[j]#"<cfif isdefined('qgetNutritional.newNUTRI') and  qgetNutritional.newNUTRI  eq '#Fat_Blubber[j]#'>selected</cfif> >#Fat_Blubber[j]#</option>
+                        </cfloop>
+                    </select>
+                </div>
+            </cfif>
+            </div>
+        </cfloop>
+    </cfif>
+    <div id="newNUTRI" class="add_new_btn_content"></div>
+    <div class="simple-button pt-15 align-right">
+        <input type="hidden" name="dynamic_NUTRITIONAL" value="" id="dynamic_NUTRITIONAL">
+    
+        <input type="button" id="Add_new" name="Add_new" class="upld-btn" value="Add New" onclick="newNUTRITIONAL()">
+    </div>
+</div>
+</div>
+<div class="col-lg-7">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" name="internal_comments" rows="12" cols="120"  maxlength="2048" >#qgetCetaceanNecropsy.internal_comments#</textarea>
+<div class="area-check align-right">
+    <label class="check-cust-fld">Photographs Taken</label>
+    <input type="checkbox" name="internal_phototaken" id="internal_phototaken" onclick="internalPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.internal_phototaken') and  qgetCetaceanNecropsy.internal_phototaken  eq 'on'>checked</cfif>>
+</div>
+</div>
+<div class="col-lg-8" id="intenalExamphotoDiv">
+<div class="cust-row btn-rw startSpinner">
+    <div class="cust-inp cust-inptsi">
+        <div class="cust-inp test" id="intenalExamSpinner">
+            <input type="file" name="intenalExamphoto" id="intenalExamphoto" class="text-field text-fields" accept="image/*">
+        </div>
+        <div class="cust-fld"><button type="button" onclick="intenalExamPictures()" class="upld-btn upld-btns">Upload</button></div>
+    </div>
+</div>
+</div>
+<div class="choose-images">
+<cfset IntenalExamimg = ValueList(qgetCetaceanNecropsy.IntenalExamImages,",")>
+        <input type="hidden" name="" value="#IntenalExamimg#" id="">
+        <div id="intenalExamPreviousimages" class="choose-images-detail"> 
+            <div id="">
+            </div>
+        <CFIF listLen(IntenalExamimg)> 
+                <cfloop list="#IntenalExamimg#" item="item" index="index">
+
+                    <span class="pip pipswi">
+                        <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                            <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                       
+                        </a>
+                        <br/>
+                        <cfif findNoCase("Read only ST", permissions) eq 0>
+                            <span class="remove rms" onclick="intenalImageremove(this)" id="#item#">Remove image</span>
+                        </cfif>
+                    </span>
+                </cfloop>
+            </cfif>	
+    </div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-7 mt-10">
+<div class="col-lg-12">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">MUSCULOSKELETAL SYSTEM</h3></div></label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="MUSCULOSKELETALNecropsy" id="MUSCULOSKELETAL">
+                <option value="">Select</option>
+                <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.MUSCULOSKELETAL') and  qgetCetaceanNecropsy.MUSCULOSKELETAL  eq 'Examined'>selected</cfif>>Examined</option>
+                <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.MUSCULOSKELETAL') and  qgetCetaceanNecropsy.MUSCULOSKELETAL  eq 'NE'>selected</cfif>>NE</option>
+                
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Joint Fluid</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Joint_Fluid"id="Joint_Fluid">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Joint_Fluid)#" index="j">
+                    <option value="#Joint_Fluid[j]#"<cfif isdefined('qgetCetaceanNecropsy.Joint_Fluid') and  qgetCetaceanNecropsy.Joint_Fluid  eq #Joint_Fluid[j]#>selected</cfif>>#Joint_Fluid[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Skeletal Findings</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op search-box" multiple="multiple" name="Skeletal_Findings"id="Skeletal_Findings">
+             
+                <cfloop from="1" to="#ArrayLen(Skeletal_Findingss)#" index="j">
+                    <option value="#Skeletal_Findingss[j]#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.Skeletal_Findings,","),#Skeletal_Findingss[j]#)>selected</cfif>>#Skeletal_Findingss[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Muscle Status</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Muscle_Status" id="Muscle_Status">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Muscle_Status)#" index="j">
+                 
+                    <option value="#Muscle_Status[j]#"<cfif isdefined('qgetCetaceanNecropsy.Muscle_Status') and  qgetCetaceanNecropsy.Muscle_Status  eq #Muscle_Status[j]#>selected</cfif>>#Muscle_Status[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Musculature Findings</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op search-box" multiple="multiple" name="Musculature_Findings" id="Musculature_Findings">
+              
+                <cfloop from="1" to="#ArrayLen(Musculature_Findings)#" index="j">
+                    <option value="#Musculature_Findings[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.Musculature_Findings,","),#Musculature_Findings[j]#)>selected</cfif>>#Musculature_Findings[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12" id="musculoskeletalDiv">
+<div class="cust-row btn-rw startSpinner">
+    <div class="cust-inp cust-inpts">
+        <div class="cust-inp test" id="startMusculoskeletalSpinner">
+            <input type="file" placeholder="image Path" name="musculoskeletal" id="musculoskeletal" class="text-field text-fields" accept="image/*">
+        </div>
+        <div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="musculoskeletalshowPictures()">Upload</button></div>
+    </div>
+</div>
+</div>
+<div class="choose-images">
+<cfset musculoskeletalImgs = ValueList(qgetCetaceanNecropsy.musculoskeletalImages,",")>
+    <input type="hidden" name="musculoskeletalImagesFile" value="#musculoskeletalImgs#" id="musculoskeletalImagesFile">
+    <div id="musculoskeletalPreviousimages" class="choose-images-detail">
+        <CFIF listLen(musculoskeletalImgs)> 
+            <cfloop list="#musculoskeletalImgs#" item="item" index="index">
+
+                <span class="pip pipws">
+                    <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                        <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                    </a>
+                    <br/>
+                    <cfif findNoCase("Read only ST", permissions) eq 0>
+                        <span class="remove rms" onclick="musculoskeletalImageremove(this)" id="#item#">Remove image</span>
+                    </cfif>
+                </span>
+            </cfloop>
+        </cfif>	
+    </div> 
+</div>
+
+</div>
+<div class="col-lg-5 mt-5">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" name="muscular_comments" rows="10" cols="120"  maxlength="4000" >#qgetCetaceanNecropsy.muscular_comments#</textarea>
+<div class="area-check align-right">
+    <label class="check-cust-fld">Photographs Taken</label>
+    <input type="checkbox"name="muscular_phototaken" id="muscular_phototaken" onclick="muscularPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.muscular_phototaken') and  qgetCetaceanNecropsy.muscular_phototaken  eq 'on'>checked</cfif>>
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-5">
+<div class="col-lg-12">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">THORACIC CAVITY</h3></div></label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op"name="THORACIC"id="THORACIC">
+                <option value="">Select</option>
+                <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.THORACIC') and  qgetCetaceanNecropsy.THORACIC  eq 'Examined'>selected</cfif>>Examined</option>
+                <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.THORACIC') and  qgetCetaceanNecropsy.THORACIC  eq 'NE'>selected</cfif>>NE</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-6 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Fluid Volume</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text" name="fluidVolume" id="fluidVolume" onblur="checkValue(this)" value="#qgetCetaceanNecropsy.fluidVolume#"class="text-field">
+        </div>
+    </div>
+</div>
+<div class="col-lg-6 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">ml</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="ml" id="ml">
+                <option value="">Select</option>
+                <option value="Actual"<cfif isdefined('qgetCetaceanNecropsy.ml') and  qgetCetaceanNecropsy.ml  eq 'Actual'>selected</cfif>>Actual</option>
+                <option value="Estimate"<cfif isdefined('qgetCetaceanNecropsy.ml') and  qgetCetaceanNecropsy.ml  eq 'Estimate'>selected</cfif>>Estimate</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Fluid</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="THORACIC_Fluid"id="THORACIC_Fluid">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Joint_Fluid)#" index="j">
+                    <option value="#Joint_Fluid[j]#" <cfif isdefined('qgetCetaceanNecropsy.THORACIC_Fluid') and  qgetCetaceanNecropsy.THORACIC_Fluid  eq #Joint_Fluid[j]#>selected</cfif>>#Joint_Fluid[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Lining</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op"name="THORACIC_Lining"id="THORACIC_Lining">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Lining)#" index="j">
+                    <option value="#Lining[j]#"<cfif isdefined('qgetCetaceanNecropsy.THORACIC_Lining') and  qgetCetaceanNecropsy.THORACIC_Lining  eq #Lining[j]#>selected</cfif> >#Lining[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+
+        <div class="col-lg-12" id="thoracicphotoDiv">
+            <div class="cust-row btn-rw startSpinner">
+                <div class="cust-inp cust-inpts">
+                    <div class="cust-inp test" id="startThoracicSpinner">
+                        <input type="file" placeholder="image Path" name="thoracicphoto" id="thoracicphoto" class="text-field text-fields" accept="image/*">
+                    </div>
+                    <div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="thoracicshowPictures()">Upload</button></div>
+                </div>
+            </div>
+        </div>
+        <div class="choose-images">
+            <cfset thoracictImgs = ValueList(qgetCetaceanNecropsy.thoracictImages,",")>
+                <input type="hidden" name="thoracicImagesFile" value="#thoracictImgs#" id="thoracicImagesFile">
+                <div id="thoracicPreviousimages" class="choose-images-detail">
+                    <CFIF listLen(thoracictImgs)> 
+                        <cfloop list="#thoracictImgs#" item="item" index="index">
+        
+                            <span class="pip pipws">
+                                <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                                    <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                                </a>
+                                <br/>
+                                <cfif findNoCase("Read only ST", permissions) eq 0>
+                                    <span class="remove rms" onclick="thoracicImageremove(this)" id="#item#">Remove image</span>
+                                </cfif>
+                            </span>
+                        </cfloop>
+                    </cfif>	
+                </div> 
+        </div>
+
+</div>
+<div class="col-lg-7">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" name="thoratic_comments" rows="10" cols="120"  maxlength="2048" >#qgetCetaceanNecropsy.thoratic_comments#</textarea>
+<div class="area-check align-right">
+    <label class="check-cust-fld">Photographs Taken</label>
+    <input type="checkbox" name="thoratic_phototaken" id="thoratic_phototaken" onclick="thoraticPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.thoratic_phototaken') and  qgetCetaceanNecropsy.thoratic_phototaken  eq 'on'>checked</cfif>
+    >
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-5">
+<div class="col-lg-12">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">ABDOMINAL CAVITY</h3></div></label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="ABDOMINAL" id="ABDOMINAL">
+                <option value="">Select</option>
+                <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.ABDOMINAL') and  qgetCetaceanNecropsy.ABDOMINAL  eq 'Examined'>selected</cfif>>Examined</option>
+                <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.ABDOMINAL') and  qgetCetaceanNecropsy.ABDOMINAL  eq 'NE'>selected</cfif>>NE</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-6 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Fluid Volume</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text" name="abdominal_fluidVolume" id="abdominal_fluidVolume" onblur="checkValue(this)" value="#qgetCetaceanNecropsy.abdominal_fluidVolume#"class="text-field">
+        </div>
+    </div>
+</div>
+<div class="col-lg-6 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">ml</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="ABDOMINAL_ml" id="ABDOMINAL_ml">
+                <option value="">Select</option>
+                <option value="Actual"<cfif isdefined('qgetCetaceanNecropsy.ABDOMINAL_ml') and  qgetCetaceanNecropsy.ABDOMINAL_ml  eq 'Actual'>selected</cfif>>Actual</option>
+                <option value="Estimate"<cfif isdefined('qgetCetaceanNecropsy.ABDOMINAL_ml') and  qgetCetaceanNecropsy.ABDOMINAL_ml  eq 'Estimate'>selected</cfif>>Estimate</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Fluid</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="ABDOMINAL_Fluid" id="ABDOMINAL_Fluid">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Joint_Fluid)#" index="j">
+                    <option value="#Joint_Fluid[j]#" <cfif isdefined('qgetCetaceanNecropsy.ABDOMINAL_Fluid') and  qgetCetaceanNecropsy.ABDOMINAL_Fluid  eq #Joint_Fluid[j]#>selected</cfif>
+                        >#Joint_Fluid[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Lining</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op search-box" multiple="multiple" name="ABDOMINAL_Lining" id="ABDOMINAL_Lining">
+                <cfloop from="1" to="#ArrayLen(Lining)#" index="j">
+                    <option value="#Lining[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.ABDOMINAL_Lining,","),#Lining[j]#)>selected</cfif>
+                        >#Lining[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+  
+        <div class="col-lg-12" id="abdominalDiv">
+            <div class="cust-row btn-rw startSpinner">
+                <div class="cust-inp cust-inpts">
+                    <div class="cust-inp test" id="startAbdominalSpinner">
+                        <input type="file" placeholder="image Path" name="abdominalphoto" id="abdominalphoto" class="text-field text-fields" accept="image/*">
+                    </div>
+                    <div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="abdominalshowPictures()">Upload</button></div>
+                </div>
+            </div>
+        </div>
+        <div class="choose-images">
+            <cfset abdominalImgs = ValueList(qgetCetaceanNecropsy.abdominalImages,",")>
+                <input type="hidden" name="abdominalImagesFile" value="#abdominalImgs#" id="abdominalImagesFile">
+                <div id="abdominalPreviousimages" class="choose-images-detail">
+                    <CFIF listLen(abdominalImgs)> 
+                        <cfloop list="#abdominalImgs#" item="item" index="index">
+        
+                            <span class="pip pipws">
+                                <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                                    <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                                </a>
+                                <br/>
+                                <cfif findNoCase("Read only ST", permissions) eq 0>
+                                    <span class="remove rms" onclick="abdominalImageremove(this)" id="#item#">Remove image</span>
+                                </cfif>
+                            </span>
+                        </cfloop>
+                    </cfif>	
+                </div> 
+        </div>
 
     
+</div>
+<div class="col-lg-7">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" name="abdominal_comments" rows="10" cols="120"  maxlength="2048" >#qgetCetaceanNecropsy.abdominal_comments#</textarea>
+<div class="area-check align-right">
+    <label class="check-cust-fld">Photographs Taken</label>
+    <input type="checkbox" name="abdominal_phototaken" id="abdominal_phototaken" onclick="abdominalPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.abdominal_phototaken') and  qgetCetaceanNecropsy.abdominal_phototaken  eq 'on'>checked</cfif>
+    >
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-5">
+<div class="col-lg-12">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">HEPATOBILIARY SYSTEM</h3></div></label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="HEPATOBILIARY" id="HEPATOBILIARY">
+                <option value="">Select</option>
+                <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.HEPATOBILIARY') and  qgetCetaceanNecropsy.HEPATOBILIARY  eq 'Examined'>selected</cfif>>Examined</option>
+                <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.HEPATOBILIARY') and  qgetCetaceanNecropsy.HEPATOBILIARY  eq 'NE'>selected</cfif>>NE</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Liver Findings</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op search-box"multiple="multiple"name="Liver_Findings" id="Liver_Findings">
+                <cfloop query="qgetLiverFinding">
+                    <cfif status eq 1>
+                        <option value="#qgetLiverFinding.ID#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.Liver_Findings,","),#qgetLiverFinding.ID#)>selected</cfif>>#qgetLiverFinding.finding#</option>
+                    </cfif>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Biliary Findings</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Biliary_Findings" id="Biliary_Findings">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Biliary_Findings)#" index="j">
+                    <option value="#Biliary_Findings[j]#"<cfif isdefined('qgetCetaceanNecropsy.Biliary_Findings') and  qgetCetaceanNecropsy.Biliary_Findings  eq #Biliary_Findings[j]#>selected</cfif> >#Biliary_Findings[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-lg-12" id="hepatobiliaryDiv">
+<div class="cust-row btn-rw startSpinner">
+<div class="cust-inp cust-inpts">
+<div class="cust-inp test" id="startHepatobiliarySpinner">
+    <input type="file" placeholder="image Path" name="hepatobiliaryphoto" id="hepatobiliaryphoto" class="text-field text-fields" accept="image/*">
+</div>
+<div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="hepatobiliaryShowPictures()">Upload</button></div>
+</div>
+</div>
+</div>
+<div class="choose-images">
+<cfset hepatobiliaryImgs = ValueList(qgetCetaceanNecropsy.hepatobiliaryImages,",")>
+<input type="hidden" name="hepatobiliaryImagesFile" value="#hepatobiliaryImgs#" id="hepatobiliaryImagesFile">
+<div id="hepatobiliaryPreviousimages" class="choose-images-detail">
+<CFIF listLen(hepatobiliaryImgs)> 
+    <cfloop list="#hepatobiliaryImgs#" item="item" index="index">
+
+        <span class="pip pipws">
+            <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+            </a>
+            <br/>
+            <cfif findNoCase("Read only ST", permissions) eq 0>
+                <span class="remove rms" onclick="hepatobiliaryImageremove(this)" id="#item#">Remove image</span>
+            </cfif>
+        </span>
+    </cfloop>
+</cfif>	
+</div> 
+</div>
+
+</div>
+<div class="col-lg-7">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" name="hepatobiliary_comments" rows="10" cols="120"  maxlength="2048" >#qgetCetaceanNecropsy.hepatobiliary_comments#</textarea>
+<div class="area-check align-right">
+    <label class="check-cust-fld">Photographs Taken</label>
+    <input type="checkbox" name="hepatobiliary_phototaken" id="hepatobiliary_phototaken" onclick="hepatobiliaryPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.hepatobiliary_phototaken') and  qgetCetaceanNecropsy.hepatobiliary_phototaken  eq 'on'>checked</cfif>
+    >
+</div>
+</div>
+</div>
+<!--- 6 --->
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row hrt-rw">
+    <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">CARDIOVASCULAR SYSTEM</h3></div></label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="CARDIOVASCULAR" id="CARDIOVASCULAR">
+            <option value="">Select</option>
+            <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.CARDIOVASCULAR') and  qgetCetaceanNecropsy.CARDIOVASCULAR  eq 'Examined'>selected</cfif>>Examined</option>
+            <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.CARDIOVASCULAR') and  qgetCetaceanNecropsy.CARDIOVASCULAR  eq 'NE'>selected</cfif>>NE</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-3">
+<div class="cust-row hrt-rw">
+    <div class="cust-fld"><label class="fl-lbl">Blood in Heart Chambers</label>
+    </div>
+    <div class="cust-inp" >
+        <select class="stl-op"name="Chambers" id="Chambers">
+            <option value="">Select</option>
+            <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.Chambers') and  qgetCetaceanNecropsy.Chambers  eq 'Yes'>selected</cfif>>Yes</option>
+            <option value"No" <cfif isdefined('qgetCetaceanNecropsy.Chambers') and  qgetCetaceanNecropsy.Chambers  eq 'No'>selected</cfif>>No</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-5">
+<div class="cust-row describe-rw">
+    <div class="cust-fld"><label class="fl-lbl">Describe</label>
+    </div>
+    <div class="cust-inp">
+        <input type="text" name="cardio_describe" value="#qgetCetaceanNecropsy.cardio_describe#" class="text-field">
+    </div>
+</div>
+</div>
+</div>
+</div>
+<!--- 7 --->
+<div class="row pt-30">
+<div class="col-lg-5">
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Pericardial Fluid</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Pericardial_Fluid" id="Pericardial_Fluid">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Pericardial_Fluid)#" index="j">
+                    <option value="#Pericardial_Fluid[j]#"<cfif isdefined('qgetCetaceanNecropsy.Pericardial_Fluid') and  qgetCetaceanNecropsy.Pericardial_Fluid  eq #Pericardial_Fluid[j]#>selected</cfif>
+                        >#Pericardial_Fluid[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Overall Findings</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op search-box"multiple="multiple" name="Overall_Findings" id="Overall_Findings">
+                <cfloop from="1" to="#ArrayLen(Overall_Findings)#" index="j">
+                    <option value="#Overall_Findings[j]#"
+                     <cfif ListFind(ValueList(qgetCetaceanNecropsy.Overall_Findings,","),#Overall_Findings[j]#)>selected</cfif>
+                        >#Overall_Findings[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+   
+   <div class="col-lg-12" id="cardiovascularDiv">
+       <div class="cust-row btn-rw startSpinner">
+           <div class="cust-inp cust-inpts">
+               <div class="cust-inpst test" id="startCardiovascularSpinner">
+                   <input type="file" placeholder="image Path" name="cardiovascularphoto" id="cardiovascularphoto" class="text-field text-fields" accept="image/*">
+               </div>
+               <div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="cardiovascularShowPictures()">Upload</button></div>
+           </div>
+       </div>
+   </div>
+   <div class="choose-images">
+       <cfset cardiovascularImgs = ValueList(qgetCetaceanNecropsy.cardiovascularImages,",")>
+           <input type="hidden" name="cardiovascularImagesFile" value="#cardiovascularImgs#" id="cardiovascularImagesFile">
+           <div id="cardiovascularPreviousimages" class="choose-images-detail">
+               <CFIF listLen(cardiovascularImgs)> 
+                   <cfloop list="#cardiovascularImgs#" item="item" index="index">
+   
+                       <span class="pip pipws">
+                           <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                               <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                           </a>
+                           <br/>
+                           <cfif findNoCase("Read only ST", permissions) eq 0>
+                               <span class="remove rms" onclick="cardiovascularImageremove(this)" id="#item#">Remove image</span>
+                           </cfif>
+                       </span>
+                   </cfloop>
+               </cfif>	
+           </div> 
+   </div>
+
+   
+</div>
+
+</div>
+<div class="col-lg-7">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" name="cardio_comments" rows="10" cols="120" maxlength="4000" >#qgetCetaceanNecropsy.cardio_comments#</textarea>
+<div class="area-check align-right">
+<label class="check-cust-fld">Photographs Taken</label>
+<input type="checkbox" name="cardio_phototaken" id="cardio_phototaken" onclick="cardioPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.cardio_phototaken') and  qgetCetaceanNecropsy.cardio_phototaken  eq 'on'>checked</cfif>
+>
+</div>
+</div>
+<!--- 8 --->
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row hrt-rw">
+    <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">PULMONARY SYSTEM</h3></div></label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="PULMONARY" id="PULMONARY">
+            <option value="">Select</option>
+            <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.PULMONARY') and  qgetCetaceanNecropsy.PULMONARY  eq 'Examined'>selected</cfif>>Examined</option>
+            <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.PULMONARY') and  qgetCetaceanNecropsy.PULMONARY  eq 'NE'>selected</cfif>>NE</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-3">
+<div class="cust-row hrt-rw">
+    <div class="cust-fld"><label class="fl-lbl">Foam - Froth in Airway</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="Froth_in_Airway" id="Froth_in_Airway">
+            <option value="">Select</option>
+            <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.Froth_in_Airway') and  qgetCetaceanNecropsy.Froth_in_Airway  eq 'Yes'>selected</cfif>>Yes</option>
+            <option value"No" <cfif isdefined('qgetCetaceanNecropsy.Froth_in_Airway') and  qgetCetaceanNecropsy.Froth_in_Airway  eq 'No'>selected</cfif>>No</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="cust-row describe-rw">
+    <div class="cust-fld"><label class="fl-lbl">If Present</label>
+    </div>
+    <div class="cust-inp" >
+        <select class="stl-op"name="If_Present" id="If_Present">
+            <option value="">Select</option>
+            <option value="Anterior to Bifurction"<cfif isdefined('qgetCetaceanNecropsy.If_Present') and  qgetCetaceanNecropsy.If_Present  eq 'Anterior to Bifurction'>selected</cfif>>Anterior to Bifurction</option>
+            <option value="Posterior to Bifurction"<cfif isdefined('qgetCetaceanNecropsy.If_Present') and  qgetCetaceanNecropsy.If_Present  eq 'Posterior to Bifurction'>selected</cfif>>Posterior to Bifurction</option>
+            <option value="Anterior and Posterior to Bifurction"<cfif isdefined('qgetCetaceanNecropsy.If_Present') and  qgetCetaceanNecropsy.If_Present  eq 'Anterior and Posterior to Bifurction'>selected</cfif>>Anterior and Posterior to Bifurction</option>
+        </select>
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-5">
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Foam Amount:</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Foam_Amount" id="Foam_Amount">
+                <option value="">Select</option>
+                <option value="Small"<cfif isdefined('qgetCetaceanNecropsy.Foam_Amount') and  qgetCetaceanNecropsy.Foam_Amount  eq 'Small'>selected</cfif>>Small </option>
+                <option value="Moderate"<cfif isdefined('qgetCetaceanNecropsy.Foam_Amount') and  qgetCetaceanNecropsy.Foam_Amount  eq 'Moderate'>selected</cfif>>Moderate</option>
+                <option value="Copious"<cfif isdefined('qgetCetaceanNecropsy.Foam_Amount') and  qgetCetaceanNecropsy.Foam_Amount  eq 'Copious'>selected</cfif>>Copious</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Color of Foam</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Color_of_Foam" id="Color_of_Foam">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Color_of_Foam)#" index="j">
+                    <option value="#Color_of_Foam[j]#" <cfif isdefined('qgetCetaceanNecropsy.Color_of_Foam') and  qgetCetaceanNecropsy.Color_of_Foam  eq #Color_of_Foam[j]#>selected</cfif>>#Color_of_Foam[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Sand/Sediment in Airway</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Sand_Sediment" id="Sand_Sediment">
+                <option value="">Select</option>
+                <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.Sand_Sediment') and  qgetCetaceanNecropsy.Sand_Sediment  eq 'Yes'>selected</cfif>>Yes</option>
+                 <option value"No" <cfif isdefined('qgetCetaceanNecropsy.Sand_Sediment') and  qgetCetaceanNecropsy.Sand_Sediment  eq 'No'>selected</cfif>>No</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Trachea/Bronchi</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Trachea_Bronchi" id="Trachea_Bronchi">
+                <option value="">Select</option>
+                <cfloop from="1" to="#ArrayLen(Trachea_Bronchi)#" index="j">
+                    <option value="#Trachea_Bronchi[j]#" <cfif isdefined('qgetCetaceanNecropsy.Trachea_Bronchi') and  qgetCetaceanNecropsy.Trachea_Bronchi  eq #Trachea_Bronchi[j]#>selected</cfif>>#Trachea_Bronchi[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Lungs Findings</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op search-box"multiple="multiple" name="Lungs_Findings" id="Lungs_Findings">
+                <cfloop query="qgetLungFinding">
+                    <cfif status eq 1>
+                        <option value="#qgetLungFinding.ID#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.Lungs_Findings,","),#qgetLungFinding.ID#)>selected</cfif>>#qgetLungFinding.finding#</option>
+                    </cfif>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Lungs Float in Formalin</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Lungs_Float" id="Lungs_Float">
+                <option value="">Select</option>
+                <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.Lungs_Float') and  qgetCetaceanNecropsy.Lungs_Float  eq 'Yes'>selected</cfif>>Yes</option>
+                <option value"No" <cfif isdefined('qgetCetaceanNecropsy.Lungs_Float') and  qgetCetaceanNecropsy.Lungs_Float  eq 'No'>selected</cfif>>No</option>
+            </select>
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-lg-7">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" name="pulmonary_comments" rows="10" cols="120" maxlength="4000" >#qgetCetaceanNecropsy.pulmonary_comments#</textarea>
+<div class="area-check align-right">
+    <label class="check-cust-fld">Photographs Taken</label>
+    <input type="checkbox" name="pulmonary_phototaken" id="pulmonary_phototaken" onclick="pulmonaryPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.pulmonary_phototaken') and  qgetCetaceanNecropsy.pulmonary_phototaken  eq 'on'>checked</cfif>
+    >
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row ingm-rw">
+    <div class="cust-fld"><label class="fl-lbl">Parasites</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="PULMONARYParasites" id="PULMONARYParasites">
+            <option value="">Select</option>
+            <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.PULMONARYParasites') and  qgetCetaceanNecropsy.PULMONARYParasites  eq 'Yes'>selected</cfif>>Yes</option>
+            <option value="No" <cfif isdefined('qgetCetaceanNecropsy.PULMONARYParasites') and  qgetCetaceanNecropsy.PULMONARYParasites  eq 'No'>selected</cfif>>No</option>
+            <!--- <option value="Yes">Yes</option>
+            <option value="No">No</option> --->
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-3">
+<div class="cust-row">
+    <div class="cust-fld"><label class="fl-lbl">Location</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op search-box"multiple="multiple" name="Parasites_Location" id="Parasites_Location">
+            <cfloop query="qgetParasiteLocation">
+                <cfif status eq 1>
+                    <option value="#qgetParasiteLocation.ID#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.Parasites_Location,","),#qgetParasiteLocation.ID#)>selected</cfif>>#qgetParasiteLocation.location#</option>
+                </cfif>
+            </cfloop>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-5">
+<div class="cust-row describe-rw">
+    <div class="cust-fld"><label class="fl-lbl"></label>
+    </div>
+    <div class="cust-inp">
+        <textarea id="top-area" name="pulmonary_textarea" maxlength="2048"  rows="5" cols="50" spellcheck="false">#qgetCetaceanNecropsy.pulmonary_textarea#</textarea>
+    </div>
+</div>
+</div>
+
+         
+           <div class="col-lg-5" id="pulmonaryDiv">
+            <div class="cust-row btn-rw startSpinner">
+                <div class="cust-inp cust-inpts">
+                    <div class="cust-inp test" id="startPulmonarySpinner">
+                        <input type="file" placeholder="image Path" name="pulmonaryphoto" id="pulmonaryphoto" class="text-field text-fields" accept="image/*">
+                    </div>
+                    <div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="pulmonaryShowPictures()">Upload</button></div>
+                </div>
+            </div>
+        </div>
+        <div class="choose-images">
+            <cfset pulmonaryImgs = ValueList(qgetCetaceanNecropsy.pulmonaryImages,",")>
+                <input type="hidden" name="pulmonaryImagesFile" value="#pulmonaryImgs#" id="pulmonaryImagesFile">
+                <div id="pulmonaryPreviousimages" class="choose-images-detail">
+                    <CFIF listLen(pulmonaryImgs)> 
+                        <cfloop list="#pulmonaryImgs#" item="item" index="index">
+        
+                            <span class="pip pipws">
+                                <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                                    <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                                </a>
+                                <br/>
+                                <cfif findNoCase("Read only ST", permissions) eq 0>
+                                    <span class="remove rms" onclick="pulmonaryImageremove(this)" id="#item#">Remove image</span>
+                                </cfif>
+                            </span>
+                        </cfloop>
+                    </cfif>	
+                </div> 
+        </div>
+
+</div>
+</div>
+<!--- 9 --->
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row hrt-rw">
+    <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">LYMPHORETICULAR SYSTEM</h3></div></label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="LYMPHORETICULAR" id="LYMPHORETICULAR">
+            <option value="">Select</option>
+            <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.LYMPHORETICULAR') and  qgetCetaceanNecropsy.LYMPHORETICULAR  eq 'Examined'>selected</cfif>>Examined</option>
+            <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.LYMPHORETICULAR') and  qgetCetaceanNecropsy.LYMPHORETICULAR  eq 'NE'>selected</cfif>>NE</option>
+        </select>
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row ingm-rw">
+    <div class="cust-fld"><label class="fl-lbl">Spleen</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="Spleen" id="Spleen">
+            <option value="">Select</option>
+            <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.Spleen') and  qgetCetaceanNecropsy.Spleen  eq 'Examined'>selected</cfif>>Examined</option>
+            <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.Spleen') and  qgetCetaceanNecropsy.Spleen  eq 'NE'>selected</cfif>>NE</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-3">
+<div class="cust-row ingm-rw">
+    <div class="cust-fld"><label class="fl-lbl">Spleen Findings</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="Spleen_Findings" id="Spleen_Findings">
+            <option value="">Select</option>
+            <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.Spleen_Findings') and  qgetCetaceanNecropsy.Spleen_Findings  eq 'No Findings'>selected</cfif>>No Findings</option>
+            <option value="Trauma"<cfif isdefined('qgetCetaceanNecropsy.Spleen_Findings') and  qgetCetaceanNecropsy.Spleen_Findings  eq 'Trauma'>selected</cfif>>Trauma</option>
+            <option value="Enlarged"<cfif isdefined('qgetCetaceanNecropsy.Spleen_Findings') and  qgetCetaceanNecropsy.Spleen_Findings  eq 'Enlarged'>selected</cfif>>Enlarged</option>
+            <option value="Masses"<cfif isdefined('qgetCetaceanNecropsy.Spleen_Findings') and  qgetCetaceanNecropsy.Spleen_Findings  eq 'Masses'>selected</cfif>>Masses</option>
+            <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.Spleen_Findings') and  qgetCetaceanNecropsy.Spleen_Findings  eq 'Other'>selected</cfif>>Other</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-5">
+<div class="cust-row describe-rw other">
+    <!--- <div class="cust-fld"><label class="fl-lbl"></label>
+    </div> --->
+    <div class="cust-inp">
+        <input type="text" value="#qgetCetaceanNecropsy.lympho_other#"name="lympho_other"placeholder="Other" class="text-field">
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<cfif isDefined('qgetLymphoreticular') AND #qgetLymphoreticular.recordcount# gt 0>
+<cfloop query="qgetLymphoreticular">
+    <div class="col-lg-12 chako" >
+        <div class="col-lg-5">
+            <div class="cust-row">
+                <div class="cust-fld"><label class="fl-lbl">Lymph Node Present</label>
+                </div>
+                <div class="cust-inp">
+                    <select name="lymphnode#qgetLymphoreticular.id#"id="lymphnode"class="stl-op">
+                        <option value="">Select</option>
+                        <cfloop query="qgetLymphNodePresent">
+                            <cfif status eq 1>
+                                <option value="#qgetLymphNodePresent.LymphNodePresent#"<cfif isdefined('qgetLymphoreticular.lymphnode') and  qgetLymphoreticular.lymphnode  eq #qgetLymphNodePresent.LymphNodePresent#>selected</cfif>>#qgetLymphNodePresent.LymphNodePresent#</option>
+                            </cfif>
+                        </cfloop>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="theak"></div>
+        <div class="col-lg-2">
+            <div class="cust-row ingm-rw">
+                <div class="cust-fld"><label class="fl-lbl">Size Length</label>
+                </div>
+                <div class="cust-inp">
+                    <input type="text" placeholder="cm" value="#qgetLymphoreticular.nodelength#" id="nodelength" onblur="checkValue(this)" name="nodelength#qgetLymphoreticular.id#"class="text-field">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="cust-row ingm-rw">
+                <div class="cust-fld"><label class="fl-lbl">Width</label>
+                </div>
+                <div class="cust-inp">
+                <input type="text" placeholder="cm"  value="#qgetLymphoreticular.nodewidth#" id="nodewidth" onblur="checkValue(this)" name="nodewidth#qgetLymphoreticular.id#" class="text-field">
+                </div>
+            </div>
+        </div>
+    </div>
+</cfloop>
+<cfelse>
+<div class="col-lg-12 chako" >
+    <div class="col-lg-5">
+        <div class="cust-row">
+            <div class="cust-fld"><label class="fl-lbl">Lymph Node Present</label>
+            </div>
+            <div class="cust-inp">
+                <select name="lymphnode"id="lymphnode"class="stl-op">
+                    <option value="">Select</option>
+                    <cfloop query="qgetLymphNodePresent">
+                        <cfif status eq 1>
+                            <option value="#qgetLymphNodePresent.LymphNodePresent#"<cfif isdefined('qgetLymphoreticular.lymphnode') and  qgetLymphoreticular.lymphnode  eq #qgetLymphNodePresent.LymphNodePresent#>selected</cfif>>#qgetLymphNodePresent.LymphNodePresent#</option>
+                        </cfif>
+                    </cfloop>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="theak"></div>
+    <div class="col-lg-2">
+        <div class="cust-row ingm-rw">
+            <div class="cust-fld"><label class="fl-lbl">Size Length</label>
+            </div>
+            <div class="cust-inp">
+                <input type="text" placeholder="cm" onblur="checkValue(this)" value="#qgetLymphoreticular.nodelength#" name="nodelength" id="nodelengthnn" class="text-field">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-2">
+        <div class="cust-row ingm-rw">
+            <div class="cust-fld"><label class="fl-lbl">Width</label>
+            </div>
+            <div class="cust-inp">
+            <input type="text" placeholder="cm" onblur="checkValue(this)" value="#qgetLymphoreticular.nodewidth#" name="nodewidth" id="nodewidthnn" class="text-field">
+            </div>
+        </div>
+    </div>
+</div>
+</cfif>
+
+<div id="newLymph" class="add_new_btn_content"></div>
+<div class="col-lg-12">
+<input type="hidden" name="dynamic_Lymph" value="" id="dynamic_Lymph">
+<input type="button" id="Add_newLymph" name="Add_newLymph" class="upld-btn" value="Add New" onclick="newLymphnode()">
+</div>
+
+</div>
+<div class="row pt-30">
+<div class="col-lg-5">
+</div>
+<div class="col-lg-7">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" name="lympho_comments" rows="10" cols="120"  maxlength="4000" >#qgetCetaceanNecropsy.lympho_comments#</textarea>
+<div class="area-check align-right">
+    <label class="check-cust-fld">Photographs Taken</label>
+    <input type="checkbox"name="lympho_phototaken" id="lympho_phototaken" onclick="lymphoPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.lympho_phototaken') and  qgetCetaceanNecropsy.lympho_phototaken  eq 'on'>checked</cfif>>
+</div>
+</div>
+</div>
+    
+  <div class="col-lg-5" id="lymphoreticularDiv">
+    <div class="cust-row btn-rw startSpinner">
+        <div class="cust-inp cust-inpts">
+            <div class="cust-inp test" id="startLymphoreticularSpinner">
+                <input type="file" placeholder="image Path" name="lymphoreticularphoto" id="lymphoreticularphoto" class="text-field text-fields" accept="image/*">
+            </div>
+            <div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="lymphoreticularShowPictures()">Upload</button></div>
+        </div>
+    </div>
+</div>
+<div class="choose-images">
+    <cfset lymphoreticularImgs = ValueList(qgetCetaceanNecropsy.lymphoreticularImages,",")>
+        <input type="hidden" name="lymphoreticularImagesFile" value="#lymphoreticularImgs#" id="lymphoreticularImagesFile">
+        <div id="lymphoreticularPreviousimages" class="choose-images-detail">
+            <CFIF listLen(lymphoreticularImgs)> 
+                <cfloop list="#lymphoreticularImgs#" item="item" index="index">
+
+                    <span class="pip pipws">
+                        <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                            <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                        </a>
+                        <br/>
+                        <cfif findNoCase("Read only ST", permissions) eq 0>
+                            <span class="remove rms" onclick="lymphoreticularImageremove(this)" id="#item#">Remove image</span>
+                        </cfif>
+                    </span>
+                </cfloop>
+            </cfif>	
+        </div> 
+</div>
+
+<!--- 10 --->
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row hrt-rw">
+    <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">ENDOCRINE SYSTEM</h3></div></label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="ENDOCRINE" id="ENDOCRINE">
+            <option value="">Select</option>
+            <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.ENDOCRINE') and  qgetCetaceanNecropsy.ENDOCRINE  eq 'Examined'>selected</cfif>>Examined</option>
+            <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.ENDOCRINE') and  qgetCetaceanNecropsy.Spleen  eq 'NE'>selected</cfif>>NE</option>
+        </select>
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row">
+    <div class="cust-fld"><label class="fl-lbl">Adrenal Glands</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="Adrenal_Glands" id="Adrenal_Glands">
+            <option value="">Select</option>
+            <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.Adrenal_Glands') and  qgetCetaceanNecropsy.Adrenal_Glands  eq 'No Findings'>selected</cfif>>No Findings</option>
+            <option value="Enlarged"<cfif isdefined('qgetCetaceanNecropsy.Adrenal_Glands') and  qgetCetaceanNecropsy.Adrenal_Glands  eq 'Enlarged'>selected</cfif>>Enlarged</option>
+            <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.Adrenal_Glands') and  qgetCetaceanNecropsy.Adrenal_Glands  eq 'Other'>selected</cfif>>Other</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-3">
+<div class="cust-row ingm-rw">
+    <div class="cust-fld"><label class="fl-lbl">Left Length</label>
+    </div>
+    <div class="cust-inp">
+        <input type="text" name="adrenal_leftLength" id="adrenal_leftLength" placeholder="cm" value="#qgetCetaceanNecropsy.adrenal_leftLength#" onblur="checkValue(this)" class="text-field">
+    </div>
+</div>
+<div class="cust-row ingm-rw mt-10">
+    <div class="cust-fld"><label class="fl-lbl">Right Length</label>
+    </div>
+    <div class="cust-inp">
+    <input type="text" name="adrenal_rightLength" id="adrenal_rightLength" placeholder="cm" value="#qgetCetaceanNecropsy.adrenal_rightLength#" onblur="checkValue(this)"  class="text-field">
+    </div>
+</div>
+</div>
+<div class="col-lg-2">
+<div class="cust-row">
+    <div class="cust-fld"><label class="fl-lbl">Width</label>
+    </div>
+    <div class="cust-inp">
+    <input type="text" name="adrenal_leftwidth" id="adrenal_leftwidth" onblur="checkValue(this)" placeholder="cm" value="#qgetCetaceanNecropsy.adrenal_leftwidth#"class="text-field">
+    </div>
+</div>
+<div class="cust-row mt-10">
+    <div class="cust-fld"><label class="fl-lbl">Width</label>
+    </div>
+    <div class="cust-inp">
+    <input type="text" name="adrenal_rightwidth" id="adrenal_rightwidth" placeholder="cm" onblur="checkValue(this)" value="#qgetCetaceanNecropsy.adrenal_rightwidth#" class="text-field">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row">
+    <div class="cust-fld"><label class="fl-lbl">Thyroid</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="Thyroid" id="Thyroid">
+            <option value="">Select</option>
+            <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.Thyroid') and  qgetCetaceanNecropsy.Thyroid  eq 'No Findings'>selected</cfif>>No Findings</option>
+            <option value="Enlarged"<cfif isdefined('qgetCetaceanNecropsy.Thyroid') and  qgetCetaceanNecropsy.Thyroid  eq 'Enlarged'>selected</cfif>>Enlarged</option>
+            <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.Thyroid') and  qgetCetaceanNecropsy.Thyroid  eq 'Other'>selected</cfif>>Other</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-3">
+<div class="cust-row ingm-rw">
+    <div class="cust-fld"><label class="fl-lbl">Length</label>
+    </div>
+    <div class="cust-inp">
+        <input type="text"name="thyroid_length" id="thyroid_length" value="#qgetCetaceanNecropsy.thyroid_length#"placeholder="cm" onblur="checkValue(this)" class="text-field">
+    </div>
+</div>
+</div>
+<div class="col-lg-2">
+<div class="cust-row">
+    <div class="cust-fld"><label class="fl-lbl">Width</label>
+    </div>
+    <div class="cust-inp">
+    <input type="text" name="thyroid_width" id="thyroid_width" placeholder="cm"value="#qgetCetaceanNecropsy.thyroid_width#" onblur="checkValue(this)" class="text-field">
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row">
+    <div class="cust-fld"><label class="fl-lbl">Pituitary Gland</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="Pituitary_Gland" id="Pituitary_Gland">
+            <option value="">Select</option>
+            <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.Pituitary_Gland') and  qgetCetaceanNecropsy.Pituitary_Gland  eq 'No Findings'>selected</cfif>>No Findings</option>
+            <option value="Enlarged"<cfif isdefined('qgetCetaceanNecropsy.Pituitary_Gland') and  qgetCetaceanNecropsy.Pituitary_Gland  eq 'Enlarged'>selected</cfif>>Enlarged</option>
+            <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.Pituitary_Gland') and  qgetCetaceanNecropsy.Pituitary_Gland  eq 'Other'>selected</cfif>>Other</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-3">
+<div class="cust-row ingm-rw">
+    <div class="cust-fld"><label class="fl-lbl">Length</label>
+    </div>
+    <div class="cust-inp">
+        <input type="text"name="Pituitary_length" id="Pituitary_length" placeholder="cm" value="#qgetCetaceanNecropsy.Pituitary_length#" onblur="checkValue(this)" class="text-field">
+    </div>
+</div>
+</div>
+<div class="col-lg-2">
+<div class="cust-row">
+    <div class="cust-fld"><label class="fl-lbl">Width</label>
+    </div>
+    <div class="cust-inp">
+    <input type="text" placeholder="cm" id="Pituitary_width" name="Pituitary_width"value="#qgetCetaceanNecropsy.Pituitary_width#" onblur="checkValue(this)" class="text-field">
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-5"></div>
+<div class="col-lg-7">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" name="endocrine_comments" rows="10" cols="120"  maxlength="2048" >#qgetCetaceanNecropsy.endocrine_comments#</textarea>
+<div class="area-check align-right">
+    <label class="check-cust-fld">Photographs Taken</label>
+    <input type="checkbox"name="endocrine_phototaken" id="endocrine_phototaken" onclick="endocrinePhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.endocrine_phototaken') and  qgetCetaceanNecropsy.endocrine_phototaken  eq 'on'>checked</cfif>>
+</div>
+</div>
+</div>
+
+      
+  <div class="col-lg-5" id="endocrineDiv">
+    <div class="cust-row btn-rw startSpinner">
+        <div class="cust-inp cust-inpts">
+            <div class="cust-inp test" id="startEndocrineSpinner">
+                <input type="file" placeholder="image Path" name="endocrinephoto" id="endocrinephoto" class="text-field text-fields" accept="image/*">
+            </div>
+            <div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="endocrineShowPictures()">Upload</button></div>
+        </div>
+    </div>
+</div>
+<div class="choose-images">
+    <cfset endocrineImgs = ValueList(qgetCetaceanNecropsy.endocrineImages,",")>
+        <input type="hidden" name="endocrineImagesFile" value="#endocrineImgs#" id="endocrineImagesFile">
+        <div id="endocrinePreviousimages" class="choose-images-detail">
+            <CFIF listLen(endocrineImgs)> 
+                <cfloop list="#endocrineImgs#" item="item" index="index">
+
+                    <span class="pip pipws">
+                        <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                            <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                        </a>
+                        <br/>
+                        <cfif findNoCase("Read only ST", permissions) eq 0>
+                            <span class="remove rms" onclick="endocrineImageremove(this)" id="#item#">Remove image</span>
+                        </cfif>
+                    </span>
+                </cfloop>
+            </cfif>	
+        </div> 
+</div>
+
+
+<!--- 11 --->
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row hrt-rw">
+    <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">UROGENITAL SYSTEM</h3></div></label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="UROGENITAL" id="UROGENITAL">
+            <option value="">Select</option>
+            <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.UROGENITAL') and  qgetCetaceanNecropsy.UROGENITAL  eq 'Examined'>selected</cfif>>Examined</option>
+            <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.UROGENITAL') and  qgetCetaceanNecropsy.UROGENITAL  eq 'NE'>selected</cfif>>NE</option>
+        </select>
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Kidneys Findings LEFT</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op search-box"multiple="multiple" name="Kidney_left" id="Kidney_left">
+                <cfloop from="1" to="#ArrayLen(Kidneys_Findings)#" index="j">
+                    <option value="#Kidneys_Findings[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.Kidney_left,","),#Kidneys_Findings[j]#)>selected</cfif>>#Kidneys_Findings[j]#</option>
+                    
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-lg-12">
+<div class="col-lg-4 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Kidneys Findings RIGHT</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op search-box"multiple="multiple" name="Kidney_right" id="Kidney_right">
+                <cfloop from="1" to="#ArrayLen(Kidneys_Findings)#" index="j">
+                    <option value="#Kidneys_Findings[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.Kidney_right,","),#Kidneys_Findings[j]#)>selected</cfif>>#Kidneys_Findings[j]#</option>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-lg-12">
+<div class="col-lg-3 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Urinary Bladder</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Urinary_Bladder" id="Urinary_Bladder">
+                <option value="">Select</option>
+                <option value="Empty"<cfif isdefined('qgetCetaceanNecropsy.Urinary_Bladder') and  qgetCetaceanNecropsy.Urinary_Bladder  eq "Empty">selected</cfif>>Empty </option>
+                <option value="Contents"<cfif isdefined('qgetCetaceanNecropsy.Urinary_Bladder') and  qgetCetaceanNecropsy.Urinary_Bladder  eq "Contents">selected</cfif>>Contents</option>
+                
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-2 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Volume</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text" name="urin_volume" id="urin_volume" value="#qgetCetaceanNecropsy.urin_volume#"placeholder="ml" onblur="checkValue(this)" class="text-field">
+        </div>
+    </div>
+</div>
+<div class="col-lg-3 mt-10">
+    <strong class="strong-position">If Urine Present</strong>
+    <div class="cust-row">
+        <div class="cust-fld">  <label class="fl-lbl">  Color</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="UROGENITAL_color" id="UROGENITAL_color">
+                <option value="">Select</option>
+                <option value="Clear"<cfif isdefined('qgetCetaceanNecropsy.UROGENITAL_color') and  qgetCetaceanNecropsy.UROGENITAL_color  eq "Clear">selected</cfif>>Clear</option>
+                <option value="Light yellow"<cfif isdefined('qgetCetaceanNecropsy.UROGENITAL_color') and  qgetCetaceanNecropsy.UROGENITAL_color  eq "Light yellow">selected</cfif>>Light yellow</option>
+                <option value="Dark yellow"<cfif isdefined('qgetCetaceanNecropsy.UROGENITAL_color') and  qgetCetaceanNecropsy.UROGENITAL_color  eq "Dark yellow">selected</cfif>>Dark yellow</option>
+                <option value="Pink - Red"<cfif isdefined('qgetCetaceanNecropsy.UROGENITAL_color') and  qgetCetaceanNecropsy.UROGENITAL_color  eq "Pink - Red">selected</cfif>>Pink - Red</option>
+                <option value="Brown"<cfif isdefined('qgetCetaceanNecropsy.UROGENITAL_color') and  qgetCetaceanNecropsy.UROGENITAL_color  eq "Brown">selected</cfif>>Brown</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-3 mt-10">
+    <div class="cust-row">
+        <div class="cust-fld"><label class="fl-lbl">Consistancy</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Consistancy" id="Consistancy">
+                <option value="">Select</option>
+                <option value="Clear"<cfif isdefined('qgetCetaceanNecropsy.Consistancy') and  qgetCetaceanNecropsy.Consistancy  eq "Clear">selected</cfif>>Clear</option>
+                <option value="Cloudy"<cfif isdefined('qgetCetaceanNecropsy.Consistancy') and  qgetCetaceanNecropsy.Consistancy  eq "Cloudy">selected</cfif>>Cloudy</option>
+                <option value="Flocculent"<cfif isdefined('qgetCetaceanNecropsy.Consistancy') and  qgetCetaceanNecropsy.Consistancy  eq "Flocculent">selected</cfif>>Flocculent</option>
+            </select>
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-lg-12">
+<div class="col-lg-4 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Abnormalities</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Abnormalities" id="Abnormalities">
+                <option value="">Select</option>
+                <option value="Mass(es)"<cfif isdefined('qgetCetaceanNecropsy.Abnormalities') and  qgetCetaceanNecropsy.Abnormalities  eq "Mass(es)">selected</cfif>>Mass(es)</option>
+                <option value="Parasites"<cfif isdefined('qgetCetaceanNecropsy.Abnormalities') and  qgetCetaceanNecropsy.Abnormalities  eq "Parasites">selected</cfif>>Parasites</option>
+                <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.Abnormalities') and  qgetCetaceanNecropsy.Abnormalities  eq "Other">selected</cfif>>Other</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-4 mt-10">
+    <div class="cust-row">
+        <div class="cust-fld"><label class="fl-lbl">Describe</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text"name="Abnormalities_describe" value="#qgetCetaceanNecropsy.Abnormalities_describe#"class="text-field">
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-lg-12">
+<div class="col-lg-4 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Reproductive Organs</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Reproductive_Organs" id="Reproductive_Organs">
+                <option value="">Select</option>
+                <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.Reproductive_Organs') and  qgetCetaceanNecropsy.Reproductive_Organs  eq 'Examined'>selected</cfif>>Examined</option>
+            <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.Reproductive_Organs') and  qgetCetaceanNecropsy.Reproductive_Organs  eq 'NE'>selected</cfif>>NE</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-4 mt-10">
+    <div class="cust-row">
+        <div class="cust-fld"><label class="fl-lbl">Identified As</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Identified_As" id="Identified_As">
+                <option value="">Select</option>
+                <option value="Penis"<cfif isdefined('qgetCetaceanNecropsy.Identified_As') and  qgetCetaceanNecropsy.Identified_As  eq 'Penis'>selected</cfif>>Penis</option>
+                <option value="Vagina"<cfif isdefined('qgetCetaceanNecropsy.Identified_As') and  qgetCetaceanNecropsy.Identified_As  eq 'Vagina'>selected</cfif>>Vagina</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-4 mt-10">
+    <div class="cust-row">
+        <div class="cust-fld"><label class="fl-lbl">Lesions</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Lesions" id="Lesions">
+                <option valu="">Select</option>
+                <option valu="Yes"<cfif isdefined('qgetCetaceanNecropsy.Lesions') and  qgetCetaceanNecropsy.Lesions  eq 'Yes'>selected</cfif>>Yes</option>
+                <option valu="No"<cfif isdefined('qgetCetaceanNecropsy.Lesions') and  qgetCetaceanNecropsy.Lesions  eq 'No'>selected</cfif>>No</option>
+                <option value="Unknown"<cfif isdefined('qgetCetaceanNecropsy.Lesions') and  qgetCetaceanNecropsy.Lesions  eq 'Unknown'>selected</cfif>>Unknown</option>
+                
+            </select>
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-lg-12">
+<div class="col-lg-4 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Gonads Identified as</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Gonads_Identified" id="Gonads_Identified">
+                <option value=" ">Select</option>
+                <option value="Testes"<cfif isdefined('qgetCetaceanNecropsy.Gonads_Identified') and  qgetCetaceanNecropsy.Gonads_Identified  eq 'Testes'>selected</cfif>>Testes </option>
+                <option value=""<cfif isdefined('qgetCetaceanNecropsy.Gonads_Identified') and  qgetCetaceanNecropsy.Gonads_Identified  eq 'Ovaries'>selected</cfif>>Ovaries</option>
+             
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-4 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Testes Length LEFT</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text"name="Testes_Length_LEFT" id="Testes_Length_LEFT" value="#qgetCetaceanNecropsy.Testes_Length_LEFT#" placeholder="cm" onblur="checkValue(this)" class="text-field">
+        </div>
+    </div>
+</div>
+<div class="col-lg-2 mt-10">
+    <div class="cust-row">
+        <div class="cust-fld"><label class="fl-lbl">Width</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text" name="Testes_Length_width" id="Testes_Length_width" placeholder="cm" value="#qgetCetaceanNecropsy.Testes_Length_width#" onblur="checkValue(this)" class="text-field">
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-lg-12">
+<div class="col-lg-4 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Mammary Glands LEFT</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Glands_LEFT" id="Glands_LEFT">
+                <option value="">Select</option>
+                <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.Glands_LEFT') and  qgetCetaceanNecropsy.Glands_LEFT  eq "No Findings">selected</cfif>>No Findings </option>
+                <option value="Milk Production"<cfif isdefined('qgetCetaceanNecropsy.Glands_LEFT') and  qgetCetaceanNecropsy.Glands_LEFT  eq 'Milk Production'>selected</cfif>>Milk Production</option>
+                <option value="Abnormal"<cfif isdefined('qgetCetaceanNecropsy.Glands_LEFT') and  qgetCetaceanNecropsy.Glands_LEFT  eq 'Abnormal'>selected</cfif>>Abnormal</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-4 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Testes Length RIGHT</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text"name="Testes_Length_right" id="Testes_Length_right" placeholder="cm" onblur="checkValue(this)" value="#qgetCetaceanNecropsy.Testes_Length_right#" class="text-field">
+        </div>
+    </div>
+</div>
+<div class="col-lg-2 mt-10">
+    <div class="cust-row">
+        <div class="cust-fld"><label class="fl-lbl">Width</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text"name="Testes_width_right" id="Testes_width_right" onblur="checkValue(this)" value="#qgetCetaceanNecropsy.Testes_width_right#" placeholder="cm" class="text-field">
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-lg-12">
+<div class="col-lg-4 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Mammary Glands RIGHT</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Glands_RIGHT" id="Glands_RIGHT">
+                <option value="">Select</option>
+                <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.Glands_RIGHT') and  qgetCetaceanNecropsy.Glands_RIGHT  eq 'No Findings'>selected</cfif>>No Findings </option>
+                <option value="Milk Production"<cfif isdefined('qgetCetaceanNecropsy.Glands_RIGHT') and  qgetCetaceanNecropsy.Glands_RIGHT  eq 'Milk Production'>selected</cfif>>Milk Production</option>
+                <option value="Abnormal"<cfif isdefined('qgetCetaceanNecropsy.Glands_RIGHT') and  qgetCetaceanNecropsy.Glands_RIGHT  eq 'Abnormal'>selected</cfif>>Abnormal</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-4 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Ovary Length LEFT</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text"name="Ovary_Length_LEFT" id="Ovary_Length_LEFT" placeholder="cm" onblur="checkValue(this)" value="#qgetCetaceanNecropsy.Ovary_Length_LEFT#" class="text-field">
+        </div>
+    </div>
+</div>
+<div class="col-lg-2 mt-10">
+    <div class="cust-row">
+        <div class="cust-fld"><label class="fl-lbl">Width</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text" name="Ovary_Width_LEFT" id="Ovary_Width_LEFT" placeholder="cm" onblur="checkValue(this)" value="#qgetCetaceanNecropsy.Ovary_Width_LEFT#"class="text-field">
+        </div>
+    </div>
+</div>
+<div class="col-lg-2 mt-10">
+    <div class="cust-row lnth-rw">
+        <div class="cust-fld"><label class="fl-lbl">Follicles Present</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Follicles_Present_Left" id="Follicles_Present_Left">
+                <option value="">Select</option>
+                <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.Follicles_Present_Left') and  qgetCetaceanNecropsy.Follicles_Present_Left  eq 'Yes'>selected</cfif>>Yes</option>
+                <option value="No"<cfif isdefined('qgetCetaceanNecropsy.Follicles_Present_Left') and  qgetCetaceanNecropsy.Follicles_Present_Left  eq 'No'>selected</cfif>>No</option>
+               
+            </select>
+        </div>
+    </div>
+</div>
+</div>
+<div class="col-lg-12">
+<div class="col-lg-4 mt-10"></div>
+<div class="col-lg-4 mt-10">
+    <div class="cust-row ingm-rw">
+        <div class="cust-fld"><label class="fl-lbl">Ovary Length RIGHT</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text"name="Ovary_Length_right" id="Ovary_Length_right" placeholder="cm" onblur="checkValue(this)" value="#qgetCetaceanNecropsy.Ovary_Length_right#" class="text-field">
+        </div>
+    </div>
+</div>
+<div class="col-lg-2 mt-10">
+    <div class="cust-row">
+        <div class="cust-fld"><label class="fl-lbl">Width</label>
+        </div>
+        <div class="cust-inp">
+            <input type="text"name="Ovary_width_right" id="Ovary_width_right" onblur="checkValue(this)" value="#qgetCetaceanNecropsy.Ovary_width_right#" placeholder="cm" class="text-field">
+        </div>
+    </div>
+</div>
+<div class="col-lg-2 mt-10">
+    <div class="cust-row lnth-rw">
+        <div class="cust-fld"><label class="fl-lbl">Follicles Present</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Follicles_Present_right" id="Follicles_Present_right">
+                <option value="">Select</option>
+                <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.Follicles_Present_right') and  qgetCetaceanNecropsy.Follicles_Present_right  eq 'Yes'>selected</cfif>>Yes</option>
+                <option value="No"<cfif isdefined('qgetCetaceanNecropsy.Follicles_Present_right') and  qgetCetaceanNecropsy.Follicles_Present_right  eq 'No'>selected</cfif>>No</option>
+            </select>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-5"></div>
+<div class="col-lg-7">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" name="UROGENITAL_Comments" rows="10" cols="120"  maxlength="4000" >#qgetCetaceanNecropsy.UROGENITAL_Comments#</textarea>
+<div class="area-check align-right">
+    <label class="check-cust-fld">Photographs Taken</label>
+    <input type="checkbox" name="UROGENITAL_phototaken" id="UROGENITAL_phototaken" onclick="UROGENITALPhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.UROGENITAL_phototaken') and  qgetCetaceanNecropsy.UROGENITAL_phototaken  eq 'on'>checked</cfif>>
+</div>
+</div>
+</div>
+       
+  <div class="col-lg-5" id="urogenitalDiv">
+    <div class="cust-row btn-rw startSpinner">
+        <div class="cust-inp cust-inpts">
+            <div class="cust-inp test" id="startUrogenitalSpinner">
+                <input type="file" placeholder="image Path" name="urogenitalphoto" id="urogenitalphoto" class="text-field text-fields" accept="image/*">
+            </div>
+<!---             <div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="urogenitalShowPictures()">Upload</button></div> --->
+        </div>
+    </div>
+</div>
+<div class="choose-images">
+    <cfset urogenitalImgs = ValueList(qgetCetaceanNecropsy.urogenitalImages,",")>
+        <input type="hidden" name="urogenitalImagesFile" value="#urogenitalImgs#" id="urogenitalImagesFile">
+        <div id="urogenitalPreviousimages" class="choose-images-detail">
+            <CFIF listLen(urogenitalImgs)> 
+                <cfloop list="#urogenitalImgs#" item="item" index="index">
+
+                    <span class="pip pipws">
+                        <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                            <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                        </a>
+                        <br/>
+                        <cfif findNoCase("Read only ST", permissions) eq 0>
+                            <span class="remove rms" onclick="urogenitalImageremove(this)" id="#item#">Remove image</span>
+                        </cfif>
+                    </span>
+                </cfloop>
+            </cfif>	
+        </div> 
+</div>
+
+<!--- 12 --->
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row hrt-rw">
+    <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">ALIMENTARY SYSTEM</h3></div></label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="ALIMENTARYSYSTEM" id="ALIMENTARYSYSTEM">
+            <option value="">Select</option>
+            <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.ALIMENTARYSYSTEM') and  qgetCetaceanNecropsy.ALIMENTARYSYSTEM  eq 'Examined'>selected</cfif>>Examined</option>
+            <option value="NE"<cfif isdefined('qgetCetaceanNecropsy.ALIMENTARYSYSTEM') and  qgetCetaceanNecropsy.ALIMENTARYSYSTEM  eq 'NE'>selected</cfif>>NE</option>
+            <option value="Complete"<cfif isdefined('qgetCetaceanNecropsy.ALIMENTARYSYSTEM') and  qgetCetaceanNecropsy.ALIMENTARYSYSTEM  eq 'Complete'>selected</cfif>>Complete</option>
+            <option value="Partial"<cfif isdefined('qgetCetaceanNecropsy.ALIMENTARYSYSTEM') and  qgetCetaceanNecropsy.ALIMENTARYSYSTEM  eq 'Partial'>selected</cfif>>Partial</option>
+        </select>
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="systum-sec">
+<div class="systum-row">
+<div class="sys-colum clm-15">
+    <h3 class="sys-title">ESOPHAGUS</h3>
+</div>
+<div class="sys-colum">
+    <p>Ulcers/exudate</p>
+    <select class="sys-op" name="ESOPHAGUSUlcers">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSUlcers') and  qgetCetaceanNecropsy.ESOPHAGUSUlcers  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSUlcers') and  qgetCetaceanNecropsy.ESOPHAGUSUlcers  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSUlcers') and  qgetCetaceanNecropsy.ESOPHAGUSUlcers  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSUlcers') and  qgetCetaceanNecropsy.ESOPHAGUSUlcers  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <p>Trauma</p>
+    <select class="sys-op" name="ESOPHAGUSTrauma">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSTrauma') and  qgetCetaceanNecropsy.ESOPHAGUSTrauma  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSTrauma') and  qgetCetaceanNecropsy.ESOPHAGUSTrauma  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSTrauma') and  qgetCetaceanNecropsy.ESOPHAGUSTrauma  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSTrauma') and  qgetCetaceanNecropsy.ESOPHAGUSTrauma  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <p>Masses</p>
+    <select class="sys-op" name="ESOPHAGUSMasses">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSMasses') and  qgetCetaceanNecropsy.ESOPHAGUSMasses  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSMasses') and  qgetCetaceanNecropsy.ESOPHAGUSMasses  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSMasses') and  qgetCetaceanNecropsy.ESOPHAGUSMasses  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSMasses') and  qgetCetaceanNecropsy.ESOPHAGUSMasses  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <p>Impaction</p>
+    <select class="sys-op" name="ESOPHAGUSImpaction">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSImpaction') and  qgetCetaceanNecropsy.ESOPHAGUSImpaction  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSImpaction') and  qgetCetaceanNecropsy.ESOPHAGUSImpaction  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSImpaction') and  qgetCetaceanNecropsy.ESOPHAGUSImpaction  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSImpaction') and  qgetCetaceanNecropsy.ESOPHAGUSImpaction  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <p>Obstruction</p>
+    <select class="sys-op" name="ESOPHAGUSObstruction">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSObstruction') and  qgetCetaceanNecropsy.ESOPHAGUSObstruction  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSObstruction') and  qgetCetaceanNecropsy.ESOPHAGUSObstruction  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSObstruction') and  qgetCetaceanNecropsy.ESOPHAGUSObstruction  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSObstruction') and  qgetCetaceanNecropsy.ESOPHAGUSObstruction  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <p>lntussusception</p>
+    <select class="sys-op" name="ESOPHAGUSlntussusception">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSlntussusception') and  qgetCetaceanNecropsy.ESOPHAGUSlntussusception  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSlntussusception') and  qgetCetaceanNecropsy.ESOPHAGUSlntussusception  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSlntussusception') and  qgetCetaceanNecropsy.ESOPHAGUSlntussusception  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSlntussusception') and  qgetCetaceanNecropsy.ESOPHAGUSlntussusception  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <p>Parasites</p>
+    <select class="sys-op" name="ESOPHAGUSParasites">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSParasites') and  qgetCetaceanNecropsy.ESOPHAGUSParasites  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSParasites') and  qgetCetaceanNecropsy.ESOPHAGUSParasites  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSParasites') and  qgetCetaceanNecropsy.ESOPHAGUSParasites  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSParasites') and  qgetCetaceanNecropsy.ESOPHAGUSParasites  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum clm-15">
+    <p>Other</p>
+    <input type="text" class="text-field"value="#qgetCetaceanNecropsy.ESOPHAGUSOther#" name="ESOPHAGUSOther">
+</div>
+</div>
+<div class="sys-comment-row mt-20">
+<div class="sys-colum-left">
+    <h3 class="sys-title">Contents</h3>
+</div>
+<div class="sys-colum-right">
+    <input type="text" class="text-field" name="ESOPHAGUSContents" value="#qgetCetaceanNecropsy.ESOPHAGUSContents#">
+</div>
+</div>
+</div>
+<div class="systum-sec">
+<div class="systum-row">
+<div class="sys-colum clm-15">
+    <h3 class="sys-title">FORESTOMACH</h3>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="FORESTOMACHUlcers">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHUlcers') and  qgetCetaceanNecropsy.FORESTOMACHUlcers  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHUlcers') and  qgetCetaceanNecropsy.FORESTOMACHUlcers  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHUlcers') and  qgetCetaceanNecropsy.FORESTOMACHUlcers  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHUlcers') and  qgetCetaceanNecropsy.FORESTOMACHUlcers  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="FORESTOMACHTrauma">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHTrauma') and  qgetCetaceanNecropsy.FORESTOMACHTrauma  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHTrauma') and  qgetCetaceanNecropsy.FORESTOMACHTrauma  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHTrauma') and  qgetCetaceanNecropsy.FORESTOMACHTrauma  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHTrauma') and  qgetCetaceanNecropsy.FORESTOMACHTrauma  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="FORESTOMACHMasses">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHMasses') and  qgetCetaceanNecropsy.FORESTOMACHMasses  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHMasses') and  qgetCetaceanNecropsy.FORESTOMACHMasses  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHMasses') and  qgetCetaceanNecropsy.FORESTOMACHMasses  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHMasses') and  qgetCetaceanNecropsy.FORESTOMACHMasses  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="FORESTOMACHImpaction">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHImpaction') and  qgetCetaceanNecropsy.FORESTOMACHImpaction  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHImpaction') and  qgetCetaceanNecropsy.FORESTOMACHImpaction  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHImpaction') and  qgetCetaceanNecropsy.FORESTOMACHImpaction  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHImpaction') and  qgetCetaceanNecropsy.FORESTOMACHImpaction  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="FORESTOMACHObstruction">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHObstruction') and  qgetCetaceanNecropsy.FORESTOMACHObstruction  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHObstruction') and  qgetCetaceanNecropsy.FORESTOMACHObstruction  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHObstruction') and  qgetCetaceanNecropsy.FORESTOMACHObstruction  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHObstruction') and  qgetCetaceanNecropsy.FORESTOMACHObstruction  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="FORESTOMACHlntussusception">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHlntussusception') and  qgetCetaceanNecropsy.FORESTOMACHlntussusception  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHlntussusception') and  qgetCetaceanNecropsy.FORESTOMACHlntussusception  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHlntussusception') and  qgetCetaceanNecropsy.FORESTOMACHlntussusception  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHlntussusception') and  qgetCetaceanNecropsy.FORESTOMACHlntussusception  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="FORESTOMACHParasites">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHParasites') and  qgetCetaceanNecropsy.FORESTOMACHParasites  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHParasites') and  qgetCetaceanNecropsy.FORESTOMACHParasites  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHParasites') and  qgetCetaceanNecropsy.FORESTOMACHParasites  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHParasites') and  qgetCetaceanNecropsy.FORESTOMACHParasites  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum clm-15">
+    <input type="text" class="text-field" name="FORESTOMACHOther"value="#qgetCetaceanNecropsy.FORESTOMACHOther#">
+</div>
+</div>
+<div class="sys-comment-row mt-20">
+<div class="sys-colum-left">
+    <h3 class="sys-title">Contents</h3>
+</div>
+<div class="sys-colum-right">
+    <input type="text" class="text-field" name="FORESTOMACHContents"value="#qgetCetaceanNecropsy.FORESTOMACHContents#">
+</div>
+</div>
+</div>
+<div class="systum-sec">
+<div class="systum-row">
+<div class="sys-colum clm-15">
+    <h3 class="sys-title">GLANDULAR STOMACH</h3>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="GLANDULARSTOMACHUlcers">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHUlcers') and  qgetCetaceanNecropsy.GLANDULARSTOMACHUlcers  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHUlcers') and  qgetCetaceanNecropsy.GLANDULARSTOMACHUlcers  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHUlcers') and  qgetCetaceanNecropsy.GLANDULARSTOMACHUlcers  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHUlcers') and  qgetCetaceanNecropsy.GLANDULARSTOMACHUlcers  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="GLANDULARSTOMACHTrauma">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHTrauma') and  qgetCetaceanNecropsy.GLANDULARSTOMACHTrauma  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHTrauma') and  qgetCetaceanNecropsy.GLANDULARSTOMACHTrauma  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHTrauma') and  qgetCetaceanNecropsy.GLANDULARSTOMACHTrauma  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHTrauma') and  qgetCetaceanNecropsy.GLANDULARSTOMACHTrauma  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="GLANDULARSTOMACHMasses">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHMasses') and  qgetCetaceanNecropsy.GLANDULARSTOMACHMasses  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHMasses') and  qgetCetaceanNecropsy.GLANDULARSTOMACHMasses  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHMasses') and  qgetCetaceanNecropsy.GLANDULARSTOMACHMasses  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHMasses') and  qgetCetaceanNecropsy.GLANDULARSTOMACHMasses  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="GLANDULARSTOMACHImpaction">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHImpaction') and  qgetCetaceanNecropsy.GLANDULARSTOMACHImpaction  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHImpaction') and  qgetCetaceanNecropsy.GLANDULARSTOMACHImpaction  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHImpaction') and  qgetCetaceanNecropsy.GLANDULARSTOMACHImpaction  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHImpaction') and  qgetCetaceanNecropsy.GLANDULARSTOMACHImpaction  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="GLANDULARSTOMACHObstruction">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHObstruction') and  qgetCetaceanNecropsy.GLANDULARSTOMACHObstruction  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHObstruction') and  qgetCetaceanNecropsy.GLANDULARSTOMACHObstruction  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHObstruction') and  qgetCetaceanNecropsy.GLANDULARSTOMACHObstruction  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHObstruction') and  qgetCetaceanNecropsy.GLANDULARSTOMACHObstruction  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="GLANDULARSTOMACHlntussusception">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHlntussusception') and  qgetCetaceanNecropsy.GLANDULARSTOMACHlntussusception  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHlntussusception') and  qgetCetaceanNecropsy.GLANDULARSTOMACHlntussusception  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHlntussusception') and  qgetCetaceanNecropsy.GLANDULARSTOMACHlntussusception  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHlntussusception') and  qgetCetaceanNecropsy.GLANDULARSTOMACHlntussusception  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="GLANDULARSTOMACHParasites">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHParasites') and  qgetCetaceanNecropsy.GLANDULARSTOMACHParasites  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHParasites') and  qgetCetaceanNecropsy.GLANDULARSTOMACHParasites  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHParasites') and  qgetCetaceanNecropsy.GLANDULARSTOMACHParasites  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHParasites') and  qgetCetaceanNecropsy.GLANDULARSTOMACHParasites  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum clm-15">
+    <input type="text" class="text-field" name="GLANDULARSTOMACHOther" value="#qgetCetaceanNecropsy.GLANDULARSTOMACHOther#">
+</div>
+</div>
+<div class="sys-comment-row mt-20">
+<div class="sys-colum-left">
+    <h3 class="sys-title">Contents</h3>
+</div>
+<div class="sys-colum-right">
+    <input type="text" class="text-field" name="GLANDULARSTOMACHContents" value="#qgetCetaceanNecropsy.GLANDULARSTOMACHContents#">
+</div>
+</div>
+</div>
+<div class="systum-sec">
+<div class="systum-row">
+<div class="sys-colum clm-15">
+    <h3 class="sys-title">PYLORUS</h3>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="PYLORUSUlcers">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSUlcers') and  qgetCetaceanNecropsy.PYLORUSUlcers  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSUlcers') and  qgetCetaceanNecropsy.PYLORUSUlcers  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSUlcers') and  qgetCetaceanNecropsy.PYLORUSUlcers  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSUlcers') and  qgetCetaceanNecropsy.PYLORUSUlcers  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="PYLORUSTrauma">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSTrauma') and  qgetCetaceanNecropsy.PYLORUSTrauma  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSTrauma') and  qgetCetaceanNecropsy.PYLORUSTrauma  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSTrauma') and  qgetCetaceanNecropsy.PYLORUSTrauma  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSTrauma') and  qgetCetaceanNecropsy.PYLORUSTrauma  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="PYLORUSMasses">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSMasses') and  qgetCetaceanNecropsy.PYLORUSMasses  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSMasses') and  qgetCetaceanNecropsy.PYLORUSMasses  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSMasses') and  qgetCetaceanNecropsy.PYLORUSMasses  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSMasses') and  qgetCetaceanNecropsy.PYLORUSMasses  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="PYLORUSImpaction">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSImpaction') and  qgetCetaceanNecropsy.PYLORUSImpaction  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSImpaction') and  qgetCetaceanNecropsy.PYLORUSImpaction  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSImpaction') and  qgetCetaceanNecropsy.PYLORUSImpaction  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSImpaction') and  qgetCetaceanNecropsy.PYLORUSImpaction  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="PYLORUSObstruction">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSObstruction') and  qgetCetaceanNecropsy.PYLORUSObstruction  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSObstruction') and  qgetCetaceanNecropsy.PYLORUSObstruction  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSObstruction') and  qgetCetaceanNecropsy.PYLORUSObstruction  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSObstruction') and  qgetCetaceanNecropsy.PYLORUSObstruction  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="PYLORUSlntussusception">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSlntussusception') and  qgetCetaceanNecropsy.PYLORUSlntussusception  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSlntussusception') and  qgetCetaceanNecropsy.PYLORUSlntussusception  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSlntussusception') and  qgetCetaceanNecropsy.PYLORUSlntussusception  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSlntussusception') and  qgetCetaceanNecropsy.PYLORUSlntussusception  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="PYLORUSParasites">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSParasites') and  qgetCetaceanNecropsy.PYLORUSParasites  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSParasites') and  qgetCetaceanNecropsy.PYLORUSParasites  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSParasites') and  qgetCetaceanNecropsy.PYLORUSParasites  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSParasites') and  qgetCetaceanNecropsy.PYLORUSParasites  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum clm-15">
+    <input type="text" class="text-field" name="PYLORUSOther"value="#qgetCetaceanNecropsy.PYLORUSOther#">
+</div>
+</div>
+<div class="sys-comment-row mt-20">
+<div class="sys-colum-left">
+    <h3 class="sys-title">Contents</h3>
+</div>
+<div class="sys-colum-right">
+    <input type="text" class="text-field" name="PYLORUSContents" value="#qgetCetaceanNecropsy.PYLORUSContents#">
+</div>
+</div>
+</div>
+<div class="systum-sec">
+<div class="systum-row">
+<div class="sys-colum clm-15">
+    <h3 class="sys-title">SMALL INTESTINE</h3>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="SMALLINTESTINEUlcers">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEUlcers') and  qgetCetaceanNecropsy.SMALLINTESTINEUlcers  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEUlcers') and  qgetCetaceanNecropsy.SMALLINTESTINEUlcers  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEUlcers') and  qgetCetaceanNecropsy.SMALLINTESTINEUlcers  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEUlcers') and  qgetCetaceanNecropsy.SMALLINTESTINEUlcers  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="SMALLINTESTINETrauma">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINETrauma') and  qgetCetaceanNecropsy.SMALLINTESTINETrauma  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINETrauma') and  qgetCetaceanNecropsy.SMALLINTESTINETrauma  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINETrauma') and  qgetCetaceanNecropsy.SMALLINTESTINETrauma  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINETrauma') and  qgetCetaceanNecropsy.SMALLINTESTINETrauma  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="SMALLINTESTINEMasses">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEMasses') and  qgetCetaceanNecropsy.SMALLINTESTINEMasses  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEMasses') and  qgetCetaceanNecropsy.SMALLINTESTINEMasses  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEMasses') and  qgetCetaceanNecropsy.SMALLINTESTINEMasses  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEMasses') and  qgetCetaceanNecropsy.SMALLINTESTINEMasses  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="SMALLINTESTINEImpaction">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEImpaction') and  qgetCetaceanNecropsy.SMALLINTESTINEImpaction  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEImpaction') and  qgetCetaceanNecropsy.SMALLINTESTINEImpaction  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEImpaction') and  qgetCetaceanNecropsy.SMALLINTESTINEImpaction  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEImpaction') and  qgetCetaceanNecropsy.SMALLINTESTINEImpaction  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="SMALLINTESTINEObstruction">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEObstruction') and  qgetCetaceanNecropsy.SMALLINTESTINEObstruction  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEObstruction') and  qgetCetaceanNecropsy.SMALLINTESTINEObstruction  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEObstruction') and  qgetCetaceanNecropsy.SMALLINTESTINEObstruction  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEObstruction') and  qgetCetaceanNecropsy.SMALLINTESTINEObstruction  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="SMALLINTESTINElntussusception">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINElntussusception') and  qgetCetaceanNecropsy.SMALLINTESTINElntussusception  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINElntussusception') and  qgetCetaceanNecropsy.SMALLINTESTINElntussusception  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINElntussusception') and  qgetCetaceanNecropsy.SMALLINTESTINElntussusception  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINElntussusception') and  qgetCetaceanNecropsy.SMALLINTESTINElntussusception  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="SMALLINTESTINEParasites">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEParasites') and  qgetCetaceanNecropsy.SMALLINTESTINEParasites  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEParasites') and  qgetCetaceanNecropsy.SMALLINTESTINEParasites  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEParasites') and  qgetCetaceanNecropsy.SMALLINTESTINEParasites  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEParasites') and  qgetCetaceanNecropsy.SMALLINTESTINEParasites  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum clm-15">
+    <input type="text" class="text-field" name="SMALLINTESTINEOther"value="#qgetCetaceanNecropsy.SMALLINTESTINEOther#">
+</div>
+</div>
+<div class="sys-comment-row mt-20">
+<div class="sys-colum-left">
+    <h3 class="sys-title">Contents</h3>
+</div>
+<div class="sys-colum-right">
+    <input type="text" class="text-field" name="SMALLINTESTINEContents"value="#qgetCetaceanNecropsy.SMALLINTESTINEContents#">
+</div>
+</div>
+</div>
+<div class="systum-sec">
+<div class="systum-row">
+<div class="sys-colum clm-15">
+    <h3 class="sys-title">COLON</h3>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="COLONUlcers">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONUlcers') and  qgetCetaceanNecropsy.COLONUlcers  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.COLONUlcers') and  qgetCetaceanNecropsy.COLONUlcers  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.COLONUlcers') and  qgetCetaceanNecropsy.COLONUlcers  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONUlcers') and  qgetCetaceanNecropsy.COLONUlcers  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="COLONTrauma">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONTrauma') and  qgetCetaceanNecropsy.COLONTrauma  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.COLONTrauma') and  qgetCetaceanNecropsy.COLONTrauma  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.COLONTrauma') and  qgetCetaceanNecropsy.COLONTrauma  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONTrauma') and  qgetCetaceanNecropsy.COLONTrauma  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="COLONMasses">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONMasses') and  qgetCetaceanNecropsy.COLONMasses  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.COLONMasses') and  qgetCetaceanNecropsy.COLONMasses  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.COLONMasses') and  qgetCetaceanNecropsy.COLONMasses  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONMasses') and  qgetCetaceanNecropsy.COLONMasses  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="COLONImpaction">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONImpaction') and  qgetCetaceanNecropsy.COLONImpaction  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.COLONImpaction') and  qgetCetaceanNecropsy.COLONImpaction  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.COLONImpaction') and  qgetCetaceanNecropsy.COLONImpaction  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONImpaction') and  qgetCetaceanNecropsy.COLONImpaction  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="COLONObstruction">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONObstruction') and  qgetCetaceanNecropsy.COLONObstruction  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.COLONObstruction') and  qgetCetaceanNecropsy.COLONObstruction  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.COLONObstruction') and  qgetCetaceanNecropsy.COLONObstruction  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONObstruction') and  qgetCetaceanNecropsy.COLONObstruction  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="COLONlntussusception">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONlntussusception') and  qgetCetaceanNecropsy.COLONlntussusception  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.COLONlntussusception') and  qgetCetaceanNecropsy.COLONlntussusception  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.COLONlntussusception') and  qgetCetaceanNecropsy.COLONlntussusception  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONlntussusception') and  qgetCetaceanNecropsy.COLONlntussusception  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum">
+    <select class="sys-op" name="COLONParasites">
+        <option value="">Select</option>
+        <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONParasites') and  qgetCetaceanNecropsy.COLONParasites  eq '>5%'>selected</cfif>>>5%</option>
+        <option value="5-25%"<cfif isdefined('qgetCetaceanNecropsy.COLONParasites') and  qgetCetaceanNecropsy.COLONParasites  eq '5-25%'>selected</cfif>>5-25%</option>
+        <option value="25-50%"<cfif isdefined('qgetCetaceanNecropsy.COLONParasites') and  qgetCetaceanNecropsy.COLONParasites  eq '25-50%'>selected</cfif>>25-50%</option>
+        <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONParasites') and  qgetCetaceanNecropsy.COLONParasites  eq '>50%'>selected</cfif>>>50%</option>
+    </select>
+</div>
+<div class="sys-colum clm-15">
+    <input type="text" class="text-field" name="COLONOther"value="#qgetCetaceanNecropsy.COLONOther#">
+</div>
+</div>
+<div class="sys-comment-row mt-20">
+<div class="sys-colum-left">
+    <h3 class="sys-title">Contents</h3>
+</div>
+<div class="sys-colum-right">
+    <input type="text" class="text-field" name="COLONContents"value="#qgetCetaceanNecropsy.COLONContents#">
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row btm-rw">
+    <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">PANCREAS</h3></div></label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="PANCREAS" id="PANCREAS">
+            <option value="">Select</option>
+            <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.PANCREAS') and  qgetCetaceanNecropsy.PANCREAS  eq 'Examined'>selected</cfif>>Examined</option>
+            <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.PANCREAS') and  qgetCetaceanNecropsy.PANCREAS  eq 'NE'>selected</cfif>>NE</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="cust-row">
+    <div class="cust-fld"><label class="fl-lbl">Pancreas Findings</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="PancreasFindings" id="PancreasFindings">
+            <option value="">Select</option>
+            <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'No Findings'>selected</cfif>>No Findings</option>
+            <option value="Trauma"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Trauma'>selected</cfif>>Trauma</option>
+            <option value="Masses"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Masses'>selected</cfif>>Masses</option>
+            <option value="Engorged"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Engorged'>selected</cfif>>Engorged</option>
+            <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Other'>selected</cfif>>Other</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="cust-row describe-rw">
+   
+    <div class="cust-inp">
+        <input type="text" placeholder="Other" class="text-field" name="PANCREASOthers"value="#qgetCetaceanNecropsy.PANCREASOthers#">
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row btm-rw">
+    <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">GI FOREIGN MATERIAL</h3></div></label>
+    </div>
+     <div class="cust-inp">
+        <select class="stl-op" name="GIFOREIGNMATERIAL" id="GIFOREIGNMATERIAL">
+            <option value="">Select</option>
+            <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.GIFOREIGNMATERIAL') and  qgetCetaceanNecropsy.GIFOREIGNMATERIAL  eq 'Yes'>selected</cfif>>Yes</option>
+            <option value="No"<cfif isdefined('qgetCetaceanNecropsy.GIFOREIGNMATERIAL') and  qgetCetaceanNecropsy.GIFOREIGNMATERIAL  eq 'No'>selected</cfif>>No</option>
+        </select>
+  
+    </div> 
+</div>
+</div>
+<div class="col-lg-2">
+    <div class="just-fld"><label class="fl-lbl">If Yes, see below</label>
+</div>
+</div>
+
+<div class="col-lg-5">
+<div class="cust-row material-rw">
+    <div class="cust-fld"><label class="fl-lbl">Injury/Lesion Associated with Foreign Material</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="InjuryLesionAssociated" id="InjuryLesionAssociated">
+            <option value="">Select</option>
+            <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.InjuryLesionAssociated') and  qgetCetaceanNecropsy.InjuryLesionAssociated  eq 'Yes'>selected</cfif>>Yes</option>
+            <option value="No"<cfif isdefined('qgetCetaceanNecropsy.InjuryLesionAssociated') and  qgetCetaceanNecropsy.InjuryLesionAssociated  eq 'No'>selected</cfif>>No</option>
+        </select>
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="sys-comment-row mt-20 btm-sec">
+<div class="sys-colum-left">
+<h3 class="sys-title">Describe</h3>
+</div>
+<div class="sys-colum-right">
+<textarea id="top-area" name="InjuryLesionAssociatedContents" rows="10" maxlength="2048" cols="120">#qgetCetaceanNecropsy.InjuryLesionAssociatedContents#</textarea>
+</div>
+</div>
+<div class="row pt-30">
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row btm-rw">
+    <div class="cust-fld"><label class="fl-lbl">GI Foreign Material Type</label>
+    </div>
+    <div class="cust-inp ">
+
+
+        <select class="stl-op search-box" multiple="multiple" name="GIForeignMaterialType" id="GIForeignMaterialType">
+            <cfloop from="1" to="#ArrayLen(material_type)#" index="j">
+                <option value="#material_type[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.GIForeignMaterialType,","),#material_type[j]#)>selected</cfif>
+                    >#material_type[j]#</option>
+            </cfloop>
+        </select>
+
+    </div>
+</div>
+</div>
+<div class="col-lg-6">
+<div class="cust-row">
+    <div class="cust-fld"><label class="fl-lbl">Material Lesion Location</label>
+    </div>
+    <div class="cust-inp">
+        <input type="text" class="text-field" name="MaterialLesionLocation" value="#qgetCetaceanNecropsy.MaterialLesionLocation#">
+    </div>
+</div>
+</div>
+</div>
+<div class="col-lg-12 material">
+<div class="col-lg-4">
+<div class="cust-row btm-rw">
+    <div class="cust-fld"><label class="fl-lbl">Material Collected</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="MaterialCollected" id="MaterialCollected">
+            <option value="">Select</option>
+            <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.MaterialCollected') and  qgetCetaceanNecropsy.MaterialCollected  eq 'Yes'>selected</cfif>>Yes</option>
+            <option value="No"<cfif isdefined('qgetCetaceanNecropsy.MaterialCollected') and  qgetCetaceanNecropsy.MaterialCollected  eq 'No'>selected</cfif>>No</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-6 ">
+<div class="cust-row">
+    <div class="cust-fld"><label class="fl-lbl">Disposition of Material Collected</label>
+    </div>
+    <div class="cust-inp">
+        <input type="text" class="text-field" name="DispositionofMaterialCollected"value="#qgetCetaceanNecropsy.DispositionofMaterialCollected#">
+    </div>
+</div>
+</div>
+</div>
+
+
+<cfif isDefined('qgetParasites') AND #qgetParasites.recordcount# gt 0>
+<input type="hidden" id="Dynamicparasites" value="#qgetParasites.recordcount#" name="counting">
+<cfloop query="qgetParasites">
+<div class="col-lg-12 parasitediv ">
+    <div class="col-lg-4">
+        <div class="cust-row btm-rw">
+            <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">PARASITES</h3></div></label>
+            </div>
+            <div class="cust-inp">
+                <select class="stl-op" name="PARASITES#qgetParasites.id#" id="PARASITES">
+                    
+                    <option value="Yes"<cfif isdefined('qgetParasites.PARASITES') and  qgetParasites.PARASITES  eq 'Yes'>selected</cfif>>Yes</option>
+                    <option value="No"<cfif isdefined('qgetParasites.PARASITES') and  qgetParasites.PARASITES  eq 'No'>selected</cfif>>No</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="cust-row">
+            <div class="cust-fld"><label class="fl-lbl">Parasite Type</label>
+            </div>
+            <div class="cust-inp">
+                <select class="stl-op" name="ParasiteType#qgetParasites.id#" id="ParasiteType">
+                    
+                    <cfloop query="qgetParasiteType">
+                        <cfif status eq 1 >
+                            <option value="#qgetParasiteType.type#"<cfif isdefined('qgetParasites.ParasiteType') and  qgetParasites.ParasiteType  eq #qgetParasiteType.type#>selected</cfif>>#qgetParasiteType.type#</option>
+                        </cfif>
+                    </cfloop>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="cust-row describe-rw">
+            <div class="cust-fld"><label class="fl-lbl">Location</label>
+            </div>
+            <div class="cust-inp">
+                <select class="stl-op" name="Parasitelocation#qgetParasites.id#" id="Parasitelocation">
+                    <cfloop query="qgetParasiteLocation">
+                        <cfif status eq 1 >
+                            <option value="#qgetParasiteLocation.location#"<cfif isdefined('qgetParasites.Parasitelocation') and  qgetParasites.Parasitelocation  eq #qgetParasiteLocation.location#>selected</cfif>>#qgetParasiteLocation.location#</option>
+                        </cfif>
+                    </cfloop>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+</cfloop>
+<cfelse>
+<div class="col-lg-12 parasitediv ">
+<div class="col-lg-4">
+    <div class="cust-row btm-rw">
+        <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">PARASITES</h3></div></label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="PARASITES" id="PARASITES">
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-4">
+    <div class="cust-row">
+        <div class="cust-fld"><label class="fl-lbl">Parasite Type</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="ParasiteType" id="ParasiteType">
+                <cfloop query="qgetParasiteType">
+                    <cfif status eq 1 >
+                        <option value="#qgetParasiteType.type#">#qgetParasiteType.type#</option>
+                    </cfif>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="col-lg-4">
+    <div class="cust-row describe-rw">
+        <div class="cust-fld"><label class="fl-lbl">Location</label>
+        </div>
+        <div class="cust-inp">
+            <select class="stl-op" name="Parasitelocation" id="Parasitelocation">
+                <cfloop query="qgetParasiteLocation">
+                    <cfif status eq 1 >
+                        <option value="#qgetParasiteLocation.location#">#qgetParasiteLocation.location#</option>
+                    </cfif>
+                </cfloop>
+            </select>
+        </div>
+    </div>
+</div>
+</div>
+</cfif>
+<div  id="newparasite"></div>
+<div class="col-lg-12">
+<div class="simple-button pt-15 align-right">
+<input type="hidden" name="dynamic_parasite" value="" id="dynamic_parasite">
+<input type="button" id="Add_newparasite" name="Add_newparasite" class="upld-btn" value="Add New" onclick="newparasite()">
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-lg-12">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" name="Parasitecomments" rows="10" cols="120"  maxlength="4000" >#qgetCetaceanNecropsy.Parasitecomments#</textarea>
+<div class="area-check align-right">
+    <label class="check-cust-fld">Photographs Taken</label>
+    <input type="checkbox" name="Parasite_phototaken" id="Parasite_phototaken" onclick="ParasitePhoto()" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.Parasite_phototaken') and  qgetCetaceanNecropsy.Parasite_phototaken  eq 'on'>checked</cfif>
+    >
+</div>
+</div>
+</div>
+  
+  <div class="col-lg-5" id="alimentaryphotoDiv">
+    <div class="cust-row btn-rw startSpinner">
+        <div class="cust-inp cust-inpts">
+            <div class="cust-inp test" id="startAlimentarySpinner">
+                <input type="file" placeholder="image Path" name="alimentaryphoto" id="alimentaryphoto" class="text-field text-fields" accept="image/*">
+            </div>
+<!---             <div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="alimentaryShowPictures()">Upload</button></div> --->
+        </div>
+    </div>
+</div>
+<div class="choose-images">
+    <cfset alimentaryImgs = ValueList(qgetCetaceanNecropsy.alimentaryImages,",")>
+        <input type="hidden" name="alimentaryImagesFile" value="#alimentaryImgs#" id="alimentaryImagesFile">
+        <div id="alimentaryPreviousimages" class="choose-images-detail">
+            <CFIF listLen(alimentaryImgs)> 
+                <cfloop list="#alimentaryImgs#" item="item" index="index">
+
+                    <span class="pip pipws">
+                        <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                            <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                        </a>
+                        <br/>
+                        <cfif findNoCase("Read only ST", permissions) eq 0>
+                            <span class="remove rms" onclick="alimentaryImageremove(this)" id="#item#">Remove image</span>
+                        </cfif>
+                    </span>
+                </cfloop>
+            </cfif>	
+        </div> 
+</div>
+
+
+<div class="row pt-30">
+<div class="">
+<div class="mrb-40">
+<label class="fl-lbl">
+    <div class="mid-t">
+        <h3 class="m-0">CENTRAL NERVOUS SYSTEM</h3>
+    </div>
+</label>
+</div>
+</div>
+<div class="col-lg-12">
+<div class="col-lg-4">
+<div class="cust-row btm-rw">
+    <div class="cust-fld">
+        <label class="fl-lbl">Brain</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="CENTRALbrain" id="">
+            <option value="">Select</option>
+            <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.CENTRALbrain') and  qgetCetaceanNecropsy.CENTRALbrain  eq "Examined">selected</cfif>
+                >Examined</option>
+            <option value="NE"<cfif isdefined('qgetCetaceanNecropsy.CENTRALbrain') and  qgetCetaceanNecropsy.CENTRALbrain  eq 'NE'>selected</cfif>
+                >NE</option>
+            <option value="Partial Examined"<cfif isdefined('qgetCetaceanNecropsy.CENTRALbrain') and  qgetCetaceanNecropsy.CENTRALbrain  eq "Partial Examined">selected</cfif>
+                >Partial Examined</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="cust-row">
+    <div class="cust-fld"><label class="fl-lbl">Brain Findings</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op search-box" multiple="multiple" name="CENTRALBrainFindings" id="CENTRALBrainFindings">
+            <cfloop from="1" to="#ArrayLen(brain_Findings)#" index="j">
+                <option value="#brain_Findings[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.CENTRALBrainFindings,","),#brain_Findings[j]#)>selected</cfif>
+                    >#brain_Findings[j]#</option>
+            </cfloop>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="cust-row describe-rw">
+    
+    <div class="cust-inp">
+        <input type="text"name="brainother" value="#qgetCetaceanNecropsy.brainother#"placeholder="Other" class="text-field">
+    </div>
+</div>
+</div>
+</div>
+<div class="col-lg-12 mt-10">
+<div class="col-lg-4">
+<div class="cust-row btm-rw">
+    <div class="cust-fld"><label class="fl-lbl">Spinal Cord</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op" name="CENTRALSpinalCord" id="">
+            <option value="">Select</option>
+            <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.CENTRALSpinalCord') and  qgetCetaceanNecropsy.CENTRALSpinalCord  eq "Examined">selected</cfif>
+                >Examined</option>
+            <option value="NE"<cfif isdefined('qgetCetaceanNecropsy.CENTRALSpinalCord') and  qgetCetaceanNecropsy.CENTRALSpinalCord  eq 'NE'>selected</cfif>
+                >NE</option>
+            <option value="Partial Examined"<cfif isdefined('qgetCetaceanNecropsy.CENTRALSpinalCord') and  qgetCetaceanNecropsy.CENTRALSpinalCord  eq "Partial Examined">selected</cfif>
+                >Partial Examined</option>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="cust-row">
+    <div class="cust-fld"><label class="fl-lbl">Spinal Cord Findings</label>
+    </div>
+    <div class="cust-inp">
+        <select class="stl-op search-box" multiple="multiple" name="CENTRALSpinalCordfinding" id="CENTRALSpinalCordfinding">
+            <cfloop from="1" to="#ArrayLen(brain_Findings)#" index="j">
+                <option value="#brain_Findings[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.CENTRALSpinalCordfinding,","),#brain_Findings[j]#)>selected</cfif>
+                    >#brain_Findings[j]#</option>
+            </cfloop>
+        </select>
+    </div>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="cust-row describe-rw">
+    
+    <div class="cust-inp">
+        <input type="text"name="spinalother" placeholder="Other" value="#qgetCetaceanNecropsy.spinalother#"class="text-field">
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="row pt-20">
+<div class="col-lg-5"></div>
+<div class="col-lg-7">
+<label class="fl-lbl">Comments</label>
+<textarea id="top-area" maxlength="2048" name="nervoussystemcomments" rows="10" cols="120" spellcheck="false">#qgetCetaceanNecropsy.nervoussystemcomments#</textarea>
+<div class="area-check align-right">
+    <label class="check-cust-fld">Photographs Taken</label>
+    <input type="checkbox"name="nervoussystemphototaken" onclick="centralNervous()" id="centralNervousCheck" class="check-bxt-fld"<cfif isdefined('qgetCetaceanNecropsy.nervoussystemphototaken') and  qgetCetaceanNecropsy.nervoussystemphototaken  eq 'on'>checked</cfif>
+    >
+</div>
+
+
+</div>
+<div class="col-lg-5" id="centralNervousdiv">
+<div class="cust-row btn-rw startSpinner">
+    <div class="cust-inp cust-inpts">
+        <div class="cust-inp test" id="startCentralNervousSpinner">
+            <input type="file" placeholder="image Path" name="centralNervousphoto" id="centralNervousphoto" class="text-field text-fields" accept="image/*">
+        </div>
+<!---         <div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="centralNervousShowPictures()">Upload</button></div> --->
+    </div>
+</div>
+</div>
+<div class="choose-images">
+<cfset centralNervousImgs = ValueList(qgetCetaceanNecropsy.centralNervousImages,",")>
+    <input type="hidden" name="centralNervousImagesFile" value="#centralNervousImgs#" id="centralNervousImagesFile">
+    <div id="centralNervousPreviousimages" class="choose-images-detail">
+        <CFIF listLen(centralNervousImgs)> 
+            <cfloop list="#centralNervousImgs#" item="item" index="index">
+
+                <span class="pip pipws">
+                    <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                        <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                    </a>
+                    <br/>
+                    <cfif findNoCase("Read only ST", permissions) eq 0>
+                        <span class="remove rms" onclick="centralNervousImageremove(this)" id="#item#">Remove image</span>
+                    </cfif>
+                </span>
+            </cfloop>
+        </cfif>	
+    </div>
+
+</div>
+
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+
+
+
+
+
+    <!---TodayWorking2 --->
+
+    </cfsavecontent>
+    </cfoutput>
+
+        <cfhtmltopdf name="mypdf">
+            <cfoutput>#myVariableName#</cfoutput>
+        </cfhtmltopdf>
+
+        <cfoutput>
+            <cfheader name="Content-Disposition" value="attachment; filename=mydownload.pdf">
+            <cfcontent type="application/pdf" variable="#toBinary(mypdf)#">
+<!---             <a href="#mypdf.pdf#" download="mydownload.pdf">Download PDF</a> --->
+        </cfoutput>   
+    </cfif> 
+<!---     End Today --->
     
     <cfif isDefined('Session.CetaceanNecropsy') and Session.CetaceanNecropsy NEQ ''> 
         <cfset form.field = #Session.CetaceanNecropsy# >
@@ -2873,7 +6278,6 @@
         </cfquery>
     </cfif>
 
-<!--- Today --->
 
     <!--- start for CetaceanExam --->
     <cfquery name="qgetCetaceanExamDataByfn" datasource="#Application.dsn#" maxRows = "1">
@@ -6101,10 +9505,41 @@
                                         </div>
                                         <div class="col-lg-12" style="margin-top: 15px;">
                                             <div class="form-group brief-history">
-                                                <label class="history-label">Brief History </label>
+                                                <label class="history-label">Brief History</label>
                                                 <textarea class="form-control textareaCustomReset locations-textarea" onblur="headerDataSave()" name="BriefHistory" id="BriefHistory"  maxlength="2084" style="resize: auto;"><cfif isDefined('qLCEDataa.BriefHistory')>#qLCEDataa.BriefHistory#</cfif> </textarea>
                                             </div>
-                                        </div> 
+                                        </div>
+                                        <div class="col-lg-12" id="headerImages" >
+                                            <div class="cust-row btn-rw startSpinner">
+                                                <div class="cust-inp cust-inpts">
+                                                    <div class="cust-inp test" id="startheaderSpinner">
+                                                        <input type="file" placeholder="image Path" name="hImages" id="hImages" class="text-field text-fields" accept="image/*">
+                                                    </div>
+                                                    <div class="cust-fld"><button class="upld-btn upld-btns" type="button" onclick="headershowPictures()">Upload</button></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="choose-images">
+                                            <cfset imgs = ValueList(qLCEDataa.headerImages,",")>
+                                                <input type="hidden" name="headerImagesFile" value="#imgs#" id="headerImagesFile">
+                                                <div id="headerPreviousimages" class="choose-images-detail">
+                                                    <CFIF listLen(imgs)> 
+                                                        <cfloop list="#imgs#" item="item" index="index">
+                                            
+                                                            <span class="pip pipws">
+                                                                <a class="imag" data-toggle="modal" data-target="##myNecropsyModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                                                                    <img  class="imageThumb image-fluid imag" style="width: 100%;"  src="http://cloud.wildfins.org/#item#" title="#item#" onclick="selectedNecropsy(this)"/>
+                                                                </a>
+                                                                <br/>
+                                                                <cfif findNoCase("Read only ST", permissions) eq 0>
+                                                                    <span class="remove rms" onclick="headerImageremove(this)" id="#item#">Remove image</span>
+                                                                </cfif>
+                                                            </span>
+                                                        </cfloop>
+                                                    </cfif>	
+                                                </div> 
+                                            </div>
+                                     <!---nouman ---> 
                                     </div>
                                 </div>
                             </div>
@@ -6138,6 +9573,7 @@
                         <input type="hidden" name="pdfFiles" value="#qLCEData.pdfFiles#" id="pdfFiles">
                         <div class="form-holder">  
                             <div class="form-group" id="find">
+                                <button type="submit" value="caseReport"  id="caseReport" name="caseReport" class="btn btn-pink btn-save">Case Report</button>
                                 <div class="row" id="startExam">
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                         <div class="form-group">
@@ -14646,6 +18082,7 @@
                 <cfif (permissions eq "full_access")>
                     <input  type="submit" id="deletCetaceanNecropsyAllRecord" name="deletCetaceanNecropsyAllRecord" class="btn btn-orange rl-4 btn-del" value="Delete All Records" onclick="if(confirm('Are you sure to Delete all Records?')){}else{return false;};">
                 </cfif>
+                <button type="submit" value="pdf"  id="createPdf" name="createPdf" class="btn btn-pink btn-save">PDF</button>
         </div>
     </cfif>
        <!--- <cfif (permissions eq "full_access")>
@@ -14672,8 +18109,10 @@
     </div>
     </div>
 
-                </div>
-            </div>   
+    </div>
+
+
+    </div>   
             <!--- end for NecropsyReport --->
 
             <!--- start for Morphometrics --->

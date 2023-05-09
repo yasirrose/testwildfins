@@ -5916,3 +5916,104 @@ $( "#SaveSampleAccession" ).click(function() {
 
   
 });
+
+function headershowPictures() {
+  var files = $("#hImages").prop("files");
+
+  var imagename = files[0]["name"];
+  var imgname = "hImages" + imagename;
+
+  // var image = files[0]['name'];
+  var image = files[0];
+  headerImagesFile = $("#headerImagesFile").val();
+  headerImagesFile = headerImagesFile.split(",");
+  if (headerImagesFile.length < 4) {
+    if (image) {
+      var imagefile = new FormData();
+      imagefile.append("pdf", image);
+      imagefile.append("name", imgname);
+
+      $("#hImages").prop("disabled", true);
+      $("#startheaderSpinner").after(
+        '<span class="spi"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></span>'
+      );
+
+      $.ajax({
+        url: application_root + "Stranding.cfc?method=uploadImage",
+        type: "POST",
+        data: imagefile,
+        enctype: "multipart/form-data",
+        processData: false, // tell jQuery not to process the data
+        contentType: false, // tell jQuery not to set contentType
+        success: function(data) {
+          if (data != "") {
+            var oldvalue = $("#headerImagesFile").val();
+            var newvalue = data;
+            if (oldvalue) {
+              var FullValue = oldvalue + "," + newvalue;
+            } else {
+              var FullValue = newvalue;
+            }
+            $("#headerImagesFile").val(FullValue);
+            $(".spi").remove();
+            $("#hImages").val("");
+
+            $("#headerPreviousimages").append(
+              '<span class="pip"><a data-toggle="modal" data-target="#myNecropsyModal" title="http://cloud.wildfins.org/' +
+                data +
+                '" target="blank"><img id="select' +
+                data +
+                '" class="imageThumb imag" onclick="selectedNecropsy(this)" class="image-fluid" src="http://cloud.wildfins.org/' +
+                data +
+                '" title="' +
+                data +
+                '"/></a><br/><span class="remove" id="' +
+                data +
+                '" onclick="headerImageremove(this)">Remove image</span></span>'
+            );
+            if (headerImagesFile.length < 3) {
+              $("#hImages").prop("disabled", false);
+            } else {
+              $("#hImages").prop("disabled", true);
+              $("#hImages").val("");
+            }
+          } else {
+            $(".spi").remove();
+            alert("Image not Uploaded");
+            $("#hImages").prop("disabled", false);
+          }
+        }
+      });
+    }
+  } else {
+    // alert('You are already uploaded 5 pictures.')
+    $("#hImages").prop("disabled", true);
+    $("#hImages").val("");
+  }
+}
+
+function headerImageremove(element) {
+  ID = $("#form_id").val();
+  image = element.id;
+  data = $("#headerImagesFile").val();
+  data1 = data.split(",");
+  var removeArrayValue = image;
+  data1.splice($.inArray(removeArrayValue, data1), 1);
+  data2 = data1.toString();
+
+  $("#headerImagesFile").val(data2);
+  // console.log(data2);
+
+  $.ajax({
+    url: application_root + "Stranding.cfc?method=removeHeaderImage",
+    type: "POST",
+    data: { ID: ID, image: image, imgValue: data2 },
+    success: function(data) {
+      // PDFArray = PDFArray.filter(e => e !== pdffile);
+      // $('#pdfFiles').val(PDFArray);
+      element.parentNode.remove();
+      $("#hImages").prop("disabled", false);
+      // console.log("data");
+    }
+  });
+}
