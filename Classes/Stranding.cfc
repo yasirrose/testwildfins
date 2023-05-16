@@ -55,6 +55,9 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
+        <cfif NOT isDefined('FORM.caseReportBox')>
+            <cfset FORM.caseReportBox = "0">
+        </cfif>
         
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -130,6 +133,7 @@
             ,actualClass
             ,euthanizedCB
             ,headerImages
+            ,caseReportBox
             ) 
             VALUES
             (
@@ -199,6 +203,7 @@
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+            ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportBox#'>
             )
         </cfquery>
         <cfcatch type="any">
@@ -259,6 +264,9 @@
         </cfif>
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.caseReportBox')>
+            <cfset FORM.caseReportBox = "0">
         </cfif>
         
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
@@ -335,6 +343,7 @@
            ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
            ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
            ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+           ,caseReportBox = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportBox#'>
 
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.ID#'>
@@ -823,9 +832,9 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
-        <!--- <cfif NOT isDefined('FORM.LCE_ID')>
-            <cfset FORM.LCE_ID = "0">
-        </cfif> --->
+        <cfif NOT isDefined('FORM.caseReportHIBox')>
+            <cfset FORM.caseReportHIBox = "0">
+        </cfif> 
       
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -870,6 +879,7 @@
             ,LCE_ID            
             ,euthanizedCB            
             ,headerImages            
+            ,caseReportBox            
             ) 
             VALUES
             (
@@ -905,6 +915,7 @@
             ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.LCE_ID#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+            ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportHIBox#'>
             )
         </cfquery>
 
@@ -1381,6 +1392,9 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
+        <cfif NOT isDefined('FORM.caseReportHIBox')>
+            <cfset FORM.caseReportHIBox = "0">
+        </cfif>
        
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -1429,6 +1443,7 @@
             ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
             ,Deleted = <cfqueryparam cfsqltype="cf_sql_varchar" value='0'>
             ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#headerImagesFile#'>
+            ,caseReportBox = <cfqueryparam cfsqltype="cf_sql_varchar" value='#caseReportHIBox#'>
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.HIForm_ID#'>
         </cfquery>
@@ -1546,6 +1561,9 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
+        <cfif NOT isDefined('FORM.caseReportLABox')>
+            <cfset FORM.caseReportLABox = "0">
+        </cfif>
         
 
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
@@ -1598,6 +1616,7 @@
                 ,actualClass
                 ,euthanizedCB
                 ,headerImages
+                ,caseReportBox
                 ) 
                 VALUES
                 (
@@ -1640,6 +1659,7 @@
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportLABox#'>
                 )
             </cfquery>
         <cfcatch type="any">
@@ -1678,6 +1698,9 @@
         </cfif>
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.caseReportLABox')>
+            <cfset FORM.caseReportLABox = "0">
         </cfif>
         
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
@@ -1729,6 +1752,7 @@
             ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
             ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
             ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+            ,caseReportBox = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportLABox#'>
             ,Deleted = <cfqueryparam cfsqltype="cf_sql_varchar" value='0'>
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.LA_ID#'>
@@ -2417,6 +2441,7 @@
                 ,date
                 ,BriefHistory
                 ,euthanizedCB
+                ,headerImages
                 ) 
                 VALUES
                 (
@@ -2450,6 +2475,7 @@
                 ,<cfqueryparam cfsqltype="CF_SQL_DATE" value='#FORM.date#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
                 )
             </cfquery>
         <cfcatch type="any">
@@ -2479,6 +2505,9 @@
         </cfif>
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.caseReportToxiBox')>
+            <cfset FORM.caseReportToxiBox = "0">
         </cfif>
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -2522,6 +2551,8 @@
                 ,BriefHistory
                 ,euthanizedCB
                 ,pdfFiles
+                ,headerImages
+                ,caseReportBox
                 ) 
                 VALUES
                 (
@@ -2556,6 +2587,8 @@
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.toxipdfFiles#'>
+                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportToxiBox#'>
                 )
             </cfquery>
         <cfcatch type="any">
@@ -2585,6 +2618,9 @@
         </cfif>
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.caseReportToxiBox')>
+            <cfset FORM.caseReportToxiBox = "0">
         </cfif>
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -2628,6 +2664,8 @@
                 ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,pdfFiles = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.toxipdfFiles#'>
+                ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                ,caseReportBox = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportToxiBox#'>
                 WHERE
                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#form.TX_ID#'>
             </cfquery>
@@ -4204,6 +4242,7 @@
                 ,date = <cfqueryparam cfsqltype="CF_SQL_DATE" value='#FORM.date#'>
                 ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+                ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.bloodValues_ID#'>
         </cfquery>
@@ -4370,6 +4409,7 @@
                 ,actualClass
                 ,BriefHistory
                 ,euthanizedCB
+                ,headerImages
                 ) 
                 VALUES
                 (
@@ -4399,6 +4439,7 @@
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
                
                 )
             </cfquery>
@@ -4468,6 +4509,7 @@
                 ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>
                 ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+                ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
                 WHERE
                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.ADID#'>
             </cfquery>
@@ -4683,6 +4725,7 @@
             ,date
             ,BriefHistory
             ,euthanizedCB
+            ,headerImages
             ) 
             VALUES
             (
@@ -4714,6 +4757,7 @@
             ,<cfqueryparam cfsqltype="CF_SQL_DATE" value='#FORM.date#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
             )
         </cfquery>
         <cfcatch type="any">
@@ -5070,6 +5114,7 @@
                 ,date = <cfqueryparam cfsqltype="CF_SQL_DATE" value='#FORM.date#'>
                 ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
+                ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
                 WHERE
                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.SEID#'>
             </cfquery>
@@ -5328,6 +5373,9 @@
         </cfif>  
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.caseReportNBox')>
+            <cfset FORM.caseReportNBox = "0">
         </cfif>
 
         <cfquery name="qcheckfieldnumber" datasource="#Application.dsn#">
@@ -5595,6 +5643,8 @@
                     ,Muscle_Status
                     ,euthanizedCB
                     ,CNRDATE
+                    ,headerImages
+                    ,caseReportBox
                     ) 
                     VALUES
                     (
@@ -5852,6 +5902,8 @@
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Muscle_Status#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportNBox#'>
                     )
                 </cfquery>
                 <cfcatch type="any">
@@ -5978,6 +6030,9 @@
         </cfif>
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.caseReportNBox')>
+            <cfset FORM.caseReportNBox = "0">
         </cfif>
         <cftry>
             <cfquery name="qupdateCetaceanNecropsy" datasource="#variables.dsn#"  result="return_data" >
@@ -6233,6 +6288,8 @@
                 ,Muscle_Status = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Muscle_Status#'>
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
+                ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                ,caseReportBox = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportNBox#'>
                 WHERE
                 fnumber =<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Fnumber#'>
             </cfquery>
@@ -6704,6 +6761,7 @@
             ,weight_values
             ,euthanizedCB
             ,lengthWeight_values
+            ,headerImages
             ) 
             VALUES
             (
@@ -6753,6 +6811,7 @@
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.weight_values#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.lengthWeight_values#'>
+            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
             )
         </cfquery>
         <cfcatch type="any">
@@ -6845,7 +6904,7 @@
            ,weight_values = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.weight_values#'> 
            ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'> 
            ,lengthWeight_values = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.lengthWeight_values#'> 
-
+           ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.Morphometricss_ID#'>
         </cfquery>
@@ -6932,6 +6991,7 @@
             ,actualClass
             ,BriefHistory
             ,CompletedBy       
+            ,headerImages       
 
             ) 
             VALUES
@@ -6961,6 +7021,7 @@
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#actualClass#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#BriefHistory#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#CompletedBy#'>
+            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#headerImages#'>
        
             )
         </cfquery>
@@ -7016,6 +7077,7 @@
            ,CompletedBy = <cfqueryparam cfsqltype="cf_sql_varchar" value='#CompletedBy#'>
            ,affiliatedID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#affiliatedID#'>
            ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#actualClass#'>
+           ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#headerImages#'>
 
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
@@ -8519,13 +8581,15 @@
     <cffunction name="getPdfFiles" returntype="any" output="false" access="public" >
 		
         <cfquery name="qgetPdfFiles" datasource="#variables.dsn#"  >
-            SELECT pdfFiles,id from ST_LiveCetaceanExam where Fnumber = '#Fnumber#' 
+            SELECT pdfFiles,id from ST_LiveCetaceanExam where Fnumber = '#Fnumber#' and caseReportBox = '1' 
             UNION
-            SELECT pdfFiles,id from ST_HIForm where Fnumber = '#Fnumber#' 
+            SELECT pdfFiles,id from ST_HIForm where Fnumber = '#Fnumber#' and caseReportBox = '1' 
             UNION
-            SELECT pdfFiles,id from ST_LevelAForm where Fnumber = '#Fnumber#' 
+            SELECT pdfFiles,id from ST_LevelAForm where Fnumber = '#Fnumber#' and caseReportBox = '1'
             UNION
-            SELECT pdfFiles,id from ST_Toxicology where Fnumber = '#Fnumber#' 
+            SELECT pdfFiles,id from ST_Toxicology where Fnumber = '#Fnumber#' and caseReportBox = '1'
+            UNION
+            SELECT HistoImages,id from ST_CetaceanNecropsyReport where Fnumber = '#Fnumber#' and caseReportBox = '1'
 
         </cfquery>
         <cfreturn qgetPdfFiles>
@@ -8550,5 +8614,32 @@
         <cfreturn True>
     </cffunction>
 
-    
+    <cffunction name="getHeaderImages" returntype="any" output="false" access="public" >
+		
+        <cfquery name="qgetPdfFiles" datasource="#variables.dsn#">
+            SELECT DISTINCT headerImages
+            FROM (
+                SELECT headerImages FROM ST_LiveCetaceanExam WHERE Fnumber = '#Fnumber#'
+                UNION ALL
+                SELECT headerImages FROM ST_HIForm WHERE Fnumber = '#Fnumber#'
+                UNION ALL
+                SELECT headerImages FROM ST_LevelAForm WHERE Fnumber = '#Fnumber#'
+                UNION ALL
+                SELECT headerImages FROM ST_HistoForm WHERE Fnumber = '#Fnumber#'
+                UNION ALL
+                SELECT headerImages FROM ST_Blood_Values WHERE Fnumber = '#Fnumber#'
+                UNION ALL
+                SELECT headerImages FROM ST_Toxicology WHERE Fnumber = '#Fnumber#'
+                UNION ALL
+                SELECT headerImages FROM ST_Ancillary_Diagnostics WHERE Fnumber = '#Fnumber#'
+                UNION ALL
+                SELECT headerImages FROM ST_SampleArchive WHERE Fnumber = '#Fnumber#'
+                UNION ALL
+                SELECT headerImages FROM ST_Morphometrics WHERE Fnumber = '#Fnumber#'
+                UNION ALL
+                SELECT headerImages FROM ST_CetaceanNecropsyReport WHERE Fnumber = '#Fnumber#'
+            ) AS all_tables
+        </cfquery>
+            <cfreturn qgetPdfFiles>
+        </cffunction>
 </cfcomponent>    
