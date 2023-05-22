@@ -579,11 +579,7 @@
             <cfset Application.Stranding.iSTAT_ChemUpdate(argumentCollection="#Form#")>
             <cfset Application.Stranding.CG4Update(argumentCollection="#Form#")>
             <cfset LCE = Application.Stranding.Blood_VFormUpdate(argumentCollection="#Form#")>
-            <!--- <cfif isDefined('SaveandgotoToxicology') and url.LCE_ID neq 0>
-                <cflocation addtoken="no" url="#Application.siteroot#?Module=Stranding&Page=Toxicology&LCE_ID=#url.LCE_ID#" >
-            <cfelseif isDefined('SaveandgotoToxicology') and url.LCE_ID eq 0>
-                <cflocation addtoken="no" url="#Application.siteroot#?Module=Stranding&Page=Toxicology" >
-            </cfif> --->
+      
         <cfelse> 
 
             <!--- If inserting new data --->
@@ -649,8 +645,7 @@
         <cfset form.bloodValue_ID = #Session.bloodValue#>
         <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
         <cfset qgetBloodValueData=Application.Stranding.getBlood_VData("#form.LCEID#")>
-        <!--- <cfdump var="#qgetBloodValueData.species#" abort="true"> --->
-        <!--- <cfset qLCEDataa=Application.Stranding.getBlood_VData("#form.LCEID#")> --->
+      
         <cfset qgetcetaceanDate=Application.Stranding.getBloodValueNecropsyDate(#form.bloodValue_ID#)>
 
         <cfif #qgetBloodValueData.species# neq "">
@@ -667,16 +662,6 @@
         <cfset qgetiSTAT_CG4=Application.Stranding.getiSTAT_CG4("#form.bloodID#")>
     </cfif>
     
-    
-
-        <!---  setup empty form when directly clicked the HI link from side bar --->
-        <!--- <cfset qgetHIData=Application.Stranding.getBlood_V_ten()> --->
-        <!--- <cfif url.LCE_ID eq 0 AND Not isDefined('form.HI_ID')>
-            <cfset qgetHIData=Application.Stranding.getBlood_V_ten()>
-            <!---  setup empty form when when entering new record --->
-        <cfelseif  isDefined('form.HI_ID') AND form.HI_ID eq "">
-            <cfset qgetHIData=Application.Stranding.getBlood_V_ten()>
-        </cfif> --->
         <!---  get all records order by ID DESC--->
         <cfset getBloodValueID=Application.Stranding.getBlood_VID()>
         <!---  get all records order by Date Desc --->
@@ -727,9 +712,7 @@
                 <cfset DT_ID = Application.Stranding.DynamicToxiType_Insert(argumentCollection="#Form#")>
                 
                 <cfset form.Tissue_type = "">
-                <!--- <cfif isDefined('SaveandgotoAncillaryDiagnostics')>
-                    <cflocation addtoken="no" url="#Application.siteroot#?Module=Stranding&Page=AncillaryDiagnostics&LCE_ID=#url.LCE_ID#" >
-                </cfif> --->
+          
             </cfif>
     
         <cfelseif isDefined('deleteToxicology')>
@@ -739,15 +722,7 @@
             <cfset Application.Stranding.deleteToxicologyAllRecord()>
             <cfset form.Toxicology_ID = "">
         </cfif>
-        <!--- if user directed from the Cetacean form, here getr first 4 forms data of Cetacean form --->
-        <!--- <cfif url.LCE_ID neq 0>
-            <cfset form.LCEID = url.LCE_ID>
-            <cfset neworexist=Application.Stranding.gettoxiByLCE("#form.LCEID#")>
-            <cfset qgetHIDataCetacean=Application.Stranding.getLiveCetaceanExamData("#form.LCEID#")>
-            <cfif neworexist.recordcount gt 0 and neworexist.LCE_ID neq 0 >
-                <cfset form.HI_ID = neworexist.ID>
-            </cfif>
-        </cfif> --->
+      
         <!---   getting data on the basis of HI_ID  --->
         <cfif  isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "">
             <cfif Session.Toxicology NEQ form.Toxicology_ID>
@@ -799,17 +774,7 @@
             </cfif>        
             <!--- <cfset qLCEDataa=Application.Stranding.gettoxiform_ten()> --->
         </cfif>
-        
-        <!---  setup empty form when directly clicked the HI link from side bar --->
-        <!--- <cfif url.LCE_ID eq 0 AND Not isDefined('form.HI_ID')>
-            <cfset qgetHIData=Application.Stranding.gettoxiform_ten()>
-            <cfset qgetToxitype=Application.Stranding.getToxitype_ten()>
-            <!---  setup empty form when when entering new record --->
-        <cfelseif  isDefined('form.HI_ID') AND form.HI_ID eq "">
-            <cfset qgetToxitype=Application.Stranding.getToxitype_ten()>
-        </cfif> --->
-        <!--- <cfset qgetDynamicToxitype=Application.Stranding.getDynamicToxitype_ten()> --->
-        <!--- <cfset qgetToxitype=Application.Stranding.getToxitype_ten()> --->
+
         <!---  get all records order by ID DESC--->
         <cfset getToxicologyID=Application.Stranding.gettoxiform_ID()>
         <!---  get all records order by Date Desc --->
@@ -852,9 +817,7 @@
                     <cfset form.ADID = #NEWADID#>
                     <cfset Application.Stranding.AncillaryReportInsert(argumentCollection="#Form#")>
                 </cfif>
-                <!--- <cfif isDefined('SaveandgotoSampleArchive')>
-                    <cflocation addtoken="no" url="#Application.siteroot#?Module=Stranding&Page=SampleArchive&LCE_ID=#url.LCE_ID#" >            
-                </cfif> --->
+           
             </cfif>
         <cfelseif isDefined('deleteAncillary')>
             <cfset Application.Stranding.deleteAncillary("#form#")>
@@ -862,16 +825,7 @@
             <cfset Application.Stranding.deleteAncillaryAllRecord()>
         </cfif>
 
-        <!--- if user directed from the Cetacean form, here getr first 4 forms data of Cetacean form --->
-        <!--- <cfif url.LCE_ID neq 0>
-            <cfset form.LCEID = url.LCE_ID>
-            <cfset neworexist=Application.Stranding.getAncillaryDataByLCE("#form.LCEID#")>
-            <cfset qgetHIData=Application.Stranding.getLiveCetaceanExamData("#form.LCEID#")>    
-            <cfif neworexist.recordcount gt 0 and neworexist.LCE_ID neq 0 >
-                <cfset form.AD_ID = neworexist.ID>
-                <cfset qAncillaryReportGet=Application.Stranding.AncillaryReportGet(ADID="#form.AD_ID#")>
-            </cfif>
-        </cfif> --->
+      
         <!---   getting data on the basis of AD_ID  --->
         <cfif  isDefined('form.AD_ID') and form.AD_ID neq "">
             <cfif Session.Ancillary NEQ form.AD_ID>
@@ -897,13 +851,7 @@
             </cfif>
             <cfset qAncillaryReportGet=Application.Stranding.AncillaryReportGet("#form.AD_ID#")>
         </cfif>
-        <!---  setup empty form when directly clicked the HI link from side bar --->
-        <!--- <cfif url.LCE_ID eq 0 AND Not isDefined('form.AD_ID')>
-            <cfset qgetHIData=Application.Stranding.getAncillary_ten()>
-            <!---  setup empty form when when entering new record --->
-        <cfelseif  isDefined('form.AD_ID') AND form.AD_ID eq "">
-            <cfset qgetHIData=Application.Stranding.getAncillary_ten()>
-        </cfif> --->
+ 
         <!---  get all records order by ID DESC--->
         <cfset getAnclillaryID=Application.Stranding.getAncillaryID()>
         <!---  get all records order by Date Desc --->
@@ -969,18 +917,6 @@
         <cfset Application.Stranding.deleteallSampleArchiveRecord()>
         <!--- <cfset form.STID = ""> --->
     </cfif>
-
-    <!--- if user directed from the Cetacean form, here getr first 4 forms data of Cetacean form --->   
-    <!--- <cfif url.LCE_ID neq 0>
-        <cfset form.LCEID = url.LCE_ID>
-        <cfset neworexist=Application.Stranding.getSampleDataByLCE("#form.LCEID#")>
-        <cfset qgetSampleData=Application.Stranding.getLiveCetaceanExamData("#form.LCEID#")>    
-        <cfset qgetSampleDetailData = Application.Stranding.getSampleDetailDataSingle(STID="#form.LCEID#")>
-        <cfif neworexist.recordcount gt 0 and neworexist.LCE_ID neq 0 >
-            <cfset form.SEID = neworexist.ID>
-        </cfif>
-    </cfif> --->
-
 
  <!---   getting data on the basis of LCEID  error--->
    
@@ -1233,20 +1169,8 @@
                 <cfelseif arrayContains(colNameArray, 'Stranding Agreement or Authority') eq false>
                     <script>
                         alert('The Column name in the sheet should be "Stranding Agreement or Authority" ');
-                    </script>
-                <!--- <cfelseif arrayContains(colNameArray, 'Restrand') eq false>
-                    <script>
-                        alert('The Column name in the sheet should be "Restrand" ');
-                    </script>
-                 <cfelseif arrayContains(colNameArray, 'Group Event') eq false>
-                    <script>
-                        alert('The Column name in the sheet should be "Group Event" ');
-                    </script>
-                <cfelseif arrayContains(colNameArray, 'Number of Animals') eq false>
-                    <script>
-                        alert('The Column name in the sheet should be "Number of Animals" ');
-                    </script> --->
-                 <cfelseif arrayContains(colNameArray, 'Sex') eq false>
+                    </script> 
+                <cfelseif arrayContains(colNameArray, 'Sex') eq false>
                     <script>
                         alert('The Column name in the sheet should be "Sex" ');
                     </script>
@@ -2782,16 +2706,7 @@
         </cfif>
     </cfif>
 
-<!---         <cfif fileExists(pdfPath)> 
-            <cfpdf action="merge" overwrite = "yes"  source="#Src#" destination="#Application.CloudDirectory#/output.pdf" /> 
-            <cfset pdfPathforall = '#Application.CloudDirectory#output.pdf'>
-            <cfheader name="Content-Disposition" value="attachment;filename=mypdf.pdf">
-            <cfcontent type="application/pdf" file="#pdfPathforall#">
-
-        <cfelse>
-            <cfdump var="Error uploading file" abort="true">
-        </cfif>--->
-                
+               
     </cfif>
 
     <!---TodayWorking22  --->
@@ -2800,8 +2715,10 @@
         <cfset form.Nfieldnumber = form.Fnumber>
         <cfset form.Morphometrics_ID = form.Fnumber>
         <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.Nfieldnumber#")> 
-       <!--- <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
-                 <cfdump var="#qLCEDataa#"><cfabort> --->
+       <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllFnumberData("#form.Morphometrics_ID#")>
+       <cfset qgetVeterinarians= Application.StaticDataNew.getVeterinarians()>
+       <cfset getTeams=Application.SightingNew.getTeams()>
+                  <!---<cfdump var="#qLCEDataa#"><cfabort> --->
     <cfoutput>
     <cfsavecontent variable="myVariableName">
    
@@ -2975,8 +2892,15 @@
                                         <td style="height: 20px;"></td>
                                     </tr>	
                                     <cfif isDefined('qgetCetaceanNecropsy.attendingVeterinarian') and #qgetCetaceanNecropsy.attendingVeterinarian# neq "" >
+
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Attending Veterinarian:</strong> #qgetCetaceanNecropsy.attendingVeterinarian#</td>
+                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Attending Veterinarian:</strong> 
+                                                <cfloop query="qgetVeterinarians">
+                                                        <cfif ListFind(ValueList(qgetCetaceanNecropsy.attendingVeterinarian,","),#qgetVeterinarians.ID#)>
+                                                            #qgetVeterinarians.Veterinarians#,
+                                                        </cfif>
+                                                </cfloop>
+                                            </td>
                                         </tr>
                                     </cfif>
                                     <tr>
@@ -2984,7 +2908,11 @@
                                     </tr>
                                     <cfif isDefined('qgetCetaceanNecropsy.Prosectors') and #qgetCetaceanNecropsy.Prosectors# neq "" >
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Prosectors:</strong>#qgetCetaceanNecropsy.Prosectors#</td>
+                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Prosectors:</strong>
+                                                <cfloop query="getTeams">
+                                                        <cfif ListFind(ValueList(qgetCetaceanNecropsy.Prosectors,","),#getTeams.RT_ID#)>#getTeams.RT_MemberName#,</cfif>
+                                                </cfloop>
+                                            </td>
                                         </tr>
                                     </cfif>
                                     <tr>
@@ -3001,7 +2929,7 @@
                                     </tr>	
                                     <cfif isDefined('qgetCetaceanNecropsy.deathcause') and #qgetCetaceanNecropsy.deathcause# neq "" >
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Cause of Death:</strong> #qgetCetaceanNecropsy.deathcause#</td>
+                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Cause of Death:</strong> #qgetCetaceanNecropsy.deathcause#</td>
                                         </tr>
                                     </cfif>
                                     <tr>
@@ -3245,37 +3173,41 @@
                                     <tr>
                                         <td>
                                             <table style="width: 100%;">
+                                               
+                                                <cfif isDefined('qgetMorphometricsData.totalLength') and qgetMorphometricsData.totalLength neq ''>
+                                                    <tr>
+                                                        <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Total Length (1): </strong><u> #qgetMorphometricsData.totalLength# cm</u>(rostrum to fluke notch)</td>
+
+                                                        <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Rostrum to Dorsal Fin (2): </strong><u>#qgetMorphometricsData.rostrum#cm</u></td>
+                                                    </tr>
+                                                </cfif>
                                                 <tr>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Total Length (1): </strong><u> 188 cm</u>(rostrum to fluke notch)</td>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Rostrum to Dorsal Fin (2): </strong><u>112.8cm</u></td>
+                                                    <td style="height: 20px;"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Blowhole to Dorsal (3): </strong><u>#qgetMorphometricsData.blowhole#</u>(center of blowhole)</td>
+                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Fluke Width: (4): </strong><u>#qgetMorphometricsData.fluke# cm</u></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="height: 20px;"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Blowhole to Dorsal (3): </strong><u>86.6 cm</u>(center of blowhole)</td>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Fluke Width: (4): </strong><u>47 cm</u></td>
+                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Girth (circumference): Cervical (5): </strong><u>#qgetMorphometricsData.girth# cm</u></td>
+                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Axillary (6): </strong><u>#qgetMorphometricsData.axillary# cm</u></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="height: 20px;"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Girth (circumference): Cervical (5): </strong><u>83.5 cm</u></td>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Axillary (6): </strong><u>95.5 cm</u></td>
+                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Maximum (7): </strong><u>#qgetMorphometricsData.maxium# cm</u></td>
+                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Blubber Thickness: Mid-Dorsal: </strong><u>#qgetMorphometricsData.blubber# cm</u></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="height: 20px;"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Maximum (7): </strong><u>100.3 cm</u></td>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Blubber Thickness: Mid-Dorsal: </strong><u>1.5 cm</u></td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="height: 20px;"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Mid-Lateral: </strong><u>1.2 cm</u></td>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Mid-Lateral: </strong><u>1.4 cm</u></td>
+                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Mid-Lateral: </strong><u>#qgetMorphometricsData.midlateral# cm</u></td>
+                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Mid-Ventral: </strong><u>#qgetMorphometricsData.midVentral# cm</u></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="height: 20px;"></td>
@@ -3287,15 +3219,15 @@
                                                     <td style="height: 20px;"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Upper-Left: </strong><u>24</u></td>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Lower-Left: </strong><u>21</u></td>
+                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Upper-Left: </strong><u>#qgetMorphometricsData.Lateralupperleft#</u></td>
+                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Lower-Left: </strong><u>#qgetMorphometricsData.Laterallowerleft#</u></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="height: 20px;"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Upper-Right: </strong><u>23</u></td>
-                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Lower-Right: </strong><u>23</u></td>
+                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Upper-Right: </strong><u>#qgetMorphometricsData.Ventralupperleft#</u></td>
+                                                    <td style="line-height: 0; font-size: 16px; font-family: Arial, Helvetica, sans-serif; text-align: left;"><strong>Lower-Right: </strong><u>#qgetMorphometricsData.Ventrallowerright#</u></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -3319,13 +3251,13 @@
                                     </cfif>
                                     <tr>
                                         <td style="height: 15px"></td>
-                                    </tr>
-                                    <cfif isDefined('qgetCetaceanNecropsy.lessionphototaken') and #qgetCetaceanNecropsy.lessionphototaken# neq "" >
+                                   <!--- </tr>
+                                     <cfif isDefined('qgetCetaceanNecropsy.lessionphototaken') and #qgetCetaceanNecropsy.lessionphototaken# neq "" > </cfif>
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken?</strong> #qgetCetaceanNecropsy.lessionphototaken#</td>
+                                            <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken?</strong> <cfif isdefined('qgetCetaceanNecropsy.lessionphototaken') and  qgetCetaceanNecropsy.lessionphototaken  eq 'on'>Yes<cfelse>No</cfif></td>
                                         </tr>
-                                    </cfif>
-                                    <tr>
+                                    
+                                    <tr>--->
                                         <td style="height: 30px"></td>
                                     </tr>
                                     <cfif isDefined('qgetCetaceanNecropsy.lessiondescribe') and #qgetCetaceanNecropsy.lessiondescribe# neq "" >
@@ -3336,6 +3268,7 @@
                                     <tr>
                                         <td style="height: 80px;"></td>
                                     </tr>
+                                    
                                     <tr>
                                         <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">3 │ Cetacean Necropsy Report</td>
                                     </tr>
@@ -3346,11 +3279,14 @@
                                         <td>
                                             <table style="width: 100%;">
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: left;"><img src="http://cloud.wildfins.org/necropsyPDF/Integument-1.png" alt="" style="width: 100%;"></td>
-                                                    <td style="line-height: 0; width: 20px;"></td>
-                                                    <td style="line-height: 0; text-align: left;"><img src="http://cloud.wildfins.org/necropsyPDF/Integument-2.png" alt="" style="width: 100%;"></td>
-                                                    <td style="line-height: 0; width: 20px;"></td>
-                                                    <td style="line-height: 0; text-align: left;"><img src="http://cloud.wildfins.org/necropsyPDF/Integument-3.png" alt="" style="width: 100%;"></td>
+                                                    <cfset imgs = ValueList(qgetCetaceanNecropsy.integumentImages,",")>
+                                                    <cfif listLen(imgs)> 
+                                                        <cfloop list="#imgs#" item="item" index="index">
+                                                            <td style="line-height: 0; text-align: left;">
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                            </td>
+                                                        </cfloop>
+                                                    </cfif>	
                                                 </tr>
                                             </table>
                                         </td>
@@ -3370,11 +3306,12 @@
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
-                                    <cfif isDefined('qgetCetaceanNecropsy.internal_phototaken') and #qgetCetaceanNecropsy.internal_phototaken# neq "" >
-                                        <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken ? </strong>#qgetCetaceanNecropsy.internal_phototaken#</td>
-                                        </tr>
-                                    </cfif>
+                                    
+                                    <!---<tr>
+                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken ? </strong><cfif isdefined('qgetCetaceanNecropsy.internal_phototaken') and  qgetCetaceanNecropsy.internal_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                    </tr>--->
+
+                                    
                                     <tr>
                                         <td style="height: 15px"></td>
                                     </tr>
@@ -3390,7 +3327,14 @@
                                         <td>
                                             <table style="width: 100%;">
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: center;"><img src="http://cloud.wildfins.org/necropsyPDF/nutritional-condition-internal-img.png" alt=""></td>
+                                                    <cfset IntenalExamimg = ValueList(qgetCetaceanNecropsy.IntenalExamImages,",")>
+                                                    <cfif listLen(IntenalExamimg)> 
+                                                        <cfloop list="#IntenalExamimg#" item="item" index="index">
+                                                            <td style="line-height: 0; text-align: left;">
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                            </td>
+                                                        </cfloop>
+                                                    </cfif>	
                                                 </tr>
                                             </table>
                                         </td>
@@ -3407,9 +3351,9 @@
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong>#qgetCetaceanNecropsy.muscular_phototaken#</td>
-                                    </tr>
+                                    <!---<tr>
+                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.muscular_phototaken') and  qgetCetaceanNecropsy.muscular_phototaken eq 'on'>Yes<cfelse>No</cfif></td>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 15px"></td>
                                     </tr>
@@ -3425,9 +3369,14 @@
                                         <td>
                                             <table style="width: 100%;">
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: right;"><img src="http://cloud.wildfins.org/necropsyPDF/musculoskeletal-system-1.png" alt=""></td>
-                                                    <td style="line-height: 0; width: 20px;"></td>
-                                                    <td style="line-height: 0; text-align: left;"><img src="http://cloud.wildfins.org/necropsyPDF/musculoskeletal-system-2.png" alt=""></td>
+                                                    <cfset musculoskeletalImgs = ValueList(qgetCetaceanNecropsy.musculoskeletalImages,",")>
+                                                    <cfif listLen(musculoskeletalImgs)> 
+                                                        <cfloop list="#musculoskeletalImgs#" item="item" index="index">
+                                                            <td style="line-height: 0; text-align: left;">
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                            </td>
+                                                        </cfloop>
+                                                    </cfif>	
                                                 </tr>
                                             </table>
                                         </td>
@@ -3444,9 +3393,9 @@
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong>#qgetCetaceanNecropsy.thoratic_phototaken#</td>
-                                    </tr>
+                                    <!---<tr>
+                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.thoratic_phototaken') and  qgetCetaceanNecropsy.thoratic_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 15px"></td>
                                     </tr>
@@ -3468,7 +3417,14 @@
                                         <td>
                                             <table style="width: 100%;">
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: center;"><img src="http://cloud.wildfins.org/necropsyPDF/thoracic-cavity-1.png" alt=""></td>
+                                                    <cfset thoracictImgs = ValueList(qgetCetaceanNecropsy.thoracictImages,",")>
+                                                    <cfif listLen(thoracictImgs)> 
+                                                        <cfloop list="#thoracictImgs#" item="item" index="index">
+                                                            <td style="line-height: 0; text-align: left;">
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                            </td>
+                                                        </cfloop>
+                                                    </cfif>
                                                 </tr>
                                             </table>
                                         </td>
@@ -3485,9 +3441,9 @@
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong>#qgetCetaceanNecropsy.abdominal_phototaken#</td>
-                                    </tr>
+                                    <!---<tr>
+                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.abdominal_phototaken') and  qgetCetaceanNecropsy.abdominal_phototaken eq 'on'>Yes<cfelse>No</cfif></td>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 15px"></td>
                                     </tr>
@@ -3502,8 +3458,15 @@
                                     <tr>
                                         <td>
                                             <table style="width: 100%;">
+                                                <cfset abdominalImgs = ValueList(qgetCetaceanNecropsy.abdominalImages,",")>
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: center;"><img src="http://cloud.wildfins.org/necropsyPDF/abdominal-cavity-1.png" alt=""></td>
+                                                    <cfif listLen(abdominalImgs)> 
+                                                        <cfloop list="#abdominalImgs#" item="item" index="index">
+                                                            <td style="line-height: 0; text-align: left;">
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                            </td>
+                                                        </cfloop>
+                                                    </cfif>
                                                 </tr>
                                             </table>
                                         </td>
@@ -3520,9 +3483,9 @@
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong>#qgetCetaceanNecropsy.Parasite_phototaken#</td>
-                                    </tr>
+                                    <!---<tr>
+                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.Parasite_phototaken') and  qgetCetaceanNecropsy.Parasite_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                    </tr>--->
                                     
                                     <tr>
                                         <td style="height: 15px"></td>
@@ -3544,12 +3507,15 @@
                                     <tr>
                                         <td>
                                             <table style="width: 100%;">
+                                                <cfset alimentaryImgs = ValueList(qgetCetaceanNecropsy.alimentaryImages,",")>
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: center;"><img src="http://cloud.wildfins.org/necropsyPDF/alimentary-system-1.png" alt="" style="width: 100%;"></td>
-                                                    <td style="line-height: 0; width: 20px;"></td>
-                                                    <td style="line-height: 0; text-align: center;"><img src="http://cloud.wildfins.org/necropsyPDF/alimentary-system-2.png" alt="" style="width: 100%;"></td>
-                                                    <td style="line-height: 0; width: 20px;"></td>
-                                                    <td style="line-height: 0; text-align: center;"><img src="http://cloud.wildfins.org/necropsyPDF/alimentary-system-3.png" alt="" style="width: 100%;"></td>
+                                                    <cfif listLen(alimentaryImgs)> 
+                                                        <cfloop list="#alimentaryImgs#" item="item" index="index">
+                                                            <td style="line-height: 0; text-align: left;">
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                            </td>
+                                                        </cfloop>
+                                                    </cfif>
                                                 </tr>
                                             </table>
                                         </td>
@@ -3566,9 +3532,9 @@
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong>#qgetCetaceanNecropsy.hepatobiliary_phototaken#</td>
-                                    </tr>
+                                    <!---<tr>
+                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.hepatobiliary_phototaken') and  qgetCetaceanNecropsy.hepatobiliary_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 15px"></td>
                                     </tr>
@@ -3583,10 +3549,15 @@
                                     <tr>
                                         <td>
                                             <table style="width: 100%;">
+                                                <cfset hepatobiliaryImgs = ValueList(qgetCetaceanNecropsy.hepatobiliaryImages,",")>
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: right;"><img src="http://cloud.wildfins.org/necropsyPDF/hepatobiliary-system-1.png" alt=""></td>
-                                                    <td style="line-height: 0; width: 20px;"></td>
-                                                    <td style="line-height: 0; text-align: left;"><img src="http://cloud.wildfins.org/necropsyPDF/hepatobiliary-system-2.png" alt=""></td>
+                                                    <cfif listLen(hepatobiliaryImgs)> 
+                                                        <cfloop list="#hepatobiliaryImgs#" item="item" index="index">
+                                                            <td style="line-height: 0; text-align: left;">
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                            </td>
+                                                        </cfloop>
+                                                    </cfif>
                                                 </tr>
                                             </table>
                                         </td>
@@ -3603,9 +3574,9 @@
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong>#qgetCetaceanNecropsy.cardio_phototaken#</td>
-                                    </tr>
+                                    <!---<tr>
+                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.cardio_phototaken') and  qgetCetaceanNecropsy.cardio_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 15px"></td>
                                     </tr>
@@ -3626,9 +3597,9 @@
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong>#qgetCetaceanNecropsy.pulmonary_phototaken#</td>
-                                    </tr>
+                                    <!---<tr>
+                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.pulmonary_phototaken') and  qgetCetaceanNecropsy.pulmonary_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 15px"></td>
                                     </tr>
@@ -3649,10 +3620,15 @@
                                     <tr>
                                         <td>
                                             <table style="width: 100%;">
+                                                <cfset pulmonaryImgs = ValueList(qgetCetaceanNecropsy.pulmonaryImages,",")>
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: right;"><img src="http://cloud.wildfins.org/necropsyPDF/pulmonary-system-1.png" alt=""></td>
-                                                    <td style="line-height: 0; width: 20px;"></td>
-                                                    <td style="line-height: 0; text-align: left;"><img src="http://cloud.wildfins.org/necropsyPDF/pulmonary-system-2.png" alt=""></td>
+                                                    <cfif listLen(pulmonaryImgs)> 
+                                                        <cfloop list="#pulmonaryImgs#" item="item" index="index">
+                                                            <td style="line-height: 0; text-align: left;">
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                            </td>
+                                                        </cfloop>
+                                                    </cfif>
                                                 </tr>
                                             </table>
                                         </td>
@@ -3669,9 +3645,9 @@
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong>#qgetCetaceanNecropsy.lympho_phototaken#</td>
-                                    </tr>
+                                    <!---<tr>
+                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.lympho_phototaken') and  qgetCetaceanNecropsy.lympho_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 15px"></td>
                                     </tr>
@@ -3686,12 +3662,15 @@
                                     <tr>
                                         <td>
                                             <table style="width: 100%;">
+                                                <cfset lymphoreticularImgs = ValueList(qgetCetaceanNecropsy.lymphoreticularImages,",")>
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: right;"><img src="http://cloud.wildfins.org/necropsyPDF/lymphoreticular-system-1.png" alt="" style="width: 100%;"></td>
-                                                    <td style="line-height: 0; width: 20px;"></td>
-                                                    <td style="line-height: 0; text-align: left;"><img src="http://cloud.wildfins.org/necropsyPDF/lymphoreticular-system-2.png" alt="" style="width: 100%;"></td>
-                                                    <td style="line-height: 0; width: 20px;"></td>
-                                                    <td style="line-height: 0; text-align: left;"><img src="http://cloud.wildfins.org/necropsyPDF/lymphoreticular-system-3.png" alt="" style="width: 100%;"></td>
+                                                    <cfif listLen(lymphoreticularImgs)> 
+                                                        <cfloop list="#lymphoreticularImgs#" item="item" index="index">
+                                                            <td style="line-height: 0; text-align: left;">
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                            </td>
+                                                        </cfloop>
+                                                    </cfif>
                                                 </tr>
                                             </table>
                                         </td>
@@ -3708,9 +3687,9 @@
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong>#qgetCetaceanNecropsy.endocrine_phototaken#</td>
-                                    </tr>
+                                    <!---<tr>
+                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.endocrine_phototaken') and  qgetCetaceanNecropsy.endocrine_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 15px"></td>
                                     </tr>
@@ -3725,8 +3704,15 @@
                                     <tr>
                                         <td>
                                             <table style="width: 100%;">
+                                                <cfset endocrineImgs = ValueList(qgetCetaceanNecropsy.endocrineImages,",")>
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: center;"><img src="http://cloud.wildfins.org/necropsyPDF/endocrine-1.png" alt=""></td>
+                                                    <cfif listLen(endocrineImgs)> 
+                                                        <cfloop list="#endocrineImgs#" item="item" index="index">
+                                                            <td style="line-height: 0; text-align: left;">
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                            </td>
+                                                        </cfloop>
+                                                    </cfif>
                                                 </tr>
                                             </table>
                                         </td>
@@ -3752,11 +3738,10 @@
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
-                                    <cfif isDefined('qgetCetaceanNecropsy.UROGENITAL_phototaken') and #qgetCetaceanNecropsy.UROGENITAL_phototaken# neq "" >
-                                        <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong>#qgetCetaceanNecropsy.UROGENITAL_phototaken#</td>
-                                        </tr>
-                                    </cfif>
+                                    
+                                    <!---<tr>
+                                            <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.UROGENITAL_phototaken') and  qgetCetaceanNecropsy.UROGENITAL_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                        </tr>--->
                                     <tr>
                                         <td style="height: 15px"></td>
                                     </tr>
@@ -3769,8 +3754,15 @@
                                     <tr>
                                         <td>
                                             <table style="width: 100%;">
+                                                <cfset urogenitalImgs = ValueList(qgetCetaceanNecropsy.urogenitalImages,",")>
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: center;"><img src="http://cloud.wildfins.org/necropsyPDF/urogenital-system-1.png" alt=""></td>
+                                                    <cfif listLen(urogenitalImgs)> 
+                                                        <cfloop list="#urogenitalImgs#" item="item" index="index">
+                                                            <td style="line-height: 0; text-align: left;">
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                            </td>
+                                                        </cfloop>
+                                                    </cfif>
                                                 </tr>
                                             </table>
                                         </td>
@@ -3787,12 +3779,13 @@
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong>#qgetCetaceanNecropsy.nervoussystemphototaken#</td>
-                                    </tr>
+                                    <!---<tr>
+                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.nervoussystemphototaken') and  qgetCetaceanNecropsy.nervoussystemphototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 15px"></td>
                                     </tr>
+                                    <!---<cfset centralNervousImgs = ValueList(qgetCetaceanNecropsy.centralNervousImages,",")> --->
                                     <cfif isDefined('qgetCetaceanNecropsy.nervoussystemcomments') and #qgetCetaceanNecropsy.nervoussystemcomments# neq "" >
                                         <tr>
                                             <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.nervoussystemcomments#</td>
@@ -3840,7 +3833,7 @@
         </cfhtmltopdf>
 
         <cfoutput>
-            <cfheader name="Content-Disposition" value="attachment; filename=mydownload.pdf">
+            <cfheader name="Content-Disposition" value="attachment; filename=NecropsyReport.pdf">
             <cfcontent type="application/pdf" variable="#toBinary(mypdf)#">
 <!---             <a href="#mypdf.pdf#" download="mydownload.pdf">Download PDF</a> --->
         </cfoutput>   
@@ -4135,9 +4128,7 @@
         <cfset form.LCEID = "#form.bloodValue_ID#">
         <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
         <cfset qgetBloodValueData=Application.Stranding.getBlood_VData("#form.LCEID#")>
-        <!--- <cfdump var="#qgetBloodValueData.species#" abort="true"> --->
-        <!--- <cfset qLCEDataa=Application.Stranding.getBlood_VData("#form.LCEID#")> --->
-      
+     
 
         <cfset form.bloodID = "#form.bloodValue_ID#" >
         <cfset qgetCBC_Data=Application.Stranding.getCBC_Data("#form.bloodID#")>
@@ -7324,7 +7315,7 @@
                                                 </a>
                                                 <br/>
                                                 <cfif findNoCase("Read only ST", permissions) eq 0>
-                                                    <span class="remove" onclick="remov(this)" id="#item#">Remove File</span>
+                                                    <span class="remove" onclick="removeExam(this)" id="#item#">Remove File</span>
                                                 </cfif>
                                                 <br/>
                                                 <span class="remove" id="#item#">#item#</span>
@@ -8573,7 +8564,7 @@
                                 </cfif>
                     <!--- working HIForm--->
                     </div>
-                      <div role="tabpanel" class="tab-pane" id="LevelAForm">
+                    <div role="tabpanel" class="tab-pane" id="LevelAForm">
                      <!--- working LevelAForm--->
                      <h5 class="mb-1"><strong>Documents</strong></h5>
                      <input type="hidden" name="LApdfFiles" value="#qgetLevelAData.pdfFiles#" id="LApdfFiles">
@@ -8848,12 +8839,49 @@
                             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                 <div class="form-group flex-center">
                                     <label class="scomment-label">Remarks</label>
-                                    <textarea class="form-control textareaCustomReset locations-textarea" maxlength="512" id="SampleCommentsID" name="SampleCommentss">#trim(qgetHIDataa.SampleComments)#</textarea>
+                                    <textarea class="form-control textareaCustomReset locations-textarea" maxlength="1024" id="SampleCommentsID" name="SampleCommentss">#trim(qgetHIDataa.SampleComments)#</textarea>
                                 </div>
                             </div>             
                         </div>
                     </div>
+                    
                 </div>
+                  
+                    <h5 class="mb-1"><strong>Documents</strong></h5>
+                    <input type="hidden" name="HistoPdfFiles" value="#qgetHIDataa.pdfFiles#" id="HistoPdfFiles">
+                    <div class="form-holder">  
+                        <div class="form-group" id="find">
+                            <div class="row" id="Histostart">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="form-group">
+                                        <div class="input-group flex-center">
+                                            <label class="">Upload PDF File (Max Size: 10MB)</label>
+                                            <input class="input-style xl-width" type="file"  name="HistoFileContents" id="HistoFileContents" onchange="histoPDFFile()" accept="application/pdf" <cfif findNoCase("Read only ST", permissions) neq 0> Disabled</cfif>>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <cfset imgss = ValueList(qgetHIDataa.pdfFiles,",")>
+                            <div id="HIstoPreviousPDF" class="PDFInline">
+                                <CFIF listLen(imgss)> 
+                                    <cfloop list="#imgss#" item="item" index="index">
+                    
+                                        <span class="pip">
+                                            <a data-toggle="modal" data-target="##myHiFormModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                                                <img  class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#item#" onclick="selectedHIForm(this)"/>
+                                            </a>
+                                            
+                                            <br/>
+                                            <span class="remove" onclick="removeHistoPDF(this)" id="#item#">Remove File</span>
+                                           </br>
+                                            <span class="remove" id="#item#">#item#</span>
+                                        </span>
+                                    </cfloop>
+                                </cfif>
+                               </div>
+                           <input class="input-style xl-width" type="checkbox" value="1" name="caseReportHistoBox" id="caseReportHistoBox" <cfif (isdefined('qgetHIDataa.caseReportBox') and  qgetHIDataa.caseReportBox eq '1')>checked</cfif>>	
+                        </div>
+                    </div>
 
                 <!---Sample Collection --->
                 <div class="form-holder blue-bg sample-type-form">
@@ -9043,8 +9071,43 @@
                         </div>
                     </div> 
                 </div>
-
-
+                
+                <h5 class="mb-1"><strong>Documents</strong></h5>
+                <input type="hidden" name="BVPdfFiles" value="#qgetBloodValueData.pdfFiles#" id="BVPdfFiles">
+                <div class="form-holder">  
+                    <div class="form-group" id="find">
+                        <div class="row" id="BVstart">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                <div class="form-group">
+                                    <div class="input-group flex-center">
+                                        <label class="">Upload PDF File (Max Size: 10MB)</label>
+                                        <input class="input-style xl-width" type="file"  name="BVFileContents" id="BVFileContents" onchange="BloodValuePDFFile()" accept="application/pdf" <cfif findNoCase("Read only ST", permissions) neq 0> Disabled</cfif>>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <cfset imgss = ValueList(qgetBloodValueData.pdfFiles,",")>
+                        <div id="BVPreviousPDF" class="PDFInline">
+                            <CFIF listLen(imgss)> 
+                                <cfloop list="#imgss#" item="item" index="index">
+                
+                                    <span class="pip">
+                                        <a data-toggle="modal" data-target="##myHiFormModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                                            <img  class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#item#" onclick="selectedHIForm(this)"/>
+                                        </a>
+                                        
+                                        <br/>
+                                        <span class="remove" onclick="removeBVPDF(this)" id="#item#">Remove File</span>
+                                       </br>
+                                        <span class="remove" id="#item#">#item#</span>
+                                    </span>
+                                </cfloop>
+                            </cfif>
+                           </div>
+                       <input class="input-style xl-width" type="checkbox" value="1" name="caseReportBVBox" id="caseReportBVBox" <cfif (isdefined('qgetBloodValueData.caseReportBox') and  qgetBloodValueData.caseReportBox eq '1')>checked</cfif>>	
+                    </div>
+                </div>
+                
                 <h5 class="mb-1"><strong>CBC</strong></h5>
                 <div class="form-holder blood-form-holder cust-v-sec">  
                     <div class="form-group blood-from-froup cust-v-row">
@@ -12362,9 +12425,9 @@
                                     <div class="form-group">
                                         <div class="input-group flex-center">
                                             <label class="am-l">Amount of Sample</label>
-                                            <input class="input-style xl-width" type="number" value="#qgetSampleTypeDataSingle.AmountofSample#" maxlength="6" name="AmountofSample" id="AmountofSample">
+                                            <input class="input-style xl-width" type="text" step="0.01" value="#qgetSampleTypeDataSingle.AmountofSample#" maxlength="6" name="AmountofSample" id="AmountofSample">
                                         </div>
-                                    </div>
+                                    </div>  
                                 </div>  
                                 <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
                                     <div class="form-group">
@@ -12786,7 +12849,7 @@
                             </div>
                             <div class="cust-inp">
                                 <!-- <input type="text" name="Tentative" placeholder="Expandable field to multi-line" value="#qgetCetaceanNecropsy.Tentative#"class="text-field"> -->
-                                <textarea id="top-area" name="Tentative" rows="1" class="text-field" cols="50" >#qgetCetaceanNecropsy.Tentative#</textarea>
+                                <textarea id="top-area" name="Tentative" rows="6" class="text-field" cols="50" >#qgetCetaceanNecropsy.Tentative#</textarea>
                             </div>
                             </div>
                         </div>
@@ -12886,6 +12949,11 @@
                         </div>
                     </div>
                     <div class="row pt-15">
+                        <!--- Nouman---> 
+                        <div class="col-lg-8 fldarea">
+                            <label class="fl-lbl">Histopathology Report By</label>
+                            <textarea id="top-area" name="historemark" rows="4" cols="50"  maxlength="4000" >#qgetCetaceanNecropsy.historemark#</textarea>
+                        </div>
                         <div class="col-lg-8 fldarea">
                             <label class="fl-lbl">Histopathology Remarks / Diagnosis</label>
                             <textarea id="top-area" name="historemark" rows="4" cols="50"  maxlength="4000" >#qgetCetaceanNecropsy.historemark#</textarea>
@@ -13076,7 +13144,7 @@
             </div>
             <div class="col-lg-6">
                 <div class="cust-row ingm-rw">
-                    <div class="cust-fld"><label class="fl-lbl">HI Form</label>
+                    <div class="cust-fld"><label class="fl-lbl">Human Interaction Form</label>
                     </div>
                     <div class="cust-inp">
                         <select class="stl-op" name="HIForm" id="HI_Form">
@@ -13163,7 +13231,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-7">
+        <div class="col-lg-7" Style="display:none;">
             <label class="fl-lbl">If skin lesion present, please describe</label>
             <textarea id="top-area" name="lessiondescribe" rows="12" cols="120">#qgetCetaceanNecropsy.lessiondescribe#</textarea>
         </div>
@@ -14326,6 +14394,7 @@
                         <option value="">Select</option>
                         <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.Adrenal_Glands') and  qgetCetaceanNecropsy.Adrenal_Glands  eq 'No Findings'>selected</cfif>>No Findings</option>
                         <option value="Enlarged"<cfif isdefined('qgetCetaceanNecropsy.Adrenal_Glands') and  qgetCetaceanNecropsy.Adrenal_Glands  eq 'Enlarged'>selected</cfif>>Enlarged</option>
+                        <option value="Not Examined"<cfif isdefined('qgetCetaceanNecropsy.Adrenal_Glands') and  qgetCetaceanNecropsy.Adrenal_Glands  eq 'Not Examined'>selected</cfif>>Not Examined</option>
                         <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.Adrenal_Glands') and  qgetCetaceanNecropsy.Adrenal_Glands  eq 'Other'>selected</cfif>>Other</option>
                     </select>
                 </div>
@@ -14376,6 +14445,7 @@
                         <option value="">Select</option>
                         <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.Thyroid') and  qgetCetaceanNecropsy.Thyroid  eq 'No Findings'>selected</cfif>>No Findings</option>
                         <option value="Enlarged"<cfif isdefined('qgetCetaceanNecropsy.Thyroid') and  qgetCetaceanNecropsy.Thyroid  eq 'Enlarged'>selected</cfif>>Enlarged</option>
+                        <option value="Not Examined"<cfif isdefined('qgetCetaceanNecropsy.Adrenal_Glands') and  qgetCetaceanNecropsy.Adrenal_Glands  eq 'Not Examined'>selected</cfif>>Not Examined</option>
                         <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.Thyroid') and  qgetCetaceanNecropsy.Thyroid  eq 'Other'>selected</cfif>>Other</option>
                     </select>
                 </div>
@@ -14412,6 +14482,7 @@
                         <option value="">Select</option>
                         <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.Pituitary_Gland') and  qgetCetaceanNecropsy.Pituitary_Gland  eq 'No Findings'>selected</cfif>>No Findings</option>
                         <option value="Enlarged"<cfif isdefined('qgetCetaceanNecropsy.Pituitary_Gland') and  qgetCetaceanNecropsy.Pituitary_Gland  eq 'Enlarged'>selected</cfif>>Enlarged</option>
+                        <option value="Not Examined"<cfif isdefined('qgetCetaceanNecropsy.Adrenal_Glands') and  qgetCetaceanNecropsy.Adrenal_Glands  eq 'Not Examined'>selected</cfif>>Not Examined</option>
                         <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.Pituitary_Gland') and  qgetCetaceanNecropsy.Pituitary_Gland  eq 'Other'>selected</cfif>>Other</option>
                     </select>
                 </div>

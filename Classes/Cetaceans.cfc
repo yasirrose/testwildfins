@@ -422,6 +422,10 @@
 
     <cffunction name="deleteCS_Record" access="remote" returnformat="plain" output="true">
         <cfargument name="cs_ID" type="any" required="true" default="0">
+        
+        <cfquery name="get" datasource="#variables.dsn#">
+            delete from Condition_Lesions where Cetacean_SightingsID = #cs_ID#
+        </cfquery>
         <cfquery name="delete" datasource="#variables.dsn#">
             delete from Cetacean_Sightings where ID = #cs_ID#
         </cfquery>
@@ -762,7 +766,7 @@
         <!--- <cfparam name="Form.Cetacean_Survey" default="0"> --->
         <cfif isDefined('form.Cetacean_Survey') and form.Cetacean_Survey neq ''>
             <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
-                select Surveys.id as surveyid, Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status from Condition_Lesions
+                select Surveys.id as surveyid, Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status,Condition_Lesions.id from Condition_Lesions
                  INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
                  INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
                  where Surveys.id = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Cetacean_Survey#'>           
@@ -773,7 +777,7 @@
         <cfelse>
 
             <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
-            select Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status from Condition_Lesions
+            select Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status,Condition_Lesions.id from Condition_Lesions
                 INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
                 INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
                 where Condition_Lesions.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#cetacean_Code#'>           
@@ -812,6 +816,24 @@
         <cfreturn qgetCetacean_Lesions_unique>
     </cffunction>
     <cffunction name="save_existingLesion" access="remote" returnformat="JSON" output="true" result="res">
+        
+        
+
+        <cfquery name="qgetCetacean_code" datasource="#variables.dsn#">
+            select ID from  Cetacean_Sightings 
+            where 
+            Sighting_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#sight#">
+            and
+            Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Cetacean_code#">
+       </cfquery> 
+        <cfif isDefined('qgetCetacean_code.ID') and qgetCetacean_code.ID neq ''>
+            <cfset Cetacean_SightingID = '#qgetCetacean_code.ID#'>
+        <cfelse>
+            <cfset Cetacean_SightingID = '0'>
+        </cfif>
+        <!---<cfdump var="#qgetCetacean_code#" abort="true"> --->
+
+
         <cfquery name="qchecklesion" datasource="#variables.dsn#">
             select ID from  Condition_Lesions 
             where 
@@ -828,7 +850,8 @@
        <cfif qchecklesion.recordCount neq 0>
             <cfquery name="qsave_existingLesion" datasource="#variables.dsn#">
                 update  Condition_Lesions set 
-                LesionPresent = <cfqueryparam cfsqltype="cf_sql_varchar" value="#sel#">
+                LesionPresent = <cfqueryparam cfsqltype="cf_sql_varchar" value="#sel#">,
+                Cetacean_SightingsID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Cetacean_SightingID#">
                 where 
                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qchecklesion.ID#">
             </cfquery> 
@@ -843,7 +866,8 @@
                     Side_L_R,
                     Status,
                     PhotoNumber,
-                    Comments
+                    Comments,
+                    Cetacean_SightingsID
                     )
                     values(
                     <cfqueryparam  cfsqltype="cf_sql_varchar" value='#cl_cs_code#'>,
@@ -854,7 +878,8 @@
                     <cfqueryparam  cfsqltype="cf_sql_varchar" value='#side#'>,
                     <cfqueryparam  cfsqltype="cf_sql_varchar" value='#status#'>,
                     <cfqueryparam  cfsqltype="cf_sql_varchar" value=''>,
-                    <cfqueryparam  cfsqltype="cf_sql_varchar" value=''>
+                    <cfqueryparam  cfsqltype="cf_sql_varchar" value=''>,
+                    <cfqueryparam  cfsqltype="cf_sql_integer" value='#Cetacean_SightingID#'>
                 )
             </cfquery>
         </cfif>

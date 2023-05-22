@@ -887,6 +887,7 @@ function save_exis_lesion() {
     var sel = $('#sel').val();
     var cl_cs_code = $("#cl_cs_code").val();
     var sight = $("#getsight_ID").val();
+    var Cetacean_code = $('#Cetacean_code').val();
 
     $.ajax({
         type: "post",
@@ -898,7 +899,8 @@ function save_exis_lesion() {
             side: side,
             sel: sel,
             cl_cs_code:cl_cs_code,
-            sight:sight
+            sight:sight,
+            Cetacean_code:Cetacean_code
         },
         url: application_root + "Cetaceans.cfc?method=save_existingLesion",
         success: function (data) {

@@ -839,7 +839,8 @@
             # order by code asc
         </cfquery>
 		<cfreturn qgetCetaceansCode>
-	</cffunction>
+    </cffunction>
+    
 	<cffunction name="getCetaceansCodeForTracking" returnformat="JSON" returntype="any" output="false" access="remote" >
 		<cfquery name="qgetCetaceansCode" datasource="#variables.dsn#">
             SELECT code,id,Name FROM Cetaceans where CetaceanSpecies = #Cetacean_Species# order by code asc

@@ -2078,6 +2078,9 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
+        <cfif NOT isDefined('FORM.caseReportHistoBox')>
+            <cfset FORM.caseReportHistoBox = "0">
+        </cfif>
         
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -2120,6 +2123,8 @@
                 ,BriefHistory
                 ,euthanizedCB
                 ,headerImages
+                ,caseReportBox
+                ,pdfFiles
                 ) 
                 VALUES
                 (
@@ -2153,6 +2158,8 @@
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportHistoBox#'>
+                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.HistoPdfFiles#'>
                 )
             </cfquery>
         <cfcatch type="any">
@@ -2199,6 +2206,9 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
+        <cfif NOT isDefined('FORM.caseReportHistoBox')>
+            <cfset FORM.caseReportHistoBox = "0">
+        </cfif>
 
          <!--- <cfdump var="#form#" abort="true"> --->
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
@@ -2242,6 +2252,8 @@
             ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
             ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
             ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+            ,caseReportBox = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportHistoBox#'>
+            ,pdfFiles = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.HistoPdfFiles#'>
 
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.Histo_ID#'>
@@ -2399,6 +2411,9 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
+        <cfif NOT isDefined('FORM.caseReportBVBox')>
+            <cfset FORM.caseReportBVBox = "">
+        </cfif>
 
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -2442,6 +2457,8 @@
                 ,BriefHistory
                 ,euthanizedCB
                 ,headerImages
+                ,pdfFiles
+                ,caseReportBox
                 ) 
                 VALUES
                 (
@@ -2476,6 +2493,8 @@
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BVPdfFiles#'>
+                ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportBVBox#'>
                 )
             </cfquery>
         <cfcatch type="any">
@@ -4201,6 +4220,9 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
+        <cfif NOT isDefined('FORM.caseReportBVBox')>
+            <cfset FORM.caseReportBVBox = "">
+        </cfif>
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -4243,6 +4265,8 @@
                 ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                ,pdfFiles = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BVPdfFiles#'>
+                ,caseReportBox = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.caseReportBVBox#'>
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.bloodValues_ID#'>
         </cfquery>
@@ -4562,6 +4586,12 @@
     <cffunction name="getMorphometricsAllData" returntype="any" output="false" access="public" >
         <cfquery name="qMorphometricsData" datasource="#Application.dsn#"  >
             SELECT * from ST_Morphometrics where ID = #Morphometrics_ID#
+        </cfquery>
+        <cfreturn qMorphometricsData>
+    </cffunction>
+    <cffunction name="getMorphometricsAllFnumberData" returntype="any" output="false" access="public" >
+        <cfquery name="qMorphometricsData" datasource="#Application.dsn#" maxRows = "1" >
+            SELECT * from ST_Morphometrics where Fnumber = '#Morphometrics_ID#'
         </cfquery>
         <cfreturn qMorphometricsData>
     </cffunction>
@@ -8642,4 +8672,49 @@
         </cfquery>
             <cfreturn qgetPdfFiles>
         </cffunction>
+        <cffunction name="getSearchedData" returntype="any" output="false" access="public" >
+            <cfdump var="test" abort="true">
+        </cffunction>
+
+        <cffunction name="BVremovepdf" returntype="string" output="false" access="remote" returnformat="plain">
+
+            <cfquery name="histoImageValue" datasource="#Application.dsn#" result = "results">
+                update ST_Blood_Values set
+                    pdfFiles=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                where
+                    ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                        
+            </cfquery>
+            <!--- <cfdump var=#results# abort="true"> --->
+            <cfif len(trim(#pdf#))>
+                <cfif FileExists("#Application.CloudDirectory&pdf#")>
+                    <cffile action = "delete" file = "#Application.CloudDirectory&pdf#">
+                </cfif>
+            </cfif>
+            <cfreturn True>
+        </cffunction>
+
+        <cffunction name="histopathologyRemovepdf" returntype="string" output="false" access="remote" returnformat="plain">
+
+            <cfquery name="histoImageValue" datasource="#Application.dsn#" result = "results">
+                update ST_HistoForm set
+                    pdfFiles=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                where
+                    ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                        
+            </cfquery>
+            <!--- <cfdump var=#results# abort="true"> --->
+            <cfif len(trim(#pdf#))>
+                <cfif FileExists("#Application.CloudDirectory&pdf#")>
+                    <cffile action = "delete" file = "#Application.CloudDirectory&pdf#">
+                </cfif>
+            </cfif>
+            <cfreturn True>
+        </cffunction>
+
+
+
+
+
+
 </cfcomponent>    

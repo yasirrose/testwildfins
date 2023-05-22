@@ -445,7 +445,7 @@
                       <div class="lesion-history-table lesion-table" style="overflow: scroll; max-height: 200px;">
                         <div class="dataTables_scrollHead" >
                           <div class="dataTables_scrollHeadInner" >
-                            <table class="table table-striped table-bordered dataTable no-footer" role="grid">
+                            <table class="table table-striped table-bordered dataTable no-footer" id="" role="grid">
                               <thead>
                                 <tr role="row">
                                   <th  rowspan="1" colspan="1" >Date Seen</th>
@@ -464,7 +464,9 @@
                           <table class="table table-striped table-bordered dataTable no-footer dtr-inline" >
                             <tbody id="DateSeen">
                             <cfif isdefined('FORM.CetaceanId')>	
+                              <!--- <cfdump var="#qgetCetacean_Lesions#" abort="true"> --->
                               <cfloop query='qgetCetacean_Lesions'>
+                                <cfif qgetCetacean_Lesions.id neq '43'>                                
                                 <tr role="row" class="odd">
                                   <td class="sorting_1">#DateFormat(qgetCetacean_Lesions.DATESEEN,'mm/dd/yyyy')#</td>
                                   <td class="sorting_1">#qgetCetacean_Lesions.sightid#</td>
@@ -474,6 +476,7 @@
                                   <td class="sorting_1">#qgetCetacean_Lesions.Status#</td>
                                   <td class="sorting_1">#qgetCetacean_Lesions.Region#</td>
                                 </tr>
+                              </cfif>
                               </cfloop>	
                             </cfif>		
                             </tbody>

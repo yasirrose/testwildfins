@@ -482,6 +482,9 @@
                   <li <cfif Page eq 'StrandingTabs' AND NOT isArchive> class='active'</cfif>>
                     <a href="#Application.superadmin#?Module=Stranding&Page=StrandingTabs">StrandingTabs</a>
                   </li>
+                  <li <cfif Page eq 'Search' AND NOT isArchive> class='active'</cfif>>
+                    <a href="#Application.superadmin#?Module=Stranding&Page=Search">Search</a>
+                  </li>
                   
                 
                </ul>

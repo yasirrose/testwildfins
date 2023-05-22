@@ -324,12 +324,6 @@ function getCode() {
   $("#KogiaSpan").hide();
   $('#maximumID').text('7');
   $("#TotalLengthID").show();
-  // speciesArray = ['','','','','','Tursiops_Diagram.png','Humpback_Diagram.png','Kogia_Diagram.png','Globicephala_Diagram.png','Globicephala_Diagram.png'];
-  // console.log(speciesArray[species]);
-  // if(species != ''){
-  //   $("#measureImage").attr("src","http://test.wildfins.org/resources/assets/img/LiveCetaceanImages/"+speciesArray[species]);
-  //   $("#measureImg").val(speciesArray[species]);
-  // }
 
   if(species == 5 || species == 12){
     $("#measureImage").attr("src","http://test.wildfins.org/resources/assets/img/LiveCetaceanImages/Tursiops_Diagram.png");
@@ -2636,6 +2630,7 @@ function remov(element) {
       // $('#pdfFiles').val(PDFArray);
       element.parentNode.remove();
       $("#ExternalExamphoto").prop("disabled", false);
+    
     }
   });
 }
@@ -4860,6 +4855,11 @@ function ceteacenExamImg(){
     var files = $('#ExamFiles').prop('files');
     var f = files[0];
     // console.log(f.size);
+       
+    TotalPdfFiles = $("#pdfFiles").val();
+    TotalPdfFiles = TotalPdfFiles.split(",");
+    if (TotalPdfFiles.length < 3) {
+
     if(f.size < 10000000){
         if(f.type == 'application/pdf'){    
             $('#startExam').after('<span class="spi"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></span>');
@@ -4893,12 +4893,18 @@ function ceteacenExamImg(){
                     $('#pdfFiles').val(FullValue);
 
                     $('.spi').remove();
-                    $('#previousimagesExam').append('<span class="pip"><a data-toggle="modal" data-target="#myModalExam" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selected(this)"/></a><br/><span class="remove" id="'+data+'" onclick="remov(this)">Remove File</span></br><span class="remove" id="'+f.name+'">'+f.name+'</span></span>');
+                    $('#previousimagesExam').append('<span class="pip"><a data-toggle="modal" data-target="#myModalExam" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selected(this)"/></a><br/><span class="remove" id="'+data+'" onclick="removeExam(this)">Remove File</span></br><span class="remove" id="'+f.name+'">'+f.name+'</span></span>');
                     $('#ExamFiles').prop('disabled', false);
                     }else{
                         alert('Selected file corrupted PDF');
                         $('.spi').remove();
                         $('#ExamFiles').prop('disabled', false);
+                    }
+                    if (TotalPdfFiles.length < 3) {
+                      $("#ExamFiles").prop("disabled", false);
+                    } else {
+                      $("#ExamFiles").prop("disabled", true);
+                      $("#ExamFiles").val("");
                     }
                 }
             });
@@ -4909,9 +4915,13 @@ function ceteacenExamImg(){
     }else{
         alert('Selected file is Large than 10MB');
         $('#ExamFiles').val("");
-    }        
+    }  
+  }else{
+    $('#ExamFiles').prop('disabled', true);
+    $('#ExamFiles').val("");
+  }      
 }
-function remov(el){
+function removeExam(el){
   // alert();
   ID = $('#form_id').val();
   var element = el;
@@ -4936,6 +4946,7 @@ function remov(el){
           // PDFArray = PDFArray.filter(e => e !== "Get_Started_With_Smallpdf20.pdf"); 
           // $('#pdfFiles').val(PDFArray);
           element.parentNode.remove();
+          $('#ExamFiles').prop('disabled', false);
       }
   });    
 }
@@ -6018,3 +6029,219 @@ function headerImageremove(element) {
     }
   });
 }
+
+
+// For Blood Value
+var PDFBVArray = [];
+if($('#BVPdfFiles').val() != ''){
+  PDFBVArray.push($('#BVPdfFiles').val());
+}
+function BloodValuePDFFile(){
+ 
+    cn = ++cn;
+    pr = cn - 1;
+    var files = $('#BVFileContents').prop('files');
+    var f = files[0];
+    
+    TotalPdfFiles = $("#BVPdfFiles").val();
+    TotalPdfFiles = TotalPdfFiles.split(",");
+    if (TotalPdfFiles.length < 5) {
+      console.log(f.size);
+      if(f.size < 10000000){
+          if(f.type == 'application/pdf'){    
+              $('#BVstart').after('<span class="spi"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></span>');
+              $('#BVFileContents').prop('disabled', true);
+              var pdffile = new FormData();
+              pdffile.append('pdf', f);
+  
+              $.ajax({
+                  url: application_root +"Stranding.cfc?method=uploadpdf",
+                  type: "POST",
+                  data: pdffile,
+                  enctype: 'multipart/form-data',
+                  processData: false, // tell jQuery not to process the data
+                  contentType: false, // tell jQuery not to set contentType
+                  success: function (data) {
+                      if(data != ""){
+                        PDFBVArray.push(data);
+  
+                      var oldvalue = $('#BVPdfFiles').val();
+                      var newvalue = data;
+                      if(oldvalue){
+                          var FullValue = oldvalue +","+ newvalue;
+                      }else{
+                          var FullValue = newvalue;
+                      }
+                      $('#BVPdfFiles').val(FullValue);
+  
+                      $('.spi').remove();
+                      $('#BVPreviousPDF').append('<span class="pip"><a data-toggle="modal" data-target="#myModalExam" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selected(this)"/></a><br/><span class="remove" id="'+data+'" onclick="removeBVPDF(this)">Remove File</span></br><span class="remove" id="'+f.name+'">'+f.name+'</span></span>');
+                      $('#BVFileContents').prop('disabled', false);
+                      }else{
+                          alert('Selected file corrupted PDF');
+                          $('.spi').remove();
+                          $('#BVFileContents').prop('disabled', false);
+                      }
+                      if (TotalPdfFiles.length < 5) {
+                        $("#BVFileContents").prop("disabled", false);
+                      } else {
+                        $("#BVFileContents").prop("disabled", true);
+                        $("#BVFileContents").val("");
+                      }
+                  }
+              });
+          }else{
+              alert('Selected file is not PDF');
+              $('#BVFileContents').val("");
+          }
+      }else{
+          alert('Selected file is Large than 10MB');
+          $('#BVFileContents').val("");
+      }        
+
+    }else{
+      $('#BVFileContents').prop('disabled', true);
+      $('#BVFileContents').val("");
+    }
+}
+function removeBVPDF(el){
+
+    ID = $('#form_id').val();
+    var element = el;
+    pdffile = element.id
+
+    data = $('#BVPdfFiles').val();
+    data1 = data.split(",");
+    var removeArrayValue = pdffile;
+    data1.splice($.inArray(removeArrayValue, data1), 1);
+    data2 = data1.toString();
+
+    $('#BVPdfFiles').val(data2);
+
+    $.ajax({
+        url: application_root +"Stranding.cfc?method=BVremovepdf",
+        type: "POST",
+        data: { ID: ID, pdf: pdffile, imgValue: data2 },
+        success: function (data) {
+          element.parentNode.remove();
+          $("#BVFileContents").prop("disabled", false);
+        }
+    });    
+  }
+  function selected(elem) {
+    var element = elem;
+    $('#embExamPDF').attr('src', element.parentNode.title);
+    $('#pdfExamName').html($(this).attr('title'));
+    
+  }
+// end Blood Value 
+
+// For Histopathology
+var PDFHistoArray = [];
+if($('#HistoPdfFiles').val() != ''){
+  PDFHistoArray.push($('#HistoPdfFiles').val());
+}
+function histoPDFFile(){
+ 
+    cn = ++cn;
+    pr = cn - 1;
+    var files = $('#HistoFileContents').prop('files');
+    var f = files[0];
+    
+    TotalPdfFiles = $("#HistoPdfFiles").val();
+    TotalPdfFiles = TotalPdfFiles.split(",");
+    if (TotalPdfFiles.length < 3) {
+      console.log(f.size);
+      if(f.size < 10000000){
+          if(f.type == 'application/pdf'){    
+              $('#Histostart').after('<span class="spi"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></span>');
+              $('#HistoFileContents').prop('disabled', true);
+              var pdffile = new FormData();
+              pdffile.append('pdf', f);
+  
+              $.ajax({
+                  url: application_root +"Stranding.cfc?method=uploadpdf",
+                  type: "POST",
+                  data: pdffile,
+                  enctype: 'multipart/form-data',
+                  processData: false, // tell jQuery not to process the data
+                  contentType: false, // tell jQuery not to set contentType
+                  success: function (data) {
+                      if(data != ""){
+                        PDFHistoArray.push(data);
+  
+                      var oldvalue = $('#HistoPdfFiles').val();
+                      var newvalue = data;
+                      if(oldvalue){
+                          var FullValue = oldvalue +","+ newvalue;
+                      }else{
+                          var FullValue = newvalue;
+                      }
+                      $('#HistoPdfFiles').val(FullValue);
+  
+                      $('.spi').remove();
+                      $('#HIstoPreviousPDF').append('<span class="pip"><a data-toggle="modal" data-target="#myModalExam" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selected(this)"/></a><br/><span class="remove" id="'+data+'" onclick="removeHistoPDF(this)">Remove File</span></br><span class="remove" id="'+f.name+'">'+f.name+'</span></span>');
+                      $('#HistoFileContents').prop('disabled', false);
+                      }else{
+                          alert('Selected file corrupted PDF');
+                          $('.spi').remove();
+                          $('#HistoFileContents').prop('disabled', false);
+                      }
+                      if (TotalPdfFiles.length < 3) {
+                        $("#HistoFileContents").prop("disabled", false);
+                      } else {
+                        $("#HistoFileContents").prop("disabled", true);
+                        $("#HistoFileContents").val("");
+                      }
+                  }
+              });
+          }else{
+              alert('Selected file is not PDF');
+              $('#HistoFileContents').val("");
+          }
+      }else{
+          alert('Selected file is Large than 10MB');
+          $('#HistoFileContents').val("");
+      }        
+
+    }else{
+      $('#HistoFileContents').prop('disabled', true);
+      $('#HistoFileContents').val("");
+    }
+}
+function removeHistoPDF(el){
+
+    ID = $('#form_id').val();
+    var element = el;
+    pdffile = element.id
+
+    data = $('#HistoPdfFiles').val();
+    data1 = data.split(",");
+    var removeArrayValue = pdffile;
+    data1.splice($.inArray(removeArrayValue, data1), 1);
+    data2 = data1.toString();
+
+    $('#HistoPdfFiles').val(data2);
+
+    $.ajax({
+        url: application_root +"Stranding.cfc?method=histopathologyRemovepdf",
+        type: "POST",
+        data: { ID: ID, pdf: pdffile, imgValue: data2 },
+        success: function (data) {
+          element.parentNode.remove();
+          $("#HistoFileContents").prop("disabled", false);
+        }
+    });    
+  }
+
+
+  function validateInput() {
+    var input = document.getElementById("decimalInput").value;
+    var regex = /^\d+(\.\d{2})?$/;
+    
+    if (regex.test(input)) {
+      alert("Valid input: " + input);
+    } else {
+      alert("Invalid input. Please enter a number with 2 decimal places.");
+    }
+  }
