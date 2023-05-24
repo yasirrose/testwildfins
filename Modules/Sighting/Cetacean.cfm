@@ -8,7 +8,7 @@
       </cfquery>
 
       <cfset sight_id = #form.sight_id#>
-     
+      
        <cfquery name="getSightingById" datasource="#Application.dsn#">
          SELECT FE_Species, SightingNumber FROM Survey_Sightings WHERE ID = #sight_id#
       </cfquery>

@@ -7,6 +7,15 @@ $(document).ready(function() {
 	}, 5000);
 })
 
+$(document).ready(function() {
+    $('#lesionHistoryTable').DataTable({
+		"pageLength": 10,
+		"paging": false,
+		"info": false,
+		responsive: true,
+		"searching": false,
+	});
+} );
 
  handleGoogleMap = function() {
 

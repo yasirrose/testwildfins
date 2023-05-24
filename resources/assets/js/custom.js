@@ -702,40 +702,110 @@ $(document).ready(function () {
     });
 
     $("#add_lesions_form").submit(function (e) {
-        var cl_cs_code = $( "#Cetacean_code option:selected" ).text().split("|")[1].trim();
+        // e.preventDefault();
+        // alert()
+
+        var sight_idd = $('#sightid').val();
+        var cetaceanCodeId = $('#Cetacean_code').val();;
+            
+     
+            // return false;
+        if($('#Cetacean_code').val() == ''){
+           var cl_cs_code = "";
+        }else{
+            var cl_cs_code = $( "#Cetacean_code option:selected" ).text().split("|")[1].trim();
+        }
+
         if (cl_cs_code != "") {
-            $('#addNewLesionAndClearTxt').html('Adding New Lesion');
-            $('#addNewLesionAndClearTxt').prop('disabled', true);
-            e.preventDefault();
-            data = $("#add_lesions_form").serialize();
             $.ajax({
                 type: "post",
-                data: data,
-                url: application_root + "ConditionLesions.cfc?method=add_lesions",
+                data: {sight_idd: sight_idd,cetaceanCodeId:cetaceanCodeId},
+                url: application_root + "ConditionLesions.cfc?method=CheckCetaceans_sight",
                 success: function (res) {
-                    $('#addNewLesionAndClearTxt').html('Add New Lesion And Clear');
-                    $('#addNewLesionAndClearTxt').prop('disabled', false);
+                    console.log(res)
+                    if(res == 'true'){
 
-                    $(".lesion-message").show();
-                    $(".lesion-message").html(res);
-                    getlesionsListHistory();
-                    // $("#btn_whale_img").trigger("click");
-                    // $(".customLesionRadio").attr("checked", false);
-                    $("#PhotoNumber").val('');
-                    $("#Comments").val('');
-                    $('.selected-region').val('').change();
-                    $('.customLesionSelect').val(0).change();
+                    $('#addNewLesionAndClearTxt').html('Adding New Lesion');
+                    $('#addNewLesionAndClearTxt').prop('disabled', true);
+                    e.preventDefault();
+                    data = $("#add_lesions_form").serialize();
+                    $.ajax({
+                        type: "post",
+                        data: data,
+                        url: application_root + "ConditionLesions.cfc?method=add_lesions",
+                        success: function (res) {
+                            $('#addNewLesionAndClearTxt').html('Add New Lesion And Clear');
+                            $('#addNewLesionAndClearTxt').prop('disabled', false);
 
-                    setTimeout(function () {
-                        $(".lesion-message").hide();
-                    }, 4000);
-                    // Get the list if CL records
-                    getlesionsList(false);
+                            $(".lesion-message").show();
+                            $(".lesion-message").html(res);
+                            getlesionsListHistory();
+                            // $("#btn_whale_img").trigger("click");
+                            // $(".customLesionRadio").attr("checked", false);
+                            $("#PhotoNumber").val('');
+                            $("#Comments").val('');
+                            $('.selected-region').val('').change();
+                            $('.customLesionSelect').val(0).change();
+
+                            setTimeout(function () {
+                                $(".lesion-message").hide();
+                            }, 4000);
+                            // Get the list if CL records
+                            getlesionsList(false);
+                        }
+                    });
+
+
+                }else {
+                    var confirmation = confirm("Are you sure you want to enter lesions with no cetacean?");
+    
+                    if (confirmation) {
+                      
+                    $('#addNewLesionAndClearTxt').html('Adding New Lesion');
+                    $('#addNewLesionAndClearTxt').prop('disabled', true);
+                    e.preventDefault();
+                    data = $("#add_lesions_form").serialize();
+                    $.ajax({
+                        type: "post",
+                        data: data,
+                        url: application_root + "ConditionLesions.cfc?method=add_lesions",
+                        success: function (res) {
+                            $('#addNewLesionAndClearTxt').html('Add New Lesion And Clear');
+                            $('#addNewLesionAndClearTxt').prop('disabled', false);
+
+                            $(".lesion-message").show();
+                            $(".lesion-message").html(res);
+                            getlesionsListHistory();
+                            // $("#btn_whale_img").trigger("click");
+                            // $(".customLesionRadio").attr("checked", false);
+                            $("#PhotoNumber").val('');
+                            $("#Comments").val('');
+                            $('.selected-region').val('').change();
+                            $('.customLesionSelect').val(0).change();
+
+                            setTimeout(function () {
+                                $(".lesion-message").hide();
+                            }, 4000);
+                            // Get the list if CL records
+                            getlesionsList(false);
+                        }
+                    });
+                    } 
+                    // else {
+                        
+                    //   alert("You clicked Cancel. Action canceled.");
+                    // }
+                    
+                    e.preventDefault();
+                    return false;
+                }    
                 }
             });
+
             return false;
         } else {
             alert("Please select Cetacean Name/Code");
+            e.preventDefault();
             return false;
         }
     });
@@ -876,7 +946,12 @@ $(document).ready(function () {
     });
 });
 function save_exis_lesion() {
-    var les = $('#unqueLesions').val();
+
+    $('#Cetacean_code').removeAttr('onchange');
+    var isSetaceanSelected = $("#Cetacean_code option:selected").val();
+    if (isSetaceanSelected != "") {
+
+       var les = $('#unqueLesions').val();
     const marray = les.split("=");
     var lesion = marray[0];
     // var region = marray[1];
@@ -915,6 +990,10 @@ function save_exis_lesion() {
             console.log("error:", err);
         }
     });
+} else {
+    alert("Please select Cetacean Name/Code");
+}
+
 }
 
 function getlesionsList(is_history) {

@@ -777,13 +777,13 @@
         <cfelse>
 
             <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
-            select Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status,Condition_Lesions.id from Condition_Lesions
-                INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
-                INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
-                where Condition_Lesions.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#cetacean_Code#'>           
-                AND Surveys.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
-                AND Survey_Sightings.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
-                order by DateSeen desc
+                select Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status,Condition_Lesions.id from Condition_Lesions
+                    INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
+                    INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
+                    where Condition_Lesions.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#cetacean_Code#'>           
+                    AND Surveys.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
+                    AND Survey_Sightings.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
+                    order by DateSeen desc
             </cfquery>
             
         </cfif>
@@ -826,12 +826,12 @@
             and
             Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Cetacean_code#">
        </cfquery> 
+            <cfdump var="#qgetCetacean_code.ID#" abort="true"> 
         <cfif isDefined('qgetCetacean_code.ID') and qgetCetacean_code.ID neq ''>
             <cfset Cetacean_SightingID = '#qgetCetacean_code.ID#'>
         <cfelse>
             <cfset Cetacean_SightingID = '0'>
         </cfif>
-        <!---<cfdump var="#qgetCetacean_code#" abort="true"> --->
 
 
         <cfquery name="qchecklesion" datasource="#variables.dsn#">
@@ -2020,4 +2020,6 @@
         </cfquery>
        <cfreturn "true">
     </cffunction>
+
+
 </cfcomponent>

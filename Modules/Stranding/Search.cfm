@@ -8,7 +8,7 @@
  
 <cfif isdefined("form") and len(trim(form.searchword)) NEQ 0>
 <cfset   qgetTrackingList=Application.Stranding.getSearchedData(form.searchword)>
-<cfdump var="#qgetTrackingList#" abort="true">
+<!--- <cfdump var="#qgetTrackingList#" abort="true"> --->
 </cfif>
 		<!-- begin #content -->
 		<div id="content" class="content content-padding">
@@ -51,10 +51,16 @@
                       	<tbody>
                          <cfoutput query="qgetTrackingList">
                          	<tr class="inverse">
-                                <td>test</td>
-                                <td >test</td>
+                                <td>#qgetTrackingList.Fnumber#</td>
+                                <td>#qgetTrackingList.Date#</td>
                                 <td>
-                                    Open
+                                <!---#Application.siteroot#/?Module=Stranding&Page=StrandingTabs
+                                    <a id="CetaceanURLWithLecID" href="http://test.wildfins.org//?Module=Stranding&amp;Page=StrandingTabs&amp;'#qgetTrackingList.SourceTable#'&amp;LCEID=#qgetTrackingList.ID#" class="linkhisto">
+                                        Open
+                                    </a> --->
+                                    <a id="CetaceanURLWithLecID" href="http://test.wildfins.org//?Module=Stranding&amp;Page=StrandingTabs&amp;'#qgetTrackingList.SourceTable#'&amp;LCEID=#qgetTrackingList.ID#" class="linkhisto">
+                                        Open
+                                    </a>
                                 </td>
                             </tr>
                          </cfoutput>

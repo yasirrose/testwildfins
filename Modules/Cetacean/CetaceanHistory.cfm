@@ -25,11 +25,12 @@
     <cfquery name="qgetlesionCode" datasource="#Application.dsn#">
       select Code from Cetaceans where ID = '#FORM.CetaceanId#'
     </cfquery>
-    <cfset form.cetacean_Code = qgetlesionCode.Code>
-    <cfset qGetCetacean = Application.Cetaceans.getCetacean(argumentCollection="#Form#")>
-   
-    <cfset qgetCetacean_Lesions = Application.Cetaceans.getCetacean_Lesions(argumentCollection="#Form#")>
-    <!--- <cfdump var="#qgetCetacean_Lesions#" abort='true'> --->
+
+<cfset form.cetacean_Code = qgetlesionCode.Code>
+<cfset qGetCetacean = Application.Cetaceans.getCetacean(argumentCollection="#Form#")>
+
+<cfset qgetCetacean_Lesions = Application.Cetaceans.getCetacean_Lesions(argumentCollection="#Form#")>
+<!--- <cfdump var="#qgetCetacean_Lesions#" abort='true'>  --->
     
     <cfif qGetCetacean.RECORDCOUNT EQ 0> 
       <cfset isDataAvaiable = "Record not found on selected CODE">       
@@ -313,7 +314,7 @@
                 <div class="row dolphin-history-table">
                   
                 <div class="col-md-12" >
-                    <div class="dataTables_scroll" style="overflow:scroll; max-height: 200px;">
+                    <div class="dataTables_scroll" style="overflow:auto; max-height: 200px;">
                       <div class="dataTables_scrollHead ">
                         <div class="dataTables_scrollHeadInner" >
                           <table class="table table-striped table-bordered dataTable no-footer" role="grid">
@@ -401,7 +402,7 @@
                 </div>
   
                   <div class="col-md-12">
-                     <div class="dataTables_scroll">
+                     <div class="dataTables_scroll" style="overflow:auto; max-height: 200px;">
                             <div class="dataTables_scrollHead" style="overflow: hidden; position: relative; border: 0px none; width: 100%;">
                               <div class="dataTables_scrollHeadInner" style="box-sizing: content-box; width: 100%;">
                                 <table class="table table-striped table-bordered dataTable no-footer ">
@@ -441,7 +442,40 @@
                 
                 <div class="dataTables_scroll">
                   <h3>Lesion History</h3>
-                  <div class="lison-history-responsive">
+                  <div class="panel pagination-inverse m-b-0 clearfix table-overflow overflow-clearfix">
+                    <table id="lesionHistoryTable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr class="inverse">
+                                <th>Date Seen</th>
+                                <th>Sighting ID</th>
+                                <th>Sighting No</th>
+                                <th>Lesion Type</th>
+                                <th>Side</th>
+                                <th>Status</th>
+                                <th>Region</th>
+                            </tr>
+                        </thead>
+                      	<tbody>
+                          <cfif isdefined('FORM.CetaceanId')>	
+                              <!--- <cfdump var="#qgetCetacean_Lesions#" abort="true"> --->
+                              <cfloop query='qgetCetacean_Lesions'>
+                                <cfif qgetCetacean_Lesions.id neq '43'>                                
+                                <tr role="row" class="odd">
+                                  <td class="sorting_1">#DateFormat(qgetCetacean_Lesions.DATESEEN,'mm/dd/yyyy')#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.sightid#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.SightingNumber#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.LesionType#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.Side_L_R#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.Status#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.Region#</td>
+                                </tr>
+                              </cfif>
+                              </cfloop>	
+                            </cfif>
+                        </tbody>
+                    </table>
+                </div>
+                  <!---<div class="lison-history-responsive">
                       <div class="lesion-history-table lesion-table" style="overflow: scroll; max-height: 200px;">
                         <div class="dataTables_scrollHead" >
                           <div class="dataTables_scrollHeadInner" >
@@ -483,7 +517,7 @@
                           </table>
                         </div>
                     </div>
-                  </div>
+                  </div>--->
                 </div>
               </div>
               
@@ -519,6 +553,9 @@
   function setSurveyId(val){
     $('#Cetacean_Survey').val(val);
   }
+
+
+
   </script>
 <style>
 table.dataTable thead th, table.dataTable thead td {
@@ -534,5 +571,22 @@ table.dataTable tbody th, table.dataTable tbody td {
 }
 table thead tr th {
     width: 87px;
+}
+.overflow-clearfix {
+  overflow: auto;
+  max-height: 426px;
+  border-radius: 0px;
+  margin-bottom: 20px !important;
+}
+.overflow-clearfix table tr th {
+  min-width: 90px !important;
+}
+.overflow-clearfix table>thead>tr.inverse>th {
+  background-color: #ebeced !important;
+  border-color: #bec3c6!important;
+  color: #30373e !important;
+}
+.overflow-clearfix table tr td {
+  min-width: 90px !important;
 }
 </style> 

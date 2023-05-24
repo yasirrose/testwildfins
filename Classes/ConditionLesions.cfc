@@ -77,7 +77,20 @@
         <cfreturn qgetRegions>
     </cffunction>
 
-        <!--- add add_lesions--->
+    <cffunction name="CheckCetaceans_sight" returnformat="plain" output="false" access="remote" >
+        <cfquery name="CheckCetaceans_sightt" datasource="#Application.dsn#">
+            SELECT  Cetacean_Sightings.*,Cetacean_Sightings.ID,Cetaceans.*,TLU_CetaceanSpecies.CetaceanSpeciesName FROM Cetacean_Sightings left JOIN Cetaceans on Cetacean_Sightings.Cetaceans_ID=Cetaceans.ID  
+            left join TLU_CetaceanSpecies on TLU_CetaceanSpecies.ID=Cetaceans.CetaceanSpecies  WHERE Cetacean_Sightings.Sighting_ID = #form.sight_idd# and Cetaceans_ID = #form.cetaceanCodeId# order by Cetacean_Sightings.Sighting_ID;
+        </cfquery>
+        <cfif CheckCetaceans_sightt.RecordCount eq '0'>
+            <cfreturn "false">
+        <cfelse>
+            <cfreturn "true">
+        </cfif>
+     
+     </cffunction>
+
+        <!--- add add_lesions nouman--->
     <cffunction name="add_lesions" access="remote" returnformat="plain" output="true">
         <cfoutput>
             <cfparam name="cl_cs_code" default="0">

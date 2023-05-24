@@ -8619,6 +8619,10 @@
             UNION
             SELECT pdfFiles,id from ST_Toxicology where Fnumber = '#Fnumber#' and caseReportBox = '1'
             UNION
+            SELECT pdfFiles,id from ST_Blood_Values where Fnumber = '#Fnumber#' and caseReportBox = '1'
+            UNION
+            SELECT pdfFiles,id from ST_HistoForm where Fnumber = '#Fnumber#' and caseReportBox = '1'
+            UNION
             SELECT HistoImages,id from ST_CetaceanNecropsyReport where Fnumber = '#Fnumber#' and caseReportBox = '1'
 
         </cfquery>
@@ -8673,7 +8677,34 @@
             <cfreturn qgetPdfFiles>
         </cffunction>
         <cffunction name="getSearchedData" returntype="any" output="false" access="public" >
-            <cfdump var="test" abort="true">
+<!---             <cfdump var="test" abort="true"> --->
+            <cfquery name="qGetSearchedData" datasource="#variables.dsn#">
+                SELECT 'CetaceanExam' AS SourceTable, ID, Fnumber, Date, Location, BriefHistory, BSNotes, General, SNM, Mentation, Palpation, Proprioception, Reflexes, RLD, ECGresults, Ultrasoundresults
+                FROM ST_LiveCetaceanExam
+                WHERE (
+                    Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
+                    OR BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR BSNotes LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR General LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR SNM LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Mentation LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Palpation LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Proprioception LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Reflexes LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR RLD LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR ECGresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Ultrasoundresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                )
+                UNION
+                SELECT 'HIForm' AS SourceTable, ID, Fnumber, Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults
+                FROM ST_HIForm
+                WHERE (
+                    Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
+                    OR BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                )
+            </cfquery>   
+<!---             <cfdump  var="#qGetSearchedData#" abort="true"> --->
+             <cfreturn qGetSearchedData>
         </cffunction>
 
         <cffunction name="BVremovepdf" returntype="string" output="false" access="remote" returnformat="plain">
