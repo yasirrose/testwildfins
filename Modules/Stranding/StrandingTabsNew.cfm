@@ -2798,7 +2798,7 @@
     <cfoutput>
     <cfsavecontent variable="myVariableName">
    
-    <!---TodayWorking22 --->
+    <!---TodayWorking22 shery--->
     <body  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
         <center>
         <table  id="Table_01" width="850" height="" border="0" cellpadding="0" cellspacing="0">
@@ -2822,103 +2822,64 @@
                                         <td style="height: 50px;"></td>
                                     </tr>	
                                     <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 20px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Gross Necropsy Report</td>
+                                        <td style="line-height: 0; padding-top:50px; text-align: center; font-size: 20px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Gross Necropsy Report</td>
                                     </tr>	
                                     <tr>
-                                        <td style="height: 50px;"></td>
+                                        <td style="line-height: 0; padding-top:50px; text-align: center; font-size: 24px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.Fnumber#</td>
                                     </tr>	
                                     <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 24px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.Fnumber#</td>
+                                        <td style="line-height: 0; padding-top:20px; text-align: center; font-size: 14px; font-family: Arial, Helvetica, sans-serif;">Bottlenose Dolphin</td>
                                     </tr>	
                                     <tr>
-                                        <td style="height: 20px;"></td>
+                                        <td style="line-height: 0; padding-top:20px; text-align: center; font-size: 14px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;"><i>Tursiops truncatus</i></td>
                                     </tr>	
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 14px; font-family: Arial, Helvetica, sans-serif;">Bottlenose Dolphin</td>
-                                    </tr>	
-                                    <tr>
-                                        <td style="height: 20px;"></td>
-                                    </tr>	
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 14px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;"><i>Tursiops truncatus</i></td>
-                                    </tr>	
-                                    <tr>
-                                        <td style="height: 40px;"></td>
-                                    </tr>
                                     <cfif isDefined('qgetCetaceanNecropsy.Date') and #qgetCetaceanNecropsy.Date# neq "" >	
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Stranding Date:</strong>#DateTimeFormat(qgetCetaceanNecropsy.Date, "MM/dd/YYYY")#</td>
+                                            <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Stranding Date:</strong>#DateTimeFormat(qgetCetaceanNecropsy.Date, "MM/dd/YYYY")#</td>
                                         </tr>
-                                    </cfif>
-                                    <tr>
-                                        <td style="height: 20px;"></td>
-                                    </tr>	
+                                    </cfif>	
                                     <cfif isDefined('qgetCetaceanNecropsy.Location') and #qgetCetaceanNecropsy.code# neq "">
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Stranding Location:</strong> #qgetCetaceanNecropsy.Location#</td>
+                                            <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Stranding Location:</strong> #qgetCetaceanNecropsy.Location#</td>
                                         </tr>
-                                    </cfif>
-                                    <tr>
-                                        <td style="height: 20px;"></td>
-                                    </tr>	
+                                    </cfif>	
                                     
                                     <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Animal ID:</strong>New</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px;"></td>
+                                        <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Animal ID:</strong>New</td>
                                     </tr>
                                     <cfif isDefined('qgetCetaceanNecropsy.code') and #qgetCetaceanNecropsy.code# neq "" >	
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Code:</strong>#qgetCetaceanNecropsy.code#</td>
+                                            <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Code:</strong>#qgetCetaceanNecropsy.code#</td>
                                         </tr>
                                     </cfif>
-                                    <tr>
-                                        <td style="height: 20px;"></td>
-                                    </tr>
                                     <cfif isDefined('qgetCetaceanNecropsy.sex') and #qgetCetaceanNecropsy.sex# neq "" >	
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Sex:</strong>#qgetCetaceanNecropsy.sex#</td>
+                                            <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Sex:</strong>#qgetCetaceanNecropsy.sex#</td>
                                         </tr>
-                                    </cfif>
+                                    </cfif>	
                                     <tr>
-                                        <td style="height: 20px;"></td>
-                                    </tr>	
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Weight:</strong>130lbs</td>
+                                        <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Weight:</strong>130lbs</td>
                                     </tr>
                                       
-                                    <tr>
-                                        <td style="height: 20px;"></td>
-                                    </tr>
                                     <cfif isDefined('qgetCetaceanNecropsy.actualClass') and #qgetCetaceanNecropsy.actualClass# neq "" >	
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Age Class:</strong>#qgetCetaceanNecropsy.actualClass#</td>
+                                            <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Age Class:</strong>#qgetCetaceanNecropsy.actualClass#</td>
                                         </tr>
                                     </cfif>
-                                    <tr>
-                                        <td style="height: 10px;"></td>
-                                    </tr>
                                     <cfif isDefined('qgetCetaceanNecropsy.BriefHistory') and #qgetCetaceanNecropsy.BriefHistory# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Brief History:</strong>#qgetCetaceanNecropsy.BriefHistory#</td>
+                                            <td style="line-height: 28px; padding-top:10px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Brief History:</strong>#qgetCetaceanNecropsy.BriefHistory#</td>
                                         </tr>
                                     </cfif>
-                                    <tr>
-                                        <td style="height: 10px;"></td>
-                                    </tr>	
                                     <cfif isDefined('qgetCetaceanNecropsy.LevelADate') and #qgetCetaceanNecropsy.LevelADate# neq "" >
                                     <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Level A Date:</strong>#DateTimeFormat(qgetCetaceanNecropsy.LevelADate, "MM/dd/YYYY")#</td>
+                                        <td style="line-height: 0; padding-top:10px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Level A Date:</strong>#DateTimeFormat(qgetCetaceanNecropsy.LevelADate, "MM/dd/YYYY")#</td>
                                     </tr>
                                     </cfif>
-                                    <tr>
-                                        <td style="height: 20px;"></td>
-                                    </tr>
                                     
                                       <cfif isDefined('qgetCetaceanNecropsy.CNRDATE') and #qgetCetaceanNecropsy.CNRDATE# neq "" >	
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Necropsy Date:</strong>#qgetCetaceanNecropsy.CNRDATE#</td>
+                                            <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Necropsy Date:</strong>#qgetCetaceanNecropsy.CNRDATE#</td>
                                         </tr>
                                     </cfif>
                                     <tr>
@@ -2928,49 +2889,34 @@
                                         <td>
                                             <table style="width: 100%;">
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: left;"><img src="http://cloud.wildfins.org/necropsyPDF/img-1.png" alt="" style="width: 100%;"></td>
+                                                    <td style="line-height: 0; text-align: left;"><img src="http://cloud.wildfins.org/necropsyPDF/img-1.png" alt="" style="width: 80px;height: 80px;"></td>
                                                     <td style="line-height: 0; width: 40px;"></td>
-                                                    <td style="line-height: 0; text-align: left;"><img src="http://cloud.wildfins.org/necropsyPDF/img-2.png" alt="" style="width: 100%;"></td>
+                                                    <td style="line-height: 0; text-align: left;"><img src="http://cloud.wildfins.org/necropsyPDF/img-2.png" alt="" style="width: 80px;height: 80px;"></td>
                                                 </tr>
                                             </table>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="height: 80px;"></td>
-                                    </tr> 
-                                    <tr>
-                                        <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">1 │ Cetacean Necropsy Report</td>
+                                        <td style="line-height: 0; padding-top:80px; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">1 │ Cetacean Necropsy Report</td>
                                     </tr>
                                     <tr>
-                                        <td style="height: 50px;"></td>
-                                    </tr> 
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Euthanized:</strong>#qgetCetaceanNecropsy.Euthanized#</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px;"></td>
+                                        <td style="line-height: 0; padding-top:50px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Euthanized:</strong>#qgetCetaceanNecropsy.Euthanized#</td>
                                     </tr>	
                                     <cfif isDefined('qgetCetaceanNecropsy.Bodycondition') and #qgetCetaceanNecropsy.Bodycondition# neq "" >
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>General Body Condition:</strong> #qgetCetaceanNecropsy.Bodycondition#</td>
+                                            <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>General Body Condition:</strong> #qgetCetaceanNecropsy.Bodycondition#</td>
                                         </tr>
                                     </cfif>
-                                      
-                                    <tr>
-                                        <td style="height: 20px;"></td>
-                                    </tr>	
+                                      	
                                     <cfif isDefined('qgetCetaceanNecropsy.AnimalRenderings') and #qgetCetaceanNecropsy.AnimalRenderings# neq "" >
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Animal Renderings:</strong> #qgetCetaceanNecropsy.AnimalRenderings#</td>
+                                            <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Animal Renderings:</strong> #qgetCetaceanNecropsy.AnimalRenderings#</td>
                                         </tr>
-                                    </cfif>
-                                    <tr>
-                                        <td style="height: 20px;"></td>
-                                    </tr>	
+                                    </cfif>	
                                     <cfif isDefined('qgetCetaceanNecropsy.attendingVeterinarian') and #qgetCetaceanNecropsy.attendingVeterinarian# neq "" >
 
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Attending Veterinarian:</strong> 
+                                            <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Attending Veterinarian:</strong> 
                                                 <cfloop query="qgetVeterinarians">
                                                         <cfif ListFind(ValueList(qgetCetaceanNecropsy.attendingVeterinarian,","),#qgetVeterinarians.ID#)>
                                                             #qgetVeterinarians.Veterinarians#,
@@ -2979,73 +2925,46 @@
                                             </td>
                                         </tr>
                                     </cfif>
-                                    <tr>
-                                        <td style="height: 20px;"></td>
-                                    </tr>
                                     <cfif isDefined('qgetCetaceanNecropsy.Prosectors') and #qgetCetaceanNecropsy.Prosectors# neq "" >
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Prosectors:</strong>
+                                            <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Prosectors:</strong>
                                                 <cfloop query="getTeams">
                                                         <cfif ListFind(ValueList(qgetCetaceanNecropsy.Prosectors,","),#getTeams.RT_ID#)>#getTeams.RT_MemberName#,</cfif>
                                                 </cfloop>
                                             </td>
                                         </tr>
                                     </cfif>
-                                    <tr>
-                                        <td style="height: 40px;"></td>
-                                    </tr>
                                     
                                     <cfif isDefined('qgetCetaceanNecropsy.Tentative') and #qgetCetaceanNecropsy.Tentative# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Tentative Gross Diagnosis:</strong>#qgetCetaceanNecropsy.Tentative#</td>
+                                            <td style="line-height: 28px; padding-top:40px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Tentative Gross Diagnosis:</strong>#qgetCetaceanNecropsy.Tentative#</td>
                                         </tr>	
-                                    </cfif>
-                                    <tr>
-                                        <td style="height: 10px;"></td>
-                                    </tr>	
+                                    </cfif>	
                                     <cfif isDefined('qgetCetaceanNecropsy.deathcause') and #qgetCetaceanNecropsy.deathcause# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Cause of Death:</strong> #qgetCetaceanNecropsy.deathcause#</td>
+                                            <td style="line-height: 28px; padding-top:10px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Cause of Death:</strong> #qgetCetaceanNecropsy.deathcause#</td>
                                         </tr>
-                                    </cfif>
+                                    </cfif>	
                                     <tr>
-                                        <td style="height: 30px;"></td>
+                                        <td style="line-height: 0; padding-top:30px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>UGA Respiratory Pathogen Test:</strong>(See attached lab results)</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="line-height: 0; padding-top:30px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>MSU Heavy Metals:</strong> (See attached lab results)</td>
                                     </tr>	
                                     <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>UGA Respiratory Pathogen Test:</strong>(See attached lab results)</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 30px;"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>MSU Heavy Metals:</strong> (See attached lab results)</td>
-                                    </tr>	
-                                    <tr>
-                                        <td style="height: 30px;"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Histopathology Report:</strong> Dr. David Rotstein</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 10px;"></td>
+                                        <td style="line-height: 0; padding-top:30px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Histopathology Report:</strong> Dr. David Rotstein</td>
                                     </tr>	
                                     <cfif isDefined('qgetCetaceanNecropsy.historemark') and #qgetCetaceanNecropsy.historemark# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Remarks:</strong> #qgetCetaceanNecropsy.historemark#</td>
+                                            <td style="line-height: 28px; padding-top:10px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Remarks:</strong> #qgetCetaceanNecropsy.historemark#</td>
                                         </tr>
                                     </cfif>
-                                    <tr>
-                                        <td style="height: 10px;"></td>
-                                    </tr>	
                                     
                                     <tr>
-                                        <td style="line-height: 0px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Primary Diagnostic Category:</strong> Parasitic</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px;"></td>
+                                        <td style="line-height: 0px; padding-top:10px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Primary Diagnostic Category:</strong> Parasitic</td>
                                     </tr>	
                                     <tr>
-                                        <td style="text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Diagnosis:</strong> Pulmonary Fibrosis, Verminous Pneumonia (degenerate parasites)</td>
+                                        <td style="text-align: left; padding-top:20px; font-size: 16px; font-family: Arial, Helvetica, sans-serif;"><strong>Diagnosis:</strong> Pulmonary Fibrosis, Verminous Pneumonia (degenerate parasites)</td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -3225,11 +3144,9 @@
                                     <tr>
                                         <td style="line-height: 25px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">The following tissues have no significant histological findings: IV Septum (1), esophagus (1), right atrium (2), right ventricle (2), left atrium (3), left ventricle (3), right pulmonary lymph node (3), tendon (4), left tracheobronchial lymph node (4), uterus (12), pylorus (5), right kidney (5), trachea (11), pancreas (6), forestomach (6), left kidney (10) fundus (10), adrenal gland (7), large intestine (7), liver (7), left lung lymph node (8), urinary bladder (8), small intestine (8), duodenal ampulla (9), right adrenal gland (9)</td>
                                     </tr>
+                                   
                                     <tr>
-                                        <td style="height: 80px;"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">2 │ Cetacean Necropsy Report</td>
+                                        <td style="line-height: 0; padding-top:80px; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">2 │ Cetacean Necropsy Report</td>
                                     </tr>
                                     <tr>
                                         <td style="height: 50px;"></td>
@@ -3238,7 +3155,7 @@
                                         <td>
                                             <table style="width: 100%; text-align: center;">
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: center;"><img src="http://cloud.wildfins.org/necropsyPDF/fish-img.png" alt=""></td>
+                                                    <td style="line-height: 0; text-align: center;"><img  src="http://cloud.wildfins.org/necropsyPDF/fish-img.png" alt="" style="width: 100%;"></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -3311,22 +3228,18 @@
                                     <tr>
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
+                                    
                                     <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0; padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Integument</td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Integument</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
+                                    
                                     <cfif isDefined('qgetCetaceanNecropsy.Lesionform') and #qgetCetaceanNecropsy.Lesionform# neq "" >
                                         <tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Skin Lesson Form ? </strong>#qgetCetaceanNecropsy.Lesionform#</td>
+                                            <td style="line-height: 0; padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Skin Lesson Form ? </strong>#qgetCetaceanNecropsy.Lesionform#</td>
                                         </tr>
                                     </cfif>
-                                    <tr>
-                                        <td style="height: 15px"></td>
+                                    <!-- <tr>
+                                        <td style="height: 15px"></td> -->
                                    <!--- </tr>
                                      <cfif isDefined('qgetCetaceanNecropsy.lessionphototaken') and #qgetCetaceanNecropsy.lessionphototaken# neq "" > </cfif>
                                         <tr>
@@ -3334,19 +3247,17 @@
                                         </tr>
                                     
                                     <tr>--->
-                                        <td style="height: 30px"></td>
-                                    </tr>
+                                        <!-- <td style="height: 30px"></td>
+                                    </tr> -->
                                     <cfif isDefined('qgetCetaceanNecropsy.lessiondescribe') and #qgetCetaceanNecropsy.lessiondescribe# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.lessiondescribe#</td>
+                                            <td style="line-height: 28px; padding-top:15px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.lessiondescribe#</td>
                                         </tr>
                                     </cfif>
-                                    <tr>
-                                        <td style="height: 80px;"></td>
-                                    </tr>
+                                    
                                     
                                     <tr>
-                                        <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">3 │ Cetacean Necropsy Report</td>
+                                        <td style="line-height: 0; padding-top:80px; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">3 │ Cetacean Necropsy Report</td>
                                     </tr>
                                     <tr>
                                         <td style="height: 50px"></td>
@@ -3359,7 +3270,7 @@
                                                     <cfif listLen(imgs)> 
                                                         <cfloop list="#imgs#" item="item" index="index">
                                                             <td style="line-height: 0; text-align: left;">
-                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="height: 80px;width:80px;">
                                                             </td>
                                                         </cfloop>
                                                     </cfif>	
@@ -3373,27 +3284,21 @@
                                     <tr>
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
+                                    
                                     <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Nutritional Condition—Internal</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0; padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Nutritional Condition—Internal</td>
                                     </tr>
                                     
+                                    
                                     <!---<tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken ? </strong><cfif isdefined('qgetCetaceanNecropsy.internal_phototaken') and  qgetCetaceanNecropsy.internal_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken ? </strong><cfif isdefined('qgetCetaceanNecropsy.internal_phototaken') and  qgetCetaceanNecropsy.internal_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
                                     </tr>--->
 
                                     
-                                    <tr>
-                                        <td style="height: 15px"></td>
-                                    </tr>
+                                    
                                     <cfif isDefined('qgetCetaceanNecropsy.muscular_comments') and #qgetCetaceanNecropsy.muscular_comments# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.muscular_comments#</td>
+                                            <td style="line-height: 28px;padding-top:15px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.muscular_comments#</td>
                                         </tr>
                                     </cfif>
                                     <tr>
@@ -3407,7 +3312,7 @@
                                                     <cfif listLen(IntenalExamimg)> 
                                                         <cfloop list="#IntenalExamimg#" item="item" index="index">
                                                             <td style="line-height: 0; text-align: left;">
-                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="height: 80px;width:80px;">
                                                             </td>
                                                         </cfloop>
                                                     </cfif>	
@@ -3418,24 +3323,18 @@
                                     <tr>
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
+                                   
                                     <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Musculoskeletal System</td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Musculoskeletal System</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
+                                   
                                     <!---<tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.muscular_phototaken') and  qgetCetaceanNecropsy.muscular_phototaken eq 'on'>Yes<cfelse>No</cfif></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.muscular_phototaken') and  qgetCetaceanNecropsy.muscular_phototaken eq 'on'>Yes<cfelse>No</cfif></td>
                                     </tr>--->
-                                    <tr>
-                                        <td style="height: 15px"></td>
-                                    </tr>
+                                    
                                     <cfif isDefined('qgetCetaceanNecropsy.muscular_comments') and #qgetCetaceanNecropsy.muscular_comments# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.muscular_comments# </td>
+                                            <td style="line-height: 28px;padding-top:15px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.muscular_comments# </td>
                                         </tr>
                                     </cfif>
                                     <tr>
@@ -3449,7 +3348,7 @@
                                                     <cfif listLen(musculoskeletalImgs)> 
                                                         <cfloop list="#musculoskeletalImgs#" item="item" index="index">
                                                             <td style="line-height: 0; text-align: left;">
-                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="height: 80px;width:80px;">
                                                             </td>
                                                         </cfloop>
                                                     </cfif>	
@@ -3460,31 +3359,23 @@
                                     <tr>
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
+                                    
                                     <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Thoracic Cavity</td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Thoracic Cavity</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
+                                    
                                     <!---<tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.thoratic_phototaken') and  qgetCetaceanNecropsy.thoratic_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.thoratic_phototaken') and  qgetCetaceanNecropsy.thoratic_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
                                     </tr>--->
-                                    <tr>
-                                        <td style="height: 15px"></td>
-                                    </tr>
+                                   
                                     <cfif isDefined('qgetCetaceanNecropsy.thoratic_comments') and #qgetCetaceanNecropsy.thoratic_comments# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.thoratic_comments#</td>
+                                            <td style="line-height: 28px;padding-top:15px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.thoratic_comments#</td>
                                         </tr>
                                     </cfif>
+                                    
                                     <tr>
-                                        <td style="height: 80px"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">4 │ Cetacean Necropsy Report</td>
+                                        <td style="line-height: 0;padding-top:80px; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">4 │ Cetacean Necropsy Report</td>
                                     </tr>
                                     <tr>
                                         <td style="height: 60px"></td>
@@ -3497,7 +3388,7 @@
                                                     <cfif listLen(thoracictImgs)> 
                                                         <cfloop list="#thoracictImgs#" item="item" index="index">
                                                             <td style="line-height: 0; text-align: left;">
-                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="height: 80px;width:80px;">
                                                             </td>
                                                         </cfloop>
                                                     </cfif>
@@ -3508,24 +3399,18 @@
                                     <tr>
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
+                                    
                                     <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Abdominal Cavity</td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Abdominal Cavity</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
+                                    
                                     <!---<tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.abdominal_phototaken') and  qgetCetaceanNecropsy.abdominal_phototaken eq 'on'>Yes<cfelse>No</cfif></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.abdominal_phototaken') and  qgetCetaceanNecropsy.abdominal_phototaken eq 'on'>Yes<cfelse>No</cfif></td>
                                     </tr>--->
-                                    <tr>
-                                        <td style="height: 15px"></td>
-                                    </tr>
+                                    
                                     <cfif isDefined('qgetCetaceanNecropsy.abdominal_comments') and #qgetCetaceanNecropsy.abdominal_comments# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.abdominal_comments#</td>
+                                            <td style="line-height: 28px;padding-top:15px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.abdominal_comments#</td>
                                         </tr>
                                     </cfif>
                                     <tr>
@@ -3539,7 +3424,7 @@
                                                     <cfif listLen(abdominalImgs)> 
                                                         <cfloop list="#abdominalImgs#" item="item" index="index">
                                                             <td style="line-height: 0; text-align: left;">
-                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="height: 80px;width:80px;">
                                                             </td>
                                                         </cfloop>
                                                     </cfif>
@@ -3550,32 +3435,24 @@
                                     <tr>
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
+                                   
                                     <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Alimentary System</td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Alimentary System</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
+                                    
                                     <!---<tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.Parasite_phototaken') and  qgetCetaceanNecropsy.Parasite_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.Parasite_phototaken') and  qgetCetaceanNecropsy.Parasite_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
                                     </tr>--->
                                     
-                                    <tr>
-                                        <td style="height: 15px"></td>
-                                    </tr>
+                                    
                                     <cfif isDefined('qgetCetaceanNecropsy.Parasitecomments') and #qgetCetaceanNecropsy.Parasitecomments# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.Parasitecomments#</td>
+                                            <td style="line-height: 28px;padding-top:15px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.Parasitecomments#</td>
                                         </tr>
                                     </cfif>
+                                    
                                     <tr>
-                                        <td style="height: 80px"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">5 │ Cetacean Necropsy Report</td>
+                                        <td style="line-height: 0;padding-top:80px; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">5 │ Cetacean Necropsy Report</td>
                                     </tr>
                                     <tr>
                                         <td style="height: 60px"></td>
@@ -3588,7 +3465,7 @@
                                                     <cfif listLen(alimentaryImgs)> 
                                                         <cfloop list="#alimentaryImgs#" item="item" index="index">
                                                             <td style="line-height: 0; text-align: left;">
-                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="height: 80px;width:80px;">
                                                             </td>
                                                         </cfloop>
                                                     </cfif>
@@ -3599,24 +3476,18 @@
                                     <tr>
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
+                                    
                                     <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Hepatobiliary System</td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Hepatobiliary System</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
+                                    
                                     <!---<tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.hepatobiliary_phototaken') and  qgetCetaceanNecropsy.hepatobiliary_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.hepatobiliary_phototaken') and  qgetCetaceanNecropsy.hepatobiliary_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
                                     </tr>--->
-                                    <tr>
-                                        <td style="height: 15px"></td>
-                                    </tr>
+                                    
                                     <cfif isDefined('qgetCetaceanNecropsy.hepatobiliary_comments') and #qgetCetaceanNecropsy.hepatobiliary_comments# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.hepatobiliary_comments#</td>
+                                            <td style="line-height: 28px;padding-top:15px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.hepatobiliary_comments#</td>
                                         </tr>
                                     </cfif>
                                     <tr>
@@ -3630,7 +3501,7 @@
                                                     <cfif listLen(hepatobiliaryImgs)> 
                                                         <cfloop list="#hepatobiliaryImgs#" item="item" index="index">
                                                             <td style="line-height: 0; text-align: left;">
-                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="height: 80px;width:80px;">
                                                             </td>
                                                         </cfloop>
                                                     </cfif>
@@ -3641,54 +3512,39 @@
                                     <tr>
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
+                                    
                                     <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Cardiovascular System</td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Cardiovascular System</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
+                                    
                                     <!---<tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.cardio_phototaken') and  qgetCetaceanNecropsy.cardio_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.cardio_phototaken') and  qgetCetaceanNecropsy.cardio_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
                                     </tr>--->
-                                    <tr>
-                                        <td style="height: 15px"></td>
-                                    </tr>
+                                    
                                     <cfif isDefined('qgetCetaceanNecropsy.cardio_comments') and #qgetCetaceanNecropsy.cardio_comments# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">T#qgetCetaceanNecropsy.cardio_comments#</td>
+                                            <td style="line-height: 28px;padding-top:15px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">T#qgetCetaceanNecropsy.cardio_comments#</td>
                                         </tr>
                                      </cfif>
                                     <tr>
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
+                                   
                                     <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Pulmonary System</td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Pulmonary System</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
+                                    
                                     <!---<tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.pulmonary_phototaken') and  qgetCetaceanNecropsy.pulmonary_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.pulmonary_phototaken') and  qgetCetaceanNecropsy.pulmonary_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
                                     </tr>--->
-                                    <tr>
-                                        <td style="height: 15px"></td>
-                                    </tr>
+                                    
                                     <cfif isDefined('qgetCetaceanNecropsy.pulmonary_comments') and #qgetCetaceanNecropsy.pulmonary_comments# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.pulmonary_comments#</td>
+                                            <td style="line-height: 28px;padding-top:15px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.pulmonary_comments#</td>
                                         </tr>
                                     </cfif>
                                     <tr>
-                                        <td style="height: 80px;"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">6 │Cetacean Necropsy Report</td>
+                                        <td style="line-height: 0;padding-top:80px; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">6 │Cetacean Necropsy Report</td>
                                     </tr>
                                     <tr>
                                         <td style="height: 60px"></td>
@@ -3701,7 +3557,7 @@
                                                     <cfif listLen(pulmonaryImgs)> 
                                                         <cfloop list="#pulmonaryImgs#" item="item" index="index">
                                                             <td style="line-height: 0; text-align: left;">
-                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="height: 80px;width:80px;">
                                                             </td>
                                                         </cfloop>
                                                     </cfif>
@@ -3712,24 +3568,18 @@
                                     <tr>
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
+                                    
                                     <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Lymphoreticular System</td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Lymphoreticular System</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
+                                    
                                     <!---<tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.lympho_phototaken') and  qgetCetaceanNecropsy.lympho_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.lympho_phototaken') and  qgetCetaceanNecropsy.lympho_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
                                     </tr>--->
-                                    <tr>
-                                        <td style="height: 15px"></td>
-                                    </tr>
+                                    
                                     <cfif isDefined('qgetCetaceanNecropsy.lympho_comments') and #qgetCetaceanNecropsy.lympho_comments# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.lympho_comments#</td>
+                                            <td style="line-height: 28px;padding-top:15px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.lympho_comments#</td>
                                         </tr>
                                     </cfif>
                                     <tr>
@@ -3743,7 +3593,7 @@
                                                     <cfif listLen(lymphoreticularImgs)> 
                                                         <cfloop list="#lymphoreticularImgs#" item="item" index="index">
                                                             <td style="line-height: 0; text-align: left;">
-                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="height: 80px;width:80px;">
                                                             </td>
                                                         </cfloop>
                                                     </cfif>
@@ -3754,24 +3604,18 @@
                                     <tr>
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
+                                    
                                     <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Endocrine</td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Endocrine</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
+                                   
                                     <!---<tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.endocrine_phototaken') and  qgetCetaceanNecropsy.endocrine_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.endocrine_phototaken') and  qgetCetaceanNecropsy.endocrine_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
                                     </tr>--->
-                                    <tr>
-                                        <td style="height: 15px"></td>
-                                    </tr>
+                                    
                                     <cfif isDefined('qgetCetaceanNecropsy.endocrine_comments') and #qgetCetaceanNecropsy.endocrine_comments# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.endocrine_comments#</td>
+                                            <td style="line-height: 28px;padding-top:15px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.endocrine_comments#</td>
                                         </tr>
                                     </cfif>
                                     <tr>
@@ -3785,7 +3629,7 @@
                                                     <cfif listLen(endocrineImgs)> 
                                                         <cfloop list="#endocrineImgs#" item="item" index="index">
                                                             <td style="line-height: 0; text-align: left;">
-                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="height: 80px;width:80px;">
                                                             </td>
                                                         </cfloop>
                                                     </cfif>
@@ -3794,10 +3638,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="height: 60px"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">7 │Cetacean Necropsy Report</td>
+                                        <td style="line-height: 0;padding-top:60px; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">7 │Cetacean Necropsy Report</td>
                                     </tr>
                                     <tr>
                                         <td style="height: 20px"></td>
@@ -3806,23 +3647,16 @@
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
                                     <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Urogenital System</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Urogenital System</td>
                                     </tr>
                                     
+                                    
                                     <!---<tr>
-                                            <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.UROGENITAL_phototaken') and  qgetCetaceanNecropsy.UROGENITAL_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                            <td style="line-height: 0;padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.UROGENITAL_phototaken') and  qgetCetaceanNecropsy.UROGENITAL_phototaken  eq 'on'>Yes<cfelse>No</cfif></td>
                                         </tr>--->
+                                    
                                     <tr>
-                                        <td style="height: 15px"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.UROGENITAL_Comments#</td>
+                                        <td style="line-height: 28px;padding-top:15px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.UROGENITAL_Comments#</td>
                                     </tr>
                                     <tr>
                                         <td style="height: 20px"></td>
@@ -3835,7 +3669,7 @@
                                                     <cfif listLen(urogenitalImgs)> 
                                                         <cfloop list="#urogenitalImgs#" item="item" index="index">
                                                             <td style="line-height: 0; text-align: left;">
-                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="width: 100%;>
+                                                                <img src="http://cloud.wildfins.org/#item#" alt="" style="height: 80px;width:80px;">
                                                             </td>
                                                         </cfloop>
                                                     </cfif>
@@ -3846,35 +3680,26 @@
                                     <tr>
                                         <td style="height: 40px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
+                                    
                                     <tr>
-                                        <td style="height: 20px"></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Central Nervous System</td>
                                     </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Central Nervous System</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
+                                    
                                     <!---<tr>
-                                        <td style="line-height: 0; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.nervoussystemphototaken') and  qgetCetaceanNecropsy.nervoussystemphototaken  eq 'on'>Yes<cfelse>No</cfif></td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: left; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><strong>Photographs Taken? </strong><cfif isdefined('qgetCetaceanNecropsy.nervoussystemphototaken') and  qgetCetaceanNecropsy.nervoussystemphototaken  eq 'on'>Yes<cfelse>No</cfif></td>
                                     </tr>--->
-                                    <tr>
-                                        <td style="height: 15px"></td>
-                                    </tr>
+                                    
                                     <!---<cfset centralNervousImgs = ValueList(qgetCetaceanNecropsy.centralNervousImages,",")> --->
                                     <cfif isDefined('qgetCetaceanNecropsy.nervoussystemcomments') and #qgetCetaceanNecropsy.nervoussystemcomments# neq "" >
                                         <tr>
-                                            <td style="line-height: 28px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.nervoussystemcomments#</td>
+                                            <td style="line-height: 28px;padding-top:20px; text-align: left; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.nervoussystemcomments#</td>
                                         </tr>
                                     </cfif>
                                     <tr>
                                         <td style="height: 30px; border-bottom: 2px solid ##579cd4;"></td>
                                     </tr>
                                     <tr>
-                                        <td style="height: 20px"></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="line-height: 0; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Additional Notes</td>
+                                        <td style="line-height: 0;padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Additional Notes</td>
                                     </tr>
                                     <tr>
                                         <td style="height: 400px"></td>
@@ -16543,7 +16368,13 @@
     </cfoutput>
 
     <style>
-
+        @page {
+            margin-bottom: 50px; /* Adjust the margin-bottom value to set the height of the footer */
+            @bottom-center {
+                content: "Your footer content here";
+                height: 50px; /* Adjust the height of the footer */
+            }
+        }
         .quantity-toxi-field {
             width: 100%;
         }

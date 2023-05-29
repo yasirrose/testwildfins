@@ -703,17 +703,19 @@ $(document).ready(function () {
 
     $("#add_lesions_form").submit(function (e) {
         // e.preventDefault();
-        // alert()
+        // alert() nouman
 
         var sight_idd = $('#sightid').val();
-        var cetaceanCodeId = $('#Cetacean_code').val();;
+        var cetaceanCodeId = $('#Cetacean_code').val();
             
-     
+        // var sight = $("#getsight_ID").val();
+        // var Cetacean_code = $('#Cetacean_code').val();
             // return false;
         if($('#Cetacean_code').val() == ''){
            var cl_cs_code = "";
         }else{
             var cl_cs_code = $( "#Cetacean_code option:selected" ).text().split("|")[1].trim();
+            $('#Cetacean_NameORcode').val(cetaceanCodeId);
         }
 
         if (cl_cs_code != "") {
@@ -722,7 +724,7 @@ $(document).ready(function () {
                 data: {sight_idd: sight_idd,cetaceanCodeId:cetaceanCodeId},
                 url: application_root + "ConditionLesions.cfc?method=CheckCetaceans_sight",
                 success: function (res) {
-                    console.log(res)
+                   
                     if(res == 'true'){
 
                     $('#addNewLesionAndClearTxt').html('Adding New Lesion');
@@ -946,7 +948,7 @@ $(document).ready(function () {
     });
 });
 function save_exis_lesion() {
-
+    // nouman
     $('#Cetacean_code').removeAttr('onchange');
     var isSetaceanSelected = $("#Cetacean_code option:selected").val();
     if (isSetaceanSelected != "") {

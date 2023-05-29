@@ -826,7 +826,7 @@
             and
             Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Cetacean_code#">
        </cfquery> 
-            <cfdump var="#qgetCetacean_code.ID#" abort="true"> 
+<!---             <cfdump var="#qgetCetacean_code.ID#" abort="true">  --->
         <cfif isDefined('qgetCetacean_code.ID') and qgetCetacean_code.ID neq ''>
             <cfset Cetacean_SightingID = '#qgetCetacean_code.ID#'>
         <cfelse>

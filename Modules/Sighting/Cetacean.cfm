@@ -708,6 +708,7 @@
                         </div>
                         <form role="form" id="add_lesions_form">
                            <input type="hidden" name="Sighting_ID" id="getsight_ID" value="#sight_id#">
+                           <input type="hidden" name="Cetacean_NameORcode" id="Cetacean_NameORcode" value="">
                            <input type="hidden" name="cl_cs_Id" id="cl_cs_Id" value="0">
                            <input type="hidden" name="cl_cs_code" id="cl_cs_code" value="">
                            <div class="form-separater">

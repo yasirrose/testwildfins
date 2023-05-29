@@ -189,7 +189,7 @@ $("#necropsyDateID").attr("readonly", true);
   // $('.nav-tabs a:last').tab('show');
 }
 
-  if(tab_url == 'HIForm'){
+  if(tab_url == 'HIForm' || histoDirect == "HIFormID"){
       $("#HIformSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("HI Form");
@@ -199,7 +199,7 @@ $("#necropsyDateID").attr("readonly", true);
       $('.nav-tabs li:eq(1) a').tab('show');
   }
   
-  if(tab_url == "LevelAForm"){
+  if(tab_url == "LevelAForm"  || histoDirect == "LevelAID"){
       $("#LAFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Level A Form");
@@ -213,21 +213,21 @@ $("#necropsyDateID").attr("readonly", true);
       $("#autoSaveValue").val("Histopathology");
       $('.nav-tabs li:eq(3) a').tab('show');
   }
-  if(tab_url == "BloodValue"){
+  if(tab_url == "BloodValue" || histoDirect == "BVID"){
       $("#BloodValueFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Blood value");
       $("#autoSaveValue").val("bloodValue");
       $('.nav-tabs li:eq(4) a').tab('show');
   }
-  if(tab_url == "Toxicology"){
+  if(tab_url == "Toxicology" || histoDirect == "ToxiID"){
       $("#ToxicologyFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Toxicology");
       $("#autoSaveValue").val("Toxicology");
       $('.nav-tabs li:eq(5) a').tab('show');
   }
-  if(tab_url == "AncillaryDiagnostics"){
+  if(tab_url == "AncillaryDiagnostics" || histoDirect == "ADID"){
       $("#AncillaryDiagnosticsFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Ancillary Diagnostics");
@@ -235,7 +235,7 @@ $("#necropsyDateID").attr("readonly", true);
       $('.nav-tabs li:eq(6) a').tab('show');
       // $('.nav-tabs a:last').tab('show');
   }
-  if(tab_url == "Morphometrics"){
+  if(tab_url == "Morphometrics" || histoDirect == "MorphoID"){
       $("#MorphometricsFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Morphometrics");
@@ -243,7 +243,7 @@ $("#necropsyDateID").attr("readonly", true);
       $('.nav-tabs li:eq(9) a').tab('show');
       // $('.nav-tabs a:last').tab('show');
   }
-  if(tab_url == "SampleArchive"){
+  if(tab_url == "SampleArchive" || histoDirect == "SAID"){
       $("#sampleAechiveFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Sample Archive");
@@ -251,7 +251,7 @@ $("#necropsyDateID").attr("readonly", true);
       $('.nav-tabs li:eq(7) a').tab('show');
       // $('.nav-tabs a:last').tab('show');
   }
-  if(tab_url == "NecropsyReport"){
+  if(tab_url == "NecropsyReport" || histoDirect == "NRID"){
     $("#necropsyDateID").attr("readonly", false); 
       $("#NecropstFormSerch").show();
       $("#CetaceanSearch").hide();

@@ -92,6 +92,24 @@
 
         <!--- add add_lesions nouman--->
     <cffunction name="add_lesions" access="remote" returnformat="plain" output="true">
+        
+        
+        
+        <cfquery name="qgetCetacean_code" datasource="#variables.dsn#">
+            select ID from  Cetacean_Sightings 
+            where 
+            Sighting_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Sighting_ID#">
+            and
+            Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Cetacean_NameORcode#">
+       </cfquery> 
+             
+        <cfif isDefined('qgetCetacean_code.ID') and qgetCetacean_code.ID neq ''>
+            <cfset Cetacean_SightingID = '#qgetCetacean_code.ID#'>
+        <cfelse>
+            <cfset Cetacean_SightingID = '0'>
+        </cfif>
+<!---         <cfdump var="#qgetCetacean_code#" abort="true"> --->
+
         <cfoutput>
             <cfparam name="cl_cs_code" default="0">
             <cfparam name="Sighting_ID" default="0">
@@ -112,7 +130,8 @@
                  Side_L_R,
                  Status,
                  PhotoNumber,
-                 Comments
+                 Comments,
+                 Cetacean_SightingsID
                 )
                 values(
                 <cfqueryparam  cfsqltype="cf_sql_varchar" value='#cl_cs_code#'>,
@@ -123,7 +142,8 @@
                 <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Side#'>,
                 <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Status#'>,
                 <cfqueryparam  cfsqltype="cf_sql_varchar" value='#PhotoNumber#'>,
-                <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Form.Comments#'>
+                <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Form.Comments#'>,
+                <cfqueryparam  cfsqltype="cf_sql_integer" value='#Cetacean_SightingID#'>
             )
             </cfquery>
             <cfif get_res.RECORDCOUNT eq 1 >

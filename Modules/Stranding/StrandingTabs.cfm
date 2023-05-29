@@ -198,20 +198,12 @@
         <cfset qLCEDataa=Application.Stranding.getLCE_ten()>
     </cfif>
 
-        <!--- <cfdump var="#Session.CeteacenExam#" abort="true"> --->
-       <!--- <cflock timeout=20 scope="Session" type="Exclusive">
-    </cflock> --->
-    <!--- <cfif isDefined('form.ID') and form.ID neq "">
-        <cfset Session.CeteacenExam = #form.ID#>
-    </cfif> --->
         <!--- form.LCEID --->
         <cfif isDefined('Session.CeteacenExam') and Session.CeteacenExam NEQ ''>
             <cfset form.LCEID = #Session.CeteacenExam#>
           
             <cfset qLCEData=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
-            <!--- <cfset qLCEDataa=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")> --->
-            <!--- <cfset qgetcetaceanDate=Application.Stranding.getcetaceanNecropsyDate(argumentCollection="#Form#")> --->
-            <!--- <cfset form.NRD = qLCEDataa.Fnumber> --->
+    
             <cfset qgetcetaceanDate=Application.Stranding.getcetaceanNecropsyDate(#form.LCEID#)>
             <!--- <cfdump var="#qgetcetaceanDate.CNRDATE#" abort="true"> --->
             <cfif #qLCEData.species# neq "">
@@ -228,7 +220,19 @@
     <!--- end for ceteacean Exam --->
 
 <!---start For HIForm --->
+    <cfif isDefined('url.HIFormID') and url.HIFormID neq 0>
+        <cfset form.HI_ID = '#url.HIFormID#'>
+        <cfset form.LCEID = '#url.HIFormID#'>                
+       <cfset qgetHIData=Application.Stranding.getHIData("#form.LCEID#")>
+        <cfset qLCEDataa=Application.Stranding.getHIData("#form.LCEID#")>
+        <cfset qgetcetaceanDate=Application.Stranding.getHIFormNecropsyDate(#form.LCEID#)>
+        <cfif #qgetHIData.species# neq "">
+            <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetHIData.species#")>
+        </cfif>
+        <cfset qgetHiExamData = Application.Stranding.getHiExamData(LCEID="#form.LCEID#")> 
+    </cfif>
 
+    
 <cfif isDefined('SaveAndNewHI') OR isDefined('SaveandgotoAForm') OR isDefined('SaveAndClose')>
     <!--- If updating existing data --->
 
@@ -310,18 +314,14 @@
 
          <cfset qgetHiExamData = Application.Stranding.getHiExamData(LCEID="#form.LCEID#")>
         </cfif>
-            <!--- <cfset SiteURl = #cgi.QUERY_STRING#>
-<cfset arr = ListToArray(SiteURl,"&","false")/>
-<cfif arr[3] eq 'HIForm'> --->
+
     <cfif isDefined('Session.HIForm') and Session.HIForm NEQ ''>        
-        <!--- <cfset form.LCEID = ''> --->
+       
         <cfset form.LCEID = #Session.HIForm#>
         <cfset form.HI_ID = #Session.HIForm#>
-         <!--- <cfdump var="#Session.HIForm#" abort="true"> --->
-        <cfset qgetHIData=Application.Stranding.getHIData("#form.LCEID#")>
-        <!--- <cfset qLCEDataa=Application.Stranding.getHIData("#form.LCEID#")> --->
+        
+        <cfset qgetHIData=Application.Stranding.getHIData("#form.LCEID#")>        
         <cfset qgetcetaceanDate=Application.Stranding.getHIFormNecropsyDate(#form.LCEID#)>
-
         <cfif #qgetHIData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetHIData.species#")>
         </cfif>
@@ -392,18 +392,20 @@
     <cfelseif isDefined('deleteAllLevelAFormRecord')>
         <cfset Application.Stranding.deleteAllLevelAFormRecord()>
     </cfif>
-   <!--- if user directed from the Cetacean form, here get first 4 forms data of Cetacean form --->
-   <!--- <cfif url.LCE_ID neq 0>
-    <cfset form.LCEID = url.LCE_ID>
-    <cfset neworexist=Application.Stranding.getLevelADataByLCE("#form.LCEID#")>
-    <cfset qgetLevelAData=Application.Stranding.getLiveCetaceanExamData("#form.LCEID#")>    
-    <cfif #qgetLevelAData.species# neq "">
-        <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetLevelAData.species#")>
+ 
+<!--- nouman --->
+    <cfif isDefined('url.LevelAID') and url.LevelAID neq 0>
+        
+        <cfset form.LCEID = url.LevelAID>
+        <cfset form.LA_ID = url.LevelAID>
+        <cfset qgetLevelAData=Application.Stranding.getLevelAData("#form.LCEID#")>
+        <cfset qLCEDataa=Application.Stranding.getLevelAData("#form.LCEID#")>
+        <cfset qgetcetaceanDate=Application.Stranding.getLevelAFormNecropsyDate(#form.LA_ID#)>
+        <!--- <cfdump var="#url.LevelAID#" abort="true"> --->
+        <cfif #qgetLevelAData.species# neq "">
+            <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetLevelAData.species#")>
+        </cfif> 
     </cfif>
-    <cfif neworexist.recordcount gt 0 and neworexist.LCE_ID neq 0 >
-        <cfset form.HI_ID = neworexist.ID>
-    </cfif>
-</cfif> --->
 <!---   getting data on the basis of LevelA ID  --->
 
 <cfif  isDefined('form.LA_ID') and form.LA_ID neq "">
@@ -661,6 +663,26 @@
         <cfset qgetiSTAT_Chem=Application.Stranding.getiSTAT_Chem("#form.bloodID#")>
         <cfset qgetiSTAT_CG4=Application.Stranding.getiSTAT_CG4("#form.bloodID#")>
     </cfif>
+
+    <cfif isDefined('url.BVID') and url.BVID neq 0>
+        <cfset form.LCEID = url.BVID>
+        <cfset form.bloodValue_ID = url.BVID>
+        <cfset form.bloodID = url.BVID>
+        <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
+        <cfset qgetBloodValueData=Application.Stranding.getBlood_VData("#form.LCEID#")>
+        <cfset qLCEDataa=Application.Stranding.getBlood_VData("#form.LCEID#")>      
+        <cfset qgetcetaceanDate=Application.Stranding.getBloodValueNecropsyDate(#form.bloodValue_ID#)>
+        <cfif #qgetBloodValueData.species# neq "">
+            <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetBloodValueData.species#")>
+        </cfif>
+        <cfset qgetCBC_Data=Application.Stranding.getCBC_Data("#form.bloodID#")>
+        <cfset qgetFibrinogen=Application.Stranding.getFibrinogen("#form.bloodID#")>
+        <cfset qgetchemistry=Application.Stranding.getchemistry("#form.bloodID#")>
+        <cfset qgetCapillary=Application.Stranding.getCapillary("#form.bloodID#")>
+        <cfset qgetDolphin=Application.Stranding.getDolphin("#form.bloodID#")>
+        <cfset qgetiSTAT_Chem=Application.Stranding.getiSTAT_Chem("#form.bloodID#")>
+        <cfset qgetiSTAT_CG4=Application.Stranding.getiSTAT_CG4("#form.bloodID#")>
+    </cfif>
     
         <!---  get all records order by ID DESC--->
         <cfset getBloodValueID=Application.Stranding.getBlood_VID()>
@@ -729,7 +751,6 @@
                 <cfset Session.Toxicology = ''>
                 </cfif>
             <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-            <!--- <cfdump var="test" abort="true">  --->
             <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
             <cfset qLCEDataa=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
             <cfset qgetcetaceanDate=Application.Stranding.getToxicologyNecropsyDate(#form.Toxicology_ID#)>
@@ -744,7 +765,6 @@
 
             <cfif isdefined('form.Tissue_type') and form.Tissue_type neq "">
                 <cfset qgetToxitype=Application.Stranding.getToxitype("#form.Tissue_type#,#form.TX_ID#")>
-                <!--- <cfdump var="#qgetToxitype#" abort="true"> --->
                 <cfset qgetDynamicToxitype=Application.Stranding.getDynamicToxitype("#form.Tissue_type#")>
                 
             <cfelse>
@@ -765,14 +785,29 @@
             <cfif #qgetToxicologyData.species# neq "">
                 <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetToxicologyData.species#")>
                 
-                </cfif>
+            </cfif>
             <cfif isdefined('form.Tissue_type') and form.Tissue_type neq "">
-                <cfset qgetToxitype=Application.Stranding.getToxitype("#form.Tissue_type#,#form.TX_ID#")>
-                <!--- <cfdump var="#qgetToxitype#" abort="true">  --->
-                <cfset qgetDynamicToxitype=Application.Stranding.getDynamicToxitype("#form.Tissue_type#")>
-                <!--- <cfdump var="#qgetDynamicToxitype#" abort="true"> --->      
+                <cfset qgetToxitype=Application.Stranding.getToxitype("#form.Tissue_type#,#form.TX_ID#")>       
+                <cfset qgetDynamicToxitype=Application.Stranding.getDynamicToxitype("#form.Tissue_type#")>    
             </cfif>        
             <!--- <cfset qLCEDataa=Application.Stranding.gettoxiform_ten()> --->
+        </cfif>
+        
+        <cfif isDefined('url.ToxiID') and url.ToxiID NEQ '0'>
+            <cfset form.Toxicology_ID = url.ToxiID>
+            <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
+            <cfset qLCEDataa=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
+            <cfset qgetcetaceanDate=Application.Stranding.getToxicologyNecropsyDate(#form.Toxicology_ID#)>
+            <cfset TissueTypeForTable =Application.Stranding.getTissueTypeForTable(#form.Toxicology_ID#)>
+            <cfif #qgetToxicologyData.species# neq "">
+                <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetToxicologyData.species#")>
+                
+            </cfif>
+            <!--- <cfif isdefined('form.Tissue_type') and form.Tissue_type neq "">
+                <cfset qgetToxitype=Application.Stranding.getToxitype("#form.Tissue_type#,#form.TX_ID#")>       
+                <cfset qgetDynamicToxitype=Application.Stranding.getDynamicToxitype("#form.Tissue_type#")>    
+            </cfif>   --->     
+             
         </cfif>
 
         <!---  get all records order by ID DESC--->
@@ -845,6 +880,16 @@
             <cfset form.AD_ID = #Session.Ancillary#>
             <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>
             <!--- <cfset qLCEDataa=Application.Stranding.getAncillaryData("#form.AD_ID#")> --->
+            <cfset qgetcetaceanDate=Application.Stranding.getAncillaryDiagnosticsNecropsyDate(#form.AD_ID#)>
+            <cfif #qgetAncillaryData.species# neq "">
+                <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetAncillaryData.species#")>
+            </cfif>
+            <cfset qAncillaryReportGet=Application.Stranding.AncillaryReportGet("#form.AD_ID#")>
+        </cfif>
+        <cfif isDefined('url.ADID') and url.ADID NEQ '0'> 
+            <cfset form.AD_ID = url.ADID>
+            <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>
+            <cfset qLCEDataa=Application.Stranding.getAncillaryData("#form.AD_ID#")> 
             <cfset qgetcetaceanDate=Application.Stranding.getAncillaryDiagnosticsNecropsyDate(#form.AD_ID#)>
             <cfif #qgetAncillaryData.species# neq "">
                 <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetAncillaryData.species#")>
@@ -4104,7 +4149,6 @@
             <cfset qgetHIDataa=Application.Stranding.getHistoData("#form.LCEID#")>
 
             <!--- <cfset qgetcetaceanDate=Application.Stranding.getHistopathologyNecropsyDate(#form.His_ID#)> --->
-            <!--- <cfdump var="#qgetHIDataa#" abort="true"> --->
             <cfset qgetHistoSampleData = Application.Stranding.getHistoSampleData(HI_ID="#form.LCEID#")>
             <!--- <cfif #qgetHIDataa.species# neq "">
                 <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetHIDataa.species#")>
@@ -12920,24 +12964,7 @@
                             </div>
                       
                             <div class="simple-button pt-15">
-                                <!--- <cfif isDefined('qgetCetaceanNecropsy')  and #qgetCetaceanNecropsy.Fnumber# neq "">
-                            <cfdump var="#qgetCetaceanNecropsy.Fnumber#">                    
-                            </cfif> --->
-                            <!--- <input type="hidden" name="FnumberValue" value="" id="FnumberValue"> --->
-                            
-                                <!--- <cfif isDefined('qgetallfieldnumbers.Fnumber') and qgetallfieldnumbers.Fnumber neq ""> --->
-                                <!--- <cfif isDefined('qgetCetaceanNecropsy.Fnumber')  and #qgetCetaceanNecropsy.Fnumber# neq "empty">
-                                    <cfquery name="qgetHistoLCEID" datasource="#Application.dsn#"  result="return_data" >
-                                        SELECT ID from ST_HistoForm where deleted != '1' and Fnumber = '#qgetCetaceanNecropsy.Fnumber#' 
-                                    </cfquery>
-                                    <!--- <cfdump var="#qgetLCEID.ID#" abort="true"> --->
-                                    <cfif  #qgetHistoLCEID.ID# eq " ">
-                                        <cfset form.CetaceanID= "0">
-                                    <cfelse>
-                                        <cfset form.CetaceanID= "#qgetHistoLCEID.ID#">
-                                    </cfif>
-                                    
-                                </cfif> --->
+                     
                                 <a id="histoURLWithLecID"  href="" class="linkhisto">
                                     Open Histopathology
                                 </a>
@@ -12950,7 +12977,6 @@
                     </div>
                     <div class="row pt-15">
                       
-              
                         <div class="col-lg-12 mt-15">
                             <div class="cust-row panel-rw">
                                 <div class="cust-fld"><label class="fl-lbl">Histopathology Report By</label>

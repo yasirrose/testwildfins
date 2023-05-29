@@ -8676,36 +8676,7 @@
         </cfquery>
             <cfreturn qgetPdfFiles>
         </cffunction>
-        <cffunction name="getSearchedData" returntype="any" output="false" access="public" >
-<!---             <cfdump var="test" abort="true"> --->
-            <cfquery name="qGetSearchedData" datasource="#variables.dsn#">
-                SELECT 'CetaceanExam' AS SourceTable, ID, Fnumber, Date, Location, BriefHistory, BSNotes, General, SNM, Mentation, Palpation, Proprioception, Reflexes, RLD, ECGresults, Ultrasoundresults
-                FROM ST_LiveCetaceanExam
-                WHERE (
-                    Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
-                    OR BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR BSNotes LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR General LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR SNM LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Mentation LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Palpation LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Proprioception LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Reflexes LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR RLD LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR ECGresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Ultrasoundresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                )
-                UNION
-                SELECT 'HIForm' AS SourceTable, ID, Fnumber, Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults
-                FROM ST_HIForm
-                WHERE (
-                    Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
-                    OR BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                )
-            </cfquery>   
-<!---             <cfdump  var="#qGetSearchedData#" abort="true"> --->
-             <cfreturn qGetSearchedData>
-        </cffunction>
+ 
 
         <cffunction name="BVremovepdf" returntype="string" output="false" access="remote" returnformat="plain">
 
@@ -8744,6 +8715,234 @@
         </cffunction>
 
 
+        <cffunction name="getSearchedData" returntype="any" output="false" access="public" >
+
+            <cfquery name="qGetSearchedData" datasource="#variables.dsn#">
+                SELECT * 
+                FROM qry_StrandingTabs
+                WHERE (
+                    Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
+                    OR BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR BSNotes LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR General LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR SNM LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Mentation LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Palpation LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Proprioception LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Reflexes LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR RLD LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR ECGresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Ultrasoundresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR ILADComment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR SampleNote LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR SampleComments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR wbc_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR RBC_count_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Hemoglobin_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Hematocrit_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR MCV_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR MCH_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR MCHC_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Segmented_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Band_Neutrophils_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Lymphocytes_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Monocytes_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Eosinophils_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Basophils_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR NRBC_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR RBC_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Platelet_Count_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Platelet_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR WBCMorphology_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Fibrinogen_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR protein_refractometer_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Hemolysis_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Alkaline_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR ALT_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Amylase_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR AST_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Calcium_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Phosphorus_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Ca_Phos_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Cholesterol_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR CPK_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR CREA_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR GGT_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Potassium_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR LDH_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Lipase_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Magnesium_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Bilirubin_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Protein2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Albumin_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Globulin_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR A_G_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Triglycerides_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Sodium_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Chloride_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR CO_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Glucose_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR BUNf_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Anion_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Osmolality_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Iron_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Lipemia_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR BUN_CREA_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Uric_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR D_Bilirubin_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Total_Protein_cap_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR A_G_ration_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Pre_Albumin_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Albumin2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Alpha_1_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR vAlpha_2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Beta_1_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Beta_2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Beta_Total_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Gamma_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Dolphin_SAA_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Na_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR K_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Cl_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR iCa_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR TCO2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Glu_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR BUN_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Crea2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Hct_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Hb_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR AnGap_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Temperature_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR pH_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR PCO2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR PO2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR BEecf_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR HCO3_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR TCO2cg_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR sO2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Lac_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR SComment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR SNote LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+
+                )
+              
+            </cfquery>        
+            <cfreturn qGetSearchedData>
+             <!--- nouman --->
+   
+             <cfdump var="#qGetSearchedData#" abort="true">
+
+            <cfquery name="qGetSearchedData" datasource="#variables.dsn#">
+                SELECT 'Cetacean Exam' AS SourceTable, ID, Fnumber, Date, Location, BriefHistory, BSNotes, General, SNM, Mentation, Palpation, Proprioception, Reflexes, RLD, ECGresults, Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments,
+                NULL AS wbc_comment,NULL AS RBC_count_comment,NULL AS Hemoglobin_comment,NULL AS Hematocrit_comment,NULL AS MCV_comment,NULL AS MCH_comment,NULL AS MCHC_comment,NULL AS Segmented_comment,NULL AS Band_Neutrophils_comment,NULL AS Lymphocytes_comment,NULL AS Monocytes_comment,NULL AS Eosinophils_comment,NULL AS Basophils_comment,NULL AS NRBC_comment,NULL AS RBC_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_comment,NULL AS WBCMorphology_comment,
+                NULL AS Fibrinogen_comment,
+                NULL AS protein_refractometer_comment,NULL AS Hemolysis_comment,NULL AS Alkaline_comment,NULL AS ALT_comment,NULL AS Amylase_comment,NULL AS AST_comment,NULL AS Calcium_comment,NULL AS Phosphorus_comment,NULL AS Ca_Phos_comment,NULL AS Cholesterol_comment,NULL AS CPK_comment,NULL AS CREA_comment,NULL AS GGT_comment,NULL AS Potassium_comment,NULL AS LDH_comment,NULL AS Lipase_comment,NULL AS Magnesium_comment,NULL AS Bilirubin_comment,NULL AS Protein2_comment,NULL AS Albumin_comment,NULL AS Globulin_comment,NULL AS A_G_comment,NULL AS Triglycerides_comment,NULL AS Sodium_comment,NULL AS Chloride_comment,NULL AS CO_comment,NULL AS Glucose_comment,NULL AS BUNf_comment,NULL AS Anion_comment,NULL AS Osmolality_comment,NULL AS Iron_comment,NULL AS Lipemia_comment,NULL AS BUN_CREA_comment,NULL AS Uric_comment,NULL AS D_Bilirubin_comment,
+                NULL AS Total_Protein_cap_comment,NULL AS A_G_ration_comment,NULL AS Pre_Albumin_comment,NULL AS Albumin2_comment,NULL AS Alpha_1_comment,NULL AS vAlpha_2_comment,NULL AS Beta_1_comment,NULL AS Beta_2_comment,NULL AS Beta_Total_comment,NULL AS Gamma_comment,
+                NULL AS Dolphin_SAA_comment,
+                NULL AS Na_comment,NULL AS K_comment,NULL AS Cl_comment,NULL AS iCa_comment,NULL AS TCO2_comment,NULL AS Glu_comment,NULL AS BUN_comment,NULL AS Crea2_comment,NULL AS Hct_comment,NULL AS Hb_comment,NULL AS AnGap_comment,NULL AS Temperature_comment,NULL AS pH_comment,NULL AS PCO2_comment,NULL AS PO2_comment,NULL AS BEecf_comment,NULL AS HCO3_comment,NULL AS TCO2cg_comment,NULL AS sO2_comment,NULL AS Lac_comment
+                FROM ST_LiveCetaceanExam
+
+                UNION
+                SELECT 'HI Form' AS SourceTable, ID, Fnumber, Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments,
+                NULL AS wbc_comment,NULL AS RBC_count_comment,NULL AS Hemoglobin_comment,NULL AS Hematocrit_comment,NULL AS MCV_comment,NULL AS MCH_comment,NULL AS MCHC_comment,NULL AS Segmented_comment,NULL AS Band_Neutrophils_comment,NULL AS Lymphocytes_comment,NULL AS Monocytes_comment,NULL AS Eosinophils_comment,NULL AS Basophils_comment,NULL AS NRBC_comment,NULL AS RBC_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_comment,NULL AS WBCMorphology_comment,
+                NULL AS Fibrinogen_comment,
+                NULL AS protein_refractometer_comment,NULL AS Hemolysis_comment,NULL AS Alkaline_comment,NULL AS ALT_comment,NULL AS Amylase_comment,NULL AS AST_comment,NULL AS Calcium_comment,NULL AS Phosphorus_comment,NULL AS Ca_Phos_comment,NULL AS Cholesterol_comment,NULL AS CPK_comment,NULL AS CREA_comment,NULL AS GGT_comment,NULL AS Potassium_comment,NULL AS LDH_comment,NULL AS Lipase_comment,NULL AS Magnesium_comment,NULL AS Bilirubin_comment,NULL AS Protein2_comment,NULL AS Albumin_comment,NULL AS Globulin_comment,NULL AS A_G_comment,NULL AS Triglycerides_comment,NULL AS Sodium_comment,NULL AS Chloride_comment,NULL AS CO_comment,NULL AS Glucose_comment,NULL AS BUNf_comment,NULL AS Anion_comment,NULL AS Osmolality_comment,NULL AS Iron_comment,NULL AS Lipemia_comment,NULL AS BUN_CREA_comment,NULL AS Uric_comment,NULL AS D_Bilirubin_comment,
+                NULL AS Total_Protein_cap_comment,NULL AS A_G_ration_comment,NULL AS Pre_Albumin_comment,NULL AS Albumin2_comment,NULL AS Alpha_1_comment,NULL AS vAlpha_2_comment,NULL AS Beta_1_comment,NULL AS Beta_2_comment,NULL AS Beta_Total_comment,NULL AS Gamma_comment,
+                NULL AS Dolphin_SAA_comment,
+                NULL AS Na_comment,NULL AS K_comment,NULL AS Cl_comment,NULL AS iCa_comment,NULL AS TCO2_comment,NULL AS Glu_comment,NULL AS BUN_comment,NULL AS Crea2_comment,NULL AS Hct_comment,NULL AS Hb_comment,NULL AS AnGap_comment,NULL AS Temperature_comment,NULL AS pH_comment,NULL AS PCO2_comment,NULL AS PO2_comment,NULL AS BEecf_comment,NULL AS HCO3_comment,NULL AS TCO2cg_comment,NULL AS sO2_comment,NULL AS Lac_comment 
+                FROM ST_HIForm
+
+                UNION
+                SELECT 'Level A Form' AS SourceTable, ID, Fnumber, Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments,
+                NULL AS wbc_comment,NULL AS RBC_count_comment,NULL AS Hemoglobin_comment,NULL AS Hematocrit_comment,NULL AS MCV_comment,NULL AS MCH_comment,NULL AS MCHC_comment,NULL AS Segmented_comment,NULL AS Band_Neutrophils_comment,NULL AS Lymphocytes_comment,NULL AS Monocytes_comment,NULL AS Eosinophils_comment,NULL AS Basophils_comment,NULL AS NRBC_comment,NULL AS RBC_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_comment,NULL AS WBCMorphology_comment,
+                NULL AS Fibrinogen_comment,
+                NULL AS protein_refractometer_comment,NULL AS Hemolysis_comment,NULL AS Alkaline_comment,NULL AS ALT_comment,NULL AS Amylase_comment,NULL AS AST_comment,NULL AS Calcium_comment,NULL AS Phosphorus_comment,NULL AS Ca_Phos_comment,NULL AS Cholesterol_comment,NULL AS CPK_comment,NULL AS CREA_comment,NULL AS GGT_comment,NULL AS Potassium_comment,NULL AS LDH_comment,NULL AS Lipase_comment,NULL AS Magnesium_comment,NULL AS Bilirubin_comment,NULL AS Protein2_comment,NULL AS Albumin_comment,NULL AS Globulin_comment,NULL AS A_G_comment,NULL AS Triglycerides_comment,NULL AS Sodium_comment,NULL AS Chloride_comment,NULL AS CO_comment,NULL AS Glucose_comment,NULL AS BUNf_comment,NULL AS Anion_comment,NULL AS Osmolality_comment,NULL AS Iron_comment,NULL AS Lipemia_comment,NULL AS BUN_CREA_comment,NULL AS Uric_comment,NULL AS D_Bilirubin_comment,
+                NULL AS Total_Protein_cap_comment,NULL AS A_G_ration_comment,NULL AS Pre_Albumin_comment,NULL AS Albumin2_comment,NULL AS Alpha_1_comment,NULL AS vAlpha_2_comment,NULL AS Beta_1_comment,NULL AS Beta_2_comment,NULL AS Beta_Total_comment,NULL AS Gamma_comment,
+                NULL AS Dolphin_SAA_comment,
+                NULL AS Na_comment,NULL AS K_comment,NULL AS Cl_comment,NULL AS iCa_comment,NULL AS TCO2_comment,NULL AS Glu_comment,NULL AS BUN_comment,NULL AS Crea2_comment,NULL AS Hct_comment,NULL AS Hb_comment,NULL AS AnGap_comment,NULL AS Temperature_comment,NULL AS pH_comment,NULL AS PCO2_comment,NULL AS PO2_comment,NULL AS BEecf_comment,NULL AS HCO3_comment,NULL AS TCO2cg_comment,NULL AS sO2_comment,NULL AS Lac_comment
+                FROM ST_LevelAForm
+
+                UNION
+                SELECT 'Histopathology' AS SourceTable, HF.ID, HF.Fnumber, HF.Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, SD.SampleNote , HF.SampleComments,    NULL AS wbc_comment,NULL AS RBC_count_comment,NULL AS Hemoglobin_comment,NULL AS Hematocrit_comment,NULL AS MCV_comment,NULL AS MCH_comment,NULL AS MCHC_comment,NULL AS Segmented_comment,NULL AS Band_Neutrophils_comment,NULL AS Lymphocytes_comment,NULL AS Monocytes_comment,NULL AS Eosinophils_comment,NULL AS Basophils_comment,NULL AS NRBC_comment,NULL AS RBC_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_comment,NULL AS WBCMorphology_comment,
+                NULL AS Fibrinogen_comment,
+                NULL AS protein_refractometer_comment,NULL AS Hemolysis_comment,NULL AS Alkaline_comment,NULL AS ALT_comment,NULL AS Amylase_comment,NULL AS AST_comment,NULL AS Calcium_comment,NULL AS Phosphorus_comment,NULL AS Ca_Phos_comment,NULL AS Cholesterol_comment,NULL AS CPK_comment,NULL AS CREA_comment,NULL AS GGT_comment,NULL AS Potassium_comment,NULL AS LDH_comment,NULL AS Lipase_comment,NULL AS Magnesium_comment,NULL AS Bilirubin_comment,NULL AS Protein2_comment,NULL AS Albumin_comment,NULL AS Globulin_comment,NULL AS A_G_comment,NULL AS Triglycerides_comment,NULL AS Sodium_comment,NULL AS Chloride_comment,NULL AS CO_comment,NULL AS Glucose_comment,NULL AS BUNf_comment,NULL AS Anion_comment,NULL AS Osmolality_comment,NULL AS Iron_comment,NULL AS Lipemia_comment,NULL AS BUN_CREA_comment,NULL AS Uric_comment,NULL AS D_Bilirubin_comment,
+                NULL AS Total_Protein_cap_comment,NULL AS A_G_ration_comment,NULL AS Pre_Albumin_comment,NULL AS Albumin2_comment,NULL AS Alpha_1_comment,NULL AS vAlpha_2_comment,NULL AS Beta_1_comment,NULL AS Beta_2_comment,NULL AS Beta_Total_comment,NULL AS Gamma_comment,
+                NULL AS Dolphin_SAA_comment,
+                NULL AS Na_comment,NULL AS K_comment,NULL AS Cl_comment,NULL AS iCa_comment,NULL AS TCO2_comment,NULL AS Glu_comment,NULL AS BUN_comment,NULL AS Crea2_comment,NULL AS Hct_comment,NULL AS Hb_comment,NULL AS AnGap_comment,NULL AS Temperature_comment,NULL AS pH_comment,NULL AS PCO2_comment,NULL AS PO2_comment,NULL AS BEecf_comment,NULL AS HCO3_comment,NULL AS TCO2cg_comment,NULL AS sO2_comment,NULL AS Lac_comment
+                FROM ST_HistoForm AS HF
+                LEFT JOIN ST_HistoSampleData AS SD ON HF.ID = SD.HI_ID
+
+                UNION
+                SELECT 'Blood Value' AS SourceTable, BV.ID, BV.Fnumber, BV.Date, BV.Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments,  CBC.wbc_comment,CBC.RBC_count_comment,CBC.Hemoglobin_comment,CBC.Hematocrit_comment,CBC.MCV_comment,CBC.MCH_comment,CBC.MCHC_comment,CBC.Segmented_comment,CBC.Band_Neutrophils_comment,CBC.Lymphocytes_comment,CBC.Monocytes_comment,CBC.Eosinophils_comment,CBC.Basophils_comment,CBC.NRBC_comment,CBC.RBC_comment,CBC.Platelet_Count_comment,CBC.Platelet_Count_comment,CBC.Platelet_comment,CBC.WBCMorphology_comment,
+                Fibrinogen.Fibrinogen_comment,
+                Ch.protein_refractometer_comment,Ch.Hemolysis_comment,Ch.Alkaline_comment,Ch.ALT_comment,Ch.Amylase_comment,Ch.AST_comment,Ch.Calcium_comment,Ch.Phosphorus_comment,Ch.Ca_Phos_comment,Ch.Cholesterol_comment,Ch.CPK_comment,Ch.CREA_comment,Ch.GGT_comment,Ch.Potassium_comment,Ch.LDH_comment,Ch.Lipase_comment,Ch.Magnesium_comment,Ch.Bilirubin_comment,Ch.Protein2_comment,Ch.Albumin_comment,Ch.Globulin_comment,Ch.A_G_comment,Ch.Triglycerides_comment,Ch.Sodium_comment,Ch.Chloride_comment,Ch.CO_comment,CH.Glucose_comment,Ch.BUNf_comment,Ch.Anion_comment,Ch.Osmolality_comment,Ch.Iron_comment,Ch.Lipemia_comment,Ch.BUN_CREA_comment,Ch.Uric_comment,Ch.D_Bilirubin_comment,
+                Cze.Total_Protein_cap_comment,Cze.A_G_ration_comment,Cze.Pre_Albumin_comment,Cze.Albumin2_comment,Cze.Alpha_1_comment,Cze.vAlpha_2_comment,Cze.Beta_1_comment,Cze.Beta_2_comment,Cze.Beta_Total_comment,Cze.Gamma_comment,
+                Dolphin.Dolphin_SAA_comment,
+                Chem.Na_comment,Chem.K_comment,Chem.Cl_comment,Chem.iCa_comment,Chem.TCO2_comment,Chem.Glu_comment,Chem.BUN_comment,Chem.Crea2_comment,Chem.Hct_comment,Chem.Hb_comment,Chem.AnGap_comment,                
+                iSTAT.Temperature_comment,iSTAT.pH_comment,iSTAT.PCO2_comment,iSTAT.PO2_comment,iSTAT.BEecf_comment,iSTAT.HCO3_comment,iSTAT.TCO2cg_comment,iSTAT.sO2_comment,iSTAT.Lac_comment
+
+                FROM ST_Blood_Values AS BV
+                LEFT JOIN ST_CBC AS CBC ON BV.ID = CBC.BV_ID
+                LEFT JOIN ST_Fibrinogen AS Fibrinogen ON BV.ID = Fibrinogen.BV_ID
+                LEFT JOIN ST_Chemistry AS Ch ON BV.ID = Ch.BV_ID
+                LEFT JOIN ST_Capillary AS Cze ON BV.ID = Cze.BV_ID
+                LEFT JOIN ST_Dolphin AS Dolphin ON BV.ID = Dolphin.BV_ID
+                LEFT JOIN ST_iSTAT_Chem AS Chem ON BV.ID = Chem.BV_ID
+                LEFT JOIN ST_iSTAT_CG4 AS iSTAT ON BV.ID = iSTAT.BV_ID
+
+            </cfquery>
+
+
+
+   
+                
+            <cfquery name="qGetSearchedData" datasource="#variables.dsn#">
+                  SELECT 'Cetacean Exam' AS SourceTable, ID, Fnumber, Date, Location, BriefHistory, BSNotes, General, SNM, Mentation, Palpation, Proprioception, Reflexes, RLD, ECGresults, Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments
+                FROM ST_LiveCetaceanExam
+                WHERE (
+                    Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
+                    OR BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR BSNotes LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR General LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR SNM LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Mentation LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Palpation LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Proprioception LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Reflexes LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR RLD LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR ECGresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Ultrasoundresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    
+                )
+                UNION
+                SELECT 'HI Form' AS SourceTable, ID, Fnumber, Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments 
+                FROM ST_HIForm
+                WHERE (
+                    Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
+                    OR BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                )
+                UNION
+                SELECT 'Level A Form' AS SourceTable, ID, Fnumber, Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments
+                FROM ST_LevelAForm
+                WHERE (
+                    Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
+                    OR BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR ILADComment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                )
+                UNION
+                SELECT 'Histopathology' AS SourceTable, HF.ID, HF.Fnumber, HF.Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, SD.SampleNote , HF.SampleComments
+                FROM ST_HistoForm AS HF
+                LEFT JOIN ST_HistoSampleData AS SD ON HF.ID = SD.HI_ID
+                WHERE (
+                    HF.Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
+                    OR HF.BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR HF.SampleComments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR SD.SampleNote LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                )
+            </cfquery>
+<!---              <cfdump  var="#qGetSearchedData#" abort="true">  --->
+                <cfreturn qGetSearchedData>
+        </cffunction>
 
 
 

@@ -7,8 +7,7 @@
  <cfset qgetTrackingList=Application.Stranding.getLCE_ten()>
  
 <cfif isdefined("form") and len(trim(form.searchword)) NEQ 0>
-<cfset   qgetTrackingList=Application.Stranding.getSearchedData(form.searchword)>
-<!--- <cfdump var="#qgetTrackingList#" abort="true"> --->
+    <cfset   qgetTrackingList=Application.Stranding.getSearchedData(form.searchword)>
 </cfif>
 		<!-- begin #content -->
 		<div id="content" class="content content-padding">
@@ -45,6 +44,7 @@
                             <tr class="inverse">
                                 <th>Field Number</th>
                                 <th>Stranding Date</th>
+                                <th>Tab Name</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -53,14 +53,60 @@
                          	<tr class="inverse">
                                 <td>#qgetTrackingList.Fnumber#</td>
                                 <td>#qgetTrackingList.Date#</td>
+                                <td>#qgetTrackingList.SourceTable#</td>
                                 <td>
-                                <!---#Application.siteroot#/?Module=Stranding&Page=StrandingTabs
-                                    <a id="CetaceanURLWithLecID" href="http://test.wildfins.org//?Module=Stranding&amp;Page=StrandingTabs&amp;'#qgetTrackingList.SourceTable#'&amp;LCEID=#qgetTrackingList.ID#" class="linkhisto">
-                                        Open
-                                    </a> --->
-                                    <a id="CetaceanURLWithLecID" href="http://test.wildfins.org//?Module=Stranding&amp;Page=StrandingTabs&amp;'#qgetTrackingList.SourceTable#'&amp;LCEID=#qgetTrackingList.ID#" class="linkhisto">
-                                        Open
-                                    </a>
+                       
+                                    <cfif qgetTrackingList.SourceTable eq 'Cetacean Exam'>
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&CetaceanExam&LCEID=#qgetTrackingList.ID#" class="linkhisto">
+                                            Open
+                                        </a>  
+                                                          
+                                    </cfif>
+                                    <cfif qgetTrackingList.SourceTable eq 'HI Form'>
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&HIForm&HIFormID=#qgetTrackingList.ID#" class="linkhisto">
+                                            Open
+                                        </a>                                    
+                                    </cfif>
+                                    <cfif qgetTrackingList.SourceTable eq 'Level A Form'>
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&LevelAForm&LevelAID=#qgetTrackingList.ID#" class="linkhisto">
+                                            Open
+                                        </a>                                    
+                                    </cfif>
+                                    <cfif qgetTrackingList.SourceTable eq 'Histopathology'>
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Histopathology&LCE_HID=#qgetTrackingList.ID#" class="linkhisto">
+                                            Open
+                                        </a>                                    
+                                    </cfif>
+                                    <cfif qgetTrackingList.SourceTable eq 'Blood Value'>
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&BloodValue&BVID=#qgetTrackingList.ID#" class="linkhisto">
+                                            Open
+                                        </a>                                    
+                                    </cfif>
+                                    <cfif qgetTrackingList.SourceTable eq 'Toxicology'>
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Toxicology&ToxiID=#qgetTrackingList.ID#" class="linkhisto">
+                                            Open
+                                        </a>                                    
+                                    </cfif>
+                                    <cfif qgetTrackingList.SourceTable eq 'Ancillary Diagnostics'>
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&AncillaryDiagnostics&ADID=#qgetTrackingList.ID#" class="linkhisto">
+                                            Open
+                                        </a>                                    
+                                    </cfif>
+                                    <cfif qgetTrackingList.SourceTable eq 'Sample Archive'>
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&SampleArchive&SAID=#qgetTrackingList.ID#" class="linkhisto">
+                                            Open
+                                        </a>                                    
+                                    </cfif>
+                                    <cfif qgetTrackingList.SourceTable eq 'Necropsy Report'>
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&NecropsyReport&NRID=#qgetTrackingList.ID#" class="linkhisto">
+                                            Open
+                                        </a>                                    
+                                    </cfif>
+                                    <cfif qgetTrackingList.SourceTable eq 'Morphometrics'>
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Morphometrics&MorphoID=#qgetTrackingList.ID#" class="linkhisto">
+                                            Open
+                                        </a>                                    
+                                    </cfif>
                                 </td>
                             </tr>
                          </cfoutput>
