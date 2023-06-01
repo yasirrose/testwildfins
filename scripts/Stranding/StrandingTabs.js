@@ -2910,7 +2910,7 @@ function checkfield() {
     });
   }
 }
-$("#savebutton").click(function(){
+$("#insertScar").click(function(){
     fieldNumber = $('#fieldnumber').val();
     fieldNumber2 = $('#Fnumber').val().trim();
     if(fieldNumber == '' && fieldNumber2 == ''){
@@ -2921,6 +2921,8 @@ $("#savebutton").click(function(){
         $('#errorMessage').hide();
     }
   });
+
+  
 function integumentshowPictures() {
   var files = $("#Integumentphoto").prop("files");
 

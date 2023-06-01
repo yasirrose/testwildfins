@@ -5675,6 +5675,8 @@
                     ,CNRDATE
                     ,headerImages
                     ,caseReportBox
+                    ,NRDiagnosisCategory
+                    ,NRHistopathologyDiagnosis
                     ) 
                     VALUES
                     (
@@ -5934,6 +5936,8 @@
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
                     ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportNBox#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.NRDiagnosisCategory#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.NRHistopathologyDiagnosis#'>
                     )
                 </cfquery>
                 <cfcatch type="any">
@@ -6319,6 +6323,8 @@
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
                 ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                ,NRDiagnosisCategory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NRDiagnosisCategory#'>
+                ,NRHistopathologyDiagnosis = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NRHistopathologyDiagnosis#'>
                 ,caseReportBox = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportNBox#'>
                 WHERE
                 fnumber =<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Fnumber#'>
@@ -8713,7 +8719,13 @@
             </cfif>
             <cfreturn True>
         </cffunction>
-
+        
+        <cffunction name="getNecropsyImages" returntype="any" output="false" access="public" >
+            <cfquery name="qgetNecropsyImages" datasource="#variables.dsn#">
+                SELECT ID,images,integumentImages,IntenalExamImages,musculoskeletalImages,thoracictImages,abdominalImages,hepatobiliaryImages,cardiovascularImages,pulmonaryImages,lymphoreticularImages,endocrineImages,urogenitalImages,alimentaryImages,centralNervousImages FROM ST_CetaceanNecropsyReport WHERE Fnumber = '#Fnumber#'
+            </cfquery>
+            <cfreturn qgetNecropsyImages>
+        </cffunction>
 
         <cffunction name="getSearchedData" returntype="any" output="false" access="public" >
 
@@ -8823,13 +8835,45 @@
                     OR Lac_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     OR SComment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     OR SNote LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR deathcause LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR historemark LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Bodycondition LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR lessioncomments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR internal_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR muscular_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR thoratic_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR abdominal_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR hepatobiliary_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR cardio_describe LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR cardio_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR pulmonary_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR pulmonary_textarea LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Tentative LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR lympho_other LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR lympho_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR endocrine_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR UROGENITAL_Comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR InjuryLesionAssociatedContents LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Parasitecomments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR nervoussystemcomments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Arsenic LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Cadmium LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Lead LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Mercury LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Thallium LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Selenium LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Iron LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Copper LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Zinc LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Molybdenum LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Manganese LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR Cobalt LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
 
                 )
-              
+                          
             </cfquery>        
             <cfreturn qGetSearchedData>
-             <!--- nouman --->
-   
+
              <cfdump var="#qGetSearchedData#" abort="true">
 
             <cfquery name="qGetSearchedData" datasource="#variables.dsn#">

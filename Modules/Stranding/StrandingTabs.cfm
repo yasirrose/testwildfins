@@ -995,7 +995,25 @@
         <cfset qgetSampleTypeIByID=Application.Stranding.getSampleType_ten()>
         <cfset qgetSampleTypeDataSingle = #qgetSampleTypeIByID#>
     </cfif>
-
+    <cfif isDefined('url.SAID') and url.SAID NEQ '0'> 
+        <cfset form.SEID = url.SAID>
+        <cfset qgetSampleData=Application.Stranding.getSampleArchiveData("#form.SEID#")>
+        <cfset qLCEDataa=Application.Stranding.getSampleArchiveData("#form.SEID#")> 
+        <cfif #qgetSampleData.species# neq "">
+            <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetSampleData.species#")>
+        </cfif>
+        <cfset qgetSampleList=Application.Stranding.getSampleList("#form.SEID#")>
+        <cfset qgetSampleFBNumberList=Application.Stranding.getSampleFBNumberList("#form.SEID#")>        
+        <!---  get all records order by ID  Desc of SampleType agianst SEID--->
+        <cfset qgetSampleTypeIByID=Application.Stranding.getSampleTypeIByID("#form.SEID#")>
+        <!---<cfif  isDefined('form.STID') and form.STID neq "">             
+            <cfset qgetSampleTypeDataSingle=Application.Stranding.getSampleTypeDataSingle("#form.STID#")>
+            <cfset qgetSampleDetailData = Application.Stranding.getSampleDetailDataSingle("#form.STID#")>
+        <cfelse>
+            <cfset qgetSampleTypeDataSingle=Application.Stranding.getSampleType_ten()>
+        </cfif>--->
+        <cfset qgetcetaceanDate=Application.Stranding.getcetaceanexamDate(#form.SEID#)>
+    </cfif>
     <cfif isDefined('Session.SampleArchive') and Session.SampleArchive NEQ ''> 
         <cfset form.SEID = #Session.SampleArchive#>
 
@@ -2568,7 +2586,7 @@
     <!--- getting all fieldnumbers from stranding sections --->
     <!--- <cfset qgetallfieldnumber=application.Stranding.getallfieldnumber()> --->
     <cfset Skeletal_Findingss= ['No Findings','Fractures','Dislocation','Avulsions','Deformities','Other- Note Location in Comments']>
-    <!--- <cfset Conditionsss = ['Fresh Dead', 'Moderate Decomposition' ,'Advanced Decomposition','Mummified']> --->
+    
     <cfset Condition_at_Necropsy = ['Fresh Dead','Moderate Decomposition','Advanced Decomposition','Mummified']>
     <cfset Animal_Renderings = ['Buried On Site','Towed Offshore','Burried and Towed Offshore','Landfill']>
     <cfset Fat_Blubber = ['Abundant - No Atrophy','Mild to Moderate Atrophy','Severe Atrophy','NE']>
@@ -2588,18 +2606,13 @@
     <cfset material_type= ['Hook','Line','Hard Plastic','Plastic Bags','Misc Soft Plastic','Ballon','Other']>
     <cfset Spinal_Cord= ['No Findings','Trauma','Hemorrhage','Necrosis','Exudate','Possible Parasite Ova','Not Examed','Partial Examed','Other']>
     <cfset qgetNxLocation= Application.StaticDataNew.getNxLocation()>
-    <!--- <cfset qgetCetaceanSpecies=Application.Stranding.getCetaceanSpecies()> --->
     <cfset qgetLiverFinding= Application.StaticDataNew.getLiverFinding()>
     <cfset qgetLungFinding= Application.StaticDataNew.getLungFinding()>
     <cfset qgetParasiteLocation= Application.StaticDataNew.getParasiteLocation()>
     <cfset qGIForeignMaterial= Application.StaticDataNew.getGIForeignMaterial()>
     <cfset qgetParasiteType= Application.StaticDataNew.getParasiteType()>
-    <!--- <cfset qgetParasiteLocation= Application.StaticDataNew.getParasiteLocation()> --->
     <cfset qgetLymphNodePresent= Application.StaticDataNew.getLymphNodePresent()>
-    <!--- <cfset qgetNxLocation= Application.StaticDataNew.getNxLocation()> --->
-    <!--- <cfset getTeams=Application.SightingNew.getTeams()> --->
-    <!--- <cfset ageClasss = ['Neonate','YOY','Yearling','Calf','Juvenile','Subadult','Adult','CBD/Unknown','Pup','Fetus']> --->
-    <!--- <cfset sexxx = ['Male','Female','unknown']> --->
+
     <cfparam  name="form.fieldnumber" DEFAULT="empty">
     <cfparam  name="form.report" DEFAULT="emptys">
 
@@ -2609,7 +2622,6 @@
             <cfset CNR = Application.Stranding.CetaceanNecropsyinsert(argumentCollection="#Form#")>
             <cfset form.Nfieldnumber = '#CNR#'> 
             <cfset Session.CetaceanNecropsy = #CNR#>
-
 
             <cfset  Application.Stranding.DynamicNutritioninsert(argumentCollection="#Form#")>
             <cfset  Application.Stranding.DynamicLymphoreticularinsert(argumentCollection="#Form#")>
@@ -2643,25 +2655,19 @@
             <cfset Session.CetaceanNecropsy = ''>  
        </cfif>
         <cfset form.field = form.Nfieldnumber>
-<!---         <cfdump var="#form.Nfieldnumber#" abort="true"> --->
             <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>          
             <cfset qLCEDataa=Application.Stranding.getCetaceanNecropsy("#form.field#")>
             <cfset qgetcetaceanDate.CNRDATE= qLCEDataa.CNRDATE>
 
-        <cfset qgetAllData=Application.Stranding.getAllData("#form.field#")>
-        
-        <cfset qgetNutritional=Application.Stranding.getNutritional("#form.field#")>     
-    
-
-        <cfset qgetLymphoreticular=Application.Stranding.getLymphoreticular("#form.field#")>
-        <cfset qgetParasites=Application.Stranding.getParasites("#form.field#")>
-        <cfif #qgetCetaceanNecropsy.species# neq "">
+            <cfset qgetAllData=Application.Stranding.getAllData("#form.field#")>        
+            <cfset qgetNutritional=Application.Stranding.getNutritional("#form.field#")>   
+            <cfset qgetLymphoreticular=Application.Stranding.getLymphoreticular("#form.field#")>
+            <cfset qgetParasites=Application.Stranding.getParasites("#form.field#")>
+            <cfif #qgetCetaceanNecropsy.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(Cetacean_Species="#qgetCetaceanNecropsy.species#")> 
         </cfif>
         <cfif isDefined('qgetAllData.species') and #qgetAllData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(Cetacean_Species="#qgetAllData.species#")>
-            
-            <!--- <cfdump var="#getCetaceansCode#"><cfabort> --->
         </cfif>
     <cfelse>
         <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy_ten()>
@@ -2675,6 +2681,8 @@
         <cfset form.field = form.Fnumber>
         <cfset form.Fnumber = form.Fnumber>
 
+        <cfset qgetNecropsyImages=Application.Stranding.getNecropsyImages("#form.Fnumber#")> 
+        <!--- <cfdump var="#qgetNecropsyImages#" abort="true"> --->
         <cfset qgetPdfFiles=Application.Stranding.getPdfFiles("#form.Fnumber#")> 
         <cfset qgetHeaderImages=Application.Stranding.getHeaderImages("#form.Fnumber#")> 
         
@@ -2687,7 +2695,6 @@
             </cfloop>
         </cfif>
         </cfloop>
-
         
         <cfset imagesList = "">
         <cfloop query="qgetHeaderImages">
@@ -2700,8 +2707,120 @@
                 </cfloop>               
             </cfif>
         </cfloop>
-        
-<!---         <cfdump var="#imagesList#" abort="true">  --->
+
+        <cfif isDefined('qgetNecropsyImages.IMAGES') and qgetNecropsyImages.IMAGES neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.IMAGES)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop> 
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.INTEGUMENTIMAGES') and qgetNecropsyImages.INTEGUMENTIMAGES neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.INTEGUMENTIMAGES)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.IntenalExamImages') and qgetNecropsyImages.IntenalExamImages neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.IntenalExamImages)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.musculoskeletalImages') and qgetNecropsyImages.musculoskeletalImages neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.musculoskeletalImages)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.thoracictImages') and qgetNecropsyImages.thoracictImages neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.thoracictImages)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.abdominalImages') and qgetNecropsyImages.abdominalImages neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.abdominalImages)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.hepatobiliaryImages') and qgetNecropsyImages.hepatobiliaryImages neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.hepatobiliaryImages)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.cardiovascularImages') and qgetNecropsyImages.cardiovascularImages neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.cardiovascularImages)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.pulmonaryImages') and qgetNecropsyImages.pulmonaryImages neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.pulmonaryImages)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.lymphoreticularImages') and qgetNecropsyImages.lymphoreticularImages neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.lymphoreticularImages)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.endocrineImages') and qgetNecropsyImages.endocrineImages neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.endocrineImages)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.urogenitalImages') and qgetNecropsyImages.urogenitalImages neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.urogenitalImages)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.alimentaryImages') and qgetNecropsyImages.alimentaryImages neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.alimentaryImages)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif isDefined('qgetNecropsyImages.centralNervousImages') and qgetNecropsyImages.centralNervousImages neq ''>
+            <cfset myImageArray = listToArray(qgetNecropsyImages.centralNervousImages)>
+            <cfloop array="#myImageArray#" index="i">
+                <cfif NOT ListFind(imagesList, "http://cloud.wildfins.org/#i#")>
+                    <cfset imagesList = ListAppend(imagesList, "http://cloud.wildfins.org/#i#", ",")> 
+                </cfif>
+            </cfloop>
+        </cfif>
+
     <cfif (imagesList neq '') or (pdfList neq '')>
         <cfif imagesList eq ''>
             <cfset Src = "#pdfList#">
@@ -2763,7 +2882,6 @@
        <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllFnumberData("#form.Morphometrics_ID#")>
        <cfset qgetVeterinarians= Application.StaticDataNew.getVeterinarians()>
        <cfset getTeams=Application.SightingNew.getTeams()>
-                  <!---<cfdump var="#qLCEDataa#"><cfabort> --->
     <cfoutput>
     <cfsavecontent variable="myVariableName">
    
@@ -2907,9 +3025,9 @@
                                     <tr>
                                         <td style="height: 80px;"></td>
                                     </tr> 
-                                    <tr>
+                                    <!---<tr> 
                                         <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">1 │ Cetacean Necropsy Report</td>
-                                    </tr>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 50px;"></td>
                                     </tr> 
@@ -3197,9 +3315,9 @@
                                     <tr>
                                         <td style="height: 80px;"></td>
                                     </tr>
-                                    <tr>
+                                    <!---<tr>
                                         <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">2 │ Cetacean Necropsy Report</td>
-                                    </tr>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 50px;"></td>
                                     </tr>
@@ -3314,9 +3432,9 @@
                                         <td style="height: 80px;"></td>
                                     </tr>
                                     
-                                    <tr>
+                                    <!---<tr>
                                         <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">3 │ Cetacean Necropsy Report</td>
-                                    </tr>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 50px"></td>
                                     </tr>
@@ -3452,9 +3570,9 @@
                                     <tr>
                                         <td style="height: 80px"></td>
                                     </tr>
-                                    <tr>
+                                   <!--- <tr>
                                         <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">4 │ Cetacean Necropsy Report</td>
-                                    </tr>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 60px"></td>
                                     </tr>
@@ -3543,9 +3661,9 @@
                                     <tr>
                                         <td style="height: 80px"></td>
                                     </tr>
-                                    <tr>
+                                    <!---<tr>
                                         <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">5 │ Cetacean Necropsy Report</td>
-                                    </tr>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 60px"></td>
                                     </tr>
@@ -3656,9 +3774,9 @@
                                     <tr>
                                         <td style="height: 80px;"></td>
                                     </tr>
-                                    <tr>
+                                    <!---<tr>
                                         <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">6 │Cetacean Necropsy Report</td>
-                                    </tr>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 60px"></td>
                                     </tr>
@@ -3765,9 +3883,9 @@
                                     <tr>
                                         <td style="height: 60px"></td>
                                     </tr>
-                                    <tr>
+                                    <!---<tr>
                                         <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">7 │Cetacean Necropsy Report</td>
-                                    </tr>
+                                    </tr>--->
                                     <tr>
                                         <td style="height: 20px"></td>
                                     </tr>
@@ -3848,9 +3966,9 @@
                                     <tr>
                                         <td style="height: 400px"></td>
                                     </tr>
-                                    <tr>
+                                    <!---<tr>
                                         <td style="line-height: 0; text-align: right; font-size: 16px; font-family: Arial, Helvetica, sans-serif;">8 │Cetacean Necropsy Report</td>
-                                    </tr>       
+                                    </tr> --->      
                                 </table>    
                             </td>    
                         </tr>	
@@ -3889,31 +4007,39 @@
         <cfset form.field = #Session.CetaceanNecropsy# >
         <cfset form.NFIELDNUMBER = #Session.CetaceanNecropsy# >
 
-        <!--- <cfdump var="#form.field#">--->
-            <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>          
-            <!--- <cfset qLCEDataa=Application.Stranding.getCetaceanNecropsy("#form.field#")> --->
-            <cfset qgetcetaceanDate.CNRDATE= qLCEDataa.CNRDATE>
-             <!--- <cfdump var="#qgetCetaceanNecropsy#" abort="true">/ --->
-            <!--- <cfdump var="#qLCEDataa#"><cfabort>  --->
-        <cfset qgetAllData=Application.Stranding.getAllData("#form.field#")>
-        
+        <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>          
+        <!--- <cfset qLCEDataa=Application.Stranding.getCetaceanNecropsy("#form.field#")> --->
+        <cfset qgetcetaceanDate.CNRDATE= qLCEDataa.CNRDATE>
+        <cfset qgetAllData=Application.Stranding.getAllData("#form.field#")>        
         <cfset qgetNutritional=Application.Stranding.getNutritional("#form.field#")>     
-    
-
         <cfset qgetLymphoreticular=Application.Stranding.getLymphoreticular("#form.field#")>
-        <!--- <cfdump var="#qgetLymphoreticular#" abort="true"> --->
         <cfset qgetParasites=Application.Stranding.getParasites("#form.field#")>
         <cfif #qgetCetaceanNecropsy.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(Cetacean_Species="#qgetCetaceanNecropsy.species#")>
-            
         </cfif>
         <cfif isDefined('qgetAllData.species') and #qgetAllData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(Cetacean_Species="#qgetAllData.species#")>
-            
-            <!--- <cfdump var="#getCetaceansCode#"><cfabort> --->
         </cfif>
     </cfif>
+    <cfif isDefined('url.NRID') and url.NRID NEQ '0'>
+        <cfset form.field = url.NRID >
+        <cfset form.NFIELDNUMBER = url.NRID >
 
+        <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>   
+<!---         <cfdump var="#qgetCetaceanNecropsy#" abort="true">        --->
+        <cfset qLCEDataa=Application.Stranding.getCetaceanNecropsy("#form.field#")> 
+        <cfset qgetcetaceanDate.CNRDATE= qLCEDataa.CNRDATE>
+        <cfset qgetAllData=Application.Stranding.getAllData("#form.field#")>        
+        <cfset qgetNutritional=Application.Stranding.getNutritional("#form.field#")>     
+        <cfset qgetLymphoreticular=Application.Stranding.getLymphoreticular("#form.field#")>
+        <cfset qgetParasites=Application.Stranding.getParasites("#form.field#")>
+        <cfif #qgetCetaceanNecropsy.species# neq "">
+            <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(Cetacean_Species="#qgetCetaceanNecropsy.species#")>
+        </cfif>
+        <cfif isDefined('qgetAllData.species') and #qgetAllData.species# neq "">
+            <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(Cetacean_Species="#qgetAllData.species#")>
+        </cfif>
+    </cfif>
 
 <!--- end for necropsy --->
 
@@ -3944,21 +4070,26 @@
    <cfif  isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "">
     <cfif Session.Morphometrics NEQ form.Morphometrics_ID>
         <cfset Session.Morphometrics = ''>
-        </cfif>
+    </cfif>
         <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
-    <!--- <cfdump var="#qgetMorphometricsData#" abort="true"> --->
     <cfset qLCEDataa=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")> 
     <cfset qgetcetaceanDate=Application.Stranding.getMorphometricsNecropsyDate(#form.Morphometrics_ID#)>
     <cfif #qgetMorphometricsData.species# neq "">
         <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetMorphometricsData.species#")>
     </cfif>
 </cfif>
-
+<cfif isDefined('url.MorphoID') and url.MorphoID NEQ '0'> 
+    <cfset form.Morphometrics_ID = url.MorphoID>
+    <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
+    <cfset qLCEDataa=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
+    <cfset qgetcetaceanDate=Application.Stranding.getMorphometricsNecropsyDate(#form.Morphometrics_ID#)>
+    <cfif #qgetMorphometricsData.species# neq "">
+        <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetMorphometricsData.species#")>
+    </cfif>
+</cfif>
 <cfif isDefined('Session.Morphometrics') and Session.Morphometrics NEQ ''> 
     <cfset form.Morphometrics_ID = #Session.Morphometrics#>
     <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
-    <!--- <cfdump var="#qgetMorphometricsData#" abort="true"> --->
-    <!--- <cfset qLCEDataa=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>  --->
     <cfset qgetcetaceanDate=Application.Stranding.getMorphometricsNecropsyDate(#form.Morphometrics_ID#)>
     <cfif #qgetMorphometricsData.species# neq "">
         <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetMorphometricsData.species#")>
@@ -3971,8 +4102,7 @@
 <!--- start data for all header --->
 <!---for HIForm --->
 <cfif (isDefined('form.LCEID') and form.LCEID neq "") || (isDefined('form.bloodValue_ID') and form.bloodValue_ID neq "") || (isDefined('form.His_ID') and form.His_ID neq "") || (isDefined('form.LA_ID') and form.LA_ID neq "") || (isDefined('form.HI_ID') and form.HI_ID neq "") || (isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "") || (isDefined('form.AD_ID') and form.AD_ID neq "") || (isDefined('form.Nfieldnumber') and form.Nfieldnumber neq "") || (isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "") || (isDefined('form.SEID') and form.SEID neq "")>
-    <!--- <cfdump var="#form.Toxicology_ID#" abort="true"> --->
-    <!--- ceteceanExam test--->
+  
     <cfif isDefined('form.LCEID') and form.LCEID neq "">        
         <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
             SELECT Fnumber from ST_LiveCetaceanExam where ID = #form.LCEID#
@@ -6511,36 +6641,7 @@
 
             <!--- start for Toxicology --->
             <div class="row" style="display:none;" id="ToxicologyFormSerch">
-                <!--- <div class="col-lg-3 col-md-4">
-                    <div class="form-group blood-from-froup input-group select-width">
-                        <form action="" method="post" id="myformToxicology">
-                            <label for="sel1">Select Toxicology</label>
-                            <div class="input"> 
-                                <select class="form-control search-box" name="Toxicology_ID" onChange="formToxicology()">
-                                    <option value="">Select Toxicology</option>
-                                    <cfloop query="getToxicologyID">
-                                        <option value="#getToxicologyID.ID#" <cfif isDefined('form.Toxicology_ID') and form.Toxicology_ID eq #getToxicologyID.ID#>selected</cfif>>#getToxicologyID.ID#</option>
-                                    </cfloop>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                </div> --->
-                <!---<div class="col-lg-3 col-md-4">
-                    <div class="form-group blood-from-froup input-group select-width">
-                        <form  action="" method="post" id="myformToxicologybyDate">
-                            <label for="sel1">Search Toxicology By Analysis Date:</label>
-                            <div class="input"> 
-                                <select class="form-control search-box" name="Toxicology_ID" onChange="formToxicologybyDate()">
-                                    <option value="">Select Date</option>
-                                    <cfloop query="qgetToxicologyDate">
-                                        <option value="#qgetToxicologyDate.ID#" <cfif isDefined('form.Toxicology_ID') and form.Toxicology_ID eq #qgetToxicologyDate.ID#>selected</cfif>>#qgetToxicologyDate.date#</option>
-                                    </cfloop>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                </div>--->
+       
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group blood-from-froup input-group select-width">
                     <form  action="" method="post" id="myformToxicologybyFieldNumber">
@@ -6559,59 +6660,12 @@
                 <div class="col-md-3 reset-btn">
                     <input type="button" name="reset" id="" class="btn btn-default" value="Reset" onClick="ResetAll()"/>                
                 </div>
-                <!--- <cfif isDefined('form.HI_ID') and form.HI_ID neq "">
-                    <div class="col-lg-3 col-md-4">
-                        <div class="form-group blood-from-froup input-group select-width">
-                            <label for="sel1">Cetacean Exam Number</label>
-                            <div class="input">
-                                <input type="text" value="#qgetHIData.LCE_ID#" class="form-control" readonly>
-                            </div>
-                        </div>
-                    </div>
-                <cfelse>
-                    <div class="col-lg-3 col-md-4">
-                        <div class="form-group blood-from-froup input-group select-width">
-                            <label for="sel1">Cetacean Exam Number</label>
-                            <div class="input">
-                                <input type="text" value="#url.LCE_ID#" class="form-control" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </cfif>     --->
+         
             </div>
             <!--- end for Toxicology --->
             <!--- start for AncillaryDiagnostics --->
             <div class="row" style="display:none;" id="AncillaryDiagnosticsFormSerch">
-                <!--- <div class="col-lg-3 col-md-4">
-                    <div class="form-group input-group select-width">
-                        <form id="myformAncillaryDiagnosticsSerch" action="" method="post" >
-                            <label for="sel1">Select Ancillary Diagnostics</label>
-                            <div class="input"> 
-                                <select class="form-control search-box" name="AD_ID" onChange="formAncillaryDiagnosticsSerch()">
-                                    <option value="">Select Ancillary Diagnostics</option>
-                                    <cfloop query="getAnclillaryID">
-                                        <option value="#getAnclillaryID.ID#" <cfif isDefined('form.AD_ID') and form.AD_ID eq #getAnclillaryID.ID#>selected</cfif>>#getAnclillaryID.ID#</option>
-                                    </cfloop>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                </div> --->
-               <!--- <div class="col-lg-3 col-md-4">
-                    <div class="form-group input-group select-width">
-                        <form  action="" method="post" id="myformAncillaryDiagnosticsSerchByDate">
-                            <label for="sel1">Search Ancillary Diagnostics By Date:</label>
-                            <div class="input"> 
-                                <select class="form-control search-box" name="AD_ID" onChange="formAncillaryDiagnosticsSerchByDate()">
-                                    <option value="">Select Date</option>
-                                    <cfloop query="qgetAnclillaryDate">
-                                        <option value="#qgetAnclillaryDate.ID#" <cfif isDefined('form.AD_ID') and form.AD_ID eq #qgetAnclillaryDate.ID#>selected</cfif>>#qgetAnclillaryDate.date#</option>
-                                    </cfloop>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                </div>--->
+        
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myformAncillaryDiagnosticsSerchByFieldNumber">
@@ -11746,18 +11800,12 @@
                 <div role="tabpanel" class="tab-pane" id="Toxicology">
                     <input type="hidden"  name="TX_ID" id="TX_IDValue" value="#qgetToxicologyData.ID#">
                     <input type="hidden" id="Toxicology_IDValue"  name="Toxicology_ID" value="">
-                    <!--- <input type="hidden"  name="HI_ID" value="#qgetToxicologyData.ID#"> --->
                     <input type="hidden" name="tisu_type" value="#qgetToxitype.Tissue_type#">
                     <input type="hidden" name="toxi_type_ID" value="#qgetToxitype.ID#">
-                    <!--- <input type="hidden" name="LCE_ID" value="#qgetToxicologyData.LCE_ID#"> --->
                     
                     <!--- this input field is using for check in stranding.cfc for general Update function --->
                     <input type="hidden"  name="check" value="1">
-                    <!--- <input type="hidden"  name="bloodvalue_fields" value="1">
-                    <input type="hidden"  name="blood_toxi" value="1"> --->
-                    <!--- <input type="hidden"  name="TissueTypeName" value="">  --->
-
-
+            
                     <h5 class="mb-1"><strong>Documents</strong></h5>
                     <input type="hidden" name="toxipdfFiles" value="#qgetToxicologyData.pdfFiles#" id="toxipdfFiles">
                     <div class="form-holder">  
@@ -12990,7 +13038,7 @@
                                             </cfif>
                                         </cfloop>
                                     </cfif>
-                                    <textarea id="top-area" name="" rows="1" class="text-field" cols="50"  maxlength="1024" >#myList#</textarea>
+                                    <textarea id="top-area" name="" rows="1" class="text-field" cols="50"  maxlength="1024" readonly="readonly">#myList#</textarea>
                                 </div>
                             </div>
                         </div>
@@ -12998,9 +13046,8 @@
                             <div class="cust-row panel-rw">
                                 <div class="cust-fld"><label class="fl-lbl">Primary Diagnosis Category</label>
                                 </div>
-                                <div class="cust-inp">
-                                    <!-- <input type="text" name="deathcause" placeholder="Expandable field to multi-line" value="#qgetCetaceanNecropsy.deathcause#"class="text-field"> -->
-                                    <textarea id="top-area" name="" rows="1" class="text-field" cols="50"  maxlength="1024" ></textarea>
+                                <div class="cust-inp">                                 
+                                    <textarea id="top-area" name="NRDiagnosisCategory" rows="1" class="text-field" cols="50"  maxlength="1024" >#qgetCetaceanNecropsy.NRDiagnosisCategory#</textarea>
                                 </div>
                             </div>
                         </div>
@@ -13023,10 +13070,7 @@
                                 <div class="cust-fld"><label class="fl-lbl">Histopathology Diagnosis</label>
                                 </div>
                                 <div class="cust-inp">
-                                    <select class="stl-op" name="" id="">
-                                        <option value="">Select</option>
-                                       
-                                    </select>
+                                    <textarea id="top-area" name="NRHistopathologyDiagnosis" rows="1" class="text-field" cols="50"  maxlength="1024" >#qgetCetaceanNecropsy.NRHistopathologyDiagnosis#</textarea>
                                 </div>
                             </div>
                         </div>          

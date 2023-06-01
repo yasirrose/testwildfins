@@ -419,6 +419,7 @@
                      <li <cfif Page eq 'IR_CountyLocation' > class='active'</cfif>><a href="#Application.superadmin#?Module=StaticData&Page=IR_CountyLocation">IR County/Location</a></li>
                      <li <cfif Page eq 'Descriptions' > class='active'</cfif>><a href="#Application.superadmin#?Module=StaticData&Page=Descriptions">Fin Change Descriptions</a></li>
                      <li <cfif Page eq 'SightingMap' > class='active'</cfif>><a href="#Application.superadmin#?Module=StaticData&Page=SightingMap">SightingMap</a></li>
+                     <li <cfif Page eq 'PermanentScar' > class='active'</cfif>><a href="#Application.superadmin#?Module=StaticData&Page=PermanentScar">Permanent Scar</a></li>
                   </ul>
                </li>
             </cfif>
