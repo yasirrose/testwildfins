@@ -3236,10 +3236,9 @@ function histoUploadshowPictures() {
   }
 }
 function histoPdfRemove(el) {
-  ID = $("#form_id").val();
+  ID = $("#report_ID").val();
   var element = el;
   pdffile = element.id;
-  // console.log(pdffile);
 
   data = $("#histoImages").val();
 
@@ -4924,7 +4923,7 @@ function ceteacenExamImg(){
   }      
 }
 function removeExam(el){
-  // alert();
+
   ID = $('#form_id').val();
   var element = el;
   pdffile = element.id
@@ -6008,6 +6007,7 @@ function headershowPictures() {
 
 function headerImageremove(element) {
   ID = $("#form_id").val();
+
   image = element.id;
   data = $("#headerImagesFile").val();
   data1 = data.split(",");
@@ -6023,8 +6023,6 @@ function headerImageremove(element) {
     type: "POST",
     data: { ID: ID, image: image, imgValue: data2 },
     success: function(data) {
-      // PDFArray = PDFArray.filter(e => e !== pdffile);
-      // $('#pdfFiles').val(PDFArray);
       element.parentNode.remove();
       $("#hImages").prop("disabled", false);
       // console.log("data");
@@ -6108,7 +6106,7 @@ function BloodValuePDFFile(){
 }
 function removeBVPDF(el){
 
-    ID = $('#form_id').val();
+    ID = $('#BloodVal_ID').val();
     var element = el;
     pdffile = element.id
 
@@ -6213,7 +6211,7 @@ function histoPDFFile(){
 }
 function removeHistoPDF(el){
 
-    ID = $('#form_id').val();
+    ID = $('#Histo_ID').val();
     var element = el;
     pdffile = element.id
 

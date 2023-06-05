@@ -26,11 +26,12 @@
       select Code from Cetaceans where ID = '#FORM.CetaceanId#'
     </cfquery>
 
-<cfset form.cetacean_Code = qgetlesionCode.Code>
-<cfset qGetCetacean = Application.Cetaceans.getCetacean(argumentCollection="#Form#")>
+    <cfset form.cetacean_Code = qgetlesionCode.Code>    
+    <cfset qgetPermanentScar = Application.Cetaceans.getPermanentScar(argumentCollection="#Form#")>
+   
+    <cfset qGetCetacean = Application.Cetaceans.getCetacean(argumentCollection="#Form#")>
 
-<cfset qgetCetacean_Lesions = Application.Cetaceans.getCetacean_Lesions(argumentCollection="#Form#")>
-<!--- <cfdump var="#qgetCetacean_Lesions#" abort='true'>  --->
+    <cfset qgetCetacean_Lesions = Application.Cetaceans.getCetacean_Lesions(argumentCollection="#Form#")>
     
     <cfif qGetCetacean.RECORDCOUNT EQ 0> 
       <cfset isDataAvaiable = "Record not found on selected CODE">       
@@ -525,8 +526,53 @@
           </div>
         </div>
       </div>
+        <h3>Permanent Scar History</h3>
+              <div class="col-lg-12" style="margin-top:10px">
+                <table id="data-table" data-order='[[1,"asc"]]' class="table panel table-bordered table-hover">
+                  <thead>
+                    <tr class="inverse">
+                      <th>Cetacean ID</th>
+                      <th>Code</th>
+                      <th>Date</th>
+                      <th>Scar Type </th>
+                      <th>Body Region</th>
+                      <th>Side of Body</th>
+                      <th>Image</th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                  <cfif isDefined('qgetPermanentScar')>
+                    <cfloop query='qgetPermanentScar'>
+                      <tr class="gradeU_#qgetPermanentScar.ID#">
+                        <td id="CI_#qgetPermanentScar.ID#">#qgetPermanentScar.CetaceanId#</td>
+                        <td id="CetaceanCode_#qgetPermanentScar.ID#">#qgetPermanentScar.CetaceanCode#</td>
+                        <td id="ScarDate_#qgetPermanentScar.ID#">#DateFormat(qgetPermanentScar.ScarDate, "mm/dd/yyyy")#</td>
+                        <td id="ScarType_#qgetPermanentScar.ID#">#qgetPermanentScar.ScarType#</td>
+                        <td id="BodyRegion_#qgetPermanentScar.ID#">#qgetPermanentScar.BodyRegion#</td>
+                        <td id="SideOfBody_#qgetPermanentScar.ID#">#qgetPermanentScar.SideOfBody#</td>
+                        <td>
+                        <cfif qgetPermanentScar.PrimaryImage neq ''>
+                            <cfset setPrimaryImage=qgetPermanentScar.PrimaryImage>
+                        <cfelse>
+                            <cfset setPrimaryImage='no-image.jpg'>
+                        </cfif>
+                        <cfif qgetPermanentScar.SecondryImage neq ''>
+                            <cfset setSecondaryImage=qgetPermanentScar.SecondryImage>
+                        <cfelse>
+                            <cfset setSecondaryImage='no-image.jpg'>
+                        </cfif>
+                        <img id="PrimaryImage_#qgetPermanentScar.ID#" src="#Application.CloudRoot##setPrimaryImage#"  style="max-width: 50%;">
+                        <img id="SecondryImage_#qgetPermanentScar.ID#" src="#Application.CloudRoot##setSecondaryImage#"  style="max-width: 50%;">
+                    </td>
+                      </tr>
+                    </cfloop>
+                    </cfif>
+                  </tbody>
+                </table>
+            </div>
     </div>
     </div>
+
   </cfoutput>
   
   <!-- Creates the bootstrap modal where the image will appear -->

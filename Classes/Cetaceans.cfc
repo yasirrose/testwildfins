@@ -2020,6 +2020,12 @@
         </cfquery>
        <cfreturn "true">
     </cffunction>
+    <cffunction name="getPermanentScar" returntype="any" output="false" access="public" >
+        <cfquery name="qgetPermanentScar" datasource="#Application.dsn#">
+            select * from PermanentScar where CetaceanCode = '#FORM.cetacean_Code#'
+          </cfquery>
+       <cfreturn qgetPermanentScar>
+    </cffunction>
 
 
 </cfcomponent>

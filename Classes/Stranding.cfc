@@ -722,13 +722,11 @@
 
     <cffunction name="removepdf" returntype="string" output="false" access="remote" returnformat="plain">
         <cfquery name="removePdfFiles" datasource="#Application.dsn#" result = "results">
-                update ST_LiveCetaceanExam set
-                pdfFiles=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-        
-                    where
-                    ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-                    
-                </cfquery>
+            update ST_LiveCetaceanExam set
+            pdfFiles=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                where
+                ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>                    
+        </cfquery>
                         <!--- <cfdump var=#results# abort="true"> --->
                
         <cfif len(trim(#pdf#))>
@@ -8637,14 +8635,12 @@
 
     <cffunction name="removeHeaderImage" returntype="string" output="false" access="remote" returnformat="plain">
         <!--- <cfdump var=#ID# abort="true"> --->
-        <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
-        update ST_LiveCetaceanExam set
-        headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-
-            where
-            ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-
- </cfquery>
+        <!--- <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+            update ST_LiveCetaceanExam set
+            headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                where
+                ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+        </cfquery> --->
          <!--- <cfdump var=#results# abort="true"> --->
         <cfif len(trim(#image#))>
             <cfif FileExists("#Application.CloudDirectory&image#")>
@@ -8868,9 +8864,21 @@
                     OR Molybdenum LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     OR Manganese LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     OR Cobalt LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR NAA LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR NMFS LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR NDB LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR affiliatedID LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR hera LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR ageClass LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR actualClass LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR InitialCondition LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR FinalCondition LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR lat LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR lon LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR county LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
 
                 )
-                          
+  
             </cfquery>        
             <cfreturn qGetSearchedData>
 

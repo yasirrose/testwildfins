@@ -8707,20 +8707,9 @@
                                 <input class="input-style xl-width" type="checkbox" value="1" name="caseReportLABox" id="caseReportLABox" <cfif (isdefined('qgetLevelAData.caseReportBox') and  qgetLevelAData.caseReportBox eq '1')>checked</cfif>>	
                          </div>
                      </div>
-                     
-                     <!--- <cfif url.LCE_ID neq 0>
-                        <cfset qgetLevelAData=Application.Stranding.getLevelA_ten()>
-                    </cfif>
-                    <cfif  isDefined('form.HI_ID') and form.HI_ID neq "">
-                        <cfset form.LCEID = form.HI_ID>
-                        <cfset qgetLevelAData=Application.Stranding.getLevelAData(argumentCollection="#Form#")>
-                    <cfelse>
-                        <cfset qgetLevelAData=Application.Stranding.getLevelA_ten()>
-                    </cfif> --->
+                    
                     <h5 class="mb-1"><strong>Stranding Event Details</strong></h5>
                     <input type="hidden"  name="level_A_ID" id="level_A_ID" value="#qgetLevelAData.ID#">
-                    <!--- <input type="hidden"  name="ID" value="#qgetLevelAData.ID#"> --->
-                    <!--- <input type="hidden" name="LCE_ID" value="#qgetLevelAData.LCE_ID#"> --->
                     <div class="form-holder">  
                         <div class="form-group">
                             <div class="row">
@@ -8836,11 +8825,7 @@
                     </div>
                     <cfif findNoCase("Read only ST", permissions) eq 0>
                         <div class="flex-center flex-row flex-wrap">
-                            <!--- <div class="flex-center flex-row flex-wrap bottons-wrap">
-                                <input type="submit" id="ToLevelAForm" class="btn btn-skyblue m-rl-4" name="SaveandgotoHistopathology" value="Save and go to Histopathology" onclick="chkreq(event)">
-                                <input type="button" id="ToIR" class="btn btn-skyblue m-rl-4" value="Save and go to  Incident Report" onclick="chkreq(event)">
-                                <input type="button" id="ToSamples" class="btn btn-skyblue m-rl-4" value="Save and go to  Samples">
-                            </div> --->
+                      
                             <div class="row mt-4 file-tabdesign-row">
                                 <form id="myform" enctype="multipart/form-data" action="" method="post" >
                                     <div class="col-lg-12 dis-flex just-center choose-file-tabdesign">
@@ -8857,27 +8842,9 @@
                                     </div>
                                 </form>
                             </div>
-                            <!--- <cfif (permissions eq "full_access")>
-                                <div class="row mt-4 file-tabdesign-row">
-                                    <form id="myform" enctype="multipart/form-data" action="" method="post" >
-                                        <div class="col-lg-12 dis-flex just-center choose-file-tabdesign">
-                                            <div class="form-group select-width">
-                                                <cfif (permissions eq "full_access")>
-                                                    <input type="file" name="LevelAsampleSpecialFile" required>
-                                                </cfif>
-                                            </div>
-                                            <div class="form-group select-width">
-                                                <cfif (permissions eq "full_access")>
-                                                    <button type="submit" class="btn btn-success">Import</button>
-                                                </cfif>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </cfif> --->
+              
                             <div class="flex-center flex-wrap bottons-wrap tabdesign-foot-btns">
                                 <input type="submit" id="SaveAndNew" name="SaveAndNewLA" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">
-                                <!--- <input type="submit" id="SaveAndClose" class="btn btn-green m-rl-4" name="SaveAndClose"value="Save and Close" onclick="chkreq(event)"> --->
                                 <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.LCEID') and form.LCEID neq "")>
                                     <input type="submit" id="" name="levelAformDelete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                                 </cfif>
@@ -8891,26 +8858,7 @@
                     </div>
                     <!--- start for histo --->
             <div role="tabpanel" class="tab-pane" id="HistoForm">
-                    
-                     <!---  Following logic to get the data from the HI table and seting value to qgetHIData variable --->
-                <!--- <cfif url.LCE_ID neq 0>
-                    <cfset qgetHIData=Application.Stranding.getHisto_ten()>
-                </cfif>
-                <cfif  isDefined('form.HI_ID') and form.HI_ID neq "">
-                    <cfset form.LCEID = form.HI_ID>
-                    <cfset qgetHIData=Application.Stranding.getHistoData(argumentCollection="#Form#")>
-                    <input type="hidden" name="LCE_ID" value="#qgetHIData.LCE_ID#">
-                <cfelse>
-                    <cfset qgetHIData=Application.Stranding.getHisto_ten()>
-                <input type="hidden" name="LCE_ID" value="#url.LCE_ID#">
-                </cfif> --->
-                
-                <input type="hidden"  name="Histo_ID" id="Histo_ID" value="#qgetHIDataa.ID#">
-                <!--- <input type="hidden"  name="ID" value="#qgetHIDataa.ID#"> --->
-                
-                <!--- this input field is using for check in stranding.cfc for general Update function --->
-                <!--- <input type="hidden"  name="check" value="1">
-                <input type="hidden" name="histopathology_fields" value="1"> --->
+                <input type="hidden"  name="Histo_ID" id="Histo_ID" value="#qgetHIDataa.ID#">        
                 <div class="form-holder">  
                     <div class="form-group">
                         <div class="row">
@@ -9065,14 +9013,9 @@
 
                 <cfif findNoCase("Read only ST", permissions) eq 0>
                     <div class="flex-center flex-row flex-wrap">
-                        <!--- <div class="flex-center flex-row flex-wrap bottons-wrap">
-                            <input type="submit" id="ToLevelAForm" class="btn btn-skyblue m-rl-4" name="SaveandgotoBloodForm" value="Save and go to Blood Values" onclick="chkreq(event)">
-                            <input type="button" id="ToIR" class="btn btn-skyblue m-rl-4" value="Save and go to  Incident Report">
-                            <input type="button" id="ToSamples" class="btn btn-skyblue m-rl-4" value="Save and go to  Samples">
-                        </div> --->
+                   
                         <div class="flex-center flex-wrap bottons-wrap">
-                            <input type="submit" id="SaveAndNew" name="HistoSaveAndNew" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">
-                            <!--- <input type="submit" id="SaveAndClose" class="btn btn-green m-rl-4" name="SaveAndClose" value="Save and Close" onclick="chkreq(event)"> --->
+                            <input type="submit" id="SaveAndNew" name="HistoSaveAndNew" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">                        
                             <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.LCEID') and form.LCEID neq "")>
                                 <input type="submit" id="" name="histoDelete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                             </cfif>
@@ -9125,6 +9068,7 @@
             
             <!--- Start for blood value --->
             <div role="tabpanel" class="tab-pane" id="BloodValue">
+                <input type="hidden"  name="BloodVal_ID" id="BloodVal_ID" value="#qgetBloodValueData.ID#">
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12"> 
                         <div class="form-group blood-from-froup flex-center flex-wrap-wrap">

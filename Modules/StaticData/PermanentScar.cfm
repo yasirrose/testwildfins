@@ -77,9 +77,9 @@
                   <label for="sel1">Cetacean</label>
                   <select class="form-control get_cetacean_id search-box" required id="cetacean_list" name="CetaceanCode" required="">
                     <option value="">Select Cetaceans</option>
-                    <cfloop query="cetaceanList">
+                    <!--- <cfloop query="cetaceanList">
                       <option value="#cetaceanList.id# #cetaceanList.Name#">  #cetaceanList.CODE#</option>
-                    </cfloop>
+                    </cfloop> --->
                   </select>
                   <span style="color:red; display:none;" id="requiredCetaceanCode">This field is required</span>
                 </div>
@@ -96,13 +96,11 @@
                     </div>
                     <br/>
              
-  
-  
                      <div class="form-group"> <br />
                       <cfif permissions eq "full_access" or findNoCase("Add Entry Data S-S-C", permissions) neq 0>
                         <button type="submit" class="btn btn-success" onclick="checkValue(event)" name="insertScar" id="insertScar">Add</button>
                       </cfif>  
-                      <button type="submit" id="resett" onclick="RdesetAll()" class="btn btn-default">Reset</button>
+                      <button type="submit" id="resett" onclick="ResetAll()" class="btn btn-default">Reset</button>
                     </div>
                     
                 </div>
@@ -138,7 +136,7 @@
                       <div class="form-group form-finchange">
                         <label for="pwd">Date:</label>
                         <div class="input-group date col-lg-7 col-md-7 col-sm-12 col-xs-12" id="datetimepicker1">
-                          <input type="text" required="" class="form-control" placeholder="mm/dd/yyyy" name="ScarDate" required id="add_distictdate">
+                          <input type="text" class="form-control" placeholder="mm/dd/yyyy" name="ScarDate" required id="add_date">
                           <span class="input-group-addon"> <span class="glyphicon glyphicon-calendar"></span> </span> 
                          </div>
                       </div>
@@ -170,6 +168,7 @@
                 </div>  
   
               </div>
+              <input type="hidden" name="CetaceanCodeValue" id="CetaceanCodeValue">
               <input type="hidden" name="updateFormID" id="updateFormID">
             </form>         
               

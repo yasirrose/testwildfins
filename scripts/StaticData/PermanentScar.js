@@ -64,21 +64,7 @@ $(document).ready(function () {
 									console.log(data);
 									var obj = JSON.parse(data);
 									console.log(obj);
-									// var option = obj[0].DScore;
-
-									// $("#dolphin_id").val(obj[0].DolphinID);
-									// $("#dolphin_name").val(obj[0].Name);
-									// $("#recordid").val(obj[0].ID);
-									// var image="<img src='"+obj[0].Fin+"' width='200' height='200' id='imageresource'>";
-									// $("#image").html(image);
-									// $("#dscore option").each(function(i) {
-									// 	$('#dscore option[value="'+option+'"]').prev().remove();										
-									// });
-									//  $("#dscore").val(option).change();
-									// $("#image").on("click", function() {
-									// $('#imagepreview').attr('src', $('#imageresource').attr('src')); // here asign the image to the modal when the user click the enlarge link
-									// $('#imagemodal').modal('show'); // imagemodal is the id attribute assigned to the bootstrap modal, then i use the show function
-									// });
+						
 								}
 							});
 					}
@@ -116,6 +102,10 @@ $(document).ready(function () {
 			}
 			);
 		} else {
+			$("#cetacean_list").empty();
+			$("#CetaceanName").val("");
+			$("#CetaceanId").val("");
+			$("#cetacean_list").val("").trigger("change");
 			//$("#reset").trigger("click");
 		}
 	}
@@ -154,7 +144,7 @@ $(document).ready(function () {
 
 	function getCetaceanImage(cetacean_id) {
 
-		console.log('getCetaceanImage', cetacean_id);
+		// console.log('getCetaceanImage', cetacean_id);
 		if (cetacean_id != '') {
 			$.ajax({
 				type: "post",
@@ -175,7 +165,8 @@ $(document).ready(function () {
 	});
 
 	$("#cetacean_list").change(function () {
-		console.log("Reached==>");
+		// console.log("Reached==>");
+		$("#CetaceanCodeValue").val($("#cetacean_list option:selected").text());
 		str = $("#cetacean_list option:selected").val();
 		cetacean_id = str.substr(0, str.indexOf(' '));
 		cetacean_name = str.substr(str.indexOf(' ') + 1);
@@ -192,69 +183,9 @@ $(document).ready(function () {
 
 	});
 
-
-	// $("#insertScar").click(function(){
-
-	//   });
-
-
-
-	/*$('#datetimepicker1')
-			.datepicker({
-				format: 'mm/dd/yyyy HH:mm:ss'
-			})
-			.on('changeDate', function(e) {
-				// Revalidate the date field
-				$('form').formValidation('revalidateField', 'DScoreDate');
-			});
-	*/
-
-	// $('form').formValidation({
-		
-	// 	framework: 'bootstrap',
-	// 	err: {
-	// 	  container: 'tooltip'
-	// 	},
-	// 	icon: {
-	// 	  valid: 'glyphicon glyphicon-ok',
-	// 	  invalid: 'glyphicon glyphicon-remove',
-	// 	  validating: 'glyphicon glyphicon-refresh'
-	// 	},
-	// 	fields: {
-	// 	  Species: {
-			  
-	// 		ignore: [],
-	// 		validators: {
-	// 		  notEmpty: {
-	// 			message: 'Please select a species'
-	// 		  }
-	// 		}
-	// 	  },
-	// 	  CetaceanCode: {
-	// 		validators: {
-	// 		  notEmpty: {
-	// 			message: 'Please select a dolphin'
-	// 		  }
-	// 		}
-	// 	  },
-	// 	//   ScarDate: {
-	// 	// 	validators: {
-	// 	// 	  notEmpty: {
-	// 	// 		message: 'Please select a date'
-	// 	// 	  },
-	// 	// 	  date: {
-	// 	// 		format: 'MM/DD/YYYY',
-	// 	// 		message: 'The date is not a valid date'
-	// 	// 	  }
-	// 	// 	}
-	// 	//   }
-	// 	}
-	//   });
-
-	// getDolphin();
 });
 function ResetAll(){
-	$('#add_distictdate').removeAttr('required');
+	$('#add_date').removeAttr('required');
 	$("#ScarForm").submit();
   }
 function deleteRecord(id) {
@@ -269,7 +200,11 @@ function deleteRecord(id) {
 					$('html, body').animate({ scrollTop: 0 }, 800);
 					$(".delete-message").show();
 					$(".gradeU_" + id).remove();
-					setTimeout(function () { $(".delete-message").hide(); }, 3000);
+					setTimeout(function () { 
+						$(".delete-message").hide(); 
+						ResetAll();
+					}, 3000);
+					
 				}
 			});
 		}
@@ -278,7 +213,7 @@ function deleteRecord(id) {
 function updateRecord(id) {
 	$('#updateFormID').val(id);
 	CetaceanID = $('#CI_'+id).text();
-	CetaceanCode = $('#CetaceanCode_'+id).text();
+	
 	ScarDate = $('#ScarDate_'+id).text();
 	ScarType = $('#ScarType_'+id).text();
 	BodyRegion = $('#BodyRegion_'+id).text();
@@ -286,16 +221,19 @@ function updateRecord(id) {
 	PrimaryImage = $('#PrimaryImage_'+id).attr('src');
 	SecondryImage = $('#SecondryImage_'+id).attr('src');
 
+
+	CetaceanCode = $('#CetaceanCode_'+id).text();
 	// clist = CetaceanID
-	$('#cetacean_list').val(CetaceanCode).trigger('change');
-	$('#add_distictdate').val(ScarDate);
+	// $('#cetacean_list').val(CetaceanCode).trigger('change');
+	$("#cetacean_list").val($("#cetacean_list option:contains(" + CetaceanCode + ")").val()).trigger("change");
+	$('#add_date').val(ScarDate);
 	$('#ScarType').val(ScarType).trigger('change');
 	$('#BodyRegion').val(BodyRegion).trigger('change');
 	$('#SideOfBody').val(SideOfBody).trigger('change');
 	$("#setPrimaryImage").html('<img src="' + PrimaryImage + '" class="image_max_width">');
 	$("#SecondaryImage").html('<img src="' + SecondryImage + '" class="image_max_width">');
 	$('#insertScar').text('Update');
-
+	document.documentElement.scrollTop = 0;
 }
 function checkValue(e){
 	Species = $('#species').val();
@@ -304,17 +242,14 @@ function checkValue(e){
 	if(Species == '' ){
 		e.preventDefault();
 		$('#errorMessage').show();
-		// $('#requiredCetaceanCode').show();
 	}else{
 		$('#errorMessage').hide();
-		// $('#requiredCetaceanCode').hide();
 	}
 	if(CetaceanCode == ''){
 		e.preventDefault();
-		// $('#errorMessage').show();
 		$('#requiredCetaceanCode').show();
 	}else{
-		// $('#errorMessage').hide();
+		
 		$('#requiredCetaceanCode').hide();
 	}
 }

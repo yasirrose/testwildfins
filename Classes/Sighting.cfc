@@ -3109,67 +3109,67 @@
  
              <cfset setOldImage = "">
              <cfset setSecOldImage = "">
-        <cfif isDefined('CetaceanCode') and CetaceanCode neq ''>
-             <cfif len(trim(BestImage))>
-                <cfif len(trim(oldImage)) AND setOldImage NEQ 'no-image.jpg'>
-                     <cfif FileExists("#Application.CloudDirectory&setOldImage#")>
-                       <cffile action = "delete" file = "#Application.CloudDirectory&setOldImage#">
+            <cfif isDefined('CetaceanCode') and CetaceanCode neq ''>
+                <cfif len(trim(BestImage))>
+                    <cfif len(trim(oldImage)) AND setOldImage NEQ 'no-image.jpg'>
+                        <cfif FileExists("#Application.CloudDirectory&setOldImage#")>
+                        <cffile action = "delete" file = "#Application.CloudDirectory&setOldImage#">
+                        </cfif>
                     </cfif>
+
+                    <cffile action="upload" fileField="BestImage" destination="#Application.CloudDirectory#" result="returnBestImage" nameconflict="overwrite">
+                    <cfset setPrimaryImage =#returnBestImage.serverfile#>
+                    <cffile action = "rename" source = "#Application.CloudDirectory##returnBestImage.serverfile#" destination = "#Application.CloudDirectory##setPrimaryImage#">
+                <cfelse> 
+                <cfset setPrimaryImage = setOldImage>
                 </cfif>
 
-                <cffile action="upload" fileField="BestImage" destination="#Application.CloudDirectory#" result="returnBestImage" nameconflict="overwrite">
-                <cfset setPrimaryImage =#returnBestImage.serverfile#>
-                <cffile action = "rename" source = "#Application.CloudDirectory##returnBestImage.serverfile#" destination = "#Application.CloudDirectory##setPrimaryImage#">
-            <cfelse> 
-               <cfset setPrimaryImage = setOldImage>
-            </cfif>
-
-            <cfif len(trim(SecondaryImage))>
-                <cfif len(trim(SecOldImage)) AND setSecOldImage NEQ 'no-image.jpg'>
-                    <cfif FileExists("#Application.CloudDirectory&setOldImage#")>
-                        <cffile action = "delete" file = "#Application.CloudDirectory&setSecOldImage#">
+                <cfif len(trim(SecondaryImage))>
+                    <cfif len(trim(SecOldImage)) AND setSecOldImage NEQ 'no-image.jpg'>
+                        <cfif FileExists("#Application.CloudDirectory&setOldImage#")>
+                            <cffile action = "delete" file = "#Application.CloudDirectory&setSecOldImage#">
+                        </cfif>
                     </cfif>
+
+                    <cffile action="upload" fileField="SecondaryImage" destination="#Application.CloudDirectory#" result="returnSecondaryImage" nameconflict="overwrite">
+                    <cfset setSecondaryImage =#returnSecondaryImage.serverfile#>
+                    <cffile action = "rename" source = "#Application.CloudDirectory##returnSecondaryImage.serverfile#" destination = "#Application.CloudDirectory##setSecondaryImage#">
+                <cfelse> 
+                <cfset setSecondaryImage = setSecOldImage>
                 </cfif>
+                
+                <cfquery name="qinsertPermanentScar" datasource="#variables.dsn#" result ='getresult'>
+    
+                    insert into PermanentScar 
+                    (
+                    Species,
+                    CetaceanCode,
+                    CetaceanName,
+                    CetaceanId,
+                    ScarDate,
+                    ScarType,
+                    BodyRegion,
+                    SideOfBody,
+                    PrimaryImage,
+                    SecondryImage  
 
-                <cffile action="upload" fileField="SecondaryImage" destination="#Application.CloudDirectory#" result="returnSecondaryImage" nameconflict="overwrite">
-                <cfset setSecondaryImage =#returnSecondaryImage.serverfile#>
-                <cffile action = "rename" source = "#Application.CloudDirectory##returnSecondaryImage.serverfile#" destination = "#Application.CloudDirectory##setSecondaryImage#">
-            <cfelse> 
-               <cfset setSecondaryImage = setSecOldImage>
+                    )
+                    values(
+                    <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.Species#">,
+                    <cfqueryparam cfsqltype="cf_sql_varchar" value="#Trim(Form.CetaceanCodeValue)#">,
+                    <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.CetaceanName#">,
+                    <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.CetaceanId#">,
+                    <cfqueryparam cfsqltype="cf_sql_date" value="#FORM.ScarDate#">,
+                    <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.ScarType#">,
+                    <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.BodyRegion#">,
+                    <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.SideOfBody#">,
+                    <cfqueryparam cfsqltype="cf_sql_varchar" value="#setPrimaryImage#">,
+                    <cfqueryparam cfsqltype="cf_sql_varchar" value="#setSecondaryImage#">
+
+                    )
+                </cfquery>
+                <cfreturn true>
             </cfif>
-             
-            <cfquery name="qinsertPermanentScar" datasource="#variables.dsn#" result ='getresult'>
- 
-                insert into PermanentScar 
-                 (
-                  Species,
-                  CetaceanCode,
-                  CetaceanName,
-                  CetaceanId,
-                  ScarDate,
-                  ScarType,
-                  BodyRegion,
-                  SideOfBody,
-                  PrimaryImage,
-                  SecondryImage  
-
-                  )
-                 values(
-                 <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.Species#">,
-                 <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.CetaceanCode#">,
-                 <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.CetaceanName#">,
-                 <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.CetaceanId#">,
-                 <cfqueryparam cfsqltype="cf_sql_date" value="#FORM.ScarDate#">,
-                 <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.ScarType#">,
-                 <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.BodyRegion#">,
-                 <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.SideOfBody#">,
-                 <cfqueryparam cfsqltype="cf_sql_varchar" value="#setPrimaryImage#">,
-                 <cfqueryparam cfsqltype="cf_sql_varchar" value="#setSecondaryImage#">
-
-                )
-            </cfquery>
-            <cfreturn true>
-        </cfif>
              <!--- <cfdump var="test" abort="true"> --->
              <!--- <cfif isDefined('CetaceanCode') and CetaceanCode neq ''>
  
@@ -3287,7 +3287,7 @@
              
             <cfquery name="qinsertPermanentScar" datasource="#variables.dsn#" result ='getresult'>    
                UPDATE PermanentScar SET
-               CetaceanCode = <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Form.CetaceanCode#' > ,
+               CetaceanCode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Trim(Form.CetaceanCodeValue)#" >,
                CetaceanName=<cfqueryparam  cfsqltype="cf_sql_varchar" value='#Form.CetaceanName#' >,
                CetaceanId=<cfqueryparam  cfsqltype="cf_sql_varchar" value='#Form.CetaceanId#' >,
                ScarDate=<cfqueryparam  cfsqltype="cf_sql_date" value='#Form.ScarDate#' >,
