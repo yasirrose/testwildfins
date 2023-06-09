@@ -8635,18 +8635,84 @@
 
     <cffunction name="removeHeaderImage" returntype="string" output="false" access="remote" returnformat="plain">
         <!--- <cfdump var=#ID# abort="true"> --->
-        <!--- <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
-            update ST_LiveCetaceanExam set
-            headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                where
-                ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-        </cfquery> --->
+        <cfif tabName eq 'CetaceanExam'>
+            <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+                update ST_LiveCetaceanExam set
+                headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                    where
+                    ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+            </cfquery> 
+            <cfelseif tabName eq 'HIForm'>  
+                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+                    update ST_HIForm set
+                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                        where
+                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                </cfquery>      
+            <cfelseif tabName eq 'LevelAForm'>  
+                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+                    update ST_LevelAForm set
+                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                        where
+                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                </cfquery>      
+            <cfelseif tabName eq 'Histopathology'>  
+                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+                    update ST_HistoForm set
+                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                        where
+                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                </cfquery>      
+            <cfelseif tabName eq 'bloodValue'>  
+                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+                    update ST_Blood_Values set
+                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                        where
+                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                </cfquery>      
+            <cfelseif tabName eq 'Toxicology'>  
+                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+                    update ST_Toxicology set
+                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                        where
+                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                </cfquery>      
+            <cfelseif tabName eq 'AncillaryDiagnostics'>  
+                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+                    update ST_Ancillary_Diagnostics set
+                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                        where
+                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                </cfquery>      
+            <cfelseif tabName eq 'SampleArchive'>  
+                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+                    update ST_SampleArchive set
+                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                        where
+                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                </cfquery>      
+            <cfelseif tabName eq 'NecropsyReport'>  
+                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+                    update ST_CetaceanNecropsyReport set
+                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                        where
+                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                </cfquery>      
+            <cfelseif tabName eq 'Morphometrics'>  
+                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+                    update ST_Morphometrics set
+                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+                        where
+                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                </cfquery>      
+        </cfif>
+
          <!--- <cfdump var=#results# abort="true"> --->
-        <cfif len(trim(#image#))>
+        <!--- <cfif len(trim(#image#))>
             <cfif FileExists("#Application.CloudDirectory&image#")>
                 <cffile action = "delete" file = "#Application.CloudDirectory&image#">
             </cfif>
-        </cfif>
+        </cfif> --->
         <cfreturn True>
     </cffunction>
 

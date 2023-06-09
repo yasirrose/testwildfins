@@ -618,6 +618,50 @@
         </cfquery>
         <cfreturn qgetLesionType>
     </cffunction>
+
+    <!---start scar  --->
+    <cffunction name="getScarType" returntype="any" output="false" access="public" >
+        <cfquery name="qgetScarType" datasource="#variables.dsn#" >
+            SELECT * from TLU_ScarType
+        </cfquery>
+        <cfreturn qgetScarType>
+    </cffunction>
+    <cffunction name="getScarTypeByword" returntype="any" output="false" access="public" >
+        <cfquery name="qgetScarType" datasource="#variables.dsn#"  >
+            SELECT * from TLU_ScarType where [ScarTypeName] like '%#form.searchword#%'
+        </cfquery>
+        <cfreturn qgetScarType>
+    </cffunction>
+
+    <cffunction name="ScarTypeInsert" returntype="any" output="false" access="public" >
+        <cfquery name="qLesionTypeInsert" datasource="#variables.dsn#"  result="return_data" >
+            INSERT INTO TLU_ScarType ([ScarTypeName],active) VALUES(<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ScarTypeName#'>,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.active#' >)
+        </cfquery>
+        <cfreturn return_data>
+    </cffunction>
+    <cffunction name="EditScarType" returntype="any" output="false" access="public" >
+        <cfquery name="qEditLesionType" datasource="#variables.dsn#" result="ScarTypeName">
+           UPDATE TLU_ScarType SET [ScarTypeName] = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ScarTypeName#' >,
+           active=<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.active#' >
+           WHERE ID = <cfqueryparam  cfsqltype="cf_sql_integer" value='#FORM.ID#' >
+         </cfquery>
+         <cfreturn ScarTypeName>
+    </cffunction>
+    <cffunction name="DeleteScarType" returntype="any" output="false"  access="remote" >
+        <cfquery name="qDeleteScarType" datasource="#variables.dsn#" >
+           DELETE FROM TLU_ScarType  WHERE ID = <cfqueryparam  cfsqltype="cf_sql_integer" value='#URL.id#' >
+         </cfquery>
+   </cffunction>
+
+   <cffunction name="getActiveScarType" returntype="any" output="false" access="public" >
+        
+    <cfquery name="qgetActiveDescription" datasource="#variables.dsn#"  result="return_data" >
+        SELECT * from TLU_ScarType WHERE active = 1
+    </cfquery>
+    <cfreturn qgetActiveDescription>
+</cffunction>
+     <!---end scar  --->
+
     <cffunction name="EditLesionType" returntype="any" output="false" access="public" >
      <cfquery name="qEditLesionType" datasource="#variables.dsn#" result="LesionTypeUpdate">
         UPDATE TLU_LesionType SET [LesionTypeName] = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.LesionTypeName#' >,

@@ -3315,16 +3315,15 @@
           <!---     <cfdump var="#cetacean_ID#">
             <cfabort> --->
             <cfquery name="qgetPermanentScar" datasource="#variables.dsn#">
-                SELECT * FROM PermanentScar
-                WHERE
-                Species = #species_ID# 
-                -- <cfif cetacean_ID neq ''>
-                -- <cfif cetacean_ID neq 'empty'>
-                --     AND  CetaceanId = #cetacean_ID#
-                -- </cfif>
-                -- </cfif>
+                SELECT PermanentScar.*, TLU_ScarType.ScarTypeName
+                FROM PermanentScar
+                LEFT JOIN TLU_ScarType ON TLU_ScarType.ID = PermanentScar.ScarType
+                WHERE PermanentScar.Species = #species_ID#
+                <cfif isDefined('cetacean_ID') AND cetacean_ID neq '' AND cetacean_ID neq 'empty'>
+                    AND PermanentScar.CetaceanId = #cetacean_ID#
+                </cfif> 
             </cfquery>
-          <!---   <cfdump var="#qgetPermanentScar#"> --->
+            <!--- <cfdump var="#qgetPermanentScar#" abort="true"> --->
             <cfset c=0>
             <cfoutput><cfset  permissions ="#session['userdetails']['permissions']#"></cfoutput>
             <cfloop query="qgetPermanentScar">
@@ -3333,7 +3332,7 @@
                     <td id="CI_#qgetPermanentScar.ID#">#qgetPermanentScar.CetaceanId#</td>
                     <td id="CetaceanCode_#qgetPermanentScar.ID#">#qgetPermanentScar.CetaceanCode#</td>
                     <td id="ScarDate_#qgetPermanentScar.ID#">#DateFormat(qgetPermanentScar.ScarDate, "mm/dd/yyyy")#</td>
-                    <td id="ScarType_#qgetPermanentScar.ID#">#qgetPermanentScar.ScarType#</td>
+                    <td id="ScarType_#qgetPermanentScar.ID#">#qgetPermanentScar.SCARTYPENAME#</td>
                     <td id="BodyRegion_#qgetPermanentScar.ID#">#qgetPermanentScar.BodyRegion#</td>
                     <td id="SideOfBody_#qgetPermanentScar.ID#">#qgetPermanentScar.SideOfBody#</td>
                     <td>

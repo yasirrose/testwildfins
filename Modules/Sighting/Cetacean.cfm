@@ -733,7 +733,9 @@
                                     <select class="form-control customLesionSelect" id="LesionType" name="LesionType">
                                        <option value="">Select Lesion Type</option>
                                        <cfloop query="getLesionTypeData">
+                                          <cfif Active eq 1>
                                           <option value="#getLesionTypeData.LesionTypeName#">#getLesionTypeData.LesionTypeName#</option>
+                                          </cfif>
                                        </cfloop>
                                     </select>
                                  </div>
@@ -1098,10 +1100,13 @@
                               <label for="body_condition">Lesion Type:</label>
                            </div>
                            <div class="input-wrap">
+                                 
                               <select class="form-control customLesionSelect" id="LesionType" name="LesionType">
                                  <option value="">Select Lesion Type</option>
                                  <cfloop query="getLesionTypeData">
+                                    <cfif Active eq 1>
                                     <option value="#getLesionTypeData.LesionTypeName#">#getLesionTypeData.LesionTypeName#</option>
+                                    </cfif>
                                  </cfloop>
                               </select>
                            </div>

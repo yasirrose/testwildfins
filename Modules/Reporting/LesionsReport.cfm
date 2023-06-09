@@ -510,7 +510,9 @@
                                     <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                         <select class="form-control search-box customLesionSelect" id="LesionType" name="LesionType" multiple>
                                             <cfloop query="getLesionTypeData">
+                                                <cfif Active eq 1>
                                                 <option value="#LesionTypeName#" <cfif isDefined('form.LesionType') and ListFind(form.LesionType,getLesionTypeData.LesionTypeName)>selected</cfif>>#LesionTypeName#</option>
+                                                </cfif>
                                             </cfloop>
                                         </select>
                                     </div>

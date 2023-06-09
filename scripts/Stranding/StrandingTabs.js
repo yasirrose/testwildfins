@@ -161,10 +161,33 @@ $(document).ready(function() {
   handleDateTimePicker();
   handleJqueryTagIt();  
 
-  // $("#subsamplee").hide();
+  if(!$('#pdfFiles').val()){
+    $('#caseReportBox').hide();
+  }
+  if(!$('#HIFormpdfFiles').val()){
+    $('#caseReportHIBox').hide();
+  }
+  if(!$('#LApdfFiles').val()){
+    $('#caseReportLABox').hide();
+  }
+  if(!$('#HistoPdfFiles').val()){
+    $('#caseReportHistoBox').hide();
+  }
+  if(!$('#BVPdfFiles').val()){
+    $('#caseReportBVBox').hide();
+  }
+  if(!$('#toxipdfFiles').val()){
+    $('#caseReportToxiBox').hide();
+  }
+  if(!$('#toxipdfFiles').val()){
+    $('#caseReportToxiBox').hide();
+  }
+  if(!$('#histoImages').val()){
+    $('#caseReportNBox').hide();
+  }
+
   $("#Thawedd").hide();
   $("#subsampleDatee").hide();
-  // getCode(); 
   $(".removeSeclectValue").css("display", "none");
 
   $('#SEIDValue').val('');
@@ -173,14 +196,12 @@ $(document).ready(function() {
 
   // tab functionality
   let tab_url1 = $(location).attr('href');
-  // const slug = tab_url1.split('&').pop(); // 2020
-  // // var url1      = window.location.pathname;
 
  let tab_url =  tab_url1.split('&').pop();
  const histoDirect = tab_url.substring(0, tab_url.indexOf('='));
-//  console.log(before_)
+
 $("#necropsyDateID").attr("readonly", true); 
-//  console.log(tab_url);
+
  if(tab_url == "CetaceanExam"){
   $("#HIstoFormSerch").hide();
   $("#CetaceanSearch").show();
@@ -2188,7 +2209,7 @@ const subsampleDateArray = [];
 
 function AddNewRecordforSample() {
   buttonname=$("#SampleAr").val();
-  // alert();nouman
+  // alert();
   if(buttonname =='Add New'){
       // alert(buttonname);
 
@@ -3219,6 +3240,7 @@ function histoUploadshowPictures() {
               $("#histofile").prop("disabled", false);
               $("#histofile").val("");
             }
+            $('#caseReportNBox').show();
           }
         });
       } else {
@@ -4907,6 +4929,7 @@ function ceteacenExamImg(){
                       $("#ExamFiles").prop("disabled", true);
                       $("#ExamFiles").val("");
                     }
+                    $('#caseReportBox').show();
                 }
             });
         }else{
@@ -4924,7 +4947,7 @@ function ceteacenExamImg(){
 }
 function removeExam(el){
 
-  ID = $('#form_id').val();
+  ID = $('#qLCEDataID').val();
   var element = el;
   pdffile = element.id
 //   console.log(pdffile);
@@ -5020,6 +5043,7 @@ function HIFormimg(){
                     //     $('#emb').attr('src', we);
                     //     $('#pdfname').html($(this).attr('title'));
                     // });
+                    $('#caseReportHIBox').show();
                 }
             });
         }else{
@@ -5053,27 +5077,12 @@ function removeHiFormPDF(el){
       type: "POST",
       data: { ID: ID, pdf: pdffile, imgValue: data2 },
       success: function (data) {
-          // PDFArray = PDFArray.filter(e => e !== "Get_Started_With_Smallpdf20.pdf"); 
-          // $('#pdfFiles').val(PDFArray);
+       
           element.parentNode.remove();
       }
   });    
 }
-// function removeHiFormPDF(el){
-//     var element = el;
-//     pdffile = element.id
-//     console.log(pdffile);
-//     $.ajax({
-//         url: application_root +"Stranding.cfc?method=removepdf",
-//         type: "POST",
-//         data: {pdf: pdffile},
-//         success: function (data) {
-//             HIPDFArray = HIPDFArray.filter(e => e !== pdffile); 
-//             $('#pdfFiles').val(HIPDFArray);
-//             element.parentNode.remove();
-//         }
-//     });    
-// }
+
 function selectedHIForm(elem) {
     var element = elem;
     $('#embHIForm').attr('src', element.parentNode.title);
@@ -5141,6 +5150,7 @@ function levelAFormimg(){
                     //     $('#emb').attr('src', we);
                     //     $('#pdfname').html($(this).attr('title'));
                     // });
+                    $('#caseReportLABox').show();
                 }
             });
         }else{
@@ -5230,7 +5240,7 @@ function Toxifile(){
                         $('.spi').remove();
                         $('#Toxifiles').prop('disabled', false);
                     }
-       
+                    $('#caseReportToxiBox').show();
                 }
             });
         }else{
@@ -5877,7 +5887,7 @@ function edit_histoST(no)
  
 } 
 
-//sample Accession nouman
+//sample Accession
 
 $( "#SaveSampleAccession" ).click(function() {
 // alert($("#Fnumber").val());
@@ -6006,7 +6016,32 @@ function headershowPictures() {
 }
 
 function headerImageremove(element) {
-  ID = $("#form_id").val();
+
+  console.log($('#autoSaveValue').val());
+  tabName = $('#autoSaveValue').val();
+  if(tabName == 'CetaceanExam'){
+    ID = $("#qLCEDataID").val();
+  } else if(tabName == 'HIForm'){
+    ID = $('#HIForm_ID').val();
+  } else if(tabName == 'LevelAForm'){
+    ID = $('#level_A_ID').val();
+  } else if(tabName == 'Histopathology'){
+    ID = $('#Histo_ID').val();
+  } else if(tabName == 'bloodValue'){
+    ID = $('#BloodVal_ID').val();
+  } else if(tabName == 'Toxicology'){
+    ID = $('#TX_IDValue').val();
+  } else if(tabName == 'AncillaryDiagnostics'){
+    ID = $('#ADID').val();
+  } else if(tabName == 'SampleArchive'){
+    ID = $('#SampleArchiveSEID').val();
+  } else if(tabName == 'NecropsyReport'){
+    ID = $("#report_ID").val();
+  } else if(tabName == 'Morphometrics'){
+    ID = $('#Morphometricss_ID').val();
+  } else{
+    ID = '';
+  }
 
   image = element.id;
   data = $("#headerImagesFile").val();
@@ -6014,22 +6049,18 @@ function headerImageremove(element) {
   var removeArrayValue = image;
   data1.splice($.inArray(removeArrayValue, data1), 1);
   data2 = data1.toString();
-
   $("#headerImagesFile").val(data2);
-  // console.log(data2);
 
   $.ajax({
     url: application_root + "Stranding.cfc?method=removeHeaderImage",
     type: "POST",
-    data: { ID: ID, image: image, imgValue: data2 },
+    data: { ID: ID, image: image, imgValue: data2,tabName:tabName },
     success: function(data) {
       element.parentNode.remove();
       $("#hImages").prop("disabled", false);
-      // console.log("data");
     }
   });
 }
-
 
 // For Blood Value
 var PDFBVArray = [];
@@ -6088,6 +6119,7 @@ function BloodValuePDFFile(){
                         $("#BVFileContents").prop("disabled", true);
                         $("#BVFileContents").val("");
                       }
+                      $('#caseReportBVBox').show();
                   }
               });
           }else{
@@ -6193,6 +6225,7 @@ function histoPDFFile(){
                         $("#HistoFileContents").prop("disabled", true);
                         $("#HistoFileContents").val("");
                       }
+                      $('#caseReportHistoBox').show();
                   }
               });
           }else{

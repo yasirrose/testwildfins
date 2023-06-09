@@ -227,7 +227,8 @@ function updateRecord(id) {
 	// $('#cetacean_list').val(CetaceanCode).trigger('change');
 	$("#cetacean_list").val($("#cetacean_list option:contains(" + CetaceanCode + ")").val()).trigger("change");
 	$('#add_date').val(ScarDate);
-	$('#ScarType').val(ScarType).trigger('change');
+	$("#ScarType").val($("#ScarType option:contains(" + ScarType + ")").val()).trigger("change");
+	// $('#ScarType').val(ScarType).trigger('change');
 	$('#BodyRegion').val(BodyRegion).trigger('change');
 	$('#SideOfBody').val(SideOfBody).trigger('change');
 	$("#setPrimaryImage").html('<img src="' + PrimaryImage + '" class="image_max_width">');

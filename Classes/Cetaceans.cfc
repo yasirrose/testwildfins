@@ -766,7 +766,7 @@
         <!--- <cfparam name="Form.Cetacean_Survey" default="0"> --->
         <cfif isDefined('form.Cetacean_Survey') and form.Cetacean_Survey neq ''>
             <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
-                select Surveys.id as surveyid, Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status,Condition_Lesions.id from Condition_Lesions
+                select Surveys.id as surveyid, Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status,Condition_Lesions.id,Condition_Lesions.PhotoNumber from Condition_Lesions
                  INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
                  INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
                  where Surveys.id = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Cetacean_Survey#'>           
@@ -777,7 +777,7 @@
         <cfelse>
 
             <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
-                select Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status,Condition_Lesions.id from Condition_Lesions
+                select Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status,Condition_Lesions.id,Condition_Lesions.PhotoNumber from Condition_Lesions
                     INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
                     INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
                     where Condition_Lesions.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#cetacean_Code#'>           
@@ -2022,7 +2022,13 @@
     </cffunction>
     <cffunction name="getPermanentScar" returntype="any" output="false" access="public" >
         <cfquery name="qgetPermanentScar" datasource="#Application.dsn#">
-            select * from PermanentScar where CetaceanCode = '#FORM.cetacean_Code#'
+            -- select * from PermanentScar where CetaceanCode = '#FORM.cetacean_Code#'
+            SELECT PermanentScar.*, TLU_ScarType.ScarTypeName
+                FROM PermanentScar
+                LEFT JOIN TLU_ScarType ON TLU_ScarType.ID = PermanentScar.ScarType
+                WHERE CetaceanCode = '#FORM.cetacean_Code#'
+              
+
           </cfquery>
        <cfreturn qgetPermanentScar>
     </cffunction>

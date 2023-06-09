@@ -2705,10 +2705,12 @@
     <cfif isDefined('caseReport')>
         <cfset form.field = form.Fnumber>
         <cfset form.Fnumber = form.Fnumber>
-
+      
         <cfset qgetPdfFiles=Application.Stranding.getPdfFiles("#form.Fnumber#")> 
         <cfset qgetHeaderImages=Application.Stranding.getHeaderImages("#form.Fnumber#")> 
-        
+      
+
+
         <cfset pdfList = "">
         <cfloop query="qgetPdfFiles">
         <cfif qgetPdfFiles.pdfFiles neq ''>
@@ -3155,7 +3157,7 @@
                                         <td>
                                             <table style="width: 100%; text-align: center;">
                                                 <tr>
-                                                    <td style="line-height: 0; text-align: center;"><img  src="http://cloud.wildfins.org/necropsyPDF/fish-img.png" alt="" style="width: 100%;"></td>
+                                                    <td style="line-height: 0; text-align: center;"><img src="http://cloud.wildfins.org/necropsyPDF/fish-img.png" alt="" style="width: 100%;"></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -16368,13 +16370,7 @@
     </cfoutput>
 
     <style>
-        @page {
-            margin-bottom: 50px; /* Adjust the margin-bottom value to set the height of the footer */
-            @bottom-center {
-                content: "Your footer content here";
-                height: 50px; /* Adjust the height of the footer */
-            }
-        }
+    
         .quantity-toxi-field {
             width: 100%;
         }

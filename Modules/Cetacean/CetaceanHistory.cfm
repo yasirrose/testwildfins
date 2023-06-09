@@ -450,6 +450,7 @@
                                 <th>Date Seen</th>
                                 <th>Sighting ID</th>
                                 <th>Sighting No</th>
+                                <th>Photo Number</th>
                                 <th>Lesion Type</th>
                                 <th>Side</th>
                                 <th>Status</th>
@@ -465,6 +466,7 @@
                                   <td class="sorting_1">#DateFormat(qgetCetacean_Lesions.DATESEEN,'mm/dd/yyyy')#</td>
                                   <td class="sorting_1">#qgetCetacean_Lesions.sightid#</td>
                                   <td class="sorting_1">#qgetCetacean_Lesions.SightingNumber#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.PhotoNumber#</td>
                                   <td class="sorting_1">#qgetCetacean_Lesions.LesionType#</td>
                                   <td class="sorting_1">#qgetCetacean_Lesions.Side_L_R#</td>
                                   <td class="sorting_1">#qgetCetacean_Lesions.Status#</td>
@@ -547,7 +549,7 @@
                         <td id="CI_#qgetPermanentScar.ID#">#qgetPermanentScar.CetaceanId#</td>
                         <td id="CetaceanCode_#qgetPermanentScar.ID#">#qgetPermanentScar.CetaceanCode#</td>
                         <td id="ScarDate_#qgetPermanentScar.ID#">#DateFormat(qgetPermanentScar.ScarDate, "mm/dd/yyyy")#</td>
-                        <td id="ScarType_#qgetPermanentScar.ID#">#qgetPermanentScar.ScarType#</td>
+                        <td id="ScarType_#qgetPermanentScar.ID#">#qgetPermanentScar.ScarTypeName#</td>
                         <td id="BodyRegion_#qgetPermanentScar.ID#">#qgetPermanentScar.BodyRegion#</td>
                         <td id="SideOfBody_#qgetPermanentScar.ID#">#qgetPermanentScar.SideOfBody#</td>
                         <td>

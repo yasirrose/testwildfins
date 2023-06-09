@@ -413,13 +413,14 @@
                      <li 
                      <cfif Page eq 'LesionType' AND NOT isArchive> class='active'</cfif>
                      ><a href="#Application.superadmin#?Module=StaticData&Page=LesionType">Lesion Type</a></li>
+                      <li <cfif Page eq 'ScarType' > class='active'</cfif>><a href="#Application.superadmin#?Module=StaticData&Page=ScarType">Scar Type</a></li>
                      <li <cfif Page eq 'YobSource' > class='active'</cfif>><a href="#Application.superadmin#?Module=StaticData&Page=YobSource">YOB Source</a></li>
                      <li <cfif Page eq 'SourceSex' > class='active'</cfif>><a href="#Application.superadmin#?Module=StaticData&Page=SourceSex">Source Sex</a></li>
                      <li <cfif Page eq 'CetaceanSpecies' > class='active'</cfif>><a href="#Application.superadmin#?Module=StaticData&Page=CetaceanSpecies">Cetacean Species</a></li>
                      <li <cfif Page eq 'IR_CountyLocation' > class='active'</cfif>><a href="#Application.superadmin#?Module=StaticData&Page=IR_CountyLocation">IR County/Location</a></li>
                      <li <cfif Page eq 'Descriptions' > class='active'</cfif>><a href="#Application.superadmin#?Module=StaticData&Page=Descriptions">Fin Change Descriptions</a></li>
                      <li <cfif Page eq 'SightingMap' > class='active'</cfif>><a href="#Application.superadmin#?Module=StaticData&Page=SightingMap">SightingMap</a></li>
-                     <li <cfif Page eq 'PermanentScar' > class='active'</cfif>><a href="#Application.superadmin#?Module=StaticData&Page=PermanentScar">Permanent Scar</a></li>
+                    
                   </ul>
                </li>
             </cfif>
@@ -433,10 +434,13 @@
                <ul class="sub-menu">
                   <li 
                   <cfif Page eq 'Home' AND NOT isArchive> class='active'</cfif>
-                  ><a href="#Application.superadmin#?Module=Sighting&Page=Home">Sighting Form</a></li>
+                  ><a href="#Application.superadmin#?Module=Sighting&Page=Home">Sighting Form</a></li>                  
                   <li 
                   <cfif Page eq 'Dscore' AND NOT isArchive> class='active'</cfif>
-                  ><a href="#Application.superadmin#?Module=Sighting&Page=Dscore">Fin Change</a></li>
+                  ><a href="#Application.superadmin#?Module=Sighting&Page=Dscore">Fin Change</a></li>                  
+                  <li 
+                  <cfif Page eq 'PermanentScar' AND NOT isArchive> class='active'</cfif>
+                  ><a href="#Application.superadmin#?Module=Sighting&Page=PermanentScar">Permanent Scar</a></li>                  
                   <li 
                   <cfif Page eq 'PhotoAnalysis' AND NOT isArchive> class='active'</cfif>
                   ><a href="#Application.superadmin#?Module=Sighting&Page=PhotoAnalysis">Photo Analysis</a></li>
