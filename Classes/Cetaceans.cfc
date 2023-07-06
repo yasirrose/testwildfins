@@ -764,26 +764,48 @@
     <cffunction name="getCetacean_Lesions" access="remote" returnformat="JSON" output="true">
         <!--- <cfdump var="#Cetacean_Survey#" abort='true'> --->
         <!--- <cfparam name="Form.Cetacean_Survey" default="0"> --->
-        <cfif isDefined('form.Cetacean_Survey') and form.Cetacean_Survey neq ''>
+         <cfif isDefined('form.Cetacean_Survey') and form.Cetacean_Survey neq ''>
             <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
-                select Surveys.id as surveyid, Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status,Condition_Lesions.id,Condition_Lesions.PhotoNumber from Condition_Lesions
+                select 
+                Surveys.id as surveyid
+                ,Survey_Sightings.SightingNumber
+                ,Survey_Sightings.id as sightid
+                ,Surveys.date as DateSeen
+                ,Condition_Lesions.LesionType
+                ,Condition_Lesions.Region
+                ,Condition_Lesions.Side_L_R
+                ,Condition_Lesions.Status
+                ,Condition_Lesions.id
+                ,Condition_Lesions.PhotoNumber 
+                from Condition_Lesions
                  INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
                  INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
                  where Surveys.id = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Cetacean_Survey#'>           
+                 AND Condition_Lesions.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#cetacean_Code#'>
                  AND Surveys.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
                  AND Survey_Sightings.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
                  order by DateSeen desc
              </cfquery>        
-        <cfelse>
-
+        <cfelse>         
+        <!--- <cfdump var="#cetacean_Code#" abort='true'> --->
             <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
-                select Survey_Sightings.SightingNumber,Survey_Sightings.id as sightid,Surveys.date as DateSeen,Condition_Lesions.LesionType,Condition_Lesions.Region,Condition_Lesions.Side_L_R,Condition_Lesions.Status,Condition_Lesions.id,Condition_Lesions.PhotoNumber from Condition_Lesions
-                    INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
-                    INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
-                    where Condition_Lesions.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#cetacean_Code#'>           
-                    AND Surveys.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
-                    AND Survey_Sightings.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
-                    order by DateSeen desc
+                select 
+                Survey_Sightings.SightingNumber
+                ,Survey_Sightings.id as sightid
+                ,Surveys.date as DateSeen
+                ,Condition_Lesions.LesionType
+                ,Condition_Lesions.Region
+                ,Condition_Lesions.Side_L_R
+                ,Condition_Lesions.Status
+                ,Condition_Lesions.id
+                ,Condition_Lesions.PhotoNumber 
+                from Condition_Lesions
+                INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
+                INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
+                where Condition_Lesions.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#cetacean_Code#'>           
+                AND Surveys.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
+                AND Survey_Sightings.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
+                order by DateSeen desc
             </cfquery>
             
         </cfif>
@@ -847,11 +869,19 @@
             and
             Side_L_R = <cfqueryparam cfsqltype="cf_sql_varchar" value="#side#">
        </cfquery> 
+
+
+       <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
+       <cfset fname = userinfo.first_name>
+       <cfset lname = userinfo.last_name>
+       <cfset CompletedBy = "#fname# #lname#">
+
        <cfif qchecklesion.recordCount neq 0>
             <cfquery name="qsave_existingLesion" datasource="#variables.dsn#">
                 update  Condition_Lesions set 
                 LesionPresent = <cfqueryparam cfsqltype="cf_sql_varchar" value="#sel#">,
                 Cetacean_SightingsID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Cetacean_SightingID#">
+                User_Name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#userinfo.USER_ID# _ #CompletedBy#">
                 where 
                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qchecklesion.ID#">
             </cfquery> 
@@ -867,7 +897,8 @@
                     Status,
                     PhotoNumber,
                     Comments,
-                    Cetacean_SightingsID
+                    Cetacean_SightingsID,
+                    User_Name
                     )
                     values(
                     <cfqueryparam  cfsqltype="cf_sql_varchar" value='#cl_cs_code#'>,
@@ -879,7 +910,8 @@
                     <cfqueryparam  cfsqltype="cf_sql_varchar" value='#status#'>,
                     <cfqueryparam  cfsqltype="cf_sql_varchar" value=''>,
                     <cfqueryparam  cfsqltype="cf_sql_varchar" value=''>,
-                    <cfqueryparam  cfsqltype="cf_sql_integer" value='#Cetacean_SightingID#'>
+                    <cfqueryparam  cfsqltype="cf_sql_integer" value='#Cetacean_SightingID#'>,
+                    <cfqueryparam  cfsqltype="cf_sql_varchar" value='#userinfo.USER_ID# _ #CompletedBy#'>
                 )
             </cfquery>
         </cfif>

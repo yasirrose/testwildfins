@@ -90,7 +90,7 @@
      
      </cffunction>
 
-        <!--- add add_lesions nouman--->
+        <!--- add add_lesions --->
     <cffunction name="add_lesions" access="remote" returnformat="plain" output="true">
         
         
@@ -109,6 +109,11 @@
             <cfset Cetacean_SightingID = '0'>
         </cfif>
 <!---         <cfdump var="#qgetCetacean_code#" abort="true"> --->
+        
+        <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
+        <cfset fname = userinfo.first_name>
+        <cfset lname = userinfo.last_name>
+        <cfset CompletedBy = "#fname# #lname#">
 
         <cfoutput>
             <cfparam name="cl_cs_code" default="0">
@@ -131,7 +136,8 @@
                  Status,
                  PhotoNumber,
                  Comments,
-                 Cetacean_SightingsID
+                 Cetacean_SightingsID,
+                 User_Name
                 )
                 values(
                 <cfqueryparam  cfsqltype="cf_sql_varchar" value='#cl_cs_code#'>,
@@ -143,7 +149,8 @@
                 <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Status#'>,
                 <cfqueryparam  cfsqltype="cf_sql_varchar" value='#PhotoNumber#'>,
                 <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Form.Comments#'>,
-                <cfqueryparam  cfsqltype="cf_sql_integer" value='#Cetacean_SightingID#'>
+                <cfqueryparam  cfsqltype="cf_sql_integer" value='#Cetacean_SightingID#'>,
+                <cfqueryparam  cfsqltype="cf_sql_varchar" value='#userinfo.USER_ID# _ #CompletedBy#'>
             )
             </cfquery>
             <cfif get_res.RECORDCOUNT eq 1 >

@@ -8792,7 +8792,7 @@
         <cffunction name="getSearchedData" returntype="any" output="false" access="public" >
 
             <cfquery name="qGetSearchedData" datasource="#variables.dsn#">
-                SELECT * 
+             SELECT MIN(ID) AS ID, fnumber, SourceTable, MIN(Date) AS Date
                 FROM qry_StrandingTabs
                 WHERE (
                     Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
@@ -8944,6 +8944,7 @@
                     OR county LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
 
                 )
+                GROUP BY fnumber, SourceTable
   
             </cfquery>        
             <cfreturn qGetSearchedData>

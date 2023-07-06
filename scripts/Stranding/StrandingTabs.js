@@ -3258,7 +3258,7 @@ function histoUploadshowPictures() {
   }
 }
 function histoPdfRemove(el) {
-  ID = $("#report_ID").val();
+  ID = $("#repotrt_ID").val();
   var element = el;
   pdffile = element.id;
 
@@ -6277,4 +6277,12 @@ function removeHistoPDF(el){
     } else {
       alert("Invalid input. Please enter a number with 2 decimal places.");
     }
+  }
+
+  function changeDecimalPlace(id){
+    
+    var value = parseFloat(id.value);
+    var decimalValue = value.toFixed(2);
+    $('#AmountofSample').val(decimalValue);
+    
   }

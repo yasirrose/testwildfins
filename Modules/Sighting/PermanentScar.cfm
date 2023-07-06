@@ -121,16 +121,23 @@
                           <label for="pwd">Body Region</label>
                           <select class="form-control search-box" name="BodyRegion" id="BodyRegion" >
                               <option value="">Select Region</optin>
-                              <option value="Fluke">Fluke</optin>
                               <option value="Head">Head</optin>
-                              
+                              <option value="Cranial Ventral">Cranial Ventral</optin>
+                              <option value="Thorax">Thorax</optin>
+                              <option value="Flipper">Flipper</optin>
+                              <option value="Lateral Abdomen">Lateral Abdomen</optin>
+                              <option value="Caudel Ventral">Caudel Ventral</optin>
+                              <option value="Peduncle">Peduncle</optin>
+                              <option value="Flukes">Flukes</optin>                              
                             </select>
                         </div>
                         <div class="form-group form-finchange">
                            <label for="pwd">Side of Body</label> 
                           <select class="form-control search-box" name="SideOfBody" id="SideOfBody" >
                             <option value="">Select Side</optin>
-                            <option value="LR">LR</optin>
+                            <option value="L">L</optin>
+                            <option value="R">R</optin>
+                            <option value="L/R">L/R</optin>
                          
                           </select>
                         </div>

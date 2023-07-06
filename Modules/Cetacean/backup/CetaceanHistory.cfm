@@ -402,19 +402,7 @@
                     </div>
                 </div>
   
-                </div>
-                  
-              </div>
-              <div class="col-lg-5 col-md-12" id="Cetacean-map">
-                <h5 class="m-t-0">Sightings</h5>
-                <div id="google-map-cobalt" class="height-sm">
-                </div>
-                
-                
-              </div>
-              
-            </div>
-        <div class="col-md-12">
+                  <div class="col-md-12">
                      <div class="dataTables_scroll" style="overflow:auto; max-height: 200px;">
                             <div class="dataTables_scrollHead" style="overflow: hidden; position: relative; border: 0px none; width: 100%;">
                               <div class="dataTables_scrollHeadInner" style="box-sizing: content-box; width: 100%;">
@@ -446,10 +434,15 @@
                             </div>
                       </div>
                   </div>
-          </div>
-        </div>
-        <div class="dataTables_scroll">
-        <h3>Lesion History</h3>
+                </div>
+              </div>
+              <div class="col-lg-5 col-md-12" id="Cetacean-map">
+                <h5 class="m-t-0">Sightings</h5>
+                <div id="google-map-cobalt" class="height-sm">
+                </div>
+                
+                <div class="dataTables_scroll">
+                  <h3>Lesion History</h3>
                   <div class="panel pagination-inverse m-b-0 clearfix table-overflow overflow-clearfix">
                     <table id="lesionHistoryTable" class="table table-bordered table-hover">
                         <thead>
@@ -485,13 +478,59 @@
                         </tbody>
                     </table>
                 </div>
+                  <!---<div class="lison-history-responsive">
+                      <div class="lesion-history-table lesion-table" style="overflow: scroll; max-height: 200px;">
+                        <div class="dataTables_scrollHead" >
+                          <div class="dataTables_scrollHeadInner" >
+                            <table class="table table-striped table-bordered dataTable no-footer" id="" role="grid">
+                              <thead>
+                                <tr role="row">
+                                  <th  rowspan="1" colspan="1" >Date Seen</th>
+                                  <th  rowspan="1" colspan="1" >Sighting ID</th>
+                                  <th  rowspan="1" colspan="1" >Sighting No</th>
+                                  <th  rowspan="1" colspan="1" >Lesion Type</th>
+                                  <th  rowspan="1" colspan="1" >Side</th>
+                                  <th  rowspan="1" colspan="1" >Status</th>
+                                  <th  rowspan="1" colspan="1" >Region</th>
+                                </tr>
+                              </thead>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="dataTables_scrollBody" >
+                          <table class="table table-striped table-bordered dataTable no-footer dtr-inline" >
+                            <tbody id="DateSeen">
+                            <cfif isdefined('FORM.CetaceanId')>	
+                              <!--- <cfdump var="#qgetCetacean_Lesions#" abort="true"> --->
+                              <cfloop query='qgetCetacean_Lesions'>
+                                <cfif qgetCetacean_Lesions.id neq '43'>                                
+                                <tr role="row" class="odd">
+                                  <td class="sorting_1">#DateFormat(qgetCetacean_Lesions.DATESEEN,'mm/dd/yyyy')#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.sightid#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.SightingNumber#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.LesionType#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.Side_L_R#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.Status#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.Region#</td>
+                                </tr>
+                              </cfif>
+                              </cfloop>	
+                            </cfif>		
+                            </tbody>
+                          </table>
+                        </div>
+                    </div>
+                  </div>--->
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
       </div>
-      </div>
-
-
         <h3>Permanent Scar History</h3>
-              <div class="panel pagination-inverse m-b-0 clearfix table-overflow overflow-clearfix" style="margin-top:10px">
-                <table id="data-table" data-order='[[1,"asc"]]' class="table table-bordered table-hover">
+              <div class="col-lg-12" style="margin-top:10px">
+                <table id="data-table" data-order='[[1,"asc"]]' class="table panel table-bordered table-hover">
                   <thead>
                     <tr class="inverse">
                       <th>Cetacean ID</th>
