@@ -1188,7 +1188,7 @@ function getSingleCS_Record(cs_ID) {
             $('#replace-btn').show();
             openCSModal();
             var obj = JSON.parse(data);
-
+            console.log(obj);
             if (obj.SDR == 'on') {
                 $("#SDR").prop("checked", true);
             }

@@ -4890,9 +4890,6 @@ function ceteacenExamImg(){
             var pdffile = new FormData();
             pdffile.append('pdf', f);
 
-
-
-
             $.ajax({
                 url: application_root +"Stranding.cfc?method=uploadpdf",
                 type: "POST",
@@ -6279,10 +6276,23 @@ function removeHistoPDF(el){
     }
   }
 
-  function changeDecimalPlace(id){
+  function changeDecimalPlace(id) {
     
     var value = parseFloat(id.value);
-    var decimalValue = value.toFixed(2);
-    $('#AmountofSample').val(decimalValue);
+    if (isNaN(value) || value === '') {
+      $('#AmountofSample').val('');
+    } else {
+      var decimalValue = value.toFixed(2);
+      $('#AmountofSample').val(decimalValue);
+    }
+  }
+  function changeeDecimalPlace(id) {
     
+    var value = parseFloat(id.value);
+    if (isNaN(value) || value === '') {
+      $('#AmountofSample').val('');
+    } else {
+      var decimalValue = value.toFixed(2);
+      $('#reportAmountofSample').val(decimalValue);
+    }
   }

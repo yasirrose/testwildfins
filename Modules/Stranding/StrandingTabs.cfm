@@ -12291,7 +12291,16 @@
                                     <div class="form-group">
                                         <div class="input-group flex-center">
                                             <label class="am-l">Amount of Sample</label>
-                                            <input class="input-style xl-width" type="text" step="0.01" value="#NumberFormat(qgetSampleTypeDataSingle.AmountofSample, "9.99")#" maxlength="6" name="AmountofSample" id="AmountofSample" onblur="changeDecimalPlace(this)">
+                                            <cfif isDefined("qgetSampleTypeDataSingle.AmountofSample") AND qgetSampleTypeDataSingle.AmountofSample neq ''>
+                                                <cfset formattedAmount = NumberFormat(qgetSampleTypeDataSingle.AmountofSample, '9.99')>
+                                              <cfelse>
+                                                <cfset formattedAmount = ''>
+                                              </cfif>
+                                              
+                                              <input class="input-style xl-width" type="text" step="0.01" value="#formattedAmount#" maxlength="6" name="AmountofSample" id="AmountofSample" onblur="changeDecimalPlace(this)">
+
+
+                                            <!--- <input class="input-style xl-width" type="text" step="0.01" value="#NumberFormat(qgetSampleTypeDataSingle.AmountofSample, "9.99")#" maxlength="6" name="AmountofSample" id="AmountofSample" onblur="changeDecimalPlace(this)"> --->
                                         </div>
                                     </div>  
                                 </div>  
@@ -16380,7 +16389,7 @@
                                 <div class="form-group">
                                     <div class="input-group flex-center">
                                         <label class="am-l">Amount of Sample</label>
-                                        <input class="input-style xl-width" type="number" value="" maxlength="6" name="reportAmountofSample" id="reportAmountofSample">
+                                        <input class="input-style xl-width" type="number" value="" maxlength="6" name="reportAmountofSample" id="reportAmountofSample" onblur="changeeDecimalPlace(this)">
                                     </div>
                                 </div>
                             </div>  
