@@ -19,7 +19,8 @@ function deleteRecord(id) {
 }
 
 function updateRecord(id) {
-
+    // alert();
+    // return false;
 	$('#latitude').val($('#lat-'+id).text());
 	$('#longitude').val($('#lng-'+id).text());
     $('#mapZoom').val($('#mapzoom-'+id).text());
@@ -51,9 +52,7 @@ $('form').formValidation({
                 }
             }
         }
-	});
-	
-	
+    });
 // function ApplyPagination(startmeup)
 // {
 // 	document.paginationform.startHereIndex.value = startmeup;

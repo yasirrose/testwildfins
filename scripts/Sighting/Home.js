@@ -1773,18 +1773,17 @@ function validateMyForm(e){
 //         }
 //     );
 // });
-
-// FormValidation.formValidation('formElement', {
-//     fields: {
-//         // ...
-//     },
-//     plugins: {
-//         // ...
-//     },
-// })
-// .on('core.validator.enabled', (e) => {
-//     // Triggered after a validator is enabled
-// })
-// .on('core.validator.disabled', (e) => {
-//     // Triggered after a validator is disabled
-// });
+FormValidation.formValidation('formElement', {
+    fields: {
+        // ...
+    },
+    plugins: {
+        // ...
+    },
+})
+.on('core.validator.enabled', (e) => {
+    // Triggered after a validator is enabled
+})
+.on('core.validator.disabled', (e) => {
+    // Triggered after a validator is disabled
+});

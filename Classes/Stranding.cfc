@@ -773,6 +773,25 @@
         <cfreturn True>
     </cffunction>
 
+    <cffunction name="removepdfAD" returntype="string" output="false" access="remote" returnformat="plain">
+        <cfquery name="removePdfFiles" datasource="#Application.dsn#" result = "results">
+                update ST_Ancillary_Diagnostics set
+                pdfFiles=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+        
+                    where
+                    ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                    
+                </cfquery>
+                        <!--- <cfdump var=#results# abort="true"> --->
+               
+        <cfif len(trim(#pdf#))>
+            <cfif FileExists("#Application.CloudDirectory&pdf#")>
+                <cffile action = "delete" file = "#Application.CloudDirectory&pdf#">
+            </cfif>
+        </cfif>
+        <cfreturn True>
+    </cffunction>
+
     <cffunction name="removeToxifiles" returntype="string" output="false" access="remote" returnformat="plain">
         <cfquery name="removePdfFiles" datasource="#Application.dsn#" result = "results">
                 update ST_Toxicology set
@@ -4394,6 +4413,10 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
+        <cfif NOT isDefined('FORM.caseReportADBox')>
+            <cfset FORM.caseReportADBox = "0">
+        </cfif>
+
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -4432,6 +4455,8 @@
                 ,BriefHistory
                 ,euthanizedCB
                 ,headerImages
+                ,pdfFiles
+                ,caseReportBox
                 ) 
                 VALUES
                 (
@@ -4462,6 +4487,8 @@
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ADpdfFiles#'>
+                ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportADBox#'>
                
                 )
             </cfquery>
@@ -4492,6 +4519,9 @@
         </cfif>
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.caseReportADBox')>
+            <cfset FORM.caseReportADBox = "0">
         </cfif>
         
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
@@ -4532,6 +4562,8 @@
                 ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                ,pdfFiles = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ADpdfFiles#'>
+                ,caseReportBox = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportADBox#'>
                 WHERE
                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.ADID#'>
             </cfquery>
@@ -4647,9 +4679,9 @@
         <cfargument name="DiagnosticLab" type="string" required="false">
         <cfargument name="pdfFilesAncillary" type="string" required="false">
         <cfargument name="ADID" type="string" required="false">
-        <cfset pd = listToArray(pdfFilesAncillary)>
+        <!--- <cfset pd = listToArray(pdfFilesAncillary)> --->
         <!--- <cfdump var="#pdfFilesAncillary#" abort="true"> --->
-        <CFTRY>
+        <!--- <CFTRY>
             <cffile action = "uploadAll"  
             fileField = "pdf" 
             destination = "#Application.CloudDirectory#"  
@@ -4665,12 +4697,14 @@
             <CFCATCH type="any">
                 <cfdump  var="#cfcatch#"><cfabort>
             </CFCATCH>
-        </CFTRY>
-        <cfset fil = arrayToList(pd)>
+        </CFTRY> --->
+        
+        <!---pdfFiles ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(fil,i)#'> --->
+        <!--- <cfset fil = arrayToList(pd)> --->
         <cfif len(trim(DiagnosticTest)) GT 0 >
 			<cfloop from="1" to="#ListLen(DiagnosticTest)#" index="i">
                 <cfquery name="qAncillaryReportInsert" datasource="#variables.dsn#">
-                   Insert into ST_Ancillary_Report  (TestingDate,ADSampleType,DiagnosticTest,TestResults,DiagnosticLab,pdfFiles,AD_ID)
+                   Insert into ST_Ancillary_Report  (TestingDate,ADSampleType,DiagnosticTest,TestResults,DiagnosticLab,AD_ID)
                     values
                     (
                         <cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(TestingDate,i)#'>
@@ -4678,7 +4712,6 @@
                         ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(DiagnosticTest,i)#'>
                         ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(TestResults,i)#'>
                         ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(DiagnosticLab,i)#'>
-                        ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(fil,i)#'>
                         ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ADID#'>
                     )
                 </cfquery>

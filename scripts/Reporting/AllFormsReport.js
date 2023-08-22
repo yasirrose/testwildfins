@@ -15,10 +15,7 @@ $(document).ready(function () {
             },
             {
                 extend: 'excelHtml5',
-				title: null,
-				// exportOptions: {
-				// 	columns: [ ':visible' ]
-				// }
+                title: null
             },
             {
                 extend: 'csv',
@@ -26,7 +23,6 @@ $(document).ready(function () {
           
         ]
 	});
-
 	$('input[name="date"]').daterangepicker({
         opens: "right",
         format: "MM/DD/YYYY",

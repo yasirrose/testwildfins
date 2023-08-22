@@ -3321,7 +3321,7 @@
                 WHERE PermanentScar.Species = #species_ID#
                 <cfif isDefined('cetacean_ID') AND cetacean_ID neq '' AND cetacean_ID neq 'empty'>
                     AND PermanentScar.CetaceanId = #cetacean_ID#
-                </cfif> 
+                </cfif>
             </cfquery>
             <!--- <cfdump var="#qgetPermanentScar#" abort="true"> --->
             <cfset c=0>

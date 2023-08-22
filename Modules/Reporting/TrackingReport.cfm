@@ -51,7 +51,6 @@
                                     <option value="">Select Field Number</option>                               
                                     <cfloop query="qgetSampleFBNumber">
                                         <option value="#qgetSampleFBNumber.Fnumber#" >#qgetSampleFBNumber.Fnumber#</option>
-                                        <!--- <cfif isDefined('form.SEID') and form.SEID eq #qgetSampleFBNumber.ID#>selected</cfif> --->
                                     </cfloop>
                                 </select>
                             </div>
@@ -61,12 +60,9 @@
                             <div class="col-sm-8">
                                 <select class="form-control" name="Species" id="Species">
                                     <option value="">Select Species</option>
-                                    <!--- <cfloop query="qgetIR_CountyLocation"> --->
                                         <cfloop query="#qgetCetaceanSpecies#">
                                             <option value="#qgetCetaceanSpecies.ID#" >#qgetCetaceanSpecies.CetaceanSpeciesName#</option>
-                                            <!--- <cfif isDefined('form.cetaceanSpecies') and form.cetaceanSpecies eq #CetaceanSpeciesName#>selected</cfif> --->
                                         </cfloop>
-                                    <!--- </cfloop> --->
                                 </select>
                             </div>
                         </div>
@@ -78,10 +74,7 @@
                                 <select class="form-control" name="SampleType" id="SampleType">
                                     <option value="">Select Sample Type</option>
                                     <cfloop query="qgetSampleType">
-                                        <!--- <cfif status  neq 0> --->
                                             <option value="#qgetSampleType.Type#" >#qgetSampleType.Type#</option>
-                                            <!--- <cfif #qgetSampleType.Type# eq #qgetSampleTypeDataSingle.SampleType#>selected</cfif> --->
-                                        <!--- </cfif> --->
                                     </cfloop>
                                 </select>
                             </div>
@@ -93,7 +86,6 @@
                                     <option value="">Select Storage Type</option>
                                         <cfloop from="1" to="#ArrayLen(StorageTypeArray)#" index="j">
                                              <option value="#StorageTypeArray[j]#" >#StorageTypeArray[j]#</option>
-                                             <!--- <cfif #StorageTypeArray[j]# eq #qgetSampleTypeDataSingle.StorageType#>selected</cfif> --->
                                      </cfloop>
                                 </select>
                             </div>
@@ -104,10 +96,7 @@
                                 <select class="form-control" name="PreservationMethod" id="PreservationMethod">
                                     <option value="">Select Preservation Method</option>
                                         <cfloop query="qgetPreservationMethod">
-                                            <!--- <cfif status  neq 0> --->
                                                 <option value="#qgetPreservationMethod.Method#" >#qgetPreservationMethod.Method#</option>
-                                                <!--- <cfif #qgetPreservationMethod.Method# eq #qgetSampleTypeDataSingle.PreservationMethod#>selected</cfif> --->
-                                            <!--- </cfif> --->
                                         </cfloop>
                                 </select>
                             </div>
@@ -139,7 +128,7 @@
 
         
             <cfquery name="qgetSampleTrackingReport" datasource="#Application.dsn#">
-                SELECT SA.Fnumber, ST.SampleID,ST.BinNumber,ST.SampleType,ST.PreservationMethod,ST.AmountofSample,ST.UnitofSample,ST.StorageType,ST.SampleComments,SD.SADate,SD.SampleLocation,SD.SampleTracking,SD.LabSentto,SD.SampleNote,SD.subsampleDate,SD.Thawed,SD.Sample_available
+                SELECT SA.Fnumber, ST.SampleID,ST.BinNumber,ST.SampleType,ST.PreservationMethod,ST.AmountofSample,ST.UnitofSample,ST.StorageType,ST.SampleComments,ST.Sample_Date,ST.Sample_Location,SD.SADate,SD.SampleLocation,SD.SampleTracking,SD.LabSentto,SD.SampleNote,SD.subsampleDate,SD.Thawed,SD.Sample_available
                 FROM ST_SampleArchive as SA
                 LEFT JOIN ST_SampleType as ST ON SA.ID = ST.SA_ID   
                 LEFT JOIN ST_SampleDetail as SD ON ST.ID = SD.ST_ID   
@@ -165,9 +154,6 @@
                 ORDER BY SA.ID DESC       
             </cfquery>
             
-
-            <!--- <cfdump var="#qgetSampleTrackingReport#" abort="true"> --->
-
             <div class="section-container  p-b-10" >
                 <cfif qgetSampleTrackingReport.recordcount NEQ 0>
                     <table id="data-table" data-order='[[3,"desc"]]' class="table table-bordered table-hover panel" style="overflow: auto; display: block; border-radius: inherit;">
@@ -182,6 +168,8 @@
                             <th>Unit of sample</th>
                             <th>Storage Type</th>
                             <th>Sample Comments</th>
+                            <th>Sample Date</th>
+                            <!--- <th>Location</th> --->
 
                             <th>Sample Accession Date</th>
                             <th>Sample Location</th>
@@ -210,6 +198,8 @@
                                         <td>#qgetSampleTrackingReport.UnitofSample#</td>
                                         <td><cfif isdefined("qgetSampleTrackingReport.StorageType") and qgetSampleTrackingReport.StorageType neq "">#qgetSampleTrackingReport.StorageType#</cfif></td>
                                         <td>#qgetSampleTrackingReport.SampleComments#</td>
+                                        <td>#qgetSampleTrackingReport.Sample_Date#</td>
+                                        <!--- <td>#qgetSampleTrackingReport.Sample_Location#</td> --->
                                         <td>#qgetSampleTrackingReport.SADate#</td>
                                         <td>#qgetSampleTrackingReport.SampleLocation#</td>
                                         <td>#qgetSampleTrackingReport.SampleTracking#</td>
@@ -238,12 +228,7 @@
                     </div>
                 </cfif>
             </div>
-            <!--- today work --->
-     
-
-
-
-        </cfif>
+         </cfif>
         <!-- end panel -->
     </div>
     <!-- end section-container -->

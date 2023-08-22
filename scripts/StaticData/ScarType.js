@@ -18,7 +18,7 @@ function deleteRecord(id) {
 }
 
 function updateRecord(id) {
-	$('#ScarTypeName	').val($('#cam-'+id).text());
+	$('#ScarTypeName').val($('#cam-'+id).text());
 	$("#add").attr('name', 'EditScarType');
 	$("#add").text('Edit');
 	$("#LesionType_id").val(id);

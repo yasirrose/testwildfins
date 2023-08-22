@@ -32,7 +32,7 @@
                             <label class="col-lg-4 col-md-4 col-sm-12 control-label top-fld">Date Range</label>
                             <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                 <div id="Date-range" class="input-group">
-                                    <input type="text"  class="form-control" value="<cfif  isDefined('form.date')>#form.date#</cfif>" name="date" id="date" placeholder="Select Date Range">
+                                    <input type="text"  class="form-control" value="<cfif  isDefined('form.date')>#form.date#</cfif>" name="date" id="date" placeholder="Select Date Range" readonly>
                                     <span class="input-group-btn">
                                         <button type="button" class="btn btn-primary"onclick="showdate()"><i class="fa fa-calendar"></i></button>
                                     </span>

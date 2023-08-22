@@ -391,9 +391,9 @@
                                  <select class="form-control" id="EnteredBy" name="EnteredBy">
                                     <option value="0">Select Entered By</option>
                                     <cfloop query="getuserlist">
-                                           <!---<cfif status eq "Enable">
-                                       </cfif>--->
+                                       <cfif status eq "Enable">
                                           <option value="#user_id#" <cfif SESSION['UserDetails']['Id'] eq user_id>selected</cfif>>#first_name# #last_name#</option>
+                                       </cfif>
                                     </cfloop>
                                  </select>
                               </div>

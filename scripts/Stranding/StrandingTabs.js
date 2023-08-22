@@ -2000,7 +2000,7 @@ if($('#TestNew').val() == "Add New"){
       $("#TestResults").val('');
       $("#DiagnosticLab").val('');
       $("#TestingDate").val('');
-      imgA();
+      // imgA();
      
   
   }
@@ -2110,40 +2110,42 @@ if($('#TestNew').val() == "Add New"){
 
 }
 
-var PDFArrayAncillary = [];
-function imgA(){
-  if($('#filesAncillary').val() != ''){
+// var PDFArrayAncillary = [];
+// function imgA(){
+//   if($('#filesAncillary').val() != ''){
 
-      var filesAncillary = $('#filesAncillary').prop('files');
-      // console.log(filesAncillary);
-      var f = filesAncillary[0];
-      if(f.size < 10000000){
-          // alert()
-          if(f.type == 'application/pdf'){ 
-              $('#filesAncillary').hide();
-              $('#filesAncillary').attr('name','pdf');   
-              $('#filesAncillary').attr('id','fi');   
-              src= URL.createObjectURL(f);
-              PDFArrayAncillary.push(f.name);
-              $('#filesAncillary').hide();
-              $('#filediv').append('<input class="input-style xl-width" type="file"  name="emptypdf" id="filesAncillary" accept="application/pdf">')
+//       var filesAncillary = $('#filesAncillary').prop('files');
+//       // console.log(filesAncillary);
+//       var f = filesAncillary[0];
+//       if(f.size < 10000000){
+//           // alert()
+//           if(f.type == 'application/pdf'){ 
+//               $('#filesAncillary').hide();
+//               $('#filesAncillary').attr('name','pdf');   
+//               $('#filesAncillary').attr('id','fi');   
+//               src= URL.createObjectURL(f);
+//               PDFArrayAncillary.push(f.name);
+//               $('#filesAncillary').hide();
+//               $('#filediv').append('<input class="input-style xl-width" type="file"  name="emptypdf" id="filesAncillary" accept="application/pdf">')
 
-              $('#AncillaryTable').find('td:last').append('<span><a data-toggle="modal" data-target="#myModalAA" href="#" title="'+src+'" target="blank"><img class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="showPDFmodal(this)"/></a><br/><span class="remove">'+f.name+'</span></span>');
-          }else{
-              alert('Selected file is not PDF');
-              PDFArrayAncillary.push(0);
-          }
-      }else{
-          alert('Selected file is Large than 10MB');
-          PDFArrayAncillary.push(0);
-      }
-  }else{
-      PDFArrayAncillary.push(0);
-  } 
-  // console.log(PDFArrayAncillary); 
-  $('#pdfFilesAncillary').val(PDFArrayAncillary);
+//               $('#AncillaryTable').find('td:last').append('<span><a data-toggle="modal" data-target="#myModalAA" href="#" title="'+src+'" target="blank"><img class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="showPDFmodal(this)"/></a><br/><span class="remove">'+f.name+'</span></span>');
+//           }else{
+//               alert('Selected file is not PDF');
+//               PDFArrayAncillary.push(0);
+//           }
+//       }else{
+//           alert('Selected file is Large than 10MB');
+//           PDFArrayAncillary.push(0);
+//       }
+//   }else{
+//       PDFArrayAncillary.push(0);
+//   } 
+//   // console.log(PDFArrayAncillary); 
+//   $('#pdfFilesAncillary').val(PDFArrayAncillary);
 
-}
+// }
+
+
 $( "#deleteAncillaryAllRecord" ).click(function() {
   $('#date').val('mm/dd/yyyy');
   $('#Fnumber').val(' ');
@@ -4890,6 +4892,9 @@ function ceteacenExamImg(){
             var pdffile = new FormData();
             pdffile.append('pdf', f);
 
+
+
+
             $.ajax({
                 url: application_root +"Stranding.cfc?method=uploadpdf",
                 type: "POST",
@@ -6296,3 +6301,105 @@ function removeHistoPDF(el){
       $('#reportAmountofSample').val(decimalValue);
     }
   }
+
+
+
+  // start for Level A Form
+
+// var cn=1;
+var ADPDFArray = [];
+if($('#ADpdfFiles').val() != ''){
+    ADPDFArray.push($('#ADpdfFiles').val());
+
+}
+function ADFilesUpload(){
+    cn = ++cn;
+    pr = cn - 1;
+    var files = $('#ADFormfiles').prop('files');
+    var f = files[0];
+    // console.log(f.size);
+    if(f.size < 10000000){
+        if(f.type == 'application/pdf'){    
+            $('#ADstart').after('<span class="spi"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></span>');
+            $('#ADFormfiles').prop('disabled', true);
+            var pdffile = new FormData();
+            pdffile.append('pdf', f);
+            $.ajax({
+                url: application_root +"Stranding.cfc?method=uploadpdf",
+                type: "POST",
+                data: pdffile,
+                enctype: 'multipart/form-data',
+                processData: false, // tell jQuery not to process the data
+                contentType: false, // tell jQuery not to set contentType
+                success: function (data) {
+                    if(data != ""){
+                    ADPDFArray.push(data);
+                    // $('#ADpdfFiles').val(ADPDFArray);
+                    var oldvalue = $('#ADpdfFiles').val();
+                    var newvalue = data;
+                    if(oldvalue){
+                        var FullValue = oldvalue +","+ newvalue;
+                    }else{
+                        var FullValue = newvalue;
+                    }
+                    $('#ADpdfFiles').val(FullValue);
+                    $('.spi').remove();
+                    $('#ADpreviousimages').append('<span class="pip"><a data-toggle="modal" data-target="#myHiFormModal" href="#" title="http://cloud.wildfins.org/'+data+'" target="blank"><img id="select'+pr+'" class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="'+f.name+'" onclick="selectedHIForm(this)"/></a><br/><span class="remove" id="'+data+'" onclick="ADremove(this)">Remove File</span></br><span class="remove" id="'+f.name+'">'+f.name+'</span></span>');
+                    $('#ADFormfiles').prop('disabled', false);
+                    }else{
+                        alert('Selected file corrupted PDF');
+                        $('.spi').remove();
+                        $('#ADFormfiles').prop('disabled', false);
+                    }
+                    // $('#remove'+pr).click(function(){
+                    //     $(this).parent(".pip").remove();
+                    //     $('#files'+pr).remove();
+
+                    // });
+
+                    // $('#select'+pr).click(function(){
+                    //     we = $(this).parent().attr('title');
+                    //     $('#emb').attr('src', we);
+                    //     $('#pdfname').html($(this).attr('title'));
+                    // });
+                    $('#caseReportLABox').show();
+                }
+            });
+        }else{
+            alert('Selected file is not PDF');
+            $('#ADFormfiles').val("");
+        }
+    }else{
+        alert('Selected file is Large than 10MB');
+        $('#ADFormfiles').val("");
+    }        
+}
+
+
+function ADremove(el){
+
+  ID = $('#ADID').val();
+  var element = el;
+  pdffile = element.id
+
+  data = $('#ADpdfFiles').val();
+
+  data1 = data.split(",");
+  var removeArrayValue = pdffile;
+  data1.splice($.inArray(removeArrayValue, data1), 1);
+  data2 = data1.toString();
+
+  $('#ADpdfFiles').val(data2);
+
+// console.log(ID);
+  $.ajax({
+      url: application_root +"Stranding.cfc?method=removepdfAD",
+      type: "POST",
+      data: { ID: ID, pdf: pdffile, imgValue: data2 },
+      success: function (data) {
+          // PDFArray = PDFArray.filter(e => e !== "Get_Started_With_Smallpdf20.pdf"); 
+          // $('#pdfFiles').val(PDFArray);
+          element.parentNode.remove();
+      }
+  });    
+}

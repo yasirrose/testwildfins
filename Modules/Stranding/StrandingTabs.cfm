@@ -523,7 +523,6 @@
         <cfset qgetHIDataa=Application.Stranding.getHistoData("#form.LCEID#")>
         <cfset qLCEDataa=Application.Stranding.getHistoData("#form.LCEID#")>
         <cfset qgetcetaceanDate=Application.Stranding.getHistopathologyNecropsyDate(#form.His_ID#)>
-        <!--- <cfdump var="#qgetHIDataa#" abort="true"> --->
         <cfset qgetHistoSampleData = Application.Stranding.getHistoSampleData(HI_ID="#form.LCEID#")>
         <cfif #qgetHIDataa.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetHIDataa.species#")>
@@ -866,18 +865,19 @@
                 </cfif>
             <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
             <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>
+            <!--- <cfdump var="#qgetAncillaryData#" abort="true"> --->
             <cfset qLCEDataa=Application.Stranding.getAncillaryData("#form.AD_ID#")>
             <cfset qgetcetaceanDate=Application.Stranding.getAncillaryDiagnosticsNecropsyDate(#form.AD_ID#)>
             <cfif #qgetAncillaryData.species# neq "">
                 <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetAncillaryData.species#")>
             </cfif>
             <cfset qAncillaryReportGet=Application.Stranding.AncillaryReportGet("#form.AD_ID#")>
+
         </cfif>
         
         <cfif isDefined('Session.Ancillary') and Session.Ancillary NEQ ''> 
             <cfset form.AD_ID = #Session.Ancillary#>
             <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>
-            <!--- <cfset qLCEDataa=Application.Stranding.getAncillaryData("#form.AD_ID#")> --->
             <cfset qgetcetaceanDate=Application.Stranding.getAncillaryDiagnosticsNecropsyDate(#form.AD_ID#)>
             <cfif #qgetAncillaryData.species# neq "">
                 <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetAncillaryData.species#")>
@@ -4181,11 +4181,7 @@
     <cfif  isDefined('form.AD_ID') and form.AD_ID neq "">
 
         <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-        <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>
-        <!--- <cfset qgetcetaceanDate=Application.Stranding.getAncillaryDiagnosticsNecropsyDate(#form.AD_ID#)>
-        <cfif #qgetAncillaryData.species# neq "">
-            <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetAncillaryData.species#")>
-        </cfif> --->
+        <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>       
         <cfset qAncillaryReportGet=Application.Stranding.AncillaryReportGet("#form.AD_ID#")>
     </cfif>
 
@@ -6982,7 +6978,7 @@
                                         <div class="col-sm-12" style="margin-bottom: 10px;">
                                             <label>Location</label>
                                             <textarea class="form-control textareaCustomReset locations-textarea" onblur="headerDataSave()" id="Location" name="Location"
-                                                maxlength="75"><cfif isDefined('qLCEDataa.Location')>#qLCEDataa.Location#</cfif></textarea>
+                                                maxlength="512"><cfif isDefined('qLCEDataa.Location')>#qLCEDataa.Location#</cfif></textarea>
                                         </div>
 
                                         <div class="col-sm-6">
@@ -7149,7 +7145,7 @@
                                         <div class="col-lg-12" style="margin-top: 15px;">
                                             <div class="form-group brief-history">
                                                 <label class="history-label">Brief History</label>
-                                                <textarea class="form-control textareaCustomReset locations-textarea" onblur="headerDataSave()" name="BriefHistory" id="BriefHistory"  maxlength="2084" style="resize: auto;"><cfif isDefined('qLCEDataa.BriefHistory')>#qLCEDataa.BriefHistory#</cfif> </textarea>
+                                                <textarea class="form-control textareaCustomReset locations-textarea" onblur="headerDataSave()" name="BriefHistory" id="BriefHistory"  maxlength="2048" style="resize: auto;"><cfif isDefined('qLCEDataa.BriefHistory')>#qLCEDataa.BriefHistory#</cfif> </textarea>
                                             </div>
                                         </div>
                                         <div class="col-lg-12" id="headerImages" >
@@ -7302,10 +7298,10 @@
                                         <div class="form-group">
                                         <div class="input-group">
                                             <div class="flex-center mb-1">
-                                                <label class="resp-rate">Resps/min</label>
+                                                <label class="resp-rate">Resps/5 mins</label>
                                                 
                                                 <div class="input">
-                                                    <input type="text" class="input input-style" onblur="checkValue(this)" value="" id="respRate" placeholder="Resps /min">
+                                                    <input type="text" class="input input-style" onblur="checkValue(this)" value="" id="respRate" placeholder="Resps/5 mins">
                                                     <span id="resp_rate" class="resp_rate_error"></span>
                                                     <input type="hidden" value="" name="respRate" id="rr">
                                                 </div>
@@ -8715,7 +8711,7 @@
                             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                 <div class="form-group flex-center">
                                     <label class="scomment-label">Remarks</label>
-                                    <textarea class="form-control textareaCustomReset locations-textarea" maxlength="1024" id="SampleCommentsID" name="SampleCommentss">#trim(qgetHIDataa.SampleComments)#</textarea>
+                                    <textarea class="form-control textareaCustomReset locations-textarea" maxlength="2048" id="SampleCommentsID" name="SampleCommentss">#trim(qgetHIDataa.SampleComments)#</textarea>
                                 </div>
                             </div>             
                         </div>
@@ -10422,7 +10418,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column " >
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Iron_comment" id="Iron_comment"
@@ -10431,7 +10427,7 @@
                             </div>
                             <!--- need to add iron  --->
                             
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column" style="display:none;">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group cust-blod">
                                         <label class="">Lipemia Index</label>
@@ -10446,7 +10442,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column" style="display:none;">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group ">
                                         <label class="county-label">Select Option</label>
@@ -10458,7 +10454,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column " style="display:none;">
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Lipemia_comment" id="Lipemia_comment"
@@ -10468,7 +10464,7 @@
                  
                       
                      
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column" style="display:none;">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group cust-blod">
                                         <label class="">BUN/CREA Ratio</label>
@@ -10476,7 +10472,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column" style="display:none;">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group ">
                                         <label class="county-label">Select Option</label>
@@ -10488,7 +10484,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column " style="display:none;">
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="BUN_CREA_comment" id="BUN_CREA_comment"
@@ -10496,7 +10492,7 @@
                                 </div>
                             </div>
                        
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column" style="display:none;">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group cust-blod">
                                         <label class="">Uric Acid</label>
@@ -10504,7 +10500,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column" style="display:none;">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group ">
                                         <label class="county-label">Select Option</label>
@@ -10516,7 +10512,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column " style="display:none;">
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control   " name="Uric_comment" id="Uric_comment"
@@ -10524,7 +10520,7 @@
                                 </div>
                             </div>
                        
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column" style="display:none;">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group cust-blod">
                                         <label class="">Direct Bilirubin</label>
@@ -10532,7 +10528,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column" style="display:none;">
                                 <div class="form-group blood-from-froup">
                                     <div class="input-group ">
                                         <label class="county-label">Select Option</label>
@@ -10544,7 +10540,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column ">
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column " style="display:none;">
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="D_Bilirubin_comment" id="D_Bilirubin_comment"
@@ -10699,7 +10695,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Alpha_1_comment" id="Alpha_1_comment"
-                                     >#qgetCapillary.Alpha_1_comment#</textarea>
+                                    maxlength="250" >#qgetCapillary.Alpha_1_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -11143,7 +11139,7 @@
                                 <div class="form-group blood-from-froup">
                                     <label class="scomment-label">Comments</label>
                                     <textarea class="form-control" name="Crea2_comment" id="Crea2_comment"
-                                     >#qgetiSTAT_Chem.Crea2_comment#</textarea>
+                                    maxlength="250" >#qgetiSTAT_Chem.Crea2_comment#</textarea>
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
@@ -11990,6 +11986,45 @@
                 <!--- <input type="hidden"  name="check" value="1">
                 <input type="hidden"  name="histopathology_fields" value="1"> --->
                 <!---Sample Collection --->
+                <cfif !isDefined('qgetAncillaryData')>
+                    <cfset qgetAncillaryData=Application.Stranding.getAncillary_ten()>
+                </cfif>    
+                <h5 class="mb-1"><strong>Documents</strong></h5>
+                <input type="hidden" name="ADpdfFiles" value="#qgetAncillaryData.pdfFiles#" id="ADpdfFiles">
+                <div class="form-holder">  
+                    <div class="form-group" id="find">
+                        <div class="row" id="ADstart">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                <div class="form-group">
+                                    <div class="input-group flex-center">
+                                        <label class="">Upload PDF File (Max Size: 10MB)</label>
+                                        <input class="input-style xl-width" type="file"  name="FileContents" id="ADFormfiles" onchange="ADFilesUpload()" accept="application/pdf" <cfif findNoCase("Read only ST", permissions) neq 0> Disabled</cfif>>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                        </div>
+                        <cfset imgss = ValueList(qgetAncillaryData.pdfFiles,",")>
+                        <div id="ADpreviousimages" class="PDFInline">
+                            <CFIF listLen(imgss)> 
+                                <cfloop list="#imgss#" item="item" index="index">
+                
+                                    <span class="pip new-pip">
+                                        <a data-toggle="modal" data-target="##myHiFormModal" href="##" title="#Application.CloudRoot##item#" target="blank">
+                                            <img  class="imageThumb" src="http://test.wildfins.org/resources/assets/img/PDF_icon.png" title="#item#" onclick="selectedHIForm(this)"/>
+                                        </a>
+                                        
+                                        <br/>
+                                        <span class="remove" onclick="ADremove(this)" id="#item#">Remove File</span>
+                                    </br>
+                                        <span class="remove" id="#item#">#item#</span>
+                                    </span>
+                                </cfloop>
+                            </cfif>
+                        </div>
+                        <input class="input-style xl-width" type="checkbox" value="1" name="caseReportADBox" id="caseReportADBox" <cfif (isdefined('qgetAncillaryData.caseReportBox') and  qgetAncillaryData.caseReportBox eq '1')>checked</cfif>>	
+                    </div>
+                </div>
                 <div class="form-holder blue-bg sample-accession-form">
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
@@ -12066,7 +12101,7 @@
                                 <input type="hidden" name="TestingDate" id="TD">
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6"> 
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" style="display:none;"> 
                             <div class="form-group" id="find">
                                 <div class="input-group flex-center" id="filediv">
                                     <label class="file-label">Upload PDF File (Max Size: 10MB)</label>
@@ -12094,7 +12129,7 @@
                                                 <th>Test Result</th>
                                                 <th>Diagnostic Lab</th>
                                                 <th>Testing Date</th>
-                                                <th>PDF</th>
+                                                <!--- <th>PDF</th> --->
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -12109,7 +12144,7 @@
                                                         <td id="TestResults_#ID#">#qAncillaryReportGet.TestResults#</td>
                                                         <td id="DiagnosticLab_#ID#">#qAncillaryReportGet.DiagnosticLab#</td>
                                                         <td id="AncillaryDate_#ID#">#qAncillaryReportGet.TestingDate#</td>
-                                                        <td id="AncillaryPDF_#ID#">
+                                                        <!--- <td id="AncillaryPDF_#ID#">
                                                             <cfif #qAncillaryReportGet.pdfFiles# neq 0>
                                                             <span class="pip">
                                                                 <a data-toggle="modal" data-target="##myModalAA" href="##" title="#Application.CloudRoot##qAncillaryReportGet.pdfFiles#" target="blank">
@@ -12120,7 +12155,7 @@
                                                                 
                                                             </span>
                                                             </cfif>
-                                                        </td>
+                                                        </td> --->
                                                         <td>
                                                             <div class="tablebutn edbtn" style="display: inline-flex;">
                                                                 <input type="button" id="edit_button#ID#" value="Edit" class="edit" onclick="edit_AncillaryRow(#ID#)">

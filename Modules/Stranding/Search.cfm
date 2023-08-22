@@ -27,15 +27,15 @@
             <div class="form-group m-b-10" style="overflow: hidden;">
                	<div class="row col-md-3">
                    <form class="navbar-form form-input-flat" method="post" name="paginationform">
-                    <div class="form-group">
-                    <input type="text" name="searchword" class="form-control" 
-                    value="<cfif isdefined("form") and len(trim(form.searchword)) NEQ 0><cfoutput>#form.searchword#</cfoutput></cfif>" placeholder="search...">
-                    <input type="hidden" name="startHereIndex" value="1" />
-                    <button type="submit" class="btn btn-search"><i class="fa fa-search"></i></button>
-                    </div>
+                   <div class="form-group">
+                   <input type="text" name="searchword" class="form-control" 
+                  value="<cfif isdefined("form") and len(trim(form.searchword)) NEQ 0><cfoutput>#form.searchword#</cfoutput></cfif>" placeholder="search...">
+                   <input type="hidden" name="startHereIndex" value="1" />
+                   <button type="submit" class="btn btn-search"><i class="fa fa-search"></i></button>
+                   </div>
                    </form>
-                </div>
-            </div>
+                   </div>
+                 </div>
                  
                 <!-- begin panel -->
                 <div class="panel pagination-inverse m-b-0 clearfix table-overflow">
