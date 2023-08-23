@@ -68,7 +68,6 @@
                 <cfset Application.Stranding.InsertRespData(argumentCollection="#Form#")>
             </cfif>
             <cfif form.Drugtype neq "">
-                <!--- <cfdump var="#form.Drugtype#" abort="true"> --->
                 <cfset Application.Stranding.InsertDrugData(argumentCollection="#Form#")>
             </cfif>
             <cfif form.BiopsyType neq "">
@@ -177,11 +176,9 @@
         <cfset Session.CeteacenExam = ''>
         </cfif>
         <cfset qLCEData=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
-        <cfset qLCEDataa=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
-        <!--- <cfset qgetcetaceanDate=Application.Stranding.getcetaceanNecropsyDate(argumentCollection="#Form#")> --->
-        <!--- <cfset form.NRD = qLCEDataa.Fnumber> --->
+        <cfset qLCEDataa=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>       
         <cfset qgetcetaceanDate=Application.Stranding.getcetaceanNecropsyDate(#form.LCEID#)>
-        <!--- <cfdump var="#qgetcetaceanDate.CNRDATE#" abort="true"> --->
+        <!--- <cfdump var="#qgetcetaceanDate.CNRDATE#" abort="true"> nouman--->
         <cfif #qLCEData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qLCEData.species#")>
         </cfif>
@@ -192,7 +189,6 @@
         <cfset qgetLesionData = Application.Stranding.getLesionData(LCEID="#form.LCEID#")>
         <cfset qgetNewSectionData = Application.Stranding.getNewSectionData(LCEID="#form.LCEID#")>
     <cfelse>
-        <!--- <cfset qgetcetaceanDate=Application.Stranding.getcetaceanNecropsyDate_ten()> --->
         <cfset qLCEData=Application.Stranding.getLCE_ten()>
         <cfset qLCEDataa=Application.Stranding.getLCE_ten()>
     </cfif>
@@ -4016,24 +4012,14 @@
 
     <cfif (isDefined('form.LCEID') and form.LCEID neq "")>
   
-        <cfset qLCEData=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
-        <!--- <cfset qgetcetaceanDate=Application.Stranding.getcetaceanNecropsyDate(argumentCollection="#Form#")> --->
-        <!--- <cfset form.NRD = qLCEDataa.Fnumber> --->
-        <!--- <cfset qgetcetaceanDate=Application.Stranding.getcetaceanNecropsyDate(#form.LCEID#)> --->
-        <!--- <cfdump var="#qgetcetaceanDate.CNRDATE#" abort="true"> --->
-        <!--- <cfif #qLCEData.species# neq "">
-            <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qLCEData.species#")>
-        </cfif> --->
+        <cfset qLCEData=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>     
         <cfset qgetHeartData = Application.Stranding.getHeartData(LCEID="#form.LCEID#")>
         <cfset qgetRespData = Application.Stranding.getRespData(LCEID="#form.LCEID#")>
         <cfset qgetDrugData = Application.Stranding.getDrugData(LCEID="#form.LCEID#")>
         <cfset qgetBiopsyData = Application.Stranding.getBiopsyData(LCEID="#form.LCEID#")>
         <cfset qgetLesionData = Application.Stranding.getLesionData(LCEID="#form.LCEID#")>
         <cfset qgetNewSectionData = Application.Stranding.getNewSectionData(LCEID="#form.LCEID#")>
-    <!--- <cfelse>
-        <!--- <cfset qgetcetaceanDate=Application.Stranding.getcetaceanNecropsyDate_ten()> --->
-        <cfset qLCEData=Application.Stranding.getLCE_ten()>
-        <cfset qLCEDataa=Application.Stranding.getLCE_ten()> --->
+
     </cfif>
 
     <!--- end for CetaceanExam --->
@@ -4056,11 +4042,7 @@
             <cfset form.LCEID = form.HI_ID>
             
             <cfset qgetHIData=Application.Stranding.getHIData("#form.LCEID#")>
-            <!--- <cfset qgetcetaceanDate=Application.Stranding.getHIFormNecropsyDate(#form.LCEID#)>
-
-            <cfif #qgetHIData.species# neq "">
-                <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetHIData.species#")>
-            </cfif> --->
+         
 
             <cfset qgetHiExamData = Application.Stranding.getHiExamData(LCEID="#form.LCEID#")>
         </cfif>
@@ -4081,11 +4063,7 @@
 
             <cfset form.LCEID = form.LA_ID>
             <cfset qgetLevelAData=Application.Stranding.getLevelAData("#form.LCEID#")>
-            <!--- <cfset qgetcetaceanDate=Application.Stranding.getLevelAFormNecropsyDate(#form.LA_ID#)> --->
-            <!--- <cfdump var="#qgetLevelAData#" abort="true"> --->
-            <!--- <cfif #qgetLevelAData.species# neq "">
-                <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetLevelAData.species#")>
-            </cfif> --->
+         
         </cfif>
     <!--- end for level a form --->
     <!--- strat for Histopathology--->
@@ -4106,11 +4084,8 @@
             <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
             <cfset qgetHIDataa=Application.Stranding.getHistoData("#form.LCEID#")>
 
-            <!--- <cfset qgetcetaceanDate=Application.Stranding.getHistopathologyNecropsyDate(#form.His_ID#)> --->
             <cfset qgetHistoSampleData = Application.Stranding.getHistoSampleData(HI_ID="#form.LCEID#")>
-            <!--- <cfif #qgetHIDataa.species# neq "">
-                <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetHIDataa.species#")>
-            </cfif> --->
+           
         </cfif>
 
     <!--- end for Histopathology --->
@@ -4203,9 +4178,7 @@
             <cfset form.field = form.Nfieldnumber>
             <!--- <cfdump var="#form.field#">--->
                 <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>          
-                <!--- <cfset qLCEDataa=Application.Stranding.getCetaceanNecropsy("#form.field#")>
-                <cfset qgetcetaceanDate.CNRDATE= qLCEDataa.CNRDATE> --->
-                <!--- <cfdump var="#qLCEDataa#"><cfabort>  --->
+              
             <cfset qgetAllData=Application.Stranding.getAllData("#form.field#")>
             
             <cfset qgetNutritional=Application.Stranding.getNutritional("#form.field#")>     
@@ -4214,21 +4187,7 @@
             <cfset qgetLymphoreticular=Application.Stranding.getLymphoreticular("#form.field#")>
             <!--- <cfdump var="#qgetLymphoreticular#" abort="true"> --->
             <cfset qgetParasites=Application.Stranding.getParasites("#form.field#")>
-            <!--- <cfif #qgetCetaceanNecropsy.species# neq "">
-                <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(Cetacean_Species="#qgetCetaceanNecropsy.species#")>
-                
-            </cfif>
-            <cfif isDefined('qgetAllData.species') and #qgetAllData.species# neq "">
-                <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(Cetacean_Species="#qgetAllData.species#")>
-                
-                <!--- <cfdump var="#getCetaceansCode#"><cfabort> --->
-            </cfif> --->
-        <!--- <cfelse>
-            <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy_ten()>
-            <cfset qgetNutritional=Application.Stranding.getNutritional_ten()>
-            <cfset qgetLymphoreticular=Application.Stranding.getLymphoreticular_ten()>
-            <cfset qgetParasites=Application.Stranding.getParasites_ten()> --->
-           
+                       
         </cfif>
 
     <!--- end for NecropsyReport --->
@@ -4249,12 +4208,7 @@
 
   
         <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
-    <!--- <cfdump var="#qgetMorphometricsData#" abort="true"> --->
-    <!--- <cfset qLCEDataa=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>  --->
-    <!--- <cfset qgetcetaceanDate=Application.Stranding.getMorphometricsNecropsyDate(#form.Morphometrics_ID#)>
-    <cfif #qgetMorphometricsData.species# neq "">
-        <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetMorphometricsData.species#")>
-    </cfif> --->
+   
 </cfif>
 
     <!--- end for Morpho --->
@@ -4355,18 +4309,10 @@
                     <script>
                         alert('The Column name in the sheet should be "Field Number" ');
                     </script>
-                <!--- <cfelseif arrayContains(colNameArray, 'Date') eq false>
-                    <script>
-                        alert('The Column name in the sheet should be "Date" ');
-                    </script> --->
                 <cfelseif arrayContains(colNameArray, 'Weight') eq false>
                     <script>
                         alert('The Column name in the sheet should be "Weight" ');
-                    </script>
-                <!--- <cfelseif arrayContains(colNameArray, 'Weight Estimated/Actual') eq false>
-                    <script>
-                        alert('The Column name in the sheet should be "Weight Estimated/Actual" ');
-                    </script> --->
+                    </script>             
                 <cfelseif arrayContains(colNameArray, 'Total Length (1)') eq false>
                     <script>
                         alert('The Column name in the sheet should be "Total Length (1)" ');
@@ -4383,18 +4329,6 @@
                     <script>
                         alert('The Column name in the sheet should be "Blowhole to Dorsal (3)" ');
                     </script>
-                <!--- <cfelseif arrayContains(colNameArray, 'Restrand') eq false>
-                    <script>
-                        alert('The Column name in the sheet should be "Restrand" ');
-                    </script>
-                 <cfelseif arrayContains(colNameArray, 'Group Event') eq false>
-                    <script>
-                        alert('The Column name in the sheet should be "Group Event" ');
-                    </script>
-                <cfelseif arrayContains(colNameArray, 'Number of Animals') eq false>
-                    <script>
-                        alert('The Column name in the sheet should be "Number of Animals" ');
-                    </script> --->
                  <cfelseif arrayContains(colNameArray, 'Fluke Width (4)') eq false>
                     <script>
                         alert('The Column name in the sheet should be "Fluke Width (4)" ');
@@ -6235,21 +6169,6 @@
             <!---start for HIForm --->
             <div class="row" id="HIformSerch" style="display:none;">
             
-               <!--- <div class="col-lg-3 col-md-4">
-                    <div class="form-group input-group select-width">
-                        <form  action="" method="post" id="myHIFormDate">
-                            <label for="sel1">Search By Date:</label>
-                            <div class="input"> 
-                                <select class="form-control search-box" name="HI_ID" onChange="hIFormDate()">
-                                    <option value="">Select Date</option>
-                                    <cfloop query="qgetHIDate">
-                                        <option value="#qgetHIDate.ID#" <cfif isDefined('form.HI_ID') and form.HI_ID eq #qgetHIDate.ID#>selected</cfif>>#qgetHIDate.date#</option>
-                                    </cfloop>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myHiFormFieldNumber">
@@ -6274,21 +6193,7 @@
             <!--- start for Level A Form --->
             <div class="row" id="LAFormSerch" style="display:none;">
 
-               <!--- <div class="col-lg-3 col-md-4">
-                    <div class="form-group input-group select-width">
-                    <form  action="" method="post" id="myLevelAFormDate">
-                        <label for="sel1">Search Level A Form By Date:</label>
-                        <div class="input"> 
-                            <select class="form-control search-box" name="LA_ID" onChange="levelAFormDate()">
-                                <option value="">Select Date</option>
-                                <cfloop query="qgetLevelADate">
-                                    <option value="#qgetLevelADate.ID#" <cfif isDefined('form.LA_ID') and form.LA_ID eq #qgetLevelADate.ID#>selected</cfif>>#qgetLevelADate.date#</option>
-                                </cfloop>
-                            </select>
-                        </div>
-                    </form>
-                    </div>
-                </div>--->
+             
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myLevelAFormFieldNumber">
@@ -6627,51 +6532,7 @@
 
             <!--- Start for Necropsy --->
             <div class="row" id="NecropstFormSerch" style="display:none;">
-                <!--- <div class="col-lg-3 col-md-4">
-                    <div class="form-group input-group select-width">
-                        <form id="myformAncillaryDiagnosticsSerch" action="" method="post" >
-                            <label for="sel1">Select Ancillary Diagnostics</label>
-                            <div class="input"> 
-                                <select class="form-control search-box" name="AD_ID" onChange="formAncillaryDiagnosticsSerch()">
-                                    <option value="">Select Ancillary Diagnostics</option>
-                                    <cfloop query="getAnclillaryID">
-                                        <option value="#getAnclillaryID.ID#" <cfif isDefined('form.AD_ID') and form.AD_ID eq #getAnclillaryID.ID#>selected</cfif>>#getAnclillaryID.ID#</option>
-                                    </cfloop>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4">
-                    <div class="form-group input-group select-width">
-                        <form  action="" method="post" id="myformAncillaryDiagnosticsSerchByDate">
-                            <label for="sel1">Search Ancillary Diagnostics By Date:</label>
-                            <div class="input"> 
-                                <select class="form-control search-box" name="AD_ID" onChange="formAncillaryDiagnosticsSerchByDate()">
-                                    <option value="">Select Date</option>
-                                    <cfloop query="qgetAnclillaryDate">
-                                        <option value="#qgetAnclillaryDate.ID#" <cfif isDefined('form.AD_ID') and form.AD_ID eq #qgetAnclillaryDate.ID#>selected</cfif>>#qgetAnclillaryDate.date#</option>
-                                    </cfloop>
-                                </select>fv
-                            </div>
-                        </form>
-                    </div>
-                </div> --->
-                <!---<div class="col-lg-3 col-md-4">
-                    <div class="form-group input-group select-width">
-                        <form  action="" method="post" id="myformNecropsySerchByDate">
-                            <label for="sel1">Search Necropsy Report By Stranding Date:</label>
-                            <div class="input"> 
-                                <select class="form-control search-box" name="Nfieldnumber" onChange="formNecropsySerchByDate()">
-                                    <option value="">Select Date</option>
-                                    <cfloop query="qgetNecropsyDate">
-                                        <option value="#qgetNecropsyDate.Fnumber#" <cfif isDefined('form.Nfieldnumber') and form.Nfieldnumber eq #qgetNecropsyDate.Fnumber#>selected</cfif>>#qgetNecropsyDate.date#</option>
-                                    </cfloop>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                </div>--->
+                
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myformNecropsySerchByFieldNumber">
@@ -6691,62 +6552,13 @@
                 <div class="col-md-3 reset-btn">
                     <input type="button" name="reset" id="" class="btn btn-default" value="Reset" onClick="ResetAll()"/>                
                 </div>         
-                <!--- <cfif isDefined('form.AD_ID') and form.AD_ID neq "">
-                    <div class="col-lg-3 col-md-4">
-                        <div class="form-group input-group select-width">
-                            <label for="sel1">Cetacean Exam Number</label>
-                            <div class="input">
-                                <input type="text" value="#qgetHIData.LCE_ID#" class="form-control" readonly>
-                            </div>
-                        </div>
-                    </div>
-                <cfelse>
-                    <div class="col-lg-3 col-md-4">
-                        <div class="form-group input-group select-width">
-                            <label for="sel1">Cetacean Exam Number</label>
-                            <div class="input">
-                                <input type="text" value="#url.LCE_ID#" class="form-control" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </cfif>     --->
+            
             </div>
 
             <!--- end for Necropsy --->
             <!--- Start for morMorphometrics --->
             <div class="row" id="MorphometricsFormSerch" style="display:none;">
-                <!--- <div class="col-lg-3 col-md-4">
-                    <div class="form-group input-group select-width">
-                        <form id="myformAncillaryDiagnosticsSerch" action="" method="post" >
-                            <label for="sel1">Select Ancillary Diagnostics</label>
-                            <div class="input"> 
-                                <select class="form-control search-box" name="AD_ID" onChange="formAncillaryDiagnosticsSerch()">
-                                    <option value="">Select Ancillary Diagnostics</option>
-                                    <cfloop query="getAnclillaryID">
-                                        <option value="#getAnclillaryID.ID#" <cfif isDefined('form.AD_ID') and form.AD_ID eq #getAnclillaryID.ID#>selected</cfif>>#getAnclillaryID.ID#</option>
-                                    </cfloop>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                </div>--->
-
-               <!--- <div class="col-lg-3 col-md-4">
-                    <div class="form-group input-group select-width">
-                        <form  action="" method="post" id="myformMorphometricsSerchByDate">
-                            <label for="sel1">Search Morphometrics By Date:</label>
-                            <div class="input"> 
-                                <select class="form-control search-box" name="Morphometrics_ID" onChange="formMorphometricsSerchByDate()">
-                                    <option value="">Select Date</option>
-                                    <cfloop query="MorphometricsoDate">
-                                        <option value="#MorphometricsoDate.ID#" <cfif isDefined('form.Morphometrics_ID') and form.Morphometrics_ID eq #MorphometricsoDate.ID#>selected</cfif>>#MorphometricsoDate.date#</option>
-                                    </cfloop>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                </div> --->
-
+               
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myformMorphometricsSerchByFieldNumber">
@@ -6764,26 +6576,7 @@
                 </div>
                 <div class="col-md-3 reset-btn">
                     <input type="button" name="reset" id="" class="btn btn-default" value="Reset" onClick="ResetAll()"/>                
-                </div>
-                <!--- <cfif isDefined('form.AD_ID') and form.AD_ID neq "">
-                    <div class="col-lg-3 col-md-4">
-                        <div class="form-group input-group select-width">
-                            <label for="sel1">Cetacean Exam Number</label>
-                            <div class="input">
-                                <input type="text" value="#qgetHIData.LCE_ID#" class="form-control" readonly>
-                            </div>
-                        </div>
-                    </div>
-                <cfelse>
-                    <div class="col-lg-3 col-md-4">
-                        <div class="form-group input-group select-width">
-                            <label for="sel1">Cetacean Exam Number</label>
-                            <div class="input">
-                                <input type="text" value="#url.LCE_ID#" class="form-control" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </cfif>     --->
+                </div>               
             </div>
 
             <!--- end for Morphometrics --->
@@ -6837,12 +6630,12 @@
                                             <div class="col-sm-6 "> 
                                                 <div class="form-group">
                                                     <label class="date-padd">Necropsy Date</label>
-                                                        <div class="input-group date " id="datetimepicker_NDate">
-                                                            <input type="text" placeholder="mm/dd/yyyy" name="necropsyDateID" id="necropsyDateID"
-                                                                class="form-control" value='<cfif isDefined('qgetcetaceanDate.CNRDATE') and #DateTimeFormat(qgetcetaceanDate.CNRDATE, "MM/DD/YYYY")# neq "" >#DateTimeFormat(qgetcetaceanDate.CNRDATE, "MM/dd/YYYY")# </cfif>' readonly/>
-                                                                <span class="input-group-addon time-icon"> <span class="glyphicon glyphicon-calendar"></span> </span>
-                                                        </div>
+                                                    <div class="input-group date " id="datetimepicker_NDate">
+                                                        <input type="text" placeholder="mm/dd/yyyy" name="necropsyDateID" id="necropsyDateID" class="form-control" value="<cfif isDefined('qgetcetaceanDate.CNRDATE') and #DateTimeFormat(qgetcetaceanDate.CNRDATE, 'MM/DD/YYYY')# neq ''>#DateTimeFormat(qgetcetaceanDate.CNRDATE, 'MM/dd/YYYY')#</cfif>"/>
+                                                        <span class="input-group-addon time-icon"> <span class="glyphicon glyphicon-calendar"></span> </span>
+                                                    </div>
                                                 </div>
+                                                
                                             </div>
                                             <div class="col-sm-6 "> 
                                                 <div class="form-group">

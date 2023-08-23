@@ -58,6 +58,32 @@
         <cfif NOT isDefined('FORM.caseReportBox')>
             <cfset FORM.caseReportBox = "0">
         </cfif>
+
+        <!--- <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
+            <cftry>
+            <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
+                SELECT cn.CNRDATE as cnrdate, cn.ID as cnID  from ST_LiveCetaceanExam sa 
+                left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
+                where sa.ID = '#form.LCEID#'            
+            </cfquery>
+            <cfdump var="#qgetcetaceanNecropsyDate#" abort="true">
+            <cfif isDefined('qgetcetaceanNecropsyDate.cnID')>
+                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
+                    UPDATE  ST_CetaceanNecropsyReport SET
+                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
+                    WHERE
+                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
+                </cfquery>
+
+                <!--- <cfdump var="#return_data#" abort="true"> --->
+            </cfif>
+            
+            <!--- <cfdump var="#qgetcetaceanNecropsyDate#" abort="true"> --->
+            <cfcatch>
+                <cfdump var="#cfcatch#" abort="true">
+            </cfcatch>
+            </cftry>
+        </cfif> --->
         
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -268,7 +294,32 @@
         <cfif NOT isDefined('FORM.caseReportBox')>
             <cfset FORM.caseReportBox = "0">
         </cfif>
-        
+        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
+            <cftry>
+            <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
+                SELECT cn.CNRDATE as cnrdate, cn.ID as cnID  from ST_LiveCetaceanExam sa 
+                left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
+                where sa.ID = '#form.LCEID#'            
+            </cfquery>
+            <cfif isDefined('qgetcetaceanNecropsyDate.cnID')>
+                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
+                    UPDATE  ST_CetaceanNecropsyReport SET
+                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
+                    WHERE
+                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
+                </cfquery>
+
+                <!--- <cfdump var="#return_data#" abort="true"> --->
+            </cfif>
+            
+            <!--- <cfdump var="#qgetcetaceanNecropsyDate#" abort="true"> --->
+            <cfcatch>
+                <cfdump var="#cfcatch#" abort="true">
+            </cfcatch>
+            </cftry>
+        </cfif>
+
+
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>

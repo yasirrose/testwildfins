@@ -200,7 +200,7 @@ $(document).ready(function() {
  let tab_url =  tab_url1.split('&').pop();
  const histoDirect = tab_url.substring(0, tab_url.indexOf('='));
 
-$("#necropsyDateID").attr("readonly", true); 
+// $("#necropsyDateID").attr("readonly", true); 
 
  if(tab_url == "CetaceanExam"){
   $("#HIstoFormSerch").hide();
@@ -273,7 +273,7 @@ $("#necropsyDateID").attr("readonly", true);
       // $('.nav-tabs a:last').tab('show');
   }
   if(tab_url == "NecropsyReport" || histoDirect == "NRID"){
-    $("#necropsyDateID").attr("readonly", false); 
+    // $("#necropsyDateID").attr("readonly", false); 
       $("#NecropstFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Necropsy Report");
@@ -1065,7 +1065,7 @@ function showHISearchBar(){
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("HIForm");
-  $("#necropsyDateID").attr("readonly", true); 
+  // $("#necropsyDateID").attr("readonly", true); 
   headerDataSave();
 
 }
@@ -1090,7 +1090,7 @@ function showCetaceanSearchBar(){
   $('#requiredDate').hide();
 
   $("#autoSaveValue").val("CetaceanExam");
-  $("#necropsyDateID").attr("readonly", true); 
+  // $("#necropsyDateID").attr("readonly", true); 
   headerDataSave();
 }
 function goToCetecanExamPage(){
@@ -1132,7 +1132,7 @@ function showLASearchBar(){
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("LevelAForm");
-  $("#necropsyDateID").attr("readonly", true); 
+  // $("#necropsyDateID").attr("readonly", true); 
   headerDataSave();
 }
 function HIstoFormSerch(){
@@ -1155,7 +1155,7 @@ function HIstoFormSerch(){
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("Histopathology");
-  $("#necropsyDateID").attr("readonly", true); 
+  // $("#necropsyDateID").attr("readonly", true); 
   headerDataSave();
 }
 function showBloodValueSerch(){
@@ -1178,7 +1178,7 @@ function showBloodValueSerch(){
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("bloodValue");
-  $("#necropsyDateID").attr("readonly", true); 
+  // $("#necropsyDateID").attr("readonly", true); 
   headerDataSave();
 }
 function showToxicologySerch(){
@@ -1200,7 +1200,7 @@ function showToxicologySerch(){
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("Toxicology");
-  $("#necropsyDateID").attr("readonly", true); 
+  // $("#necropsyDateID").attr("readonly", true); 
   headerDataSave();  
 }
 function showAncillaryDiagnosticsSerch(){
@@ -1222,7 +1222,7 @@ function showAncillaryDiagnosticsSerch(){
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("AncillaryDiagnostics");
-  $("#necropsyDateID").attr("readonly", true); 
+  // $("#necropsyDateID").attr("readonly", true); 
   headerDataSave();  
 }
 function showSampleArchiveSerch(){
@@ -1244,7 +1244,7 @@ function showSampleArchiveSerch(){
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("SampleArchive");
-  $("#necropsyDateID").attr("readonly", true); 
+  // $("#necropsyDateID").attr("readonly", true); 
   headerDataSave();
 
 }
@@ -1267,7 +1267,7 @@ function showMorphometricsSerch(){
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("Morphometrics");
-  $("#necropsyDateID").attr("readonly", true); 
+  // $("#necropsyDateID").attr("readonly", true); 
   headerDataSave();
 }
 function showNecropsyReportSerch(){
@@ -1289,7 +1289,7 @@ function showNecropsyReportSerch(){
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("NecropsyReport");
-  $("#necropsyDateID").attr("readonly", false); 
+  // $("#necropsyDateID").attr("readonly", false); 
   headerDataSave();
 
 }
