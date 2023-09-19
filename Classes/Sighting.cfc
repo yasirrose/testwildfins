@@ -3137,6 +3137,13 @@
                 <cfelse> 
                 <cfset setSecondaryImage = setSecOldImage>
                 </cfif>
+
+                <cfif NOT isDefined('FORM.ScarType')>
+                    <cfset FORM.ScarType = "">
+                </cfif>
+                <cfif NOT isDefined('FORM.BodyRegion')>
+                    <cfset FORM.BodyRegion = "">
+                </cfif>
                 
                 <cfquery name="qinsertPermanentScar" datasource="#variables.dsn#" result ='getresult'>
     
@@ -3284,7 +3291,12 @@
             <cfelse> 
                <cfset setSecondaryImage = setSecOldImage>
             </cfif>
-             
+            <cfif NOT isDefined('FORM.ScarType')>
+                <cfset FORM.ScarType = "">
+            </cfif>
+            <cfif NOT isDefined('FORM.BodyRegion')>
+                <cfset FORM.BodyRegion = "">
+            </cfif>
             <cfquery name="qinsertPermanentScar" datasource="#variables.dsn#" result ='getresult'>    
                UPDATE PermanentScar SET
                CetaceanCode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Trim(Form.CetaceanCodeValue)#" >,
@@ -3315,15 +3327,17 @@
           <!---     <cfdump var="#cetacean_ID#">
             <cfabort> --->
             <cfquery name="qgetPermanentScar" datasource="#variables.dsn#">
-                SELECT PermanentScar.*, TLU_ScarType.ScarTypeName
+                SELECT PermanentScar.*, 
+                       (SELECT STRING_AGG(TLU_ScarType.ScarTypeName, ', ') 
+                        FROM TLU_ScarType 
+                        WHERE CHARINDEX(',' + CAST(TLU_ScarType.ID AS VARCHAR) + ',', ',' + PermanentScar.ScarType + ',') > 0) AS ScarTypeNames
                 FROM PermanentScar
-                LEFT JOIN TLU_ScarType ON TLU_ScarType.ID = PermanentScar.ScarType
-                WHERE PermanentScar.Species = #species_ID#
-                <cfif isDefined('cetacean_ID') AND cetacean_ID neq '' AND cetacean_ID neq 'empty'>
-                    AND PermanentScar.CetaceanId = #cetacean_ID#
+                WHERE PermanentScar.Species = <cfqueryparam value="#species_ID#" cfsqltype="CF_SQL_INTEGER">
+                <cfif isDefined('cetacean_ID') AND trim(cetacean_ID) neq '' AND trim(cetacean_ID) neq 'empty'>
+                    AND PermanentScar.CetaceanId = <cfqueryparam value="#cetacean_ID#" cfsqltype="CF_SQL_INTEGER">
                 </cfif>
             </cfquery>
-            <!--- <cfdump var="#qgetPermanentScar#" abort="true"> --->
+                       <!--- <cfdump var="#qgetPermanentScar#" abort="true"> --->
             <cfset c=0>
             <cfoutput><cfset  permissions ="#session['userdetails']['permissions']#"></cfoutput>
             <cfloop query="qgetPermanentScar">
@@ -3332,7 +3346,7 @@
                     <td id="CI_#qgetPermanentScar.ID#">#qgetPermanentScar.CetaceanId#</td>
                     <td id="CetaceanCode_#qgetPermanentScar.ID#">#qgetPermanentScar.CetaceanCode#</td>
                     <td id="ScarDate_#qgetPermanentScar.ID#">#DateFormat(qgetPermanentScar.ScarDate, "mm/dd/yyyy")#</td>
-                    <td id="ScarType_#qgetPermanentScar.ID#">#qgetPermanentScar.SCARTYPENAME#</td>
+                    <td id="ScarType_#qgetPermanentScar.ID#">#qgetPermanentScar.ScarTypeNames#</td>
                     <td id="BodyRegion_#qgetPermanentScar.ID#">#qgetPermanentScar.BodyRegion#</td>
                     <td id="SideOfBody_#qgetPermanentScar.ID#">#qgetPermanentScar.SideOfBody#</td>
                     <td>

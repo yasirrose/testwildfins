@@ -474,7 +474,7 @@
         </cfif>
     </cfif>
 
-    <cfif isDefined('HistoSaveAndNew') OR isDefined('SaveandgotoBloodForm') OR isDefined('SaveAndClose')>
+    <cfif isDefined('HistoSaveAndNew')>
         <cfset form.check = "1">
      
         <!--- If updating existing data --->
@@ -498,10 +498,7 @@
             <cfset form.HI_ID  = "#LCE#">
             <cfif form.SampleType neq "" and form.SampleNote neq "">
                 <cfset Application.Stranding.InsertHistopathologySampleData(argumentCollection="#Form#")>
-            </cfif>
-            <!--- <cfif isDefined('SaveandgotoBloodForm')>
-                <cflocation addtoken="no" url="#Application.siteroot#?Module=Stranding&Page=BloodValues&LCE_ID=#url.LCE_ID#" >
-            </cfif> --->
+            </cfif>           
         </cfif>
     <cfelseif isDefined('histoDelete')>
         <cfset Application.Stranding.deleteHisto("#form#")>
@@ -557,7 +554,7 @@
     <cfset qgetLipemiaIndex=Application.StaticDataNew.getLipemiaIndex()>
    
 
-    <cfif isDefined('SaveAndNewBloodvalue') OR isDefined('SaveandgotoToxicology') OR isDefined('SaveAndClose')>
+    <cfif isDefined('SaveAndNewBloodvalue') OR isDefined('SaveAndClose')>
         <!--- If updating existing data --->
        
         <cfif  isDefined('form.bloodValues_ID') and form.bloodValues_ID neq "">
@@ -576,9 +573,7 @@
             <cfset LCE = Application.Stranding.Blood_VFormUpdate(argumentCollection="#Form#")>
       
         <cfelse> 
-
             <!--- If inserting new data --->
-            
             <cfset BV_ID = Application.Stranding.Blood_VFormInsert(argumentCollection="#Form#")>
             <cfset Session.bloodValue = #BV_ID#>
             <cfset form.BV_ID = "#BV_ID#">
@@ -592,9 +587,7 @@
             <cfset Dol_ID = Application.stranding.Dolphininsert(argumentcollection="#Form#")>
             <cfset iSTAT_ID = Application.stranding.iSTAT_Cheminsert(argumentcollection="#Form#")>
             <cfset CG4_ID = Application.stranding.CG4_Cheminsert(argumentcollection="#Form#")>
-            <!--- <cfif isDefined('SaveandgotoToxicology')>
-                <cflocation addtoken="no" url="#Application.siteroot#?Module=Stranding&Page=Toxicology&LCE_ID=#url.LCE_ID#" >
-            </cfif> --->
+        
         </cfif>
     <cfelseif isDefined('bloodValueDelete')>
         <cfset Application.Stranding.deletBlood_V("#form#")>
@@ -693,7 +686,7 @@
         <cfset qgetTissueType=Application.StaticDataNew.getTissueType()>
 
         <cfset ToxicologySelectoptions = ['High','Low','Critical Result','Corrected Result','None']>
-        <cfif isDefined('SaveAndNewToxicology') OR isDefined('SaveAndClose') OR isdefined('Add_new') >
+        <cfif isDefined('SaveAndNewToxicology') OR isdefined('Add_new') >
             <!--- If updating existing data --->
             <cfif  isDefined('form.TX_ID') and form.TX_ID neq "">
                 <cfset Session.Toxicology = #form.TX_ID#>
@@ -820,7 +813,7 @@
         <cfset testResult = ['Positive','Negative','Inconclusive','Normal','Abnormal','N/A']>
 
 
-        <cfif isDefined('SaveAndNewAncillaryDiagnostics') OR isDefined('SaveandgotoSampleArchive') OR isDefined('SaveAndClose')>
+        <cfif isDefined('SaveAndNewAncillaryDiagnostics') OR isDefined('SaveAndClose')>
             <!--- If updating existing data --->
             <cfif  isDefined('form.ADID') and form.ADID neq "">
                 <cfset Session.Ancillary = #form.ADID#>
@@ -7806,9 +7799,9 @@
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 mb-2">
                                 <div class="input-group">
                                     <label class="">Scars and Natural Markings</label>
-                                    <textarea class="form-control textareaCustomReset" maxlength="512" name="SNM">#qLCEData.SNM#</textarea>
+                                    <textarea class="form-control textareaCustomReset" maxlength="1024" name="SNM" style="      resize: vertical; min-height: 120px; max-height: 300px; overflow-y: auto; height: 17px;">#qLCEData.SNM#</textarea>
                                 </div>
-                            </div>
+                            </div>                                                        
                             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6 mb-2">
                                 <div class="input-group">
                                     <label class="">Mentation</label>
@@ -8768,7 +8761,7 @@
                        <input class="input-style xl-width" type="checkbox" value="1" name="caseReportBVBox" id="caseReportBVBox" <cfif (isdefined('qgetBloodValueData.caseReportBox') and  qgetBloodValueData.caseReportBox eq '1')>checked</cfif>>	
                     </div>
                 </div>
-                
+                <!--- <form id="CBCForm">  --->
                 <h5 class="mb-1"><strong>CBC</strong></h5>
                 <div class="form-holder blood-form-holder cust-v-sec">  
                     <div class="form-group blood-from-froup cust-v-row">
@@ -9284,14 +9277,22 @@
                             <cfif findNoCase("Read only ST", permissions) eq 0>
                                 <div class="flex-center flex-row flex-wrap d-flex">
                                     <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
+                                        <input type="button" id="SaveCBCBloodvalue" name="SaveCBCBloodvalue" class="btn btn-pink m-rl-4" value="Save">  
                                     </div>
                                 </div>
                             </cfif>
+                             <!---<cfif findNoCase("Read only ST", permissions) eq 0>
+                                <div class="flex-center flex-row flex-wrap d-flex">
+                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
+                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
+                                    </div>
+                                </div>
+                            </cfif> --->
                         </div>
                     </div>
                 </div>
-                                
+                <!--- </form> 
+                <form id="Fibrinogen">--->
                 <h5 class="mb-1"><strong>Fibrinogen</strong></h5>
                 <div class="form-holder blood-form-holder cust-v-sec">  
                     <div class="form-group blood-from-froup cust-v-row">
@@ -9323,17 +9324,24 @@
                                     maxlength="250"  >#qgetFibrinogen.Fibrinogen_comment#</textarea>
                                 </div>
                             </div>
-                            <cfif findNoCase("Read only ST", permissions) eq 0>
+                           <cfif findNoCase("Read only ST", permissions) eq 0>
+                                <div class="flex-center flex-row flex-wrap d-flex">
+                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
+                                        <input type="button" id="SaveBloodvalue" name="SaveBloodvalue" class="btn btn-pink m-rl-4" value="Save" >  
+                                    </div>
+                                </div>
+                            </cfif> 
+                              <!---<cfif findNoCase("Read only ST", permissions) eq 0>
                                 <div class="flex-center flex-row flex-wrap d-flex">
                                     <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
                                         <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
                                     </div>
                                 </div>
-                            </cfif>
+                            </cfif>--->
                         </div>
                     </div>
                 </div>
-
+                <!--- </form>    --->
                 <h5 class="mb-1"><strong>Chemistry</strong></h5>
                 <div class="form-holder blood-form-holder cust-v-sec">  
                     <div class="form-group blood-from-froup cust-v-row">
@@ -10344,10 +10352,17 @@
                             <cfif findNoCase("Read only ST", permissions) eq 0>
                                 <div class="flex-center flex-row flex-wrap d-flex">
                                     <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
+                                        <input type="button" id="SaveCHBvalue" name="SaveCHBvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
+                                    </div>
+                                </div>
+                            </cfif> 
+                            <!--- <cfif findNoCase("Read only ST", permissions) eq 0>
+                                <div class="flex-center flex-row flex-wrap d-flex">
+                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
                                         <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
                                     </div>
                                 </div>
-                            </cfif>
+                            </cfif> --->
                         </div>
                     </div>
                 </div>
@@ -10629,10 +10644,17 @@
                             <cfif findNoCase("Read only ST", permissions) eq 0>
                                 <div class="flex-center flex-row flex-wrap d-flex">
                                     <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
+                                        <input type="button" id="SaveCZEBloodvalue" name="SaveCZEBloodvalue" class="btn btn-pink m-rl-4" value="Save">  
                                     </div>
                                 </div>
                             </cfif>
+                            <!--- <cfif findNoCase("Read only ST", permissions) eq 0>
+                                <div class="flex-center flex-row flex-wrap d-flex">
+                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
+                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
+                                    </div>
+                                </div>
+                            </cfif> --->
                         </div>
                     </div>
                 </div>
@@ -10671,10 +10693,17 @@
                             <cfif findNoCase("Read only ST", permissions) eq 0>
                                 <div class="flex-center flex-row flex-wrap d-flex">
                                     <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
+                                        <input type="button" id="SaveSAABloodvalue" name="SaveSAABloodvalue" class="btn btn-pink m-rl-4" value="Save">  
                                     </div>
                                 </div>
                             </cfif>
+                            <!--- <cfif findNoCase("Read only ST", permissions) eq 0>
+                                <div class="flex-center flex-row flex-wrap d-flex">
+                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
+                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
+                                    </div>
+                                </div>
+                            </cfif> --->
                         </div>
                     </div>
                 </div>
@@ -10708,6 +10737,7 @@
                                     <div class="input-group ">
                                         <label class="county-label">Operator</label>
                                         <select class="form-control" name="Operator_chem" id="Operator_chem">
+                                            <option value="0">Select Operator</option>
                                             <cfloop query="getTeams">
                                                 <cfif active eq 1>
                                                     <option value="#getTeams.RT_ID#" <cfif #getTeams.RT_ID# eq #qgetiSTAT_Chem.Operator_che#>selected</cfif>>#getTeams.RT_MemberName#</option>
@@ -11019,10 +11049,17 @@
                             <cfif findNoCase("Read only ST", permissions) eq 0>
                                 <div class="flex-center flex-row flex-wrap d-flex">
                                     <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
+                                        <input type="button" id="SaveChemBloodvalue" name="SaveChemBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
                                     </div>
                                 </div>
                             </cfif>
+                            <!--- <cfif findNoCase("Read only ST", permissions) eq 0>
+                                <div class="flex-center flex-row flex-wrap d-flex">
+                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
+                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
+                                    </div>
+                                </div>
+                            </cfif> --->
                         </div>
                     </div>
                 </div>
@@ -11056,6 +11093,7 @@
                                     <div class="input-group ">
                                         <label class="county-label">Operator</label>
                                         <select class="form-control" name="Operator" id="Operator">
+                                            <option value="0">Select Operator</option>
                                             <cfloop query="getTeams">
                                                 <cfif active eq 1>
                                                     <option value="#getTeams.RT_ID#" <cfif #getTeams.RT_ID# eq #qgetiSTAT_CG4.Operator#>selected</cfif>>#getTeams.RT_MemberName#</option>
@@ -11311,10 +11349,17 @@
                             <cfif findNoCase("Read only ST", permissions) eq 0>
                                 <div class="flex-center flex-row flex-wrap d-flex">
                                     <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
+                                        <input type="button" id="SaveISTATBloodvalue" name="SaveISTATBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
                                     </div>
                                 </div>
                             </cfif>
+                            <!--- <cfif findNoCase("Read only ST", permissions) eq 0>
+                                <div class="flex-center flex-row flex-wrap d-flex">
+                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
+                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
+                                    </div>
+                                </div>
+                            </cfif> --->
                             <button type="button" onclick="gotoTopFunction()"  id="myBtn" title="Go to top">Back to Top</button>
                         </div>
                     </div>
@@ -11344,7 +11389,7 @@
                                 <input type="button" id="ToSamples" class="btn btn-skyblue m-rl-4" value="Save and go to  Samples">
                             </div> --->
                             <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                <!--- <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)"> --->
+                                <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">
                                 <!--- <input type="submit" id="SaveAndClose" class="btn btn-green m-rl-4" name="SaveAndClose" value="Save and Close" onclick="chkreq(event)"> --->
                                 <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.LCEID') and form.LCEID neq "")>
                                     <input type="submit" id="" name="bloodValueDelete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
@@ -12397,17 +12442,18 @@
                                         <th>Unit of sample</th>
                                         <th>Storage Type</th>
                                         <th>Sample Comments</th>
+                                        <th>Sample Availability</th>
                                              <!--- <cfif isDefined('qgetSampleData')>
                                          <th>Date</th>
                                         </cfif> --->
-                                         <th>Date</th>                                        
+                                        <!--- <th>Date</th>                                        
                                         <cfif isDefined('qgetSampleDetailData')>
                                             <cfset c = 2>
                                             <cfloop index="index" from="1" to="#qgetSampleDetailData.recordcount#">
                                                 <cfset c = incrementValue(#c#)>
                                                 <th>Date#c#</th>
                                             </cfloop>
-                                        </cfif>
+                                        </cfif> --->
                                         <th>Location</th>
                                         <cfif isDefined('qgetSampleDetailData')>
                                             <cfset c = 1>
@@ -12431,15 +12477,17 @@
                                                 <td id="reportUnitofSample#ID#">#qgetSampleTypeIByID.UnitofSample#</td>
                                                 <td id="reportStorageType#ID#">#qgetSampleTypeIByID.StorageType#</td>
                                                 <td id="reportSampleComments#ID#">#qgetSampleTypeIByID.SampleComments#</td>
+                                                <td id="reportSampleComments#ID#">#qgetSampleTypeIByID.SampleComments#</td>
                                                 <!--- <cfif isDefined('qgetSampleData')> --->
                                                     <!--- <td id="archivedate">#qgetSampleTypeIByID.maindate#</td> --->
                                                 <!--- </cfif> --->
-                                                <td id="reportSample_Date#ID#">#qgetSampleTypeIByID.Sample_Date#</td>
+                                                <!--- <td id="reportSample_Date#ID#">#qgetSampleTypeIByID.Sample_Date#</td>
                                                 <cfif isDefined('qgetSampleDetailData')>
                                                     <cfloop query="qgetSampleDetailData">
                                                         <td>#qgetSampleDetailData.SADate#</td>
                                                     </cfloop>    
-                                                </cfif>
+                                                </cfif> --->
+
                                                 <td id="reportSample_Location#ID#">#qgetSampleTypeIByID.Sample_Location#</td>
                                                 <cfif isDefined('qgetSampleDetailData')>
                                                     <cfloop query="qgetSampleDetailData">
@@ -14667,7 +14715,7 @@
         </div>
     </div>
     </div>
-    <div class="systum-sec">
+    <div class="systum-sec" >
         <div class="systum-row">
             <div class="sys-colum clm-15">
                 <h3 class="sys-title">ESOPHAGUS</h3>
@@ -14680,7 +14728,7 @@
                     </cfloop>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <p>Ulcers/exudate</p>
                 <select class="sys-op" name="ESOPHAGUSUlcers">
                     <option value="">Select</option>
@@ -14690,7 +14738,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSUlcers') and  qgetCetaceanNecropsy.ESOPHAGUSUlcers  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <p>Trauma</p>
                 <select class="sys-op" name="ESOPHAGUSTrauma">
                     <option value="">Select</option>
@@ -14700,7 +14748,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSTrauma') and  qgetCetaceanNecropsy.ESOPHAGUSTrauma  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <p>Masses</p>
                 <select class="sys-op" name="ESOPHAGUSMasses">
                     <option value="">Select</option>
@@ -14710,7 +14758,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSMasses') and  qgetCetaceanNecropsy.ESOPHAGUSMasses  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <p>Impaction</p>
                 <select class="sys-op" name="ESOPHAGUSImpaction">
                     <option value="">Select</option>
@@ -14720,7 +14768,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSImpaction') and  qgetCetaceanNecropsy.ESOPHAGUSImpaction  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <p>Obstruction</p>
                 <select class="sys-op" name="ESOPHAGUSObstruction">
                     <option value="">Select</option>
@@ -14730,7 +14778,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSObstruction') and  qgetCetaceanNecropsy.ESOPHAGUSObstruction  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <p>lntussusception</p>
                 <select class="sys-op" name="ESOPHAGUSlntussusception">
                     <option value="">Select</option>
@@ -14740,7 +14788,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSlntussusception') and  qgetCetaceanNecropsy.ESOPHAGUSlntussusception  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <p>Parasites</p>
                 <select class="sys-op" name="ESOPHAGUSParasites">
                     <option value="">Select</option>
@@ -14750,7 +14798,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.ESOPHAGUSParasites') and  qgetCetaceanNecropsy.ESOPHAGUSParasites  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum clm-15">
+            <div class="sys-colum clm-15" style='display:none;'>
                 <p>Other</p>
                 <input type="text" class="text-field"value="#qgetCetaceanNecropsy.ESOPHAGUSOther#" name="ESOPHAGUSOther">
             </div>
@@ -16008,7 +16056,7 @@
                 </div>
                 <div class="modal-body">
                     <object data="mypdf.pdf" type="application/pdf" frameborder="0" width="100%" height="600px" style="padding: 20px;">
-<!---                             <embed src="https://drive.google.com/file/d/1CRFdbp6uBDE-YKJFaqRm4uy9Z4wgMS7H/preview?usp=sharing" width="100%" height="600px"/>  --->
+                    <!--- <embed src="https://drive.google.com/file/d/1CRFdbp6uBDE-YKJFaqRm4uy9Z4wgMS7H/preview?usp=sharing" width="100%" height="600px"/>  --->
                     <embed id="emb" src="" width="1000" height="500" type="application/pdf" title="test.pdf">
 
                     </object>
@@ -16281,7 +16329,8 @@
         .PDFInline{
             display: flex;
         }
-        @media (max-width: 1199px) {
+     
+                @media (max-width: 1199px) {
             .dry-weight-row {
                 display: flex;
                 flex-direction: column;

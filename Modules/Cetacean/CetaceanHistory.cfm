@@ -198,17 +198,17 @@
                             </select>
                         </form>
                       </div>
-                      <div class="specie-area">
+                       <!--- <div class="specie-area">
                         <form id="myform" class="cetcean-form" action="#Application.siteroot#?Module=Cetacean&Page=CetaceanHistory" method="post" >
                             <label for="sel1">Select SurveyID</label>
                             <select class="form-control search-box" id="Cetacean_SurveyID" name="Cetacean_SurveyID" onchange="setSurveyId(this.value)">
                                 <option value="0">Select SurveyID</option>
                                 <cfloop query="qSurveysId">
-                                  <option value="#qSurveysId.id#" <cfif isdefined('qgetCetacean_Lesions.surveyid') and qgetCetacean_Lesions.surveyid eq qSurveysId.id>selected</cfif> >#qSurveysId.id#</option>
+                                  <!---<option value="#qSurveysId.id#" <cfif isdefined('qgetCetacean_Lesions.surveyid') and qgetCetacean_Lesions.surveyid eq qSurveysId.id>selected</cfif> >#qSurveysId.id#</option>--->
                                 </cfloop>
                             </select>
                         </form>
-                      </div>
+                      </div> --->
                       <div class="code-area">
                         <form id="myformmmmm" class="cetcean-form" action="#Application.siteroot#?Module=Cetacean&Page=CetaceanHistory" method="post" >
                             <input type="hidden" name="Cetacean_Survey" id="Cetacean_Survey" value=''>
@@ -455,6 +455,7 @@
                         <thead>
                             <tr class="inverse">
                                 <th>Date Seen</th>
+                                <th>Survey ID</th>
                                 <th>Sighting ID</th>
                                 <th>Sighting No</th>
                                 <th>Photo Number</th>
@@ -462,22 +463,29 @@
                                 <th>Side</th>
                                 <th>Status</th>
                                 <th>Region</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                       	<tbody>
                           <cfif isdefined('FORM.CetaceanId')>	
-                              <!--- <cfdump var="#qgetCetacean_Lesions#" abort="true"> --->
+                              <!--- <cfdump var="#qgetCetacean_Lesions#" abort="true">--->
                               <cfloop query='qgetCetacean_Lesions'>
                                 <cfif qgetCetacean_Lesions.id neq '43'>                                
-                                <tr role="row" class="odd">
+                                <tr role="row" class="odd" id="tr_#qgetCetacean_Lesions.id#">
                                   <td class="sorting_1">#DateFormat(qgetCetacean_Lesions.DATESEEN,'mm/dd/yyyy')#</td>
+                                  <td class="sorting_1">#qgetCetacean_Lesions.surveyid#</td>
                                   <td class="sorting_1">#qgetCetacean_Lesions.sightid#</td>
-                                  <td class="sorting_1">#qgetCetacean_Lesions.SightingNumber#</td>
-                                  <td class="sorting_1">#qgetCetacean_Lesions.PhotoNumber#</td>
-                                  <td class="sorting_1">#qgetCetacean_Lesions.LesionType#</td>
-                                  <td class="sorting_1">#qgetCetacean_Lesions.Side_L_R#</td>
-                                  <td class="sorting_1">#qgetCetacean_Lesions.Status#</td>
-                                  <td class="sorting_1">#qgetCetacean_Lesions.Region#</td>
+                                  <td class="sorting_1" >#qgetCetacean_Lesions.SightingNumber#</td>
+                                  <td class="sorting_1" id="PhotoNumber_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.PhotoNumber#</td>
+                                  <td class="sorting_1" id="LesionType_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.LesionType#</td>
+                                  <td class="sorting_1" id="Side_L_R_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.Side_L_R#</td>
+                                  <td class="sorting_1" id="Status_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.Status#</td>
+                                  <td class="sorting_1" id="Region_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.Region#</td>
+                                  <td>
+                                  <button onclick="openLesionHistoryModal(#qgetCetacean_Lesions.id#)">Edit</button>
+                                  <button onclick="deleteLesion(#qgetCetacean_Lesions.id#)">Delete</button>
+                                  </td>
+                                  
                                 </tr>
                               </cfif>
                               </cfloop>	
@@ -555,6 +563,84 @@
       </div>
     </div>
   </div>
+
+<!-- modal -->
+<div class="modal fade" id="myModal" role="dialog">
+  <div class="modal-dialog" style="max-width: 35%;">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id=""></h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="dateSen">Date Seen:</label>
+          <input type="hidden" class="form-control" id="IDForupdateData" >
+          <input type="text" class="form-control" id="dateSen" disabled>
+        </div>
+        <div class="form-group">
+          <label for="surveyID">Survey ID:</label>
+          <input type="text" class="form-control" id="surveyID" disabled>
+        </div>
+        <div class="form-group">
+          <label for="sightingNo">Sighting No:</label>
+          <input type="text" class="form-control" id="sightingNo" disabled>
+        </div>
+        <div class="form-group">
+          <label for="photoNumber">Photo Number:</label>
+          <input type="text" class="form-control" id="photoNumber">
+        </div>
+        <div class="form-group">
+          <label for="lesionType">Lesion Type:</label>
+          <select id="lesionType"></select>
+          <!--- <input type="text" class="form-control" id="lesionType"> --->
+        </div>
+        <div class="form-group">
+          <label for="side">Side:</label>          
+          <select id="side">
+            <option value="">Side</option>
+            <option value="L">L</option>
+            <option value="R">R</option>
+            <option value="L/R">L/R</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="status">Status:</label>
+          <select id="status">
+            <option value="">Status</option>
+            <option value="Fresh">Fresh</option>
+            <option value="Healing">Healing</option>
+            <option value="Healed">Healed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="region">Region:</label>          
+          <select id="region">
+            <option value="">Region</option>
+            <option value="1">Head</option>
+            <option value="2">Cranial Ventral</option>
+            <option value="3">Thorax</option>
+            <option value="4">Flipper</option>
+            <option value="5">Dorsal Fin</option>
+            <option value="6">Lateral Abdomen</option>
+            <option value="7">Caudal Ventral</option>
+            <option value="8">Peduncle</option>
+            <option value="9">Flukes</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" onclick="updateFunction()" class="btn btn-default" >Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
   
   
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxYI6DN6VquzG8dxWfN04TAK5Rfngn9ug"></script>
@@ -562,6 +648,8 @@
   // $(document).ready(function() {
   //   localStorage.setItem("selectedValCetacean", '');	
   //   });
+ 
+  
   function setSurveyId(val){
     $('#Cetacean_Survey').val(val);
     Cetacean_dscore = $('#Cetacean_dscore').val();
@@ -589,9 +677,209 @@
   //       dropdown.value = selectedValue;
   //     }
   //   });
+  function deleteLesion(id){
+    
+    if(confirm('Are you sure to Delete All Record?'))
+      {
+        $.ajax({
+              type: "POST",
+              url: application_root + "Cetaceans.cfc?method=deleteLesion",
+              data: {
+                  id: id,
+              },
+              success: function(response) {
+                var response = JSON.parse(response);
+                console.log(response);
+                $('#tr_' + id).remove();
+                alert('Lesion deleted successfully!');
+
+              },
+              error: function(error) {
+                  console.error("Error:", error);
+              }
+          });
+
+
+      }
+      else{
+        return false;
+      }
+    }
+
+  function updateFunction(){
+    id = $('#IDForupdateData').val();
+    photoNumber = $('#photoNumber').val();
+    lesionType = $('#lesionType').val();
+    Side = $('#side').val();
+    status = $('#status').val();
+    region = $('#region').val();
+    
+    
+    $.ajax({
+          type: "POST",
+          url: application_root + "Cetaceans.cfc?method=UpdateCetacean_LesionsByID",
+          data: {
+              id: id,
+              photoNumber: photoNumber,
+              lesionType: lesionType,
+              Side: Side,
+              status: status,
+              region: region,
+          },
+          success: function(response) {
+            var response = JSON.parse(response);
+            console.log(response);
+            $('#PhotoNumber_' + id).text(photoNumber);
+            $('#LesionType_' + id).text(lesionType);
+            $('#Side_L_R_' + id).text(Side);
+            $('#Status_' + id).text(status);
+            
+            if (region == '') {
+                $('#Region_' + id).text('');
+              } else if (region == '1') {
+                $('#Region_' + id).text('Head');
+              } else if (region == '2') {
+                $('#Region_' + id).text('Cranial Ventral');
+              } else if (region == '3') {
+                $('#Region_' + id).text('Thorax');
+              } else if (region == '4') {
+                $('#Region_' + id).text('Flipper');
+              } else if (region == '5') {
+                $('#Region_' + id).text('Dorsal Fin');
+              } else if (region == '6') {
+                $('#Region_' + id).text('Lateral Abdomen');
+              } else if (region == '7') {
+                $('#Region_' + id).text('Caudal Ventral');
+              } else if (region == '8') {
+                $('#Region_' + id).text('Peduncle');
+              } else if (region == '9') {
+                $('#Region_' + id).text('Flukes');
+              }
+
+              $('#myModal').modal('hide');
+          },
+          error: function(error) {
+              console.error("Error:", error);
+          }
+      });
+  }
+
+ function openLesionHistoryModal(id)
+ {
+  //  alert(id)
+   $('#myModal').modal('show');
+
+
+    var selectElement = document.getElementById('Cetacean_dscore');
+    var selectedOption = selectElement.options[selectElement.selectedIndex];
+    var selectedText = selectedOption.text;
+    var parts = selectedText.split('|');
+    var cetacean_Code = parts[1].trim();
+    // console.log(selectedText);
+    // return false;
+    $.ajax({
+                type: "post",
+                Datatype: "json",
+                data: {
+                    cetacean_Code: cetacean_Code
+                },
+                url: application_root + "Cetaceans.cfc?method=getCetacean_Lesions_unique",
+                success: function (data) {
+                    $('#updtaedata').empty();
+                    $('#save_button').empty();
+                    var obj = JSON.parse(data);
+                    if(obj.DATA.length){
+
+                        let lregion= "";
+                        let lrname= "";
+                        let lside= "";
+                        for (i = 0; i <=obj.DATA.length; ++i) {
+                            if(obj.DATA[i][1] != ""){
+                                // lregion = ' - '+obj.DATA[i][1];
+                                // lrname = ' - '+obj.DATA[i][3];
+                                lregion = obj.DATA[i][1];
+                                lrname = obj.DATA[i][3];
+                                
+                            }
+                            if(obj.DATA[i][2] != ""){
+                                lside = obj.DATA[i][2];
+                            }                        
+
+                           
+                            if(obj.DATA[i][0] != "" && obj.DATA[i][0] != "0"){
+                                $('#lesionType').append('<option value="'+obj.DATA[i][0]+'">'+obj.DATA[i][0]+'</option>');
+                            }
+                         
+                        }
+                    }
+
+                },
+                error: function (err) {
+                    console.log("error:", err);
+                }
+            });
+
+   $.ajax({
+          type: "POST",
+          url: application_root + "Cetaceans.cfc?method=getCetacean_LesionsByID",
+          data: {
+              id: id,
+          },
+          success: function(response) {
+            var response = JSON.parse(response);
+            console.log(response.DATA[0]);
+            var data= response.DATA[0]; 
+
+
+            var date = new Date(data[3]);
+            var year = date.getFullYear();
+            var month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-indexed, so add 1
+            var day = date.getDate().toString().padStart(2, '0');
+            var formattedDate = `${month}/${day}/${year}`;
+
+
+            $('#dateSen').val(formattedDate);
+            $('#surveyID').val(data[1]);
+            $('#sightingNo').val(data[0]);
+            $('#photoNumber').val(data[9]);
+            $('#lesionType').val(data[4]);
+            // $('#region').val(data[5]);
+            var regionVal = data[5];
+            $("#region option:contains('" + regionVal + "')").filter(function() {
+              return $(this).text() === regionVal;
+            }).prop('selected', true);
+            $('#side').val(data[6]);
+            $('#status').val(data[7]);
+            $('#IDForupdateData').val(id);
+
+          },
+          error: function(error) {
+              console.error("Error:", error);
+          }
+      });
+
+ }
+
+
+
 
   </script>
 <style>
+    /* Style for dropdowns */
+    select {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    /* Style for the selected option */
+    select option:checked {
+        background-color: #007bff; /* Change to your preferred color */
+        color: #fff; /* Text color for the selected option */
+    }
 table.dataTable thead th, table.dataTable thead td {
     padding: 10px 6px!important;
 }

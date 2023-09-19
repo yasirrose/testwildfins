@@ -9,6 +9,7 @@
         <!--- <cfdump var="#form.updateFormID#" abort="true"> --->
             <cfset qinsertFinFlukee = Application.Sighting.UpdatePermanentScar(argumentCollection="#Form#")>
       <cfelse>
+        <!--- <cfdump var="test" abort="true"> --->
             <cfset qinsertFinFluke = Application.Sighting.insertPermanentScar(argumentCollection="#Form#")>
       </cfif>
     </cfif>  
@@ -111,33 +112,34 @@
     
                         <div class="form-group form-finchange">
                          <label for="pwd">Scar Type</label> 
-                          <select class="form-control search-box" name="ScarType" id="ScarType" >
-                            <option value="">Select Scar</optin>
+                          <select class="form-control search-box" multiple="multiple" name="ScarType" id="ScarType" >
+                            <!--- <option value="" selected>Select Scar</option> --->
                             <cfloop query="qgetActiveScarType">
                                 <option value="#qgetActiveScarType.ID#">  #qgetActiveScarType.ScarTypeName#</option>
                             </cfloop>                            
                           </select>
     
                           <label for="pwd">Body Region</label>
-                          <select class="form-control search-box" name="BodyRegion" id="BodyRegion" >
-                              <option value="">Select Region</optin>
-                              <option value="Head">Head</optin>
-                              <option value="Cranial Ventral">Cranial Ventral</optin>
-                              <option value="Thorax">Thorax</optin>
-                              <option value="Flipper">Flipper</optin>
-                              <option value="Lateral Abdomen">Lateral Abdomen</optin>
-                              <option value="Caudel Ventral">Caudel Ventral</optin>
-                              <option value="Peduncle">Peduncle</optin>
-                              <option value="Flukes">Flukes</optin>                              
+                          <select class="form-control search-box" multiple="multiple" name="BodyRegion" id="BodyRegion" >
+                              <!--- <option value="" selected>Select Region</option> --->
+                              <option value="Head">Head</option>
+                              <option value="Cranial Ventral">Cranial Ventral</option>
+                              <option value="Thorax">Thorax</option>
+                              <option value="Flipper">Flipper</option>
+                              <option value="Lateral Abdomen">Lateral Abdomen</option>
+                              <option value="Caudel Ventral">Caudel Ventral</option>
+                              <option value="Peduncle">Peduncle</option>
+                              <option value="Flukes">Flukes</option>                              
+                              <option value="Dorsal Fin">Dorsal Fin</option>                              
                             </select>
                         </div>
                         <div class="form-group form-finchange">
                            <label for="pwd">Side of Body</label> 
                           <select class="form-control search-box" name="SideOfBody" id="SideOfBody" >
-                            <option value="">Select Side</optin>
-                            <option value="L">L</optin>
-                            <option value="R">R</optin>
-                            <option value="L/R">L/R</optin>
+                            <option value="">Select Side</option>
+                            <option value="L">L</option>
+                            <option value="R">R</option>
+                            <option value="L/R">L/R</option>
                          
                           </select>
                         </div>

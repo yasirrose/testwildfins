@@ -16,36 +16,36 @@ $(document).ready(function() {
 // 		"searching": false,
 // 	});
 // } );
-$(document).ready(function() {
-    // Custom sorting plugin for day of the month
-    jQuery.extend(jQuery.fn.dataTableExt.oSort, {
-        "date-day-pre": function(a) {
-            var dateParts = a.split('/');
-            return parseInt(dateParts[1], 10);
-        },
-        "date-day-asc": function(a, b) {
-            return a - b;
-        },
-        "date-day-desc": function(a, b) {
-            return b - a;
-        }
-    });
 
-    // Initialize DataTable with custom sorting
+$(document).ready(function() {
     $('#lesionHistoryTable').DataTable({
         "pageLength": 10,
         "paging": false,
         "info": false,
-        "responsive": true,
+        responsive: true,
         "searching": false,
         "columnDefs": [
             {
-                "targets": 0, // Index of the "Date Seen" column
-                "type": "date-day", // Use the custom sorting plugin
+                "targets": 0, // Date Seen column index (zero-based)
+                "type": "date",
+                "render": function(data, type, row) {
+                    // Parse the date in "mm/dd/yyyy" format to a JavaScript Date object
+                    var dateParts = data.split('/');
+                    if (dateParts.length === 3) {
+                        var year = dateParts[2];
+                        var month = dateParts[0];
+                        var day = dateParts[1];
+                        return month + '/' + day + '/' + year;
+                    } else {
+                        return data;
+                    }
+                }
             }
         ]
     });
 });
+
+
 
 
 

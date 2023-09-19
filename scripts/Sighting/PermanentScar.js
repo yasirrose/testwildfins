@@ -227,9 +227,28 @@ function updateRecord(id) {
 	// $('#cetacean_list').val(CetaceanCode).trigger('change');
 	$("#cetacean_list").val($("#cetacean_list option:contains(" + CetaceanCode + ")").val()).trigger("change");
 	$('#add_date').val(ScarDate);
-	$("#ScarType").val($("#ScarType option:contains(" + ScarType + ")").val()).trigger("change");
+	// $("#ScarType").val($("#ScarType option:contains(" + ScarType + ")").val()).trigger("change");
 	// $('#ScarType').val(ScarType).trigger('change');
-	$('#BodyRegion').val(BodyRegion).trigger('change');
+	// $('#BodyRegion').val(BodyRegion).trigger('change');
+	if (ScarType !== '') {
+		$("#ScarType option:selected").prop('selected', false);
+		var scarTypeValues = ScarType.split(',');
+	  
+		scarTypeValues.forEach(function(optionValue) {
+		  $("#ScarType option:contains('" + optionValue.trim() + "')").prop('selected', true);
+		});
+		$("#ScarType").trigger("change");
+	  }
+	if (BodyRegion !== '') {
+		$("#BodyRegion option:selected").prop('selected', false);
+		var bodyRegionValues = BodyRegion.split(',');
+		bodyRegionValues.forEach(function(optionValue) {
+		$("#BodyRegion option:contains('" + optionValue.trim() + "')").prop('selected', true);
+		});
+		$("#BodyRegion").trigger("change");
+	}
+
+
 	$('#SideOfBody').val(SideOfBody).trigger('change');
 	$("#setPrimaryImage").html('<img src="' + PrimaryImage + '" class="image_max_width">');
 	$("#SecondaryImage").html('<img src="' + SecondryImage + '" class="image_max_width">');

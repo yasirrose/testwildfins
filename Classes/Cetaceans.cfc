@@ -761,14 +761,16 @@
         <cfreturn selectedRegions> 
     </cffunction> 
 
+
+
+
+
+
     <cffunction name="getCetacean_Lesions" access="remote" returnformat="JSON" output="true">
-        <!--- <cfdump var="#Cetacean_Survey#" abort='true'> --->
-        <!--- <cfparam name="Form.Cetacean_Survey" default="0"> --->
-         <cfif isDefined('form.Cetacean_Survey') and form.Cetacean_Survey neq ''>
+       
+   
             <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
-                select 
-                Surveys.id as surveyid
-                ,Survey_Sightings.SightingNumber
+                select Survey_Sightings.SightingNumber                
                 ,Survey_Sightings.id as sightid
                 ,Surveys.date as DateSeen
                 ,Condition_Lesions.LesionType
@@ -777,28 +779,7 @@
                 ,Condition_Lesions.Status
                 ,Condition_Lesions.id
                 ,Condition_Lesions.PhotoNumber 
-                from Condition_Lesions
-                 INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
-                 INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
-                 where Surveys.id = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Cetacean_Survey#'>           
-                 AND Condition_Lesions.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#cetacean_Code#'>
-                 AND Surveys.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
-                 AND Survey_Sightings.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
-                 order by DateSeen desc
-             </cfquery>        
-        <cfelse>         
-        <!--- <cfdump var="#cetacean_Code#" abort='true'> --->
-            <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
-                select 
-                Survey_Sightings.SightingNumber
-                ,Survey_Sightings.id as sightid
-                ,Surveys.date as DateSeen
-                ,Condition_Lesions.LesionType
-                ,Condition_Lesions.Region
-                ,Condition_Lesions.Side_L_R
-                ,Condition_Lesions.Status
-                ,Condition_Lesions.id
-                ,Condition_Lesions.PhotoNumber 
+                ,Surveys.id as surveyid
                 from Condition_Lesions
                 INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
                 INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
@@ -808,7 +789,6 @@
                 order by DateSeen desc
             </cfquery>
             
-        </cfif>
         
         <cfloop query="qgetCetacean_Lesions">
             <cfif #qgetCetacean_Lesions.Region# NEQ "">
@@ -2053,7 +2033,7 @@
        <cfreturn "true">
     </cffunction>
     <cffunction name="getPermanentScar" returntype="any" output="false" access="public" >
-        <cfquery name="qgetPermanentScar" datasource="#Application.dsn#">
+        <!--- <cfquery name="qgetPermanentScar" datasource="#Application.dsn#">
             -- select * from PermanentScar where CetaceanCode = '#FORM.cetacean_Code#'
             SELECT PermanentScar.*, TLU_ScarType.ScarTypeName
                 FROM PermanentScar
@@ -2061,9 +2041,80 @@
                 WHERE CetaceanCode = '#FORM.cetacean_Code#'
               
 
-          </cfquery>
+          </cfquery> --->
+          <cfquery name="qgetPermanentScar" datasource="#variables.dsn#">
+            SELECT PermanentScar.*, 
+                   (SELECT STRING_AGG(TLU_ScarType.ScarTypeName, ', ') 
+                    FROM TLU_ScarType 
+                    WHERE CHARINDEX(',' + CAST(TLU_ScarType.ID AS VARCHAR) + ',', ',' + PermanentScar.ScarType + ',') > 0) AS ScarTypeName
+            FROM PermanentScar
+            WHERE CetaceanCode = '#FORM.cetacean_Code#'
+        </cfquery>
        <cfreturn qgetPermanentScar>
     </cffunction>
 
+    <cffunction name="getCetacean_LesionsByID" access="remote" returnformat="JSON" output="true">
+        <!--- <cfdump var="#Cetacean_Survey#" abort='true'> --->
+      
+            <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
+                select 
+                Survey_Sightings.SightingNumber
+                ,Surveys.id as surveyid
+                ,Survey_Sightings.id as sightid
+                ,Surveys.date as DateSeen
+                ,Condition_Lesions.LesionType
+                ,Condition_Lesions.Region
+                ,Condition_Lesions.Side_L_R
+                ,Condition_Lesions.Status
+                ,Condition_Lesions.id
+                ,Condition_Lesions.PhotoNumber 
+                from Condition_Lesions
+                INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
+                INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
+                where Condition_Lesions.id = <cfqueryparam cfsqltype="cf_sql_integer" value='#id#'>           
+                AND Surveys.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
+                AND Survey_Sightings.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
+                order by DateSeen desc
+            </cfquery>
+        
+        <cfloop query="qgetCetacean_Lesions">
+            <cfif #qgetCetacean_Lesions.Region# NEQ "">
+                <cfset regionN = getRegionNamebyId(qgetCetacean_Lesions.Region)>
+                <cfset querySetCell(qgetCetacean_Lesions, "Region", "#regionN#",qgetCetacean_Lesions.currentRow)>
+            </cfif>
+        </cfloop>
+        <cfreturn qgetCetacean_Lesions>
+    </cffunction>
 
+    <cffunction name="UpdateCetacean_LesionsByID" access="remote" returnformat="JSON" output="true">
+        <!--- <cfdump var="#Cetacean_Survey#" abort='true'> --->
+        <cftry>
+        <cfquery name="update_cetaceans"datasource="#variables.dsn#">
+            UPDATE Condition_Lesions
+            SET LesionType = '#lesionType#'
+            ,Side_L_R = '#Side#'
+            ,status = '#status#'
+            ,Region = '#region#'
+            ,PhotoNumber = '#photoNumber#'
+            WHERE ID = #ID#
+        </cfquery>
+        <cfcatch>
+            <cfdump var="#cfcatch#" abort="true">
+        </cfcatch>
+         </cftry>
+        <cfreturn true>
+    </cffunction>
+    <cffunction name="deleteLesion" access="remote" returnformat="JSON" output="true">
+        <!--- <cfdump var="#Cetacean_Survey#" abort='true'> --->
+        <cftry>
+            <cfquery name="qdelete" datasource="#Application.dsn#">
+                delete from Condition_Lesions
+                where ID = '#ID#'
+            </cfquery>
+        <cfcatch>
+            <cfdump var="#cfcatch#" abort="true">
+        </cfcatch>
+         </cftry>
+        <cfreturn true>
+    </cffunction>
 </cfcomponent>

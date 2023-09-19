@@ -6403,3 +6403,238 @@ function ADremove(el){
       }
   });    
 }
+
+$(document).ready(function() {
+  $("#SaveBloodvalue").click(function() {
+
+      var formData = $("#myforma").serialize();
+
+      bloodValues_ID= $('#bloodValues_ID').val();
+      if(bloodValues_ID){
+        console.log(formData);
+        $.ajax({
+          type: "POST",
+          url: application_root + "Stranding.cfc?method=updateFibrinogen",
+          data: {
+              formData: formData,
+              bloodValues_ID: bloodValues_ID
+          },
+          success: function(response) {
+              console.log("Success:");
+              alert('Data Updated Successfully!');
+          },
+          error: function(error) {
+              console.error("Error:", error);
+          }
+      });
+      }else{
+        alert('Please select Fnumber first');
+      }
+    
+  
+  });
+  // $("#SaveBloodvalue").click(function(event) {
+  //   event.preventDefault(); // Prevent the default form submission behavior
+    
+  //   var formData = {};
+    
+  //   $("#Fibrinogen :input").each(function() {
+  //     var field = $(this);
+  //     formData[field.attr("name")] = field.val();
+  //   });
+  //   // console.log(formData);
+  //   // return false;
+  //   var bloodValues_ID = $('#bloodValues_ID').val();
+    
+  //   if (bloodValues_ID) {
+      
+  //     $.ajax({
+  //       type: "POST",
+  //       url: application_root + "Stranding.cfc?method=updateFibrinogen",
+  //       data: {
+  //         formData: formData,
+  //         bloodValues_ID: bloodValues_ID
+  //       },
+  //       success: function(response) {
+  //         console.log("Success:");
+  //         alert('Data Updated Successfully!');
+  //       },
+  //       error: function(error) {
+  //         console.error("Error:", error);
+  //       }
+  //     });
+  //   } else {
+  //     alert('Please select Fnumber first');
+  //   }
+  // });
+  
+
+  $("#SaveCBCBloodvalue").click(function() {
+
+      var formData = $("#myforma").serialize();
+      bloodValues_ID= $('#bloodValues_ID').val();
+      if(bloodValues_ID){
+        console.log(formData);
+        $.ajax({
+          type: "POST",
+          url: application_root + "Stranding.cfc?method=updateCBC",
+          data: {
+              formData: formData,
+              bloodValues_ID: bloodValues_ID
+          },
+          success: function(response) {
+              console.log("Success:");
+              alert('Data Updated Successfully!');
+          },
+          error: function(error) {
+              console.error("Error:", error);
+          }
+      });
+      }else{
+        alert('Please select Fnumber first');
+      }
+    
+  
+  });
+  
+  $("#SaveCZEBloodvalue").click(function() {
+
+      var formData = $("#myforma").serialize();
+      bloodValues_ID= $('#bloodValues_ID').val();
+      if(bloodValues_ID){
+        console.log(formData);
+        $.ajax({
+          type: "POST",
+          url: application_root + "Stranding.cfc?method=updateCZE",
+          data: {
+              formData: formData,
+              bloodValues_ID: bloodValues_ID
+          },
+          success: function(response) {
+              console.log("Success:");
+              alert('Data Updated Successfully!');
+          },
+          error: function(error) {
+              console.error("Error:", error);
+          }
+      });
+      }else{
+        alert('Please select Fnumber first');
+      }
+    
+  
+  });
+
+  $("#SaveSAABloodvalue").click(function() {
+
+      var formData = $("#myforma").serialize();
+      bloodValues_ID= $('#bloodValues_ID').val();
+      if(bloodValues_ID){
+        console.log(formData);
+        $.ajax({
+          type: "POST",
+          url: application_root + "Stranding.cfc?method=updateSAA",
+          data: {
+              formData: formData,
+              bloodValues_ID: bloodValues_ID
+          },
+          success: function(response) {
+              console.log("Success:");
+              alert('Data Updated Successfully!');
+          },
+          error: function(error) {
+              console.error("Error:", error);
+          }
+      });
+      }else{
+        alert('Please select Fnumber first');
+      }
+    
+  
+  });
+
+  $("#SaveCHBvalue").click(function() {
+
+      var formData = $("#myforma").serialize();
+      bloodValues_ID= $('#bloodValues_ID').val();
+      if(bloodValues_ID){
+        console.log(formData);
+        $.ajax({
+          type: "POST",
+          url: application_root + "Stranding.cfc?method=updateChemistryVal",
+          data: {
+              formData: formData,
+              bloodValues_ID: bloodValues_ID
+          },
+          success: function(response) {
+              console.log("Success:");
+              alert('Data Updated Successfully!');
+          },
+          error: function(error) {
+              console.error("Error:", error);
+          }
+      });
+      }else{
+        alert('Please select Fnumber first');
+      }
+    
+  
+  });
+
+  $("#SaveChemBloodvalue").click(function() {
+
+      var formData = $("#myforma").serialize();
+      bloodValues_ID= $('#bloodValues_ID').val();
+      if(bloodValues_ID){
+        console.log(formData);
+        $.ajax({
+          type: "POST",
+          url: application_root + "Stranding.cfc?method=updateChemVal",
+          data: {
+              formData: formData,
+              bloodValues_ID: bloodValues_ID
+          },
+          success: function(response) {
+              console.log("Success:");
+              alert('Data Updated Successfully!');
+          },
+          error: function(error) {
+              console.error("Error:", error);
+          }
+      });
+      }else{
+        alert('Please select Fnumber first');
+      }
+    
+  
+  });
+  $("#SaveISTATBloodvalue").click(function() {
+
+      var formData = $("#myforma").serialize();
+      bloodValues_ID= $('#bloodValues_ID').val();
+      if(bloodValues_ID){
+        console.log(formData);
+        $.ajax({
+          type: "POST",
+          url: application_root + "Stranding.cfc?method=updateISTATVal",
+          data: {
+              formData: formData,
+              bloodValues_ID: bloodValues_ID
+          },
+          success: function(response) {
+              console.log("Success:");
+              alert('Data Updated Successfully!');
+          },
+          error: function(error) {
+              console.error("Error:", error);
+          }
+      });
+      }else{
+        alert('Please select Fnumber first');
+      }
+    
+  
+  });
+
+
+});
