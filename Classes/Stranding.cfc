@@ -5702,6 +5702,17 @@
         </cfquery>
         <cfreturn qgetSampleData>
     </cffunction>
+    <cffunction name="getSampleDetailByID" returntype="any" output="false" access="public" >
+        <cftry>
+        <cfquery name="qgetSampleData" datasource="#variables.dsn#">
+            SELECT *  FROM ST_SampleDetail where ST_ID = #SamplID#
+        </cfquery>
+        <cfcatch>
+            <cfdump var="#cfcatch#" abort="true">
+        </cfcatch>
+        </cftry>
+        <cfreturn qgetSampleData>
+    </cffunction>
     
 
     <cffunction name="SampleArchiveUpdate" returntype="any" output="false" access="public" >
@@ -6091,6 +6102,26 @@
         <cfif NOT isDefined('FORM.caseReportNBox')>
             <cfset FORM.caseReportNBox = "0">
         </cfif>
+        <cfif NOT isDefined('FORM.Esophagus')>
+            <cfset FORM.Esophagus = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.Forestomach')>
+            <cfset FORM.Forestomach = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.glandularStomach')>
+            <cfset FORM.glandularStomach = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.Pylorus')>
+            <cfset FORM.Pylorus = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.smallIntestine')>
+            <cfset FORM.smallIntestine = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.Colon')>
+            <cfset FORM.Colon = "">
+        </cfif>
+      
+       
 
         <cfquery name="qcheckfieldnumber" datasource="#Application.dsn#">
             SELECT fnumber FROM ST_CetaceanNecropsyReport
@@ -6361,6 +6392,13 @@
                     ,caseReportBox
                     ,NRDiagnosisCategory
                     ,NRHistopathologyDiagnosis
+                    ,Esophagus
+                    ,Forestomach
+                    ,glandularStomach
+                    ,Pylorus
+                    ,Colon
+                    ,smallIntestine
+                    ,AlimentarySystemComments
                     ) 
                     VALUES
                     (
@@ -6494,6 +6532,7 @@
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Testes_Length_LEFT#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Testes_Length_width#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Glands_LEFT#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Glands_LEFT#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Testes_Length_right#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Testes_width_right#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Glands_RIGHT#'>
@@ -6622,6 +6661,13 @@
                     ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportNBox#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NRDiagnosisCategory#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NRHistopathologyDiagnosis#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Esophagus#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Forestomach#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.glandularStomach#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Pylorus#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Colon#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.smallIntestine#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.AlimentarySystemComments#'>
                     )
                 </cfquery>
                 <cfcatch type="any">
@@ -6751,6 +6797,24 @@
         </cfif>
         <cfif NOT isDefined('FORM.caseReportNBox')>
             <cfset FORM.caseReportNBox = "0">
+        </cfif>
+        <cfif NOT isDefined('FORM.Esophagus')>
+            <cfset FORM.Esophagus = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.Forestomach')>
+            <cfset FORM.Forestomach = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.glandularStomach')>
+            <cfset FORM.glandularStomach = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.Pylorus')>
+            <cfset FORM.Pylorus = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.smallIntestine')>
+            <cfset FORM.smallIntestine = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.Colon')>
+            <cfset FORM.Colon = "">
         </cfif>
         <cftry>
             <cfquery name="qupdateCetaceanNecropsy" datasource="#variables.dsn#"  result="return_data" >
@@ -7010,6 +7074,13 @@
                 ,NRDiagnosisCategory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NRDiagnosisCategory#'>
                 ,NRHistopathologyDiagnosis = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NRHistopathologyDiagnosis#'>
                 ,caseReportBox = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportNBox#'>
+                ,Esophagus = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Esophagus#'>
+                ,Forestomach = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Forestomach#'>
+                ,glandularStomach = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.glandularStomach#'>
+                ,Pylorus = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Pylorus#'>
+                ,smallIntestine = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.smallIntestine#'>
+                ,Colon = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Colon#'>
+                ,AlimentarySystemComments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.AlimentarySystemComments#'>
                 WHERE
                 fnumber =<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Fnumber#'>
             </cfquery>
@@ -7384,7 +7455,6 @@
                 ,Prosectors = ''
                 ,Tentative = ''
                 ,deathcause = ''
-                ,HistoImages = ''
                 ,NRDiagnosisCategory = ''
                 ,historemark = ''
                 ,NRHistopathologyDiagnosis = ''
@@ -7401,7 +7471,6 @@
                 ,eyeleft = ''
                 ,eyeright = ''
                 ,lessioncomments = ''
-                ,integumentImages = ''
                 ,Fat_Blubber = ''
                 ,heart = ''
                 ,mesentery = ''
@@ -7497,6 +7566,38 @@
                 ,nervoussystemcomments = ''
                 ,Parasitecomments = ''
                 ,endocrine_comments = ''
+                ,AlimentarySystemComments = ''
+                ,PANCREAS = ''
+                ,PancreasFindings = ''
+                ,PANCREASOthers = ''
+                ,GIFOREIGNMATERIAL = ''
+                ,InjuryLesionAssociated = ''
+                ,InjuryLesionAssociatedContents = ''
+                ,GIForeignMaterialType = ''
+                ,MaterialLesionLocation = ''
+                ,MaterialCollected = ''
+                ,DispositionofMaterialCollected = ''
+                ,Esophagus = ''
+                ,Forestomach = ''
+                ,glandularStomach = ''
+                ,Pylorus = ''
+                ,smallIntestine = ''
+                ,Colon = ''
+                ,HistoImages = ''
+                ,images = ''
+                ,integumentImages = ''
+                ,IntenalExamImages = ''
+                ,thoracictImages = ''
+                ,abdominalImages = ''
+                ,hepatobiliaryImages = ''
+                ,cardiovascularImages = ''
+                ,pulmonaryImages = ''
+                ,lymphoreticularImages = ''
+                ,endocrineImages = ''
+                ,urogenitalImages = ''
+                ,alimentaryImages = ''
+                ,centralNervousImages = ''
+                ,musculoskeletalImages = ''
                 
 
                 where ID = #report_ID#
@@ -10020,6 +10121,8 @@
                 </cfif>
             </cfloop>
 
+            <!--- <cfdump var="#formDataStruct.RBC_MORPHOLOGY#" abort="true"> --->
+
             <cfif isDefined('formDataStruct.wbc_count')>
                 <cfset wbc_count = formDataStruct.wbc_count>
             <cfelse>
@@ -10191,11 +10294,12 @@
 
       
             <cfset RBC_report = formDataStruct.RBC_report>
-            <!--- <cfif isDefined('formDataStruct.RBC_Morphology ')>
-                <cfset RBC_Morphology  = formDataStruct.RBC_Morphology >
+
+            <cfif isDefined('formDataStruct.RBC_Morphology')>
+                <cfset RBC_Morphology = formDataStruct.RBC_Morphology >
             <cfelse>
-                <cfset RBC_Morphology  =''>
-            </cfif> --->
+                <cfset RBC_Morphology =''>
+            </cfif>
             <cfif isDefined('formDataStruct.RBC_comment')>
                 <cfset RBC_comment = formDataStruct.RBC_comment>
             <cfelse>
@@ -10228,6 +10332,11 @@
             </cfif>
             
             <!--- <cfset WBC_Morphology = formDataStruct.WBC_Morphology> --->
+            <cfif isDefined('formDataStruct.WBC_Morphology')>
+                <cfset WBC_Morphology = formDataStruct.WBC_Morphology>
+            <cfelse>
+                <cfset WBC_Morphology =''>
+            </cfif>
             <cfset WBCMorphology_report = formDataStruct.WBCMorphology_report>
             <cfif isDefined('formDataStruct.WBCMorphology_comment')>
                 <cfset WBCMorphology_comment = formDataStruct.WBCMorphology_comment>
@@ -10237,7 +10346,7 @@
 
             <!--- ,RBC_Morphology =<cfqueryparam cfsqltype="cf_sql_varchar" value='#RBC_Morphology#'>            
                 ,WBC_Morphology =<cfqueryparam cfsqltype="cf_sql_varchar" value='#WBC_Morphology#'>
-            --->
+            NoumanAwan --->
                      
         <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
             SELECT ID from ST_CBC where BV_ID = #form.bloodValues_ID#
@@ -10311,6 +10420,8 @@
                 ,Platelet_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Platelet_comment#'>
                 ,WBCMorphology_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#WBCMorphology_report#'>
                 ,WBCMorphology_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#WBCMorphology_comment#'>
+                ,RBC_Morphology =<cfqueryparam cfsqltype="cf_sql_varchar" value='#RBC_Morphology#'>            
+                ,WBC_Morphology =<cfqueryparam cfsqltype="cf_sql_varchar" value='#WBC_Morphology#'>
             WHERE
             BV_ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.bloodValues_ID#'>
             </cfquery>

@@ -225,7 +225,12 @@ function updateRecord(id) {
 	CetaceanCode = $('#CetaceanCode_'+id).text();
 	// clist = CetaceanID
 	// $('#cetacean_list').val(CetaceanCode).trigger('change');
-	$("#cetacean_list").val($("#cetacean_list option:contains(" + CetaceanCode + ")").val()).trigger("change");
+
+	// $("#cetacean_list").val($("#cetacean_list option:contains(" + CetaceanCode + ")").val()).trigger("change");
+	$("#cetacean_list").val($("#cetacean_list option").filter(function() {
+		return $(this).text().trim() === CetaceanCode;
+	}).val()).trigger("change");
+	
 	$('#add_date').val(ScarDate);
 	// $("#ScarType").val($("#ScarType option:contains(" + ScarType + ")").val()).trigger("change");
 	// $('#ScarType').val(ScarType).trigger('change');

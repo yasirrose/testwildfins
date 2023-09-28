@@ -780,6 +780,7 @@
                 ,Condition_Lesions.id
                 ,Condition_Lesions.PhotoNumber 
                 ,Surveys.id as surveyid
+                ,Condition_Lesions.Comments 
                 from Condition_Lesions
                 INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
                 INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
@@ -2068,6 +2069,8 @@
                 ,Condition_Lesions.Status
                 ,Condition_Lesions.id
                 ,Condition_Lesions.PhotoNumber 
+                ,Condition_Lesions.Region as CLRegion
+                ,Condition_Lesions.Comments 
                 from Condition_Lesions
                 INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
                 INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
@@ -2096,6 +2099,7 @@
             ,status = '#status#'
             ,Region = '#region#'
             ,PhotoNumber = '#photoNumber#'
+            ,Comments = '#comments#'
             WHERE ID = #ID#
         </cfquery>
         <cfcatch>

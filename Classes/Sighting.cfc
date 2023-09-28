@@ -3040,7 +3040,7 @@
            <cfset vet_assistant=0>
            <cfset photoIDAdministrator=0>
             <cfoutput>
-            <cfloop index="i" from="1" to="11">
+            <cfloop index="i" from="1" to="12">
                 
                 <cfif isDefined('form.administrators')>
                     <cfif listFind('#form.administrators#',i)>

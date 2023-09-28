@@ -2604,6 +2604,7 @@
     <cfparam  name="form.report" DEFAULT="emptys">
 
     <cfif isDefined('form.save')>
+        <!--- <cfdump var="#form#" abort="true"> --->
         <cfset form.report_ID ='#form.report_ID#'>
         <cfif form.report_ID eq '' >
             <cfset CNR = Application.Stranding.CetaceanNecropsyinsert(argumentCollection="#Form#")>
@@ -2629,6 +2630,7 @@
     <cfelseif isDefined('deleteNecropsyRecord')>
         
         <cfset Application.Stranding.deletcetaceannecropsy("#form#")>
+        <cfset form.fnumber = ''>
     <cfelseif isDefined('deletCetaceanNecropsyAllRecord')>
         <cfset Application.Stranding.deletCetaceanNecropsyAllRecord()>
     </cfif>
@@ -6530,6 +6532,7 @@
                     <div class="form-group input-group select-width">
                     <form  action="" method="post" id="myformNecropsySerchByFieldNumber">
                         <label for="sel1">Search Necropsy Report By Field Number:</label>
+
                         <div class="input"> 
                             <select class="form-control search-box" id="fieldnumber" name="Nfieldnumber" onChange="checkfield()">
                                 <option value="">Select Field Number</option>
@@ -7998,9 +8001,9 @@
                             <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.LCEID') and form.LCEID neq "")>
                                 <input type="submit" id="" name="delete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                             </cfif>
-                            <cfif (permissions eq "full_access")>
+                            <!--- <cfif (permissions eq "full_access")>
                                 <input type="submit" id="deleteAllRecord" name="deleteAllRecord" class="btn btn-orange m-rl-4" value="Delete All Record" onclick="if(confirm('Are you sure to Delete all Records?')){}else{return false;};">
-                            </cfif>
+                            </cfif> --->
                         </div>
                     </div>
                 </cfif>
@@ -8266,9 +8269,9 @@
                                                 <input type="submit" id="" name="hiRecordDelete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                 
                                             </cfif>
-                                            <cfif (permissions eq "full_access")>
+                                            <!--- <cfif (permissions eq "full_access")>
                                                 <input type="submit" id="deleteAllHiFormRecord" name="deleteAllHiFormRecord" class="btn btn-orange m-rl-4" value="Delete All Records" onclick="if(confirm('Are you sure to Delete All Records?')){}else{return false;};">
-                                            </cfif>
+                                            </cfif> --->
                                         </div>
                                     </div>
                                 </cfif>
@@ -8460,9 +8463,9 @@
                                 <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.LCEID') and form.LCEID neq "")>
                                     <input type="submit" id="" name="levelAformDelete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                                 </cfif>
-                                <cfif (permissions eq "full_access")>
+                                <!--- <cfif (permissions eq "full_access")>
                                      <input type="submit" id="deleteAllLevelAFormRecord" name="deleteAllLevelAFormRecord" class="btn btn-orange m-rl-4" value="Delete All Records" onclick="if(confirm('Are you sure to Delete All Records ?')){}else{return false;};">
-                                </cfif>
+                                </cfif> --->
                             </div> 
                         </div>
                     </cfif>
@@ -8631,9 +8634,9 @@
                             <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.LCEID') and form.LCEID neq "")>
                                 <input type="submit" id="" name="histoDelete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                             </cfif>
-                            <cfif (permissions eq "full_access")>
+                            <!--- <cfif (permissions eq "full_access")>
                                 <input type="submit" id="deleteHIstoRecord" name="deleteHIstoRecord" class="btn btn-orange m-rl-4" value="Delete All Records" onclick="if(confirm('Are you sure to Delete all Records?')){}else{return false;};">
-                            </cfif>
+                            </cfif> --->
                         </div>
                     </div>
                 </cfif>
@@ -11394,9 +11397,9 @@
                                 <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.LCEID') and form.LCEID neq "")>
                                     <input type="submit" id="" name="bloodValueDelete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                                 </cfif>
-                                <cfif (permissions eq "full_access")>
+                                <!--- <cfif (permissions eq "full_access")>
                                     <input type="submit" id="deleteBloodValuesRecord" name="deleteBloodValuesRecord" class="btn btn-orange m-rl-4" value="Delete All Records" onclick="if(confirm('Are you sure to Delete All Records?')){}else{return false;};">
-                                </cfif>
+                                </cfif> --->
                             </div>
                         </div>
                     </cfif>
@@ -11803,9 +11806,9 @@
                                 <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "")>
                                     <input type="submit" id="" name="deleteToxicology" class="btn btn-orange rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                                 </cfif>
-                                <cfif (permissions eq "full_access")>
+                                <!--- <cfif (permissions eq "full_access")>
                                     <input type="submit" id="deleteToxicologyAllRecord" name="deleteToxicologyAllRecord" class="btn btn-orange rl-4" value="Delete All Records" onclick="if(confirm('Are you sure to Delete All Records?')){}else{return false;};">
-                                </cfif>
+                                </cfif> --->
                             </div>
                         </div>
                     </cfif>
@@ -12026,9 +12029,9 @@
                             <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.AD_ID') and form.AD_ID neq "")>
                                 <input type="submit" id="" name="deleteAncillary" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                             </cfif>
-                            <cfif (permissions eq "full_access")>
+                            <!--- <cfif (permissions eq "full_access")>
                                     <input type="submit" id="deleteAncillaryAllRecord" name="deleteAncillaryAllRecord" class="btn btn-orange m-rl-4" value="Delete All Records" onclick="if(confirm('Are you sure to Delete All Records?')){}else{return false;};">
-                            </cfif>
+                            </cfif> --->
                         </div>
                     </div>
                 </cfif>
@@ -12221,11 +12224,11 @@
                                 <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('qgetSampleTypeIByID.ID') and qgetSampleTypeIByID.ID neq "") AND ('#session.userdetails.email eq 'annesleeman@gmail.com'#' or '#session.userdetails.email eq 'joesleeman@me.com'#' or '#session.userdetails.email eq 'tldz.dev1@gmail.com'#' or '#session.userdetails.email eq 'asleeman@centersoft.net'#')>
                                     <input type="submit" id="" name="deleteSampleAechive" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){deleteit()}else{return false;};" >
                                 </cfif>
-                                <cfif (permissions eq "full_access")>
+                                <!--- <cfif (permissions eq "full_access")>
                                     <cfif (session.userdetails.email eq "asleeman@centersoft.net" or session.userdetails.email eq "joesleeman@me.com" or session.userdetails.email eq "annesleeman@gmail.com" or session.userdetails.email eq "tldz.dev1@gmail.com") >
                                         <input type="submit" id="deleteallSampleArchiveRecord" name="deleteallSampleArchiveRecord" class="btn btn-orange m-rl-4" value="Delete All Records" onclick="if(confirm('Are you sure to Delete All Records ?')){deleteit()}else{return false;};" >
                                     </cfif>
-                                </cfif>
+                                </cfif> --->
                             </div>
                             <!--- <div class="col-lg-2 col-md-4 col-sm-4 col-xs-4 s-content">
                                 <input type="submit" id="SaveAndClose" class="btn btn-green m-rl-4" value="Save and Close" name="SaveAndClose" onclick="chkreq(event)">                        
@@ -12442,7 +12445,44 @@
                                         <th>Unit of sample</th>
                                         <th>Storage Type</th>
                                         <th>Sample Comments</th>
-                                        <th>Sample Availability</th>
+                                        <!--- <th>Sample Availability</th> 
+                                        qgetSampleTypeIByID
+
+
+                                        --->
+                                   
+
+                                        <cfset maxCount = 0>
+                                        <cfset idWithMaxCount = "">
+
+                                        <!-- Loop through the "qgetSampleTypeIByID" query -->
+                                        <cfloop query="qgetSampleTypeIByID">
+                                            <!-- Get the current ID from the query -->
+                                            <cfset currentID = qgetSampleTypeIByID.ID>
+
+                                            <!-- Run a select query to count records in "ST_SampleDetail" for the current ID -->
+                                            <cfquery name="getCountForID" datasource="#Application.dsn#">
+                                                SELECT COUNT(*) AS totalCount
+                                                FROM ST_SampleDetail
+                                                WHERE ST_ID = <cfqueryparam value="#currentID#" cfsqltype="cf_sql_integer">
+                                            </cfquery>
+
+                                            <!-- Check if the current count is greater than the maximum count -->
+                                            <cfif getCountForID.totalCount GT maxCount>
+                                                <!-- Update the maximum count and corresponding ID if needed -->
+                                                <cfset maxCount = getCountForID.totalCount>
+                                                <cfset idWithMaxCount = currentID>
+                                            </cfif>
+                                        </cfloop>
+
+
+                                        <cfif isDefined('qgetSampleDetailData')>
+                                            <cfset c = 0>
+                                            <cfloop index="index" from="1" to="#maxCount#">
+                                                <cfset c = incrementValue(#c#)>
+                                                <th>Sample Availability#c#</th>
+                                            </cfloop>
+                                        </cfif>
                                              <!--- <cfif isDefined('qgetSampleData')>
                                          <th>Date</th>
                                         </cfif> --->
@@ -12457,7 +12497,7 @@
                                         <th>Location</th>
                                         <cfif isDefined('qgetSampleDetailData')>
                                             <cfset c = 1>
-                                            <cfloop index="index" from="1" to="#qgetSampleDetailData.recordcount#">
+                                            <cfloop index="index" from="1" to="#maxCount#">
                                                 <cfset c = incrementValue(#c#)>
                                                 <th>Location#c#</th>
                                             </cfloop>
@@ -12467,7 +12507,13 @@
                                 </thead>
                                 <tbody>
                                     <cfif isDefined('qgetSampleTypeIByID')>
-                                        <cfloop query="qgetSampleTypeIByID">
+                                        <cfloop query="qgetSampleTypeIByID" >
+                                            <cfquery name="qgetSampleDataaaa" datasource="#Application.dsn#">
+                                                SELECT * FROM ST_SampleDetail where ST_ID =#qgetSampleTypeIByID.ID#
+                                            </cfquery>
+                                           
+                                            
+                                            
                                             <tr id="samplereporttr_#ID#">
                                                 <td id="SamplereportID#ID#">#qgetSampleTypeIByID.SampleID#</td>
                                                 <td id="reportBinNumber#ID#">#qgetSampleTypeIByID.BinNumber#</td>
@@ -12477,7 +12523,21 @@
                                                 <td id="reportUnitofSample#ID#">#qgetSampleTypeIByID.UnitofSample#</td>
                                                 <td id="reportStorageType#ID#">#qgetSampleTypeIByID.StorageType#</td>
                                                 <td id="reportSampleComments#ID#">#qgetSampleTypeIByID.SampleComments#</td>
-                                                <td id="reportSampleComments#ID#">#qgetSampleTypeIByID.SampleComments#</td>
+                                                <!--- <td id="SampleAvailable#ID#">#qgetSampleTypeIByID.Sample_available#</td> 
+                                                <cfdump var="#qgetSampleDataaaa.Sample_available[1]#" abort="true">--->
+                                                <cfif isDefined('qgetSampleDetailData')>
+                                                    <cfif isDefined('qgetSampleDataaaa')>   
+                                                        <cfloop index="i" from="1" to="#maxCount#">
+                                                            <cfset columnName = "Sample_available#i#">
+                                                            <cfif isDefined('qgetSampleDataaaa.Sample_available')>
+                                                                <td>#qgetSampleDataaaa.Sample_available[i]#</td>
+                                                            <cfelse>
+                                                                <td></td>
+                                                            </cfif>
+                                                        </cfloop>    
+                                                    </cfif>
+                                                </cfif>
+
                                                 <!--- <cfif isDefined('qgetSampleData')> --->
                                                     <!--- <td id="archivedate">#qgetSampleTypeIByID.maindate#</td> --->
                                                 <!--- </cfif> --->
@@ -12489,10 +12549,21 @@
                                                 </cfif> --->
 
                                                 <td id="reportSample_Location#ID#">#qgetSampleTypeIByID.Sample_Location#</td>
-                                                <cfif isDefined('qgetSampleDetailData')>
+                                                <!--- <cfif isDefined('qgetSampleDetailData')>
                                                     <cfloop query="qgetSampleDetailData">
                                                         <td>#qgetSampleDetailData.SampleLocation#</td>
                                                     </cfloop>    
+                                                </cfif> --->
+                                                <cfif isDefined('qgetSampleDetailData')>
+                                                    <cfif isDefined('qgetSampleDataaaa')>   
+                                                        <cfloop index="i" from="1" to="#maxCount#">
+                                                            <cfif isDefined('qgetSampleDataaaa.SampleLocation')>
+                                                                <td>#qgetSampleDataaaa.SampleLocation[i]#</td>
+                                                            <cfelse>
+                                                                <td></td>
+                                                            </cfif>
+                                                        </cfloop>    
+                                                    </cfif>
                                                 </cfif>
                                                 <td>                                                    
                                                     <div class="tablebutn" style="display: inline-flex;">
@@ -14716,15 +14787,15 @@
     </div>
     </div>
     <div class="systum-sec" >
-        <div class="systum-row">
-            <div class="sys-colum clm-15">
+        <div class="systum-row" style="align-items: center;">
+            <div class="sys-colum clm-15" style="margin: 0;">
                 <h3 class="sys-title">ESOPHAGUS</h3>
             </div>
+            <!--- NoumanAwan --->
             <div class="" style="margin-right: 33px;width: 200px;">
-                <p></p>
-                <select class="stl-op search-box"multiple="multiple" name="" id="">
+                <select class="stl-op search-box"multiple="multiple" name="Esophagus" id="">
                     <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
-                        <option value="#Alimentary_SystemArray[j]#" >#Alimentary_SystemArray[j]#</option>
+                        <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.Esophagus,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
                     </cfloop>
                 </select>
             </div>
@@ -14813,20 +14884,21 @@
         </div>
     </div>
     <div class="systum-sec">
-        <div class="systum-row">
-            <div class="sys-colum clm-15">
+        <div class="systum-row" style="align-items: center;">
+            <div class="sys-colum clm-15" style="margin: 0;">
                 <h3 class="sys-title">FORESTOMACH</h3>
             </div>
             <div class="" style="margin-right: 33px;width: 200px;">
                 <p></p>
+                <!--- NoumanAwan --->
 <!---                 <cfif ListFind(ValueList(qgetCetaceanNecropsy.Kidney_right,","),#Alimentary_SystemArray[j]#)>selected</cfif> --->
-                <select class="stl-op search-box"multiple="multiple" name="" id="">
+                <select class="stl-op search-box"multiple="multiple" name="Forestomach" id="">
                     <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
-                        <option value="#Alimentary_SystemArray[j]#">#Alimentary_SystemArray[j]#</option>
+                        <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.Forestomach,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
                     </cfloop>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="FORESTOMACHUlcers">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHUlcers') and  qgetCetaceanNecropsy.FORESTOMACHUlcers  eq '>5%'>selected</cfif>>>5%</option>
@@ -14835,7 +14907,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHUlcers') and  qgetCetaceanNecropsy.FORESTOMACHUlcers  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="FORESTOMACHTrauma">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHTrauma') and  qgetCetaceanNecropsy.FORESTOMACHTrauma  eq '>5%'>selected</cfif>>>5%</option>
@@ -14844,7 +14916,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHTrauma') and  qgetCetaceanNecropsy.FORESTOMACHTrauma  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="FORESTOMACHMasses">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHMasses') and  qgetCetaceanNecropsy.FORESTOMACHMasses  eq '>5%'>selected</cfif>>>5%</option>
@@ -14853,7 +14925,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHMasses') and  qgetCetaceanNecropsy.FORESTOMACHMasses  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="FORESTOMACHImpaction">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHImpaction') and  qgetCetaceanNecropsy.FORESTOMACHImpaction  eq '>5%'>selected</cfif>>>5%</option>
@@ -14862,7 +14934,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHImpaction') and  qgetCetaceanNecropsy.FORESTOMACHImpaction  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="FORESTOMACHObstruction">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHObstruction') and  qgetCetaceanNecropsy.FORESTOMACHObstruction  eq '>5%'>selected</cfif>>>5%</option>
@@ -14871,7 +14943,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHObstruction') and  qgetCetaceanNecropsy.FORESTOMACHObstruction  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="FORESTOMACHlntussusception">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHlntussusception') and  qgetCetaceanNecropsy.FORESTOMACHlntussusception  eq '>5%'>selected</cfif>>>5%</option>
@@ -14880,7 +14952,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHlntussusception') and  qgetCetaceanNecropsy.FORESTOMACHlntussusception  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="FORESTOMACHParasites">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHParasites') and  qgetCetaceanNecropsy.FORESTOMACHParasites  eq '>5%'>selected</cfif>>>5%</option>
@@ -14889,7 +14961,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.FORESTOMACHParasites') and  qgetCetaceanNecropsy.FORESTOMACHParasites  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum clm-15">
+            <div class="sys-colum clm-15" style='display:none;'>
                 <input type="text" class="text-field" name="FORESTOMACHOther"value="#qgetCetaceanNecropsy.FORESTOMACHOther#">
             </div>
         </div>
@@ -14903,19 +14975,20 @@
         </div>
     </div>
     <div class="systum-sec">
-        <div class="systum-row">
-            <div class="sys-colum clm-15">
+        <div class="systum-row" style="align-items: center;">
+            <div class="sys-colum clm-15" style="margin: 0;">
                 <h3 class="sys-title">GLANDULAR STOMACH</h3>
             </div>
             <div class="" style="margin-right: 33px;width: 200px;">
                 <p></p>
-                <select class="stl-op search-box"multiple="multiple" name="" id="">
+                <!--- NoumanAwan --->
+                <select class="stl-op search-box"multiple="multiple" name="glandularStomach" id="">
                     <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
-                        <option value="#Alimentary_SystemArray[j]#" >#Alimentary_SystemArray[j]#</option>
+                        <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.glandularStomach,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
                     </cfloop>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="GLANDULARSTOMACHUlcers">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHUlcers') and  qgetCetaceanNecropsy.GLANDULARSTOMACHUlcers  eq '>5%'>selected</cfif>>>5%</option>
@@ -14924,7 +14997,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHUlcers') and  qgetCetaceanNecropsy.GLANDULARSTOMACHUlcers  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="GLANDULARSTOMACHTrauma">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHTrauma') and  qgetCetaceanNecropsy.GLANDULARSTOMACHTrauma  eq '>5%'>selected</cfif>>>5%</option>
@@ -14933,7 +15006,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHTrauma') and  qgetCetaceanNecropsy.GLANDULARSTOMACHTrauma  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="GLANDULARSTOMACHMasses">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHMasses') and  qgetCetaceanNecropsy.GLANDULARSTOMACHMasses  eq '>5%'>selected</cfif>>>5%</option>
@@ -14942,7 +15015,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHMasses') and  qgetCetaceanNecropsy.GLANDULARSTOMACHMasses  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="GLANDULARSTOMACHImpaction">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHImpaction') and  qgetCetaceanNecropsy.GLANDULARSTOMACHImpaction  eq '>5%'>selected</cfif>>>5%</option>
@@ -14951,7 +15024,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHImpaction') and  qgetCetaceanNecropsy.GLANDULARSTOMACHImpaction  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="GLANDULARSTOMACHObstruction">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHObstruction') and  qgetCetaceanNecropsy.GLANDULARSTOMACHObstruction  eq '>5%'>selected</cfif>>>5%</option>
@@ -14960,7 +15033,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHObstruction') and  qgetCetaceanNecropsy.GLANDULARSTOMACHObstruction  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="GLANDULARSTOMACHlntussusception">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHlntussusception') and  qgetCetaceanNecropsy.GLANDULARSTOMACHlntussusception  eq '>5%'>selected</cfif>>>5%</option>
@@ -14969,7 +15042,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHlntussusception') and  qgetCetaceanNecropsy.GLANDULARSTOMACHlntussusception  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="GLANDULARSTOMACHParasites">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHParasites') and  qgetCetaceanNecropsy.GLANDULARSTOMACHParasites  eq '>5%'>selected</cfif>>>5%</option>
@@ -14978,7 +15051,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.GLANDULARSTOMACHParasites') and  qgetCetaceanNecropsy.GLANDULARSTOMACHParasites  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum clm-15">
+            <div class="sys-colum clm-15" style='display:none;'>
                 <input type="text" class="text-field" name="GLANDULARSTOMACHOther" value="#qgetCetaceanNecropsy.GLANDULARSTOMACHOther#">
             </div>
         </div>
@@ -14992,19 +15065,20 @@
         </div>
     </div>
     <div class="systum-sec">
-        <div class="systum-row">
-            <div class="sys-colum clm-15">
+        <div class="systum-row" style="align-items: center;">
+            <div class="sys-colum clm-15" style="margin: 0;">
                 <h3 class="sys-title">PYLORUS</h3>
             </div>
             <div class="" style="margin-right: 33px;width: 200px;">
                 <p></p>
-                <select class="stl-op search-box"multiple="multiple" name="" id="">
+                <!--- NoumanAwan --->
+                <select class="stl-op search-box"multiple="multiple" name="Pylorus" id="">
                     <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
-                        <option value="#Alimentary_SystemArray[j]#" >#Alimentary_SystemArray[j]#</option>
+                        <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.Pylorus,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
                     </cfloop>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="PYLORUSUlcers">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSUlcers') and  qgetCetaceanNecropsy.PYLORUSUlcers  eq '>5%'>selected</cfif>>>5%</option>
@@ -15013,7 +15087,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSUlcers') and  qgetCetaceanNecropsy.PYLORUSUlcers  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="PYLORUSTrauma">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSTrauma') and  qgetCetaceanNecropsy.PYLORUSTrauma  eq '>5%'>selected</cfif>>>5%</option>
@@ -15022,7 +15096,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSTrauma') and  qgetCetaceanNecropsy.PYLORUSTrauma  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="PYLORUSMasses">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSMasses') and  qgetCetaceanNecropsy.PYLORUSMasses  eq '>5%'>selected</cfif>>>5%</option>
@@ -15031,7 +15105,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSMasses') and  qgetCetaceanNecropsy.PYLORUSMasses  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="PYLORUSImpaction">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSImpaction') and  qgetCetaceanNecropsy.PYLORUSImpaction  eq '>5%'>selected</cfif>>>5%</option>
@@ -15040,7 +15114,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSImpaction') and  qgetCetaceanNecropsy.PYLORUSImpaction  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="PYLORUSObstruction">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSObstruction') and  qgetCetaceanNecropsy.PYLORUSObstruction  eq '>5%'>selected</cfif>>>5%</option>
@@ -15049,7 +15123,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSObstruction') and  qgetCetaceanNecropsy.PYLORUSObstruction  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="PYLORUSlntussusception">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSlntussusception') and  qgetCetaceanNecropsy.PYLORUSlntussusception  eq '>5%'>selected</cfif>>>5%</option>
@@ -15058,7 +15132,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSlntussusception') and  qgetCetaceanNecropsy.PYLORUSlntussusception  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="PYLORUSParasites">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSParasites') and  qgetCetaceanNecropsy.PYLORUSParasites  eq '>5%'>selected</cfif>>>5%</option>
@@ -15067,7 +15141,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.PYLORUSParasites') and  qgetCetaceanNecropsy.PYLORUSParasites  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum clm-15">
+            <div class="sys-colum clm-15" style='display:none;'>
                 <input type="text" class="text-field" name="PYLORUSOther"value="#qgetCetaceanNecropsy.PYLORUSOther#">
             </div>
         </div>
@@ -15081,19 +15155,20 @@
         </div>
     </div>
     <div class="systum-sec">
-        <div class="systum-row">
-            <div class="sys-colum clm-15">
+        <div class="systum-row" style="align-items: center;">
+            <div class="sys-colum clm-15" style="margin: 0;">
                 <h3 class="sys-title">SMALL INTESTINE</h3>
             </div>
             <div class="" style="margin-right: 33px;width: 200px;">
                 <p></p>
-                <select class="stl-op search-box"multiple="multiple" name="" id="">
+                <!--- NoumanAwan --->
+                <select class="stl-op search-box"multiple="multiple" name="smallIntestine" id="">
                     <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
-                        <option value="#Alimentary_SystemArray[j]#" >#Alimentary_SystemArray[j]#</option>
+                        <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.smallIntestine,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
                     </cfloop>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="SMALLINTESTINEUlcers">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEUlcers') and  qgetCetaceanNecropsy.SMALLINTESTINEUlcers  eq '>5%'>selected</cfif>>>5%</option>
@@ -15102,7 +15177,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEUlcers') and  qgetCetaceanNecropsy.SMALLINTESTINEUlcers  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="SMALLINTESTINETrauma">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINETrauma') and  qgetCetaceanNecropsy.SMALLINTESTINETrauma  eq '>5%'>selected</cfif>>>5%</option>
@@ -15111,7 +15186,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINETrauma') and  qgetCetaceanNecropsy.SMALLINTESTINETrauma  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="SMALLINTESTINEMasses">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEMasses') and  qgetCetaceanNecropsy.SMALLINTESTINEMasses  eq '>5%'>selected</cfif>>>5%</option>
@@ -15120,7 +15195,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEMasses') and  qgetCetaceanNecropsy.SMALLINTESTINEMasses  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="SMALLINTESTINEImpaction">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEImpaction') and  qgetCetaceanNecropsy.SMALLINTESTINEImpaction  eq '>5%'>selected</cfif>>>5%</option>
@@ -15129,7 +15204,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEImpaction') and  qgetCetaceanNecropsy.SMALLINTESTINEImpaction  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="SMALLINTESTINEObstruction">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEObstruction') and  qgetCetaceanNecropsy.SMALLINTESTINEObstruction  eq '>5%'>selected</cfif>>>5%</option>
@@ -15138,7 +15213,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEObstruction') and  qgetCetaceanNecropsy.SMALLINTESTINEObstruction  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="SMALLINTESTINElntussusception">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINElntussusception') and  qgetCetaceanNecropsy.SMALLINTESTINElntussusception  eq '>5%'>selected</cfif>>>5%</option>
@@ -15147,7 +15222,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINElntussusception') and  qgetCetaceanNecropsy.SMALLINTESTINElntussusception  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="SMALLINTESTINEParasites">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEParasites') and  qgetCetaceanNecropsy.SMALLINTESTINEParasites  eq '>5%'>selected</cfif>>>5%</option>
@@ -15156,7 +15231,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.SMALLINTESTINEParasites') and  qgetCetaceanNecropsy.SMALLINTESTINEParasites  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum clm-15">
+            <div class="sys-colum clm-15" style='display:none;'>
                 <input type="text" class="text-field" name="SMALLINTESTINEOther"value="#qgetCetaceanNecropsy.SMALLINTESTINEOther#">
             </div>
         </div>
@@ -15170,19 +15245,20 @@
         </div>
     </div>
     <div class="systum-sec">
-        <div class="systum-row">
-            <div class="sys-colum clm-15">
+        <div class="systum-row systum-sec" style="align-items: center;">
+            <div class="sys-colum clm-15" style="margin: 0;">
                 <h3 class="sys-title">COLON</h3>
             </div>
             <div class="" style="margin-right: 33px;width: 200px;">
                 <p></p>
-                <select class="stl-op search-box"multiple="multiple" name="" id="">
+                <!--- NoumanAwan --->
+                <select class="stl-op search-box"multiple="multiple" name="Colon" id="">
                     <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
-                        <option value="#Alimentary_SystemArray[j]#" >#Alimentary_SystemArray[j]#</option>
+                        <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.Colon,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
                     </cfloop>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="COLONUlcers">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONUlcers') and  qgetCetaceanNecropsy.COLONUlcers  eq '>5%'>selected</cfif>>>5%</option>
@@ -15191,7 +15267,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONUlcers') and  qgetCetaceanNecropsy.COLONUlcers  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="COLONTrauma">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONTrauma') and  qgetCetaceanNecropsy.COLONTrauma  eq '>5%'>selected</cfif>>>5%</option>
@@ -15200,7 +15276,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONTrauma') and  qgetCetaceanNecropsy.COLONTrauma  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="COLONMasses">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONMasses') and  qgetCetaceanNecropsy.COLONMasses  eq '>5%'>selected</cfif>>>5%</option>
@@ -15209,7 +15285,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONMasses') and  qgetCetaceanNecropsy.COLONMasses  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="COLONImpaction">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONImpaction') and  qgetCetaceanNecropsy.COLONImpaction  eq '>5%'>selected</cfif>>>5%</option>
@@ -15218,7 +15294,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONImpaction') and  qgetCetaceanNecropsy.COLONImpaction  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="COLONObstruction">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONObstruction') and  qgetCetaceanNecropsy.COLONObstruction  eq '>5%'>selected</cfif>>>5%</option>
@@ -15227,7 +15303,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONObstruction') and  qgetCetaceanNecropsy.COLONObstruction  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="COLONlntussusception">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONlntussusception') and  qgetCetaceanNecropsy.COLONlntussusception  eq '>5%'>selected</cfif>>>5%</option>
@@ -15236,7 +15312,7 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONlntussusception') and  qgetCetaceanNecropsy.COLONlntussusception  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum">
+            <div class="sys-colum" style='display:none;'>
                 <select class="sys-op" name="COLONParasites">
                     <option value="">Select</option>
                     <option value=">5%"<cfif isdefined('qgetCetaceanNecropsy.COLONParasites') and  qgetCetaceanNecropsy.COLONParasites  eq '>5%'>selected</cfif>>>5%</option>
@@ -15245,11 +15321,11 @@
                     <option value=">50%"<cfif isdefined('qgetCetaceanNecropsy.COLONParasites') and  qgetCetaceanNecropsy.COLONParasites  eq '>50%'>selected</cfif>>>50%</option>
                 </select>
             </div>
-            <div class="sys-colum clm-15">
+            <div class="sys-colum clm-15" style='display:none;'>
                 <input type="text" class="text-field" name="COLONOther"value="#qgetCetaceanNecropsy.COLONOther#">
             </div>
         </div>
-        <div class="sys-comment-row mt-20" style="display:none;">
+        <div class="sys-comment-row mt-20 " style="display:none;">
             <div class="sys-colum-left">
                 <h3 class="sys-title">Contents</h3>
             </div>
@@ -15257,8 +15333,56 @@
                 <input type="text" class="text-field" name="COLONContents"value="#qgetCetaceanNecropsy.COLONContents#">
             </div>
         </div>
+        <div class="row pt-30">
+            <div class="col-lg-12">
+            <div class="col-lg-4">
+                <div class="cust-row btm-rw">
+                    <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">PANCREAS</h3></div></label>
+                    </div>
+                    <div class="cust-inp">
+                        <select class="stl-op" name="PANCREAS" id="PANCREAS">
+                            <option value="">Select</option>
+                            <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.PANCREAS') and  qgetCetaceanNecropsy.PANCREAS  eq 'Examined'>selected</cfif>>Examined</option>
+                            <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.PANCREAS') and  qgetCetaceanNecropsy.PANCREAS  eq 'NE'>selected</cfif>>NE</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="cust-row">
+                    <div class="cust-fld"><label class="fl-lbl">Pancreas Findings</label>
+                    </div>
+                    <div class="cust-inp">
+                        <select class="stl-op" name="PancreasFindings" id="PancreasFindings">
+                            <option value="">Select</option>
+                            <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'No Findings'>selected</cfif>>No Findings</option>
+                            <option value="Trauma"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Trauma'>selected</cfif>>Trauma</option>
+                            <option value="Masses"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Masses'>selected</cfif>>Masses</option>
+                            <option value="Engorged"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Engorged'>selected</cfif>>Engorged</option>
+                            <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Other'>selected</cfif>>Other</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="cust-row describe-rw">
+                    <!--- <div class="cust-fld"><label class="fl-lbl">Describe</label>
+                    </div> --->
+                    <div class="cust-inp">
+                        <input type="text" placeholder="Other" class="text-field" name="PANCREASOthers"value="#qgetCetaceanNecropsy.PANCREASOthers#">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-lg-12">
+                <h3 class="sys-title" style="margin-top: 20px;">Comments</h3>
+                <!--- <label class="fl-lbl">Comments</label> NoumanAwan--->
+                <textarea id="top-area" name="AlimentarySystemComments" rows="10" cols="120"  maxlength="4000" >#qgetCetaceanNecropsy.AlimentarySystemComments#</textarea>            
+            </div>
+        </div>
     </div>
-    <div class="row pt-30">
+    <!--- <div class="row pt-30">
         <div class="col-lg-12">
         <div class="col-lg-4">
             <div class="cust-row btm-rw">
@@ -15298,7 +15422,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --->
     </div>
     <div class="row pt-30">
         <div class="col-lg-12">
@@ -15710,9 +15834,9 @@
                 <cfif isDefined('qgetCetaceanNecropsy.ID') and qgetCetaceanNecropsy.ID neq "">
                     <input type="submit" id="delete_btn" name="deleteNecropsyRecord" class="btn btn-orange rl-4 btn-del" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                 </cfif>
-                <cfif (permissions eq "full_access")>
+                <!--- <cfif (permissions eq "full_access")>
                     <input  type="submit" id="deletCetaceanNecropsyAllRecord" name="deletCetaceanNecropsyAllRecord" class="btn btn-orange rl-4 btn-del" value="Delete All Records" onclick="if(confirm('Are you sure to Delete all Records?')){}else{return false;};">
-                </cfif>
+                </cfif> --->
                 <button type="submit" value="pdf"  id="createPdf" name="createPdf" class="btn btn-pink btn-save">PDF</button>
         </div>
     </cfif>
@@ -15994,9 +16118,9 @@
                                 <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('qgetMorphometricsData.ID') and qgetMorphometricsData.ID neq "")>
                                     <input type="submit" id="" name="deleteMorphometrics" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};" >
                                 </cfif>
-                                <cfif (permissions eq "full_access")>
+                                <!--- <cfif (permissions eq "full_access")>
                                     <input type="submit" id="deleteallMorphometricsRecord" name="deleteallMorphometricsRecord" class="btn btn-orange m-rl-4" value="Delete All Records" onclick="if(confirm('Are you sure to Delete All Records ?')){deleteit()}else{return false;};" >
-                                </cfif>
+                                </cfif> --->
                             </div>                            
                         </div>
                             <!--- <div class="col-lg-2 col-md-4 col-sm-4 col-xs-4 s-content">

@@ -13,7 +13,9 @@
   <cfparam name='qGetCetacean.SurveyType' default =''>
   
   <cfparam name='qGetCetacean.recordcount' default =''>
-  
+  <cfset getLesionTypeData = Application.StaticDataNew.getLesionType()>
+  <cfset getRegions = Application.ConditionLesions.getRegions()>
+
   <cfparam name='arr' default =''>
   <cfset variables.dsn = "wildfins_new">
   <cfset setLeftImage  = '#Application.CloudRoot#no-image.jpg'> 
@@ -459,6 +461,7 @@
                                 <th>Sighting ID</th>
                                 <th>Sighting No</th>
                                 <th>Photo Number</th>
+                                <th>Comments</th>
                                 <th>Lesion Type</th>
                                 <th>Side</th>
                                 <th>Status</th>
@@ -469,6 +472,7 @@
                       	<tbody>
                           <cfif isdefined('FORM.CetaceanId')>	
                               <!--- <cfdump var="#qgetCetacean_Lesions#" abort="true">--->
+                              
                               <cfloop query='qgetCetacean_Lesions'>
                                 <cfif qgetCetacean_Lesions.id neq '43'>                                
                                 <tr role="row" class="odd" id="tr_#qgetCetacean_Lesions.id#">
@@ -477,13 +481,16 @@
                                   <td class="sorting_1">#qgetCetacean_Lesions.sightid#</td>
                                   <td class="sorting_1" >#qgetCetacean_Lesions.SightingNumber#</td>
                                   <td class="sorting_1" id="PhotoNumber_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.PhotoNumber#</td>
+                                  <td class="sorting_1" id="Comments_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.Comments#</td>
                                   <td class="sorting_1" id="LesionType_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.LesionType#</td>
                                   <td class="sorting_1" id="Side_L_R_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.Side_L_R#</td>
                                   <td class="sorting_1" id="Status_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.Status#</td>
                                   <td class="sorting_1" id="Region_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.Region#</td>
                                   <td>
                                   <button onclick="openLesionHistoryModal(#qgetCetacean_Lesions.id#)">Edit</button>
-                                  <button onclick="deleteLesion(#qgetCetacean_Lesions.id#)">Delete</button>
+                                  <cfif (permissions eq "full_access" or findNoCase("Delete LH", permissions) neq 0)>
+                                    <button onclick="deleteLesion(#qgetCetacean_Lesions.id#)">Delete</button>
+                                  </cfif>
                                   </td>
                                   
                                 </tr>
@@ -593,9 +600,21 @@
           <input type="text" class="form-control" id="photoNumber">
         </div>
         <div class="form-group">
+          <label for="comments">Comments:</label>
+          <input type="text" class="form-control" id="comments">
+        </div>
+        <div class="form-group">
           <label for="lesionType">Lesion Type:</label>
-          <select id="lesionType"></select>
-          <!--- <input type="text" class="form-control" id="lesionType"> --->
+           <select class="form-control customLesionSelect" id="lesionType" name="lesionType">
+              <option value="">Select Lesion Type</option>
+              <cfoutput>
+              <cfloop query="getLesionTypeData">
+                <cfif Active eq 1>
+                <option value="#getLesionTypeData.LesionTypeName#">#getLesionTypeData.LesionTypeName#</option>
+                </cfif>
+              </cfloop>
+              </cfoutput>
+          </select>
         </div>
         <div class="form-group">
           <label for="side">Side:</label>          
@@ -617,17 +636,14 @@
         </div>
         <div class="form-group">
           <label for="region">Region:</label>          
-          <select id="region">
-            <option value="">Region</option>
-            <option value="1">Head</option>
-            <option value="2">Cranial Ventral</option>
-            <option value="3">Thorax</option>
-            <option value="4">Flipper</option>
-            <option value="5">Dorsal Fin</option>
-            <option value="6">Lateral Abdomen</option>
-            <option value="7">Caudal Ventral</option>
-            <option value="8">Peduncle</option>
-            <option value="9">Flukes</option>
+          <select class="form-control search-box selected-region" multiple="multiple" id="region" name="region">
+          <cfoutput>
+            <cfset counter = 1>
+            <cfloop query="getRegions">
+                  <option value="#getRegions.ID#">#counter&' - '&getRegions.RegionName#</option>
+                  <cfset counter = counter + 1>
+            </cfloop>
+          </cfoutput>
           </select>
         </div>
       </div>
@@ -713,7 +729,32 @@
     Side = $('#side').val();
     status = $('#status').val();
     region = $('#region').val();
-    
+    comments = $('#comments').val();
+    var resultString = region.join(',');
+    // console.log(region);
+    var region = $('#region').val();
+
+      var selectedOptions = [];
+
+      // Function to get option text from value
+      function getOptionText(value) {
+        return $('#region option[value="' + value + '"]').text();
+      }
+
+      // Add the text of initially selected options to the array
+      if (region) {
+        selectedOptions = region.map(getOptionText);
+      }
+
+      var extractedTexts = selectedOptions.map(function(item) {
+        return item.split('- ')[1]; 
+      });
+
+      var seletedOption = extractedTexts.join(', ');
+
+      console.log(seletedOption);
+
+    // return false;
     
     $.ajax({
           type: "POST",
@@ -724,7 +765,8 @@
               lesionType: lesionType,
               Side: Side,
               status: status,
-              region: region,
+              comments: comments,
+              region: resultString,
           },
           success: function(response) {
             var response = JSON.parse(response);
@@ -733,30 +775,10 @@
             $('#LesionType_' + id).text(lesionType);
             $('#Side_L_R_' + id).text(Side);
             $('#Status_' + id).text(status);
-            
-            if (region == '') {
-                $('#Region_' + id).text('');
-              } else if (region == '1') {
-                $('#Region_' + id).text('Head');
-              } else if (region == '2') {
-                $('#Region_' + id).text('Cranial Ventral');
-              } else if (region == '3') {
-                $('#Region_' + id).text('Thorax');
-              } else if (region == '4') {
-                $('#Region_' + id).text('Flipper');
-              } else if (region == '5') {
-                $('#Region_' + id).text('Dorsal Fin');
-              } else if (region == '6') {
-                $('#Region_' + id).text('Lateral Abdomen');
-              } else if (region == '7') {
-                $('#Region_' + id).text('Caudal Ventral');
-              } else if (region == '8') {
-                $('#Region_' + id).text('Peduncle');
-              } else if (region == '9') {
-                $('#Region_' + id).text('Flukes');
-              }
+            $('#Region_' + id).text(seletedOption);
+            $('#Comments_' + id).text(comments);
 
-              $('#myModal').modal('hide');
+            $('#myModal').modal('hide');
           },
           error: function(error) {
               console.error("Error:", error);
@@ -775,49 +797,7 @@
     var selectedText = selectedOption.text;
     var parts = selectedText.split('|');
     var cetacean_Code = parts[1].trim();
-    // console.log(selectedText);
-    // return false;
-    $.ajax({
-                type: "post",
-                Datatype: "json",
-                data: {
-                    cetacean_Code: cetacean_Code
-                },
-                url: application_root + "Cetaceans.cfc?method=getCetacean_Lesions_unique",
-                success: function (data) {
-                    $('#updtaedata').empty();
-                    $('#save_button').empty();
-                    var obj = JSON.parse(data);
-                    if(obj.DATA.length){
-
-                        let lregion= "";
-                        let lrname= "";
-                        let lside= "";
-                        for (i = 0; i <=obj.DATA.length; ++i) {
-                            if(obj.DATA[i][1] != ""){
-                                // lregion = ' - '+obj.DATA[i][1];
-                                // lrname = ' - '+obj.DATA[i][3];
-                                lregion = obj.DATA[i][1];
-                                lrname = obj.DATA[i][3];
-                                
-                            }
-                            if(obj.DATA[i][2] != ""){
-                                lside = obj.DATA[i][2];
-                            }                        
-
-                           
-                            if(obj.DATA[i][0] != "" && obj.DATA[i][0] != "0"){
-                                $('#lesionType').append('<option value="'+obj.DATA[i][0]+'">'+obj.DATA[i][0]+'</option>');
-                            }
-                         
-                        }
-                    }
-
-                },
-                error: function (err) {
-                    console.log("error:", err);
-                }
-            });
+  
 
    $.ajax({
           type: "POST",
@@ -843,11 +823,14 @@
             $('#sightingNo').val(data[0]);
             $('#photoNumber').val(data[9]);
             $('#lesionType').val(data[4]);
-            // $('#region').val(data[5]);
-            var regionVal = data[5];
-            $("#region option:contains('" + regionVal + "')").filter(function() {
-              return $(this).text() === regionVal;
-            }).prop('selected', true);
+            $('#comments').val(data[11]);
+            var regionVal = data[10];
+            hilocation = regionVal.split(",")
+            $('#region').val(hilocation).trigger('change');
+            // $("#region option:contains('" + regionVal + "')").filter(function() {
+            //   return $(this).text() === regionVal;
+            // }).prop('selected', true);
+
             $('#side').val(data[6]);
             $('#status').val(data[7]);
             $('#IDForupdateData').val(id);
@@ -866,6 +849,9 @@
   </script>
 <style>
     /* Style for dropdowns */
+    .select2{
+      width: 100% !important;
+    }
     select {
         width: 100%;
         padding: 10px;

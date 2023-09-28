@@ -179,11 +179,12 @@ $(document).ready(function() {
   if(!$('#toxipdfFiles').val()){
     $('#caseReportToxiBox').hide();
   }
-  if(!$('#toxipdfFiles').val()){
-    $('#caseReportToxiBox').hide();
-  }
+
   if(!$('#histoImages').val()){
     $('#caseReportNBox').hide();
+  }
+  if(!$('#ADpdfFiles').val()){
+    $('#caseReportADBox').hide();
   }
 
   $("#Thawedd").hide();
@@ -5616,6 +5617,8 @@ if(autoSaveValue == "CetaceanExam"){
 }
 function ResetAll(){
   $('#removeSession').val('removeS');
+  $('#Fnumber').val('');
+
   $( "#myforma" ).submit();
 }
 
@@ -6362,7 +6365,7 @@ function ADFilesUpload(){
                     //     $('#emb').attr('src', we);
                     //     $('#pdfname').html($(this).attr('title'));
                     // });
-                    $('#caseReportLABox').show();
+                    $('#caseReportADBox').show();
                 }
             });
         }else{
