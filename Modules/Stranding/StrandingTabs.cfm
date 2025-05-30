@@ -15244,7 +15244,7 @@
             </div>
         </div>
     </div>
-    <div class="systum-sec">
+    <div class="">
         <div class="systum-row systum-sec" style="align-items: center;">
             <div class="sys-colum clm-15" style="margin: 0;">
                 <h3 class="sys-title">COLON</h3>
@@ -15333,9 +15333,9 @@
                 <input type="text" class="text-field" name="COLONContents"value="#qgetCetaceanNecropsy.COLONContents#">
             </div>
         </div>
-        <div class="row pt-30">
+        <div class="row">
             <div class="col-lg-12">
-            <div class="col-lg-4">
+            <div class="col-lg-4" style="display:none;">
                 <div class="cust-row btm-rw">
                     <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">PANCREAS</h3></div></label>
                     </div>
@@ -15348,23 +15348,39 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="systum-sec">
+                <div class="systum-row" style="align-items: center;">
+                    <div class="sys-colum clm-15" style="margin: 0;">
+                        <h3 class="sys-title">Pancreas Findings</h3>
+                    </div>
+                    <div class="" style="margin-right: 33px;width: 200px;">
+                        <p></p>
+                        <!--- NoumanAwan --->
+                        <select class="stl-op search-box"multiple="multiple" name="PancreasFindings" id="">
+                            <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
+                                <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.PancreasFindings,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
+                            </cfloop>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4" style="display:none;">
                 <div class="cust-row">
                     <div class="cust-fld"><label class="fl-lbl">Pancreas Findings</label>
                     </div>
-                    <div class="cust-inp">
-                        <select class="stl-op" name="PancreasFindings" id="PancreasFindings">
+                    <div class="cust-inp">                     
+                        <!--- <select class="stl-op" name="PancreasFindings" id="PancreasFindings">
                             <option value="">Select</option>
                             <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'No Findings'>selected</cfif>>No Findings</option>
                             <option value="Trauma"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Trauma'>selected</cfif>>Trauma</option>
                             <option value="Masses"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Masses'>selected</cfif>>Masses</option>
                             <option value="Engorged"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Engorged'>selected</cfif>>Engorged</option>
                             <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Other'>selected</cfif>>Other</option>
-                        </select>
+                        </select> --->
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-4" style="display:none;">
                 <div class="cust-row describe-rw">
                     <!--- <div class="cust-fld"><label class="fl-lbl">Describe</label>
                     </div> --->

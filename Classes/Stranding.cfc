@@ -6120,6 +6120,9 @@
         <cfif NOT isDefined('FORM.Colon')>
             <cfset FORM.Colon = "">
         </cfif>
+        <cfif NOT isDefined('FORM.PancreasFindings')>
+            <cfset FORM.PancreasFindings = "">
+        </cfif>
       
        
 
@@ -6815,6 +6818,9 @@
         </cfif>
         <cfif NOT isDefined('FORM.Colon')>
             <cfset FORM.Colon = "">
+        </cfif>
+        <cfif NOT isDefined('FORM.PancreasFindings')>
+            <cfset FORM.PancreasFindings = "">
         </cfif>
         <cftry>
             <cfquery name="qupdateCetaceanNecropsy" datasource="#variables.dsn#"  result="return_data" >

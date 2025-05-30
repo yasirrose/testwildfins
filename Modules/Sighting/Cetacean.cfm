@@ -899,6 +899,8 @@
                                           No
                                        <cfelseif cetaceans_sight.wMomDropDown eq 3>
                                           Partial
+                                       <cfelseif cetaceans_sight.wMomDropDown eq 4>
+                                          Partial
                                        </cfif>
                                     </div>
                                     <div class="col-md-1 CL Note_#cetaceans_sight.ID#">#cetaceans_sight.Note#</div> 

@@ -3337,7 +3337,7 @@
                     AND PermanentScar.CetaceanId = <cfqueryparam value="#cetacean_ID#" cfsqltype="CF_SQL_INTEGER">
                 </cfif>
             </cfquery>
-                       <!--- <cfdump var="#qgetPermanentScar#" abort="true"> --->
+            <!--- <cfdump var="#qgetPermanentScar#" abort="true"> --->
             <cfset c=0>
             <cfoutput><cfset  permissions ="#session['userdetails']['permissions']#"></cfoutput>
             <cfloop query="qgetPermanentScar">
