@@ -4,7 +4,11 @@
   <cfset THIS.SessionManagement = true />
   <cfset THIS.sessiontimeout=CreateTimeSpan(0,1,0,0)>
   <cfset THIS.name= "GoalTrackingSystemTest">
+  <cfif isdefined('URL.reset')>
+    <cfset OnApplicationStart() />
+  </cfif>
 
+  <!--- <cfdump var="#htp#" abort="true"> --->
   <!--- on application start  --->
   <cffunction
       name="OnApplicationStart"
@@ -18,14 +22,18 @@
     <cfif structKeyExists(url, 'Archive')>
       <cfset Application.dsn = "wildfins">
     </cfif>
-
+    <cfif isdefined('CGI.HTTPS') And CGI.HTTPS eq 'on'>
+      <cfset protocol = 'https' />
+    <cfelse>
+      <cfset protocol = 'http' />
+    </cfif>
     <!--- define port --->
     <cfif SERVER_PORT eq '80' >
       
       <!--- application root ---->
-      <cfset Application.siteroot = 'http://#SERVER_NAME#/' >
+      <cfset Application.siteroot = '#protocol#://#SERVER_NAME#/' >
       <cfelse>
-      <cfset Application.siteroot = 'http://#SERVER_NAME#:#SERVER_PORT#/' >
+      <cfset Application.siteroot = '#protocol#://#SERVER_NAME#:#SERVER_PORT#/' >
     </cfif>
     
     <!--- application super admin modules directory --->
@@ -38,7 +46,7 @@
     
     <!--- application super admin ---->
     <cfset Application.superadmin = '#Application.siteroot#' >
-    <cfset Application.CloudRoot= 'http://cloud.wildfins.org/' >
+    <cfset Application.CloudRoot= 'https://cloud.wildfins.org/' >
     
     <cfset Application.CloudDirectory = 'C:\home\wildfins.org\subdomains\cloud\'>
     
@@ -78,6 +86,12 @@
             <cfset Application.dsn = "wildfins">
           </cfif>
 
+          <cfif isdefined('CGI.HTTPS') And CGI.HTTPS eq 'on'>
+            <cfset protocol = 'https' />
+          <cfelse>
+            <cfset protocol = 'http' />
+          </cfif>
+
         <!--- application Script includes directory ---->
       <cfset Application.script = '#Application.siteroot#scripts/' >
       <cfset Application.Common = createObject("component","Classes.Common").init(Application.dsn)>
@@ -103,7 +117,7 @@
       </cfif>
       <cfif isdefined('URL.destroy') >
         <cfset StructClear(Session)>
-        <cflocation url="http://test.wildfins.org/">
+        <cflocation url="https://test.wildfins.org/">
       </cfif>
       <cfreturn true />
   </cffunction>

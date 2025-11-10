@@ -9,6 +9,8 @@
 <cfset getuserlist=Application.Accounts.getuserbygroup(argumentCollection="#Form#")>
 </cfif>
 
+
+
 		<div id="content" class="content">
 			<!-- begin breadcrumb -->
 			 <ol class="breadcrumb pull-right">
@@ -19,6 +21,34 @@
 			<!-- begin page-header -->
 			<h1 class="page-header">User List </h1>
 			<!-- end page-header -->
+
+                    <cfif structKeyExists(url, "success") and url.success eq "true">
+                      <div id="successAlert" class="alert alert-success" role="alert">
+                          Successfully Added !
+                      </div>
+                  
+                      <script>
+                          // Automatically close the alert after 3000 milliseconds (3 seconds)
+                          setTimeout(function () {
+                              document.getElementById('successAlert').style.display = 'none';
+                          }, 3000);
+                      </script>
+                  </cfif>
+
+                  <cfif structKeyExists(url, "result") and url.result eq "pass">
+                    <div id="successAlert" class="alert alert-info" role="alert">
+                        Successfully Updated !
+                    </div>
+                
+                    <script>
+                        // Automatically close the alert after 3000 milliseconds (3 seconds)
+                        setTimeout(function () {
+                            document.getElementById('successAlert').style.display = 'none';
+                        }, 3000);
+                        
+                    </script>
+                </cfif>
+
 
             <!-- begin section-container -->
             <div class="section-container section-with-top-border">

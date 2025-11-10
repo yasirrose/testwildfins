@@ -1,9 +1,5 @@
 <!--- Update user--->
-<cfif isdefined("form.updateuser")>
-    <cfset form.group_name =  "0">
-    <cfset form.permission =  "">
-    <cfset updated=Application.Accounts.UpdateUser(argumentCollection="#Form#")>
-</cfif>
+
  
 <!--- get user Detail--->
 <cfif isdefined("form.userId") and form.userId NEQ 0>
@@ -18,13 +14,32 @@
     </ol>
     <!-- end breadcrumb -->
     <!-- begin page-header -->
+
+
     <h1 class="page-header">Edit User </h1>
     <!-- end page-header -->
     <div class="section-container section-with-top-border p-b-10">
     <div class="row">
+
+        <cfif isdefined("form.updateuser")>
+            <cfset form.group_name =  "0">
+            <cfset form.permission =  "">
+            <cfset updated=Application.Accounts.UpdateUser(argumentCollection="#Form#")>
+                
+                <cfif updated.RECORDCOUNT eq 1 >
+                    <cflocation url="#Application.superadmin#?Module=Accounts&Page=UsersList&result=pass" addtoken="no">
+                </cfif> 
+        </cfif>
+
+
             <!-- begin col-6 -->
             <div class="col-md-10">
                 <h5 class="m-t-0">Edit User</h5>
+
+
+                
+
+
                 <cfoutput>
                 <form class="form-horizontal" action="" name="update-user" method="post">
                     <div class="form-group m-b-10">
@@ -64,6 +79,8 @@
                         <option value="team_members" <cfif #getuserdetail.user_type# eq "team_members">selected</cfif> >Team Members</option>
                         <option value="vet_assistant" <cfif #getuserdetail.user_type# eq "vet_assistant">selected</cfif> >Vet Assistant</option>
                         <option value="volunteers" <cfif #getuserdetail.user_type# eq "volunteers">selected</cfif> >Volunteer</option>
+                        <option value="photoIDAdministrator" <cfif #getuserdetail.user_type# eq "photoIDAdministrator">selected</cfif>>Photo ID Administrator</option>
+                        <option value="Veterinarian" <cfif #getuserdetail.user_type# eq "Veterinarian">selected</cfif>>Veterinarian</option>
                         </select>
                             
                         </div>

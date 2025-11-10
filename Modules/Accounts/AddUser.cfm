@@ -11,7 +11,8 @@
   <cfabort> --->
   <cfif InsertUser.RECORDCOUNT eq 1 >
       
-  <cflocation url="#Application.superadmin#?Module=Accounts&Page=UsersList" addtoken="no">
+
+    <cflocation url="#Application.superadmin#?Module=Accounts&Page=UsersList&success=true" addtoken="no">
   <cfelse>
     <cfset errMSG="User Insertion failed. Try Again">
       </cfif>
@@ -81,6 +82,7 @@
                                 <option value="vet_assistant">Vet Assistant</option>
                                 <option value="volunteers">Volunteer</option>
                                 <option value="photoIDAdministrator">Photo ID Administrator</option>
+                                <option value="Veterinarian">Veterinarian</option>
 
                                 </select>
 
