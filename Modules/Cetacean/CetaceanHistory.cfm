@@ -16,6 +16,30 @@
   <cfset getLesionTypeData = Application.StaticDataNew.getLesionType()>
   <cfset getRegions = Application.ConditionLesions.getRegions()>
 
+  <cfset qgetLesionScarType = Application.StaticDataNew.getLesionScarType()>
+      
+<!--- Separate data for Lesion and Scar types --->
+<cfset lesionTypeData = []>
+<cfset scarTypeData = []>
+
+<cfloop query="qgetLesionScarType">
+    <cfif Type EQ "Lesion">
+        <cfset ArrayAppend(lesionTypeData, {
+            ID = qgetLesionScarType.ID,
+            Name = qgetLesionScarType.Name,
+            Active = qgetLesionScarType.Active,
+            Type = qgetLesionScarType.Type
+        })>
+    <cfelseif Type EQ "Scar">
+        <cfset ArrayAppend(scarTypeData, {
+            ID = qgetLesionScarType.ID,
+            Name = qgetLesionScarType.Name,
+            Active = qgetLesionScarType.Active,
+            Type = qgetLesionScarType.Type
+        })>
+    </cfif>
+</cfloop>
+
   <cfparam name='arr' default =''>
   <cfset variables.dsn = "wildfins_new">
   <cfset setLeftImage  = '#Application.CloudRoot#no-image.jpg'> 
@@ -27,31 +51,33 @@
     <cfquery name="qgetlesionCode" datasource="#Application.dsn#">
       select Code from Cetaceans where ID = '#FORM.CetaceanId#'
     </cfquery>
-
+      <!--- <cfdump var="#FORM.CetaceanId#" abort="true"> --->
     <cfset form.cetacean_Code = qgetlesionCode.Code>    
     <cfset qgetPermanentScar = Application.Cetaceans.getPermanentScar(argumentCollection="#Form#")>
-   
-    <cfset qGetCetacean = Application.Cetaceans.getCetacean(argumentCollection="#Form#")>
-
-    <cfset qgetCetacean_Lesions = Application.Cetaceans.getCetacean_Lesions(argumentCollection="#Form#")>
     
+    <cfset qGetCetacean = Application.Cetaceans.getCetacean(argumentCollection="#Form#")>
+    
+    <cfset qgetCetacean_Lesions = Application.Cetaceans.getCetacean_Lesions(argumentCollection="#Form#")>
+    <!--- <cfdump var="#qgetlesionCode.Code#" abort="true"> --->
     <cfif qGetCetacean.RECORDCOUNT EQ 0> 
       <cfset isDataAvaiable = "Record not found on selected CODE">       
     </cfif>
-  
-  <cfif qGetCetacean.ImageName NEQ '' and FileExists('#Application.CloudRoot##qGetCetacean.ImageName#')>
-    <cfset  setLeftImage = '#Application.CloudRoot##qGetCetacean.ImageName#'>
-  <cfelse>
+    <!--- <cfdump var="#Application.CloudDirectory##qGetCetacean.ImageName#" abort="true"> --->
+
+    <cfif qGetCetacean.ImageName NEQ '' and FileExists('#Application.CloudRoot##qGetCetacean.ImageName#')>
+      <cfset  setLeftImage = '#Application.CloudRoot##qGetCetacean.ImageName#'>
+    <cfelse>
       <cfloop query='qGetCetacean'>
-          <cfif qGetCetacean.ImageName NEQ ''>
-              <cfset Fin_Left = '#Application.CloudRoot##qGetCetacean.ImageName#'>
-              <cfif FileExists('#Application.CloudDirectory##Fin_Left#')>
-                  <cfset  setLeftImage = '#Application.CloudRoot##Fin_Left#'>
-                  <cfbreak>
-              </cfif>	
-           </cfif>                       
+        <cfif qGetCetacean.ImageName NEQ ''>
+          <cfset Fin_Left = '#Application.CloudRoot##qGetCetacean.ImageName#'>
+          <cfif FileExists('#Application.CloudDirectory##Fin_Left#')>
+            <cfset  setLeftImage = '#Application.CloudRoot##Fin_Left#'>
+            <cfbreak>
+          </cfif>	
+        </cfif>                       
       </cfloop>
-  </cfif>
+    </cfif>
+    
   
   <cfif qGetCetacean.SecondaryImage NEQ '' and FileExists('#Application.CloudRoot##qGetCetacean.SecondaryImage#')>
     <cfset  setRightImage = '#Application.CloudRoot##qGetCetacean.SecondaryImage#'>
@@ -320,32 +346,43 @@
                     <div class="dataTables_scroll" style="overflow:auto; max-height: 200px;">
                       <div class="dataTables_scrollHead ">
                         <div class="dataTables_scrollHeadInner" >
-                          <table class="table table-striped table-bordered dataTable no-footer" role="grid">
+                          <table class="table table-striped table-bordered dataTable no-footer" id="survey_table" role="grid">
                             <thead>
                               <tr role="row">
                                 <th  rowspan="1" colspan="1" >Survey ID</th>
                                 <th  rowspan="1" colspan="1" >Date Seen</th>
                                 <th  rowspan="1" colspan="1" >Sighting ID</th>
+                                <th  rowspan="1" colspan="1" >Survey Route</th>
                                 <th  rowspan="1" colspan="1" >Sighting No</th>
                                 <th  rowspan="1" colspan="1" >Sighting Type</th>
                                 <th  rowspan="1" colspan="1" >Body Condition</th>
                                 <th  rowspan="1" colspan="1" >DScore</th>
                                 <th  rowspan="1" colspan="1" >Body Of Water</th>
                                 <th  rowspan="1" colspan="1" >Fetals Calf Yoy</th>
-                              </tr>
+                                </tr>
                             </thead>
-                          </table>
-                        </div>
-                      </div>
-                      <div class="dataTables_scrollBody" >
-                        <table class="table table-striped table-bordered dataTable no-footer dtr-inline" >
                           <tbody id="DateSeen">
                           <cfif isdefined('FORM.CetaceanId')>	
                             <cfloop query='qGetCetacean'>
+
+                              <cfquery name="qgetsurveyRoutename" datasource="#Application.dsn#">
+                                SELECT RouteName
+                                FROM TLU_SurveyRoute
+                                WHERE ID IN (
+                                    <cfqueryparam value="#qGetCetacean.Survey_Route#" list="true" cfsqltype="CF_SQL_INTEGER">
+                                )
+                            </cfquery>
+                            
+
+                                <cfset routeNames = ValueList(qgetsurveyRoutename.RouteName)>
+
+                                  
+
                               <tr role="row" class="odd">
                                 <td class="sorting_1">#qGetCetacean.Survey_ID#</td>
                                 <td class="sorting_1">#DateFormat(qGetCetacean.DATESEEN,'mm/dd/yyyy')#</td>
                                 <td class="sorting_1">#qGetCetacean.Sighting_ID#</td>
+                                <td class="sorting_1">#routeNames#</td>
                                 <td class="sorting_1">#qGetCetacean.SightingNo#</td>
                                 <td class="sorting_1">#qGetCetacean.SurveyType#</td>
                                 <td class="sorting_1">
@@ -405,22 +442,20 @@
                 </div>
   
                 </div>
-                  
-              </div>
-              <div class="col-lg-5 col-md-12" id="Cetacean-map">
-                <h5 class="m-t-0">Sightings</h5>
-                <div id="google-map-cobalt" class="height-sm">
-                </div>
-                
-                
+              
               </div>
               
+            </div>
+            <div class="col-lg-5 col-md-12" id="Cetacean-map">
+              <h5 class="m-t-0">Sightings</h5>
+              <div id="google-map-cobalt" class="height-sm">
+              </div> 
             </div>
         <div class="col-md-12">
                      <div class="dataTables_scroll" style="overflow:auto; max-height: 200px;">
                             <div class="dataTables_scrollHead" style="overflow: hidden; position: relative; border: 0px none; width: 100%;">
                               <div class="dataTables_scrollHeadInner" style="box-sizing: content-box; width: 100%;">
-                                <table class="table table-striped table-bordered dataTable no-footer ">
+                                <table class="table table-striped table-bordered dataTable no-footer " id="friends" >
                                   <thead>
                                     <tr>
                                       <th style='width:28%'>Friends(Code-Name)</th>
@@ -428,11 +463,9 @@
                                       <th style='width:25%'>Times Seen</th>
                                     </tr>
                                   </thead>
-                                </table>
                               </div>
                             </div>
                             <div class="dataTables_scrollBody" >
-                              <table class="table table-striped table-bordered dataTable no-footer ">
                                 <tbody id='Cetacean_friends'>
                                   <cfif isdefined('FORM.CetaceanId') and isdefined("qGetCetaceanFriends")>	
                                     <cfloop query='qGetCetaceanFriends'>
@@ -450,7 +483,7 @@
                   </div>
           </div>
         </div>
-        <div class="dataTables_scroll">
+        <div class="dataTables_scroll col-md-12">
         <h3>Lesion History</h3>
                   <div class="panel pagination-inverse m-b-0 clearfix table-overflow overflow-clearfix">
                     <table id="lesionHistoryTable" class="table table-bordered table-hover">
@@ -462,7 +495,9 @@
                                 <th>Sighting No</th>
                                 <th>Photo Number</th>
                                 <th>Comments</th>
-                                <th>Lesion Type</th>
+                                <th>Type Name</th>
+                                <th>Permanent Date</th>
+                                <th>Lesion/Scar Type</th>
                                 <th>Side</th>
                                 <th>Status</th>
                                 <th>Region</th>
@@ -479,9 +514,20 @@
                                   <td class="sorting_1">#DateFormat(qgetCetacean_Lesions.DATESEEN,'mm/dd/yyyy')#</td>
                                   <td class="sorting_1">#qgetCetacean_Lesions.surveyid#</td>
                                   <td class="sorting_1">#qgetCetacean_Lesions.sightid#</td>
-                                  <td class="sorting_1" >#qgetCetacean_Lesions.SightingNumber#</td>
+                                  <td class="sorting_1" >
+                                    <cfif qgetCetacean_Lesions.SightingText NEQ ''>
+                                       #qgetCetacean_Lesions.SightingText#
+                                    <cfelse>
+                                       #qgetCetacean_Lesions.SightingNumber#
+                                    </cfif>
+                                    <!--- #qgetCetacean_Lesions.SightingNumber# --->
+                                  </td>
                                   <td class="sorting_1" id="PhotoNumber_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.PhotoNumber#</td>
                                   <td class="sorting_1" id="Comments_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.Comments#</td>
+                                  <td class="sorting_1" id="TypeName_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.TypeName#</td>
+                                  <td class="sorting_1" id="PermanentScar_date_#qgetCetacean_Lesions.id#">
+                                    #DateFormat(qgetCetacean_Lesions.PermanentScar_date,'mm/dd/yyyy')#
+                                  </td>
                                   <td class="sorting_1" id="LesionType_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.LesionType#</td>
                                   <td class="sorting_1" id="Side_L_R_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.Side_L_R#</td>
                                   <td class="sorting_1" id="Status_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.Status#</td>
@@ -603,19 +649,32 @@
           <label for="comments">Comments:</label>
           <input type="text" class="form-control" id="comments">
         </div>
+
+        <div class="form-group">
+          <label for="TypeName">TypeName:</label>          
+          <select id="TypeName" name="TypeName" class="form-control" disabled>
+            <option value="" >Please Select Type</option>
+            <option value="Lesion_Type" >Lesion_Type</option>
+            <option value="Scar_Type" >Scar Type</option>
+          </select>
+        </div>
+
+        <input type="hidden" name="HiddenTypeName" id="HiddenTypeName">
+
         <div class="form-group">
           <label for="lesionType">Lesion Type:</label>
            <select class="form-control customLesionSelect" id="lesionType" name="lesionType">
-              <option value="">Select Lesion Type</option>
-              <cfoutput>
-              <cfloop query="getLesionTypeData">
-                <cfif Active eq 1>
-                <option value="#getLesionTypeData.LesionTypeName#">#getLesionTypeData.LesionTypeName#</option>
-                </cfif>
-              </cfloop>
-              </cfoutput>
+              
           </select>
         </div>
+
+         <div class="form-group">
+          <label for="permanentScar_date">Permanent Date:</label>
+          <input type="date" class="form-control" id="permanentScar_date">
+        </div>
+
+        
+
         <div class="form-group">
           <label for="side">Side:</label>          
           <select id="side">
@@ -649,7 +708,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" onclick="updateFunction()" class="btn btn-default" >Update</button>
+        <button type="button" onclick="updateFunction()" class="btn btn-success" >Update</button>
       </div>
     </div>
   </div>
@@ -726,10 +785,13 @@
     id = $('#IDForupdateData').val();
     photoNumber = $('#photoNumber').val();
     lesionType = $('#lesionType').val();
+    TypeName = $('#TypeName').val();
+    HiddenTypeName = $('#HiddenTypeName').val();
     Side = $('#side').val();
     status = $('#status').val();
     region = $('#region').val();
     comments = $('#comments').val();
+    permanentScar_date = $('#permanentScar_date').val();
     var resultString = region.join(',');
     // console.log(region);
     var region = $('#region').val();
@@ -753,6 +815,8 @@
       var seletedOption = extractedTexts.join(', ');
 
       console.log(seletedOption);
+      console.log('TypeName: ' + TypeName);
+      console.log('HIddenvalue: ' + HiddenTypeName);
 
     // return false;
     
@@ -767,6 +831,7 @@
               status: status,
               comments: comments,
               region: resultString,
+              permanentScar_date: permanentScar_date,
           },
           success: function(response) {
             var response = JSON.parse(response);
@@ -777,6 +842,19 @@
             $('#Status_' + id).text(status);
             $('#Region_' + id).text(seletedOption);
             $('#Comments_' + id).text(comments);
+
+            if (permanentScar_date && permanentScar_date !== "" && permanentScar_date !== "null") {
+                var p_date = new Date(permanentScar_date);
+                var p_year = p_date.getFullYear();
+                var p_month = (p_date.getMonth() + 1).toString().padStart(2, '0');
+                var p_day = p_date.getDate().toString().padStart(2, '0');
+                var p_formattedDate = `${p_month}/${p_day}/${p_year}`;
+                $('#PermanentScar_date_' + id).text(p_formattedDate);
+            } else {
+                $('#PermanentScar_date_' + id).text('');
+            }
+
+            // $('#PermanentScar_date_' + id).text(permanentScar_date);
 
             $('#myModal').modal('hide');
           },
@@ -817,13 +895,39 @@
             var day = date.getDate().toString().padStart(2, '0');
             var formattedDate = `${month}/${day}/${year}`;
 
+            // var p_date = new Date(data[13]);
+            // var p_year = p_date.getFullYear();
+            // var p_month = (p_date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-indexed, so add 1
+            // var p_day = p_date.getDate().toString().padStart(2, '0');
+            // var p_formattedDate = `${p_month}/${p_day}/${p_year}`
+
+
+            var rawDate = data[13];
+            if (rawDate && rawDate !== "" && rawDate !== "null") {
+                var p_date = new Date(rawDate);
+                var p_year = p_date.getFullYear();
+                var p_month = (p_date.getMonth() + 1).toString().padStart(2, '0');
+                var p_day = p_date.getDate().toString().padStart(2, '0');
+                var p_formattedDate = `${p_year}-${p_month}-${p_day}`;
+                $('#permanentScar_date').val(p_formattedDate);
+            } else {
+                $('#permanentScar_date').val('');
+            }
+
 
             $('#dateSen').val(formattedDate);
             $('#surveyID').val(data[1]);
-            $('#sightingNo').val(data[0]);
+
+
+           // $('#sightingNo').val(data[0]);
+            $('#sightingNo').val(data[10] ? data[10] : data[0]);
+
             $('#photoNumber').val(data[9]);
-            $('#lesionType').val(data[4]);
+            // $('#lesionType').val(data[4]);
             $('#comments').val(data[11]);
+            $('#TypeName').val(data[12]);
+            $('#HiddenTypeName').val(data[12]);
+            // $('#permanentScar_date').val(p_formattedDate);
             var regionVal = data[10];
             hilocation = regionVal.split(",")
             $('#region').val(hilocation).trigger('change');
@@ -835,13 +939,54 @@
             $('#status').val(data[7]);
             $('#IDForupdateData').val(id);
 
-          },
-          error: function(error) {
-              console.error("Error:", error);
-          }
-      });
+            var lesionType = String(data[4]).trim(); // Value to match against
+            var lesionTypeDropdown = $('#lesionType');
+            lesionTypeDropdown.empty();
+            var matched = false;
 
- }
+            var lesionTypeData = <cfoutput>#SerializeJSON(lesionTypeData)#</cfoutput>;
+            var scarTypeData = <cfoutput>#SerializeJSON(scarTypeData)#</cfoutput>;
+
+            if (data[12] === "Lesion_Type") {
+        lesionTypeData.forEach(function(option) {
+            lesionTypeDropdown.append(
+                `<option value="${option.Name}" ${
+                    option.Name == lesionType ? "selected" : ""
+                }>${option.Name}</option>`
+            );
+            if (option.Name == lesionType) matched = true; // Mark as matched
+        });
+          } else if (data[12] === "Scar_Type") {
+              scarTypeData.forEach(function(option) {
+                  lesionTypeDropdown.append(
+                      `<option value="${option.Name}" ${
+                          option.Name == lesionType ? "selected" : ""
+                      }>${option.Name}</option>`
+                  );
+                  if (option.Name == lesionType) matched = true; // Mark as matched
+              });
+          }
+
+          // If no match found, add data[4] as a new option and select it
+          if (!matched) {
+              lesionTypeDropdown.append(
+                  `<option value="${lesionType}" selected>${lesionType}</option>`
+              );
+          }
+
+          if (!matched) {
+              lesionTypeDropdown.append(
+                  `<option value="${lesionType}" selected>${lesionType}</option>`
+              );
+          }
+
+                },
+                error: function(error) {
+                    console.error("Error:", error);
+                }
+            });
+
+    }
 
 
 

@@ -10,6 +10,7 @@
         SELECT * from TLU_Regions
     </cfquery>
     <cfif isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge')>
+        <cftry>
         <cfif isdefined("form.date") and form.date NEQ "">
         <cfset form.startDate = dateformat(form.date.split('-')[1],'YYYY-mm-dd')>
         <cfset form.endDate   = dateformat(form.date.split('-')[2],'YYYY-mm-dd')>
@@ -36,7 +37,12 @@
             AND ss.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
             AND s.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
         </cfquery>
-        <!--- <cfdump var="#allCount#"> --->
+
+
+
+         <!--- <cfdump var="#allCount#" abort="true" > --->
+
+
         <!--- query to count maximum number of Lesion against a cetacean --->
     <cfquery datasource="#variables.dsn#" name="maximumLesions">
         SELECT Sighting_ID,Cetaceans_ID, COUNT(*) AS MaxLesion
@@ -46,10 +52,13 @@
         ORDER BY MaxLesion desc
     </cfquery>
 
+    
+
     <cfset oo = 0>
     <cfloop index="index" from="1" to="#maximumLesions.MaxLesion#">
         <cfset oo = incrementValue(#oo#)> 
         <cfset lp =  "LesionPresent" & #oo#>
+        <cfset tn =  "TypeName" & #oo#>
         <cfset lete =  "LesionType" & #oo#>
         <cfset re =  "Region" & #oo#>
         <cfset slr =  "Side_L_R" & #oo#>
@@ -57,6 +66,7 @@
         <cfset lc =  "Comments" & #oo#>
         <cfset lpn =  "PhotoNumber" & #oo#>
         <cfset QueryAddColumn(allCount, "#lp#","varchar",[""])>
+        <cfset QueryAddColumn(allCount, "#tn#","varchar",[""])>
         <cfset QueryAddColumn(allCount, "#lete#","varchar",[""])>
         <cfset QueryAddColumn(allCount, "#re#","varchar",[""])>
         <cfset QueryAddColumn(allCount, "#slr#","varchar",[""])>
@@ -64,20 +74,28 @@
         <cfset QueryAddColumn(allCount, "#lc#","varchar",[""])>
         <cfset QueryAddColumn(allCount, "#lpn#","varchar",[""])>
     </cfloop>
+
+       
+
         <cfloop query="allCount">
             <cfif #sightingID# neq "" and #Cetaceans_I# neq ""> 
                 <!--- Query get lesion data against a cetacean and sighting ID --->
                 <cfquery datasource="#variables.dsn#" name="cldd">
-                    SELECT cl.*
+                    SELECT SurveyID,SightingNumber,Sighting_ID,Cetaceans_ID,LesionPresent,LesionType,Region,Side_L_R,Status,PhotoNumber,ID, Comments,TypeName
                     FROM Condition_Lesions cl
-                    where cl.Sighting_ID = #sightingID# and cl.Cetaceans_ID='#cscode#'
+                    where cl.Sighting_ID = #sightingID# and cl.Cetaceans_ID='#cscode#' 
+                    <cfif isDefined('form.typeName') and form.TypeName NEQ '' >
+                        and cl.TypeName = '#form.TypeName#'
+                    </cfif>
                 </cfquery>
+               
                 <cfif cldd.RECORDCOUNT gte 1 >
                     <cfset cc = 0>
                     <!--- loop for seting columns data  --->
                     <cfloop query="cldd" > 
                         <cfset cc = incrementValue(#cc#)> 
                         <cfset lp =  "LesionPresent" & #cc#>
+                        <cfset tn =  "TypeName" & #cc#>
                         <cfset lete =  "LesionType" & #cc#>
                         <cfset re =  "Region" & #cc#>
                         <cfset slr =  "Side_L_R" & #cc#>
@@ -85,6 +103,7 @@
                         <cfset lc =  "Comments" & #cc#>
                         <cfset lpn =  "PhotoNumber" & #cc#>
                         <cfset QuerySetCell(allCount, "#lp#", #LesionPresent#, allCount.currentRow)>
+                        <cfset QuerySetCell(allCount, "#tn#", #TypeName#, allCount.currentRow)>
                         <cfset QuerySetCell(allCount, "#lete#", #LesionType#, allCount.currentRow)>
                         <cfset QuerySetCell(allCount, "#re#", #Region#, allCount.currentRow)>
                         <cfset QuerySetCell(allCount, "#slr#", #Side_L_R#, allCount.currentRow)>
@@ -95,7 +114,8 @@
                 </cfif>
             </cfif>
         </cfloop>
-        <!--- <cfdump var="#allCount#" abort="true"> --->
+
+
         <cfscript>
             if( isDefined('form.LesionType') and form.LesionType neq "")
             {    
@@ -104,7 +124,15 @@
                 
                     return obj.LesionType1 eq #form.LesionType# OR obj.LesionType2 eq #form.LesionType# OR obj.LesionType3 eq #form.LesionType#;
                 });
-            }  
+            }
+            if( isDefined('form.Typename') and form.Typename neq "")
+            {    
+                
+                qFiltered=QueryFilter(allCount,function(obj){
+                
+                    return obj.Typename1 eq #form.Typename# OR obj.Typename2 eq #form.Typename# OR obj.Typename3 eq #form.Typename#;
+                });
+            }    
         </cfscript>
         <cfscript>
             rowsPerPage = 100;
@@ -200,7 +228,12 @@
             }
             paginate = local.paginationStruct;
         </cfscript>
+        
+        <!--- <cfdump var="#allCount#" abort="true"> --->
+        
         <cfquery datasource="#variables.dsn#" name="qFiltered">
+
+        
             SELECT
             s.ID AS SurveyID,
             s.DATE,
@@ -237,7 +270,9 @@
             st.[Desc] as Sightability,
             bt.[Desc] as Beaufort,
             ss.HabitatDepth,
+
             ht.HabitatName,
+
             ss.AirTemp,
             ss.WindSpeed,
             gdw.[Desc] as WindDirection,
@@ -295,6 +330,8 @@
             distanceSelect4,
             pH,
             DO,
+            EndDepth,
+			dissolvedOxygen,
             Conductivity,
             BehavioralSpecifics1,
             BehavioralSpecificsN1,
@@ -346,7 +383,7 @@
             c.Code,
             tlu.CetaceanSpeciesName,
             c.Sex,
-            c.code as cscode,
+            c.code as Code,
             c.name as csname,
             cs.Fetals,
             cs.Calf,
@@ -376,7 +413,7 @@
             cs.Body_DorsalRidgeScapula,
             cs.Body_Ribs,
             cs.Tail_TransversePro,
-            cs.Cetaceans_ID AS Cetaceans_I
+            cs.Cetaceans_ID AS Cetaceans_I    
             
         FROM
             Surveys s
@@ -392,7 +429,9 @@
             LEFT JOIN TLU_GlareDirection gd ON gd.ID = ss.GlareDirection
             LEFT JOIN TLU_Sightability st ON st.ID = ss.Sightability
             LEFT JOIN TLU_Beaufort bt ON bt.ID = ss.Beaufort
-            LEFT JOIN TLU_Habitat ht ON ht.HabitatID = ss.HabitatType
+
+            LEFT JOIN TLU_Habitat ht ON ht.HabitatID = TRY_CAST(ss.HabitatType AS int)
+
             LEFT JOIN TLU_GlareDirection gdw ON gdw.ID = ss.WindDirection
             LEFT JOIN TLU_Tide td ON td.TideID = ss.Tide
             LEFT JOIN TLU_Heading ih ON ih.ID = ss.InitialHeading
@@ -400,6 +439,7 @@
             LEFT JOIN TLU_FinalHeading fh ON fh.ID = ss.FinalHeading
             LEFT JOIN TLU_ResearchTeamMembers rtp ON rtp.RT_ID = ss.Photographer
             LEFT JOIN TLU_ResearchTeamMembers rtd ON rtd.RT_ID = ss.Driver
+                        
             where 1=1
             <cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">and CONVERT(char(10), s.Date,126) BETWEEN '#form.startDate#' AND '#form.endDate#'</cfif>
             <cfif isdefined("form.surveyRoute") and form.surveyRoute neq ""> and CONCAT(',', s.SurveyRoute, ',') LIKE '%,#form.surveyRoute#,%'</cfif>
@@ -412,19 +452,25 @@
             <cfif isdefined("form.platform") and form.platform neq ""> and s.platform = '#form.platform#'</cfif>
             <cfif isdefined("form.NOAAStock") and form.NOAAStock neq ""> and s.NOAAStock like '%#form.NOAAStock#%'</cfif>
             <cfif isdefined("form.surveyEffort") and form.surveyEffort neq ""> and ss.Survey = '#form.surveyEffort#'</cfif>
-            AND s.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
-            AND ss.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
+            AND s.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value="1">
+            and tlu.CetaceanSpeciesName != ''
+            
             ORDER BY s.ID 
             <cfif #form.LesionType# eq "">
                 OFFSET #local.paginationStruct["startCount"]#-1 ROWS
                 FETCH NEXT #rowsPerPage# ROWS ONLY
             </cfif>
     </cfquery>
+
+    <!--- <cfdump var="#qFiltered#" abort="true"> --->
+
+
     <cfset rr = 0>
     <!--- loop for adding columns in main query --->
     <cfloop index="index" from="1" to="#maximumLesions.MaxLesion#">
             <cfset rr = incrementValue(#rr#)> 
             <cfset lp =  "LesionPresent" & #rr#>
+            <cfset tn =  "TypeName" & #rr#>
             <cfset lete =  "LesionType" & #rr#>
             <cfset re =  "Region" & #rr#>
             <cfset slr =  "Side_L_R" & #rr#>
@@ -432,6 +478,7 @@
             <cfset lc =  "Comments" & #rr#>
             <cfset lpn =  "PhotoNumber" & #rr#>
             <cfset QueryAddColumn(qFiltered, "#lp#","varchar",[""])>
+            <cfset QueryAddColumn(qFiltered, "#tn#","varchar",[""])>
             <cfset QueryAddColumn(qFiltered, "#lete#","varchar",[""])>
             <cfset QueryAddColumn(qFiltered, "#re#","varchar",[""])>
             <cfset QueryAddColumn(qFiltered, "#slr#","varchar",[""])>
@@ -439,39 +486,58 @@
             <cfset QueryAddColumn(qFiltered, "#lc#","varchar",[""])>
             <cfset QueryAddColumn(qFiltered, "#lpn#","varchar",[""])>
     </cfloop>
-        <cfloop query="qFiltered">
-            <cfif #sightingID# neq "" and #Cetaceans_I# neq ""> 
-                <!--- Query get lesion data against a cetacean and sighting ID --->
+
+        
+ 
+        <cfloop query="qFiltered" >
+            <cfif #sightingID# neq "" and #Code# neq ""  >
                 <cfquery datasource="#variables.dsn#" name="cldd">
-                    SELECT cl.*
+                     SELECT SurveyID,SightingNumber,Sighting_ID,Cetaceans_ID,LesionPresent,LesionType,Region,Side_L_R,Status,PhotoNumber,ID,Comments, TypeName
                     FROM Condition_Lesions cl
-                    where cl.Sighting_ID = #sightingID# and cl.Cetaceans_ID='#cscode#'
+                    where cl.Sighting_ID = #sightingID# and cl.Cetaceans_ID='#Code#' <cfif isDefined('form.typeName') and form.TypeName NEQ '' >and cl.TypeName = '#form.TypeName#'</cfif>
                 </cfquery>
-                <cfif cldd.RECORDCOUNT gte 1 >
+
+                
+
+                <cfif cldd.RECORDCOUNT gte 1>
                     <cfset cne = 0>
-                    <!--- loop for seting columns data  --->
-                    <cfloop query="cldd" > 
+                    
+                    <cfloop query="cldd"> 
                         <cfset cne = incrementValue(#cne#)> 
                         <cfset lp =  "LesionPresent" & #cne#>
+                        <cfset tn =  "TypeName" & #cne#>
                         <cfset lete =  "LesionType" & #cne#>
                         <cfset re =  "Region" & #cne#>
                         <cfset slr =  "Side_L_R" & #cne#>
                         <cfset st =  "Status" & #cne#>
-                        <cfset lc =  "Comments" & #cne#>
-                        <cfset lpn =  "PhotoNumber" & #cne#>
+                        <cfset pn =  "PhotoNumber" & #oo#>
+                        <cfset cn =  "Comments" & #oo#>
                         <cfset QuerySetCell(qFiltered, "#lp#", #LesionPresent#, qFiltered.currentRow)>
+                        <cfset QuerySetCell(qFiltered, "#tn#", #TypeName#, qFiltered.currentRow)>
                         <cfset QuerySetCell(qFiltered, "#lete#", #LesionType#, qFiltered.currentRow)>
-                        <cfset QuerySetCell(qFiltered, "#re#", #Region#, qFiltered.currentRow)>
                         <cfset QuerySetCell(qFiltered, "#slr#", #Side_L_R#, qFiltered.currentRow)>
                         <cfset QuerySetCell(qFiltered, "#st#", #Status#, qFiltered.currentRow)>
-                        <cfset QuerySetCell(qFiltered, "#lc#", #Comments#, qFiltered.currentRow)>
-                        <cfset QuerySetCell(qFiltered, "#lpn#", #PhotoNumber#, qFiltered.currentRow)>
+                        <cfset QuerySetCell(qFiltered, "#pn#", #PhotoNumber#, qFiltered.currentRow)>
+                        <cfset QuerySetCell(qFiltered, "#cn#", #Comments#, qFiltered.currentRow)>
+                        <cfif #Region# NEQ "">
+                            <cfset regionN = Application.Cetaceans.getRegionNamebyId(Region)>
+                            <cfset QuerySetCell(qFiltered, "#re#", #regionN#, qFiltered.currentRow)>
+                        </cfif>
                     </cfloop>
                 </cfif>
+
+
             </cfif>
         </cfloop>
+
+        <!--- <cfdump var="#qFiltered#" abort="true"> --->
+
     <!--- Data set after filtering --->
-    <!--- <cfdump var="#qFiltered#" abort="true"> --->
+    
+    <cfcatch>
+        <cfdump var="#cfcatch#" abort="true">
+    </cfcatch>
+</cftry>
     </cfif>
     <cfset getAreaName =  Application.Sighting.getAreaName()>
     <cfset getSurveyArea = Application.Sighting.getSurveyArea()>
@@ -506,6 +572,29 @@
     <cfset getBodyRibs = Application.ConditionLesions.getBodyRibs()>
     <!---  Tail Condition   --->
     <cfset getTailTransversePro = Application.ConditionLesions.getTailTransversePro()>
+
+    <cfset qgetLesionScarType = Application.StaticDataNew.getLesionScarType()>
+
+        <cfset lesionTypeData = []>
+        <cfset scarTypeData = []>
+
+        <cfloop query="qgetLesionScarType">
+            <cfif Type EQ "Lesion">
+                <cfset ArrayAppend(lesionTypeData, {
+                    ID = qgetLesionScarType.ID,
+                    Name = qgetLesionScarType.Name,
+                    Active = qgetLesionScarType.Active,
+                    Type = qgetLesionScarType.Type
+                })>
+            <cfelseif Type EQ "Scar">
+                <cfset ArrayAppend(scarTypeData, {
+                    ID = qgetLesionScarType.ID,
+                    Name = qgetLesionScarType.Name,
+                    Active = qgetLesionScarType.Active,
+                    Type = qgetLesionScarType.Type
+                })>
+            </cfif>
+        </cfloop>
 
     <cfquery name="cetaceans" datasource="#variables.dsn#">
         select ID,Code,Name from Cetaceans order by Code ASC
@@ -569,17 +658,7 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-4 col-md-4 col-sm-12 control-label">Body of Water</label>
-                                    <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
-                                        <select class="form-control" name="bodyOfWater">
-                                            <option value="">Select Body of Water</option>
-                                            <cfloop query="#getSurveyArea#">
-                                                <option value="#ID#" >#AreaName#</option>
-                                            </cfloop>
-                                        </select>
-                                    </div>
-                                </div>
+                                
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
                                     <label class="col-lg-4 col-md-4 col-sm-12 control-label">Survey Type</label>
                                     <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
@@ -591,25 +670,77 @@
                                         </select>
                                     </div>
                                 </div>
+
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12">
+                                    <label class="col-lg-4 col-md-4 col-sm-12 control-label"> Type</label>
+                                    <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
+                                        <select class="form-control  " id="TypeName" name="TypeName" onchange="updateLesionScarValues()">
+                                            <option value="" >Select Type</option>
+                                            <option value="Lesion_Type" <cfif isDefined('form.typeName') and form.TypeName EQ 'Lesion_Type' >selected</cfif> >Lesion Type</option>
+                                            <option value="Scar_Type" <cfif isDefined('form.typeName') and form.TypeName EQ 'Scar_Type' >selected</cfif>>Scar Type</option>
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
                                     <label class="col-lg-4 col-md-4 col-sm-12 control-label">Lesions</label>
                                     <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
+                                       
+
                                             <select class="form-control customLesionSelect" id="LesionType" name="LesionType">
-                                                <option value="">Select Lesion Type</option>
-                                                <cfloop query="getLesionTypeData">
-                                                    <cfif Active eq 1>
-                                                    <option value="#LesionTypeName#">#LesionTypeName#</option>
-                                                </cfif>
-                                                </cfloop>
+                                                <option value="">Select  Type</option>
+                                                
+                                                
                                             </select>
                                         </div>
                                     </div>
+
+                                    <script>
+                                        // Preload data as JavaScript objects
+                                        const lesionTypeData = [
+                                        <cfloop array="#lesionTypeData#" index="lesion">
+                                            { id: "#lesion.ID#", name: "#lesion.Name#", active: #lesion.Active# },
+                                        </cfloop>
+                                    ];
+                                
+                                    const scarTypeData = [
+                                        <cfloop array="#scarTypeData#" index="scar">
+                                            { id: "#scar.ID#", name: "#scar.Name#", active: #scar.Active# },
+                                        </cfloop>
+                                    ];
+    
+                                            // Function to update the second dropdown
+                                            function updateLesionScarValues() {
+                                        const selectedType = document.getElementById("TypeName").value;
+                                        const secondDropdown = document.getElementById("LesionType");
+                                
+                                        // Clear existing options
+                                        secondDropdown.innerHTML = '<option value="">Select Type</option>';
+                                
+                                        let data = [];
+                                        if (selectedType === "Lesion_Type") {
+                                            data = lesionTypeData.filter(item => item.active === 1);
+                                        } else if (selectedType === "Scar_Type") {
+                                            data = scarTypeData.filter(item => item.active === 1);
+                                        }
+                                
+                                        // Populate new options
+                                        data.forEach(item => {
+                                            const option = document.createElement("option");
+                                            option.value = item.name;
+                                            option.textContent = item.name;
+                                            secondDropdown.appendChild(option);
+                                        });
+                                    }
+                                    </script>
+
+
                                 </div>
                             <div class="form-row">
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
                                     <label class="col-lg-4 col-md-4 col-sm-12 control-label">Species</label>
                                     <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
-                                    <select class="form-control" name="cetaceanSpecies">
+                                    <select class="form-control" name="cetaceanSpecies"  onchange="getcode()" >
                                             <option value="">Select Species</option>
                                             <cfloop query="#qgetCetaceanSpecies#">
                                                 <option value="#CetaceanSpeciesName#" >#CetaceanSpeciesName#</option>
@@ -620,11 +751,13 @@
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
                                     <label class="col-lg-4 col-md-4 col-sm-12 control-label">Code</label>
                                     <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
-                                        <select class="form-control" name="code">
+                                        <select class="form-control" name="code" >
                                             <option value="">Select Code</option>
+                                            <cfif isdefined('form.cetaceanSpecies') and form.cetaceanSpecies neq ''>
                                             <cfloop query="#cetaceans#">
                                                 <option value="#Code#" >#Code#</option>
                                             </cfloop>
+                                        </cfif>
                                         </select>
                                     </div>
                                 </div>
@@ -673,6 +806,21 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-lg-4 col-md-6 col-sm-12">
+                                    <label class="col-lg-4 col-md-4 col-sm-12 control-label">Body of Water</label>
+                                    <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
+                                        <select class="form-control" name="bodyOfWater">
+                                            <option value="">Select Body of Water</option>
+                                            <cfloop query="#getSurveyArea#">
+                                                <option value="#ID#" >#AreaName#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="form-row">
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
                                     <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Condition (from sighting)</label>
@@ -777,6 +925,9 @@
                                     </div>
                                 </div>
                             </div>
+
+                            
+
                             <div class="form-row all_btn_form">
                                 <div class="col-lg-10 col-md-10 col-sm-9 text-right">
                                     <button type="submit" name="btnSearchSightings" value ="submit"  class="btn btn-success width-100 m-r-5  ml-auto" id="add">Run</button>
@@ -799,8 +950,23 @@
                 
                     return obj.LesionType1 eq #form.LesionType# OR obj.LesionType2 eq #form.LesionType# OR obj.LesionType3 eq #form.LesionType#;
                 });
-            }  
+            } 
+            
+            if( isDefined('form.Typename') and form.Typename neq "")
+            {    
+                
+                qFiltered=QueryFilter(qFiltered,function(obj){
+                
+                    return obj.Typename1 eq #form.Typename# OR obj.Typename2 eq #form.Typename# OR obj.Typename3 eq #form.Typename#;
+                });
+            } 
+
         </cfscript>
+
+        
+        
+        <cfif #qFiltered.CetaceanSpeciesName# neq '' >
+
             <div class="section-container section-with-top-border"> 
                 <div class="">
                     <cfif qFiltered.recordCount neq 0>
@@ -811,6 +977,9 @@
                             </div>
                     </div>
                     </cfif> 
+
+                    <!--- <cfdump var="#qFiltered.CetaceanSpeciesName#" abort="true"> --->
+
                     <table id="allReport" data-order='[[0,"desc"]]' class="table table-bordered table-hover ">
                         <thead>
                         <tr class="inverse">
@@ -998,6 +1167,7 @@
                             <cfoutput> 
                                 <cfloop index="index" from="1" to="#maximumLesions.MaxLesion#">
                                         <th>LesionPresent#index#</th>
+                                        <th>TypeName#index#</th>
                                         <th>LesionType#index#</th>
                                         <th>Region#index#</th>
                                         <th>Side_L_R#index#</th>
@@ -1272,7 +1442,9 @@
                                     <td>#BestSighting#</td>
                                     <td>#Code#</td>
                                     <cfset AssociateValue=[]>
-                                    <cfquery name="qgetAssociate" datasource="#Application.dsn#"  >
+
+                                    <cfif sightingID neq '' >
+                                        <cfquery name="qgetAssociate" datasource="#Application.dsn#"  >
                                         SELECT cs.Sighting_ID,ss.id,cs.Cetaceans_ID from Cetacean_Sightings cs
                                         JOIN Survey_Sightings ss ON cs.Sighting_ID = ss.id
                                         JOIN Surveys s ON s.ID = ss.Project_ID
@@ -1285,6 +1457,9 @@
                                     </cfquery> 
                                     <cfset ArrayAppend(AssociateValue,qgetAssociateValue.Code,"true") >                                                                      
                                     </cfloop>
+                                    </cfif>
+                                    
+                                    
                                     <!--- <cfdump var="#Replace(AssociateValue.toList(), ",", ", ", "ALL")#" abort="true"> --->
 
                                     <td>#Replace(AssociateValue.toList(), ",", " ", "ALL")#</td>
@@ -1450,6 +1625,7 @@
                                     <cfloop index="cn" from="1" to="#maximumLesions.MaxLesion#">
                                     
                                         <cfset a =  "LesionPresent">
+                                        <cfset t =  "TypeName">
                                         <cfset b =  "LesionType">
                                         <cfset g =  "Region">
                                         <cfset c =  "Side_L_R">
@@ -1457,6 +1633,7 @@
                                         <cfset e =  "Comments">
                                         <cfset f =  "PhotoNumber">
                                         <td>#Evaluate(a&cn)#</td>
+                                        <td>#Evaluate(t&cn)#</td>
                                         <td>#Evaluate(b&cn)#</td>
                                         <td>#Evaluate(g&cn)#</td>
                                         <td>#Evaluate(c&cn)#</td>
@@ -1502,6 +1679,13 @@
                     }
                 </cfscript>
             </div>
+
+            <cfelse>
+                <div class="alert alert-danger">
+                    <strong>Alert!</strong> No record found.
+                </div>
+            </cfif>
+
         </cfif>
         <div class="footer" id="footer">
             <span class="pull-right">

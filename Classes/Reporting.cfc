@@ -5535,6 +5535,49 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
   </cfquery>
 
   <cfquery datasource="#variables.dsn#" name="qFiltered">
+
+    WITH SplitHabitatType AS (
+              SELECT
+                  ss.ID AS sightingID,
+                  TRIM(value) AS HabitatType
+              FROM
+                  Survey_Sightings ss
+              CROSS APPLY (
+                  SELECT
+                      SUBSTRING(ss.HabitatType, v.number, CHARINDEX(',', ss.HabitatType + ',', v.number) - v.number) AS value
+                  FROM
+                      master.dbo.spt_values v
+                  WHERE
+                      v.type = 'P' 
+                      AND v.number BETWEEN 1 AND LEN(ss.HabitatType) + 1
+                      AND SUBSTRING(',' + ss.HabitatType, v.number, 1) = ','
+              ) AS SplitValues
+          )
+          , ConcatHabitatType AS (
+              SELECT
+                  ss.ID,
+                  STUFF((
+                      SELECT ',' + sht.HabitatType
+                      FROM SplitHabitatType sht
+                      WHERE sht.sightingID = ss.ID
+                      FOR XML PATH(''), TYPE
+                  ).value('.', 'NVARCHAR(MAX)'), 1, 1, '') AS AllHabitatTypes
+              FROM
+                  Survey_Sightings ss
+              GROUP BY ss.ID
+          )
+          , HabitatNames AS (
+              SELECT
+                  sht.sightingID,
+                  STRING_AGG(ht.HabitatName, ',') AS HabitatNames
+              FROM 
+                  SplitHabitatType sht
+              JOIN 
+                  TLU_Habitat ht ON sht.HabitatType = ht.HabitatID
+              GROUP BY 
+                  sht.sightingID
+          )
+
     SELECT
     CONVERT(varchar, s.DATE) AS DATE,
     s.ID AS SurveyID,
@@ -5569,7 +5612,9 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
     st.[Desc] AS Sightability,
     bt.[Desc] AS Beaufort,
     ss.HabitatDepth,
-    ht.HabitatName,
+
+    hn.HabitatNames AS HabitatName,
+
     ss.AirTemp,
     ss.WindSpeed,
     gdw.[Desc] AS WindDirection,
@@ -5577,6 +5622,8 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
     ss.Salinity,
     ss.pH,
     ss.DO,
+    ss.EndDepth,
+	  ss.dissolvedOxygen,
     ss.Conductivity,
     ih.HeadingName AS InitialHeading,
     gh.GHeadingName AS GeneralHeading,
@@ -5723,7 +5770,10 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
     LEFT JOIN TLU_GlareDirection gd ON gd.ID = ss.GlareDirection
     LEFT JOIN TLU_Sightability st ON st.ID = ss.Sightability
     LEFT JOIN TLU_Beaufort bt ON bt.ID = ss.Beaufort
-    LEFT JOIN TLU_Habitat ht ON ht.HabitatID = ss.HabitatType
+
+    LEFT JOIN ConcatHabitatType cth ON ss.ID = cth.ID
+    LEFT JOIN HabitatNames hn ON ss.ID = hn.sightingID
+
     LEFT JOIN TLU_GlareDirection gdw ON gdw.ID = ss.WindDirection
     LEFT JOIN TLU_Tide td ON td.TideID = ss.Tide
     LEFT JOIN TLU_Heading ih ON ih.ID = ss.InitialHeading

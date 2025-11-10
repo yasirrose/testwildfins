@@ -1,16 +1,37 @@
 $(document).ready(function () {
-  $('#data-table').DataTable( {
+
+//   $('#data-table').DataTable( {
+//     dom: 'Bfritp',
+//     buttons: [
+//       {
+//           extend: 'excelHtml5',
+//           title: 'Sample Report',
+//           autoFilter: true,
+//           text:"Export Excel",
+//           className: 'btn btn-success'
+//       },
+//     ]
+//   });
+$('#data-table').DataTable( {
     dom: 'Bfritp',
+    ordering: false,
+    // ordering: true, // Enable initial sorting
+    // order: [], // Set initial sorting order to none
     buttons: [
-      {
-          extend: 'excelHtml5',
-          title: 'Sample Report',
-          autoFilter: true,
-          text:"Export Excel",
-          className: 'btn btn-success'
-      },
+        {
+            extend: 'excelHtml5',
+            title: 'Sample Report',
+            autoFilter: true,
+            text: 'Export Excel',
+            className: 'btn btn-success',
+            exportOptions: {
+                order: 'applied' // Export the data in current order
+            }
+        }
     ]
-  });
+});
+
+
   $(".buttons-html5").removeClass("dt-button");
   $(".buttons-html5").removeClass("buttons-excel");
 	$('input[name="date"]').daterangepicker({
@@ -53,11 +74,14 @@ function deleteRecord(id) {
 function clearAll(){
   localStorage.clear();
 $("#date").val('');
-$("#sampleFN").val('');
-$("#Species").val('');
-$("#SampleType").val('');
-$("#StorageType").val('');
-$("#PreservationMethod").val('');
+$("#sampleFN").val('').trigger('change');
+// $("#Species").val('');
+$("#Species").val([]).trigger("change");
+$("#SampleType").val([]).trigger("change");
+$("#StorageType").val([]).trigger("change");
+$("#PreservationMethod").val([]).trigger("change");
+// $("#StorageType").val('');
+// $("#PreservationMethod").val('');
 }
 
 						   

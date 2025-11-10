@@ -13,6 +13,10 @@
 </cfif>
 </cfif>
 <cfset qgetLesionType = Application.StaticDataNew.getLesionType()>
+
+<cfset qgetLesionScarType = Application.StaticDataNew.getLesionScarType()>
+<!--- <cfdump var="#qgetLesionScarType#" abort="true"> --->
+
 <cfif isdefined("form") and len(trim(form.searchword)) NEQ 0>
 <cfset   qgetLesionType=Application.StaticDataNew.getLesionTypeByword(form.searchword)>
 </cfif>
@@ -51,6 +55,17 @@
                      <div class="col-md-7">
                         <input type="hidden" name="ID" value='' id="LesionType_id" />
                         <input type="text" class="form-control" name="LesionTypeName" id="LesionTypeName" placeholder="Please Input Lesion Type" required/>
+                     </div>
+                  </div>
+                  <div class="form-group m-b-10">
+                     <label class="col-md-3 control-label">Type</label>
+                     <div class="col-md-7">
+                        <select class="form-control" name="LesionScar" id="LesionScar">
+                           <!--- <option value="0">Select Type</option> --->
+                           <option value="Lesion">Lesion</option>
+                           <option value="Scar">Scar</option>
+                        </select>
+                        <input type="hidden" name="LesionScarHidden" id="LesionScarHidden" />
                      </div>
                   </div>
                   <div class="form-group m-b-10">
@@ -101,16 +116,17 @@
             <thead>
                <tr class="inverse">
                   <th>Sr#</th>
-                  <th>Lesion Type</th>
+                  <th>Name</th>
                   <th>Status</th>
+                  <th>Type</th>
                   <th>Actions</th>
                </tr>
             </thead>
             <tbody>
-               <cfoutput query="qgetLesionType" startrow="#startHereIndex#" maxrows="#Application.record_per_page#">
+               <cfoutput query="qgetLesionScarType" startrow="#startHereIndex#" maxrows="#Application.record_per_page#">
                   <tr class="inverse" id="remov_#ID#">
-                     <td>#qgetLesionType.currentRow#</td>
-                     <td id='cam-#id#'>#LesionTypeName#</td>
+                     <td>#qgetLesionScarType.currentRow#</td>
+                     <td id='cam-#id#'>#Name#</td>
                      <td>
                         <cfif active eq 1 >
                            Active
@@ -118,6 +134,11 @@
                            Inactive
                         </cfif>
                      </td>
+                     <td>#Type#</td>
+
+                     
+                     <input type="hidden" name="LesionScarHidden" id="LesionScarHidden" />
+                     <input type="hidden" name="selectedLesionScar-#id#" id="selectedLesionScar-#id#" value="#Type#">
                      <input type="hidden" name="seletecActiveValue-#id#" id="seletecActiveValue-#id#" value="#active#">
                      <td >
                         <button class="btn btn-xs btn-primary update" onclick="updateRecord(#ID#)"><i class="fa fa-pencil-square-o"></i></button> &nbsp; &nbsp;&nbsp;&nbsp; <button class="btn btn-xs btn-primary" onclick="return deleteRecord(#ID#)"><i class="glyphicon glyphicon-trash"></i></button>
@@ -126,7 +147,7 @@
                </cfoutput>
             </tbody>
          </table>
-         <cfset qpagination = qgetLesionType >
+         <cfset qpagination = qgetLesionScarType >
          <cfinclude template="../pagination.cfm">
       </div>
       <!-- end panel -->

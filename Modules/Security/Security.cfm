@@ -82,6 +82,8 @@
       <cfset msg="Successfully Saved!">
     </cfif>  
     <cfset qget = Application.Sighting.getSecuritySetting()>
+      
+     
     <div id="content" class="content"> 
       <!-- begin breadcrumb -->
       <ol class="breadcrumb pull-right">
@@ -115,6 +117,7 @@
                       <th class="text_center"><h4>Vet Assistant</h4></th>
                       <th class="text_center"><h4>Volunteer</h4></th>
                       <th class="text_center"><h4>Photo ID Administrator</h4></th>
+                      <th class="text_center"><h4>Veterinarian </h4></th>
                     </tr>
                     <cfloop query="qget">
                       <cfoutput>
@@ -135,6 +138,9 @@
                             </td>
                             <td class="text_center">
                               <input type="checkbox" class="checkbox_button" <cfif qget.photoIDAdministrator neq 0> checked</cfif> value="#qget.ID#" name="photoIDAdministrator">
+                            </td>
+                            <td class="text_center">
+                              <input type="checkbox" class="checkbox_button" <cfif qget.Veterinarian neq 0> checked</cfif> value="#qget.ID#" name="Veterinarian">
                             </td>
                           </tr>
                         </cfif>
@@ -162,6 +168,9 @@
                             </td>
                             <td class="text_center">
                               <input type="checkbox" class="checkbox_button" <cfif qget.photoIDAdministrator neq 0> checked</cfif> value="#qget.ID#" name="photoIDAdministrator">
+                            </td>
+                            <td class="text_center">
+                              <input type="checkbox" class="checkbox_button" <cfif qget.Veterinarian neq 0> checked</cfif> value="#qget.ID#" name="Veterinarian">
                             </td>
                           </tr>
                         </cfif>
@@ -193,6 +202,9 @@
                             </td>
                             <td class="text_center">
                               <input type="checkbox" class="checkbox_button" <cfif qget.photoIDAdministrator neq 0> checked</cfif> value="#qget.ID#" name="photoIDAdministrator">
+                            </td>
+                            <td class="text_center">
+                              <input type="checkbox" class="checkbox_button" <cfif qget.Veterinarian neq 0> checked</cfif> value="#qget.ID#" name="Veterinarian">
                             </td>
                           </tr>
                         </cfif>

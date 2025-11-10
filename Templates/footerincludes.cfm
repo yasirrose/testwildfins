@@ -66,6 +66,7 @@
 <script type="text/javascript" src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://highcharts.github.io/pattern-fill/pattern-fill-v2.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.16/sorting/natural.js"></script>
 
 <!--- new addition --->
 <!--- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> --->

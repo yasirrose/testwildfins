@@ -2,10 +2,7 @@
 <cfset Application.record_per_page=500>
 <cfparam name="form.searchword" default=" ">
 <cfset getCetacean = Application.Cetaceans.get_CetaceanList(form.searchword)>
-<cfif isdefined("form") and len(trim(form.searchword)) NEQ 0>
-<!--- <cfdump  var="#form.searchword#"><cfabort> --->
-<cfset  getCetacean=Application.Cetaceans.get_CetaceanList(form.searchword)>
-</cfif>
+
 <!-- begin #content -->
 <div id="content" class="content">
    <!-- begin breadcrumb -->
@@ -22,7 +19,7 @@
       <div class="form-group m-b-10" style="overflow: hidden;">
          <div class="col-md-12">
             <div class="col-md-4">
-               <form class="navbar-form form-input-flat listcetacen_form" method="post" name="searchfrom">
+               <form class="navbar-form form-input-flat listcetacen_form" action="" method="post" name="searchfrom" id="searchfrom" >
                   <div class="form-group">
                      <input type="text" style="width: 140%;" name="searchword" class="form-control" id="searchword"
                      value="<cfif isdefined("form") and len(trim(form.searchword)) NEQ 0>
@@ -77,6 +74,15 @@
          <cfinclude template="../pagination.cfm">
       </div>
       <!-- end panel -->
+      <cfif isDefined('getCetacean')>
+            <cfif getCetacean.recordCount neq 0>
+                <div class="row" style="margin-top: 15px;">
+                    <div class="col-lg-12 col-md-12 col-sm-12 text-right">
+                        <button type="button" onclick="excel()" class="btn btn-success width-123 m-r-5  ml-auto">Export Excel</button>
+                    </div>
+                </div>
+            </cfif>   
+      </cfif> 
    </div>
    <!-- end section-container -->
    <div class="footer" id="footer">

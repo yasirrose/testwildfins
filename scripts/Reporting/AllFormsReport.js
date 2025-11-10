@@ -42,7 +42,11 @@ function paginate(value){
 }
 function excel(){
 	form=document.getElementById('searchAllReports');
-	form.action='http://test.wildfins.org/index.cfm?Module=Reporting&Page=ExportReport';
+	if (location.protocol === 'https:') {
+        form.action = 'https://test.wildfins.org/index.cfm?Module=Reporting&Page=ExportReport';
+    } else {
+        form.action = 'http://test.wildfins.org/index.cfm?Module=Reporting&Page=ExportReport';
+    }
 	form.submit();
 	form.action='';
 	$('#ConditionFromSighting').attr('checked', false);
@@ -163,4 +167,27 @@ window.onload = function()
 	$('select[name="NOAAStock"]').val(localStorage.getItem("NOAAStock"));
 	$('select[name="surveyEffort"]').val(localStorage.getItem("surveyEffort"));
 	$('#date').val(localStorage.getItem("date"));
+}
+
+function getcode(){
+	const v = $('select[name="cetaceanSpecies"]').val();
+	
+	console.log(v);
+	$.ajax({
+		url: application_root + "StaticDataNew.cfc?method=getCetaceancode",
+		type: "post",
+		data: {
+			codes:v
+		},
+		success: function (data) {
+			var obj = JSON.parse(data);
+			console.log(obj);			
+			$('select[name="code"]').empty();
+			$('select[name="code"]').append('<option value="">Select Code</option>');
+			for (var i = 0; i < obj.DATA.length; i++) {
+				$('select[name="code"]').append('<option value="'+obj.DATA[i][1]+'">'+obj.DATA[i][1]+'</option>');
+			}
+			
+		}
+	});
 }

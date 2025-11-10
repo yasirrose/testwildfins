@@ -3039,8 +3039,9 @@
            <cfset collaborator_guest=0>
            <cfset vet_assistant=0>
            <cfset photoIDAdministrator=0>
+           <cfset Veterinarian=0>
             <cfoutput>
-            <cfloop index="i" from="1" to="12">
+            <cfloop index="i" from="1" to="14">
                 
                 <cfif isDefined('form.administrators')>
                     <cfif listFind('#form.administrators#',i)>
@@ -3088,8 +3089,16 @@
                     </cfif>    
                 </cfif>
 
+                <cfif isDefined('form.Veterinarian')>
+                    <cfif listFind('#form.Veterinarian#',i)>
+                        <cfset Veterinarian='Veterinarian'>
+                    <cfelse>
+                        <cfset Veterinarian=0>
+                    </cfif>    
+                </cfif> 
+
                 <cfquery name="query" datasource="#variables.dsn#" result="return_data">
-                    UPDATE Security_Settings SET administrators = '#administrators#', team_members = '#team_members#',vet_assistant = '#vet_assistant#', volunteers = '#volunteers#',photoIDAdministrator = '#photoIDAdministrator#', collaborator_guest = '#collaborator_guest#' where ID = #i#
+                    UPDATE Security_Settings SET administrators = '#administrators#', team_members = '#team_members#',vet_assistant = '#vet_assistant#', volunteers = '#volunteers#',photoIDAdministrator = '#photoIDAdministrator#', collaborator_guest = '#collaborator_guest#',Veterinarian='#Veterinarian#' where ID = #i#
                 </cfquery>
             </cfloop>
             </cfoutput>
@@ -3337,7 +3346,7 @@
                     AND PermanentScar.CetaceanId = <cfqueryparam value="#cetacean_ID#" cfsqltype="CF_SQL_INTEGER">
                 </cfif>
             </cfquery>
-            <!--- <cfdump var="#qgetPermanentScar#" abort="true"> --->
+                       <!--- <cfdump var="#qgetPermanentScar#" abort="true"> --->
             <cfset c=0>
             <cfoutput><cfset  permissions ="#session['userdetails']['permissions']#"></cfoutput>
             <cfloop query="qgetPermanentScar">

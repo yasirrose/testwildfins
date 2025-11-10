@@ -185,7 +185,7 @@
                
                 <h3>Permanent Scar History</h3>
                 <div class="col-lg-12" style="margin-top:10px">
-                  <table id="data-table" data-order='[[1,"asc"]]' class="table panel table-bordered table-hover">
+                  <table id="permanentScarHistoryTable"  class="table panel dataTable table-bordered table-hover">
                     <thead>
                       <tr class="inverse">
                         <th>Cetacean ID</th>

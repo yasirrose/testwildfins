@@ -88,13 +88,21 @@ function resetIdleTime ()
 }
 	function CheckIdleTime() {
 		idleSecondsCounter++;
+
+		
+
 		// console.log(idleSecondsCounter);
 		var oPanel = document.getElementById("timeOut");
 		
+		
+
+
 		if (oPanel) {
 			oPanel.innerHTML = (IdealTimeOut - idleSecondsCounter);
 		}
 		
+		
+
 		if (idleSecondsCounter >= IdealTimeOut) {
 			window.clearInterval(idleSecondsTimer);
 			$("#info").html("<h5 class='new-h5'>Your session has expired</h5>");
@@ -112,7 +120,7 @@ function resetIdleTime ()
 	}
 
 	function redirect(){
-		window.location.href = "http://test.wildfins.org?destroy";
+		window.location.href = "https://test.wildfins.org?destroy";
 	}
 
 </script>

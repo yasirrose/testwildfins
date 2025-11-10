@@ -92,12 +92,48 @@ $(document).ready(function () {
 		var cetacean_ID = cetacean_ID;
 
 		if (species_ID != '') {
+
 			$.ajax({
 				type: "post",
 				data: { species_ID: species_ID, cetacean_ID: cetacean_ID },
 				url: application_root + "Sighting.cfc?method=getPermanentScar",
 				success: function (data) {
+
+					if ($.fn.DataTable.isDataTable('#permanentScarHistoryTable')) {
+						$('#permanentScarHistoryTable').DataTable().destroy();
+					}
 					$("#list_dolhpin").html(data);
+					
+					$('#permanentScarHistoryTable').DataTable({
+						"pageLength": 10,
+						"paging": false,
+						"info": false,
+						"searching": false,
+						"order": [[0, 'asc']], 
+						"columnDefs": [
+							{
+								"targets": [6, 7],
+								"orderable": false
+							},
+							{
+								"targets": 2, // Date Seen column index (zero-based)
+								"type": "date",
+								"render": function(data, type, row) {
+									// Parse the date in "mm/dd/yyyy" format to a JavaScript Date object
+									var dateParts = data.split('/');
+									if (dateParts.length === 3) {
+										var year = dateParts[2];
+										var month = dateParts[0];
+										var day = dateParts[1];
+										return month + '/' + day + '/' + year;
+									} else {
+										return data;
+									}
+								}
+							}
+						]
+						
+					});
 				}
 			}
 			);
@@ -109,6 +145,15 @@ $(document).ready(function () {
 			//$("#reset").trigger("click");
 		}
 	}
+	// $(document).ready(function() {
+	// 	$('#permanentScarHistoryTable').DataTable({
+	// 		"pageLength": 10,
+	// 		"paging": false,
+	// 		"info": false,
+	// 		responsive: true,
+	// 		"searching": false,
+	// 	});
+	// } );
 	function getFinFlukeCetaceanCodes(species_ID) {
 
 		var species_ID = species_ID;
@@ -235,15 +280,46 @@ function updateRecord(id) {
 	// $("#ScarType").val($("#ScarType option:contains(" + ScarType + ")").val()).trigger("change");
 	// $('#ScarType').val(ScarType).trigger('change');
 	// $('#BodyRegion').val(BodyRegion).trigger('change');
+
+
+
+	// if (ScarType !== '') {
+	// 	$("#ScarType option:selected").prop('selected', false);
+	// 	var scarTypeValues = ScarType.split(',');
+
+	// 	console.log(scarTypeValues);
+	  
+	// 	scarTypeValues.forEach(function(optionValue) {
+	// 	  $("#ScarType option:contains('" + optionValue.trim() + "')").prop('selected', true);
+	// 	});
+	// 	$("#ScarType").trigger("change");
+	//   }
+
+
 	if (ScarType !== '') {
 		$("#ScarType option:selected").prop('selected', false);
 		var scarTypeValues = ScarType.split(',');
-	  
+	
+		console.log('scarTypeValues=' + scarTypeValues);
+	
 		scarTypeValues.forEach(function(optionValue) {
-		  $("#ScarType option:contains('" + optionValue.trim() + "')").prop('selected', true);
+			var $matchingOption = $("#ScarType option").filter(function() {
+				return $(this).text().trim() === optionValue.trim();
+			});
+	
+			if ($matchingOption.length > 0) {
+				$matchingOption.prop('selected', true);
+				console.log('optionValue=' + optionValue);
+			} else {
+				console.log('No matching option found for: ' + optionValue);
+			}
 		});
+	
 		$("#ScarType").trigger("change");
-	  }
+	}
+
+
+
 	if (BodyRegion !== '') {
 		$("#BodyRegion option:selected").prop('selected', false);
 		var bodyRegionValues = BodyRegion.split(',');
@@ -278,3 +354,4 @@ function checkValue(e){
 		$('#requiredCetaceanCode').hide();
 	}
 }
+

@@ -577,6 +577,8 @@
                                           No
                                        <cfelseif cetaceans_sight.wMomDropDown eq 3>
                                           Partial
+                                        <cfelseif cetaceans_sight.wMomDropDown eq 4>
+                                            Mom Not Present
                                        </cfif>
                                     </div>
                                     <div class="col-md-1 CL Note_#cetaceans_sight.ID#">#cetaceans_sight.Note#</div> 
@@ -669,7 +671,27 @@
                <cfset setSecondaryImage = setSecOldImage>
             </cfif>
 
+            <cfquery name="qget_cetacean" datasource="#variables.dsn#" result='qget_cetacean'>
+                select ID, Code 
+                from Cetaceans 
+                where ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#Form.ID#'>
+            </cfquery>
+           
+            <cfif qget_cetacean.recordcount neq 0>
+                <cfquery name="qUpdate_Lesions" datasource="#variables.dsn#" result='qUpdate_Lesions'>
+                    update Condition_Lesions 
+                    set Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Form.Code#'>
+                    where Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#qget_cetacean.Code#'>
+                </cfquery>
 
+                <cfquery name="qUpdate_PermanentScar" datasource="#variables.dsn#" result='qUpdate_PermanentScar'>
+                    update PermanentScar 
+                    set CetaceanCode = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Form.Code#'>
+                    where CetaceanCode = <cfqueryparam cfsqltype="cf_sql_varchar" value='#qget_cetacean.Code#'>
+                </cfquery>
+            </cfif>
+            
+            <!--- <cfdump var="#qUpdate_Lesions#" abort="true"> Nouman--->
 
             
             <cfquery name="update_cetacean" datasource="#variables.dsn#" result='get_res'>
@@ -699,6 +721,7 @@
             </cfquery>
 
             <cfif get_res.RECORDCOUNT eq 1>
+              
                 <div class="alert alert-success">
                     <strong>Success!</strong> Cetacean record Updated.
                 </div>
@@ -779,6 +802,10 @@
                 ,Condition_Lesions.Status
                 ,Condition_Lesions.id
                 ,Condition_Lesions.PhotoNumber 
+                ,Condition_Lesions.TypeName 
+                ,Condition_Lesions.EnterDate 
+                ,Condition_Lesions.SightingText 
+                ,Condition_Lesions.PermanentScar_date 
                 ,Surveys.id as surveyid
                 ,Condition_Lesions.Comments 
                 from Condition_Lesions
@@ -899,6 +926,7 @@
         <cfreturn TRUE>
     </cffunction>
     <cffunction name="getCetacean" access="public" returnformat="plain" output="true">
+    <cftry>
         
     <cfquery name="getCetacean" datasource="#variables.dsn#">
      SELECT
@@ -918,6 +946,7 @@
 		Cetaceans.DScore,
         Surveys.Date as DateSeen,
         Surveys.ID as Survey_ID,
+        Surveys.SurveyRoute as Survey_Route,
 		Survey_Sightings.ID as Sighting_ID,
         Survey_Sightings.SightingNumber as SightingNo,
 		Survey_Sightings.Project_ID,
@@ -947,6 +976,9 @@
         AND Survey_Sightings.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
         order by dateseen desc
         </cfquery>
+        
+        
+
         <cfquery name="getfinflok" datasource="#variables.dsn#">
             select *
             from Fin_Fluke
@@ -962,6 +994,89 @@
            </cfloop>
         </cfloop>
         <cfreturn getCetacean>
+        <cfcatch>
+            <cfdump var="#cfcatch#" abort="true">    
+        </cfcatch>
+    </cftry>
+    </cffunction>
+
+    <cffunction name="getCetaceans" access="public" returnformat="plain" output="true">
+    <cftry>
+        <cfset cetaceanSpeciesList = ArrayToList(ListToArray(Form.cetaceanSpecies, ","))>
+        <!--- <cfdump var="#cetaceanSpeciesList#" abort="true"> --->
+        <cfquery name="getCetacean" datasource="#variables.dsn#">
+            SELECT DISTINCT
+                Survey_Sightings.SightingNumber,
+                Cetaceans.CetaceanSpecies,
+                Cetaceans.Code,
+                Cetaceans.Name,
+                Cetaceans.Sex,
+                Cetaceans.SourceSexed,
+                Cetaceans.FB_Number,
+                Cetaceans.YearOfBirth,
+                Cetaceans.FirstSightingDate as First_Sighting_Date,
+                Cetaceans.ImageName,
+                Cetaceans.SecondaryImage,
+                Cetaceans.DateDeath as DOD,
+                Cetaceans.DateOfBirthEstimate as DOB,
+                Cetaceans.DScore,
+                Surveys.Date as DateSeen,
+                Surveys.ID as Survey_ID,
+                Surveys.SurveyRoute as Survey_Route,
+                Survey_Sightings.ID as Sighting_ID,
+                Survey_Sightings.SightingNumber as SightingNo,
+                Survey_Sightings.Project_ID,
+                Survey_Sightings.InitialLatitude,
+                Survey_Sightings.InitialLongitude,
+                Survey_Sightings.AtLatitude,
+                Survey_Sightings.AtLongitude,
+                Survey_Sightings.EndLatitude, 
+                Survey_Sightings.EndLongitude,
+                Survey_Sightings.FE_Species,
+                Surveys.BodyOfWater,
+                Surveys.SurveyType,
+                Cetacean_Sightings.bodyCondition,
+                Cetacean_Sightings.Fetals, 
+                Cetacean_Sightings.Calf, 
+                Cetacean_Sightings.Yoy
+            FROM Surveys
+            LEFT JOIN (
+                Survey_Sightings
+                LEFT JOIN (
+                    Cetaceans
+                    RIGHT JOIN Cetacean_Sightings ON Cetaceans.ID = Cetacean_Sightings.Cetaceans_ID
+                ) ON Survey_Sightings.ID = Cetacean_Sightings.Sighting_ID
+            ) ON Surveys.ID = Survey_Sightings.Project_ID
+            WHERE Survey_Sightings.FE_Species IN (#cetaceanSpeciesList#)
+            AND Surveys.IsDeleted != <cfqueryparam cfsqltype="cf_sql_bit" value="1">
+            AND Survey_Sightings.IsDeleted != <cfqueryparam cfsqltype="cf_sql_bit" value="1">
+            AND Cetaceans.Code != ''
+            ORDER BY DateSeen DESC
+        </cfquery>
+        
+        
+        <!--- Cetaceans.ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#Form.CetaceanId#'>
+        AND Surveys.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'> --->
+        <!--- <cfdump var="#getCetacean#" abort="true"> --->
+
+        <!--- <cfquery name="getfinflok" datasource="#variables.dsn#">
+            select *
+            from Fin_Fluke
+            where Species =<cfqueryparam cfsqltype="cf_sql_integer" value='#getCetacean.CetaceanSpecies#'>
+            order by Date asc
+        </cfquery>
+        <cfloop query="getCetacean">
+           <cfloop query="getfinflok">
+                <cfif getCetacean.DateSeen gte getfinflok.Date>
+                    <cfset querySetCell(getCetacean,"DScore" ,#getfinflok.DScore# )>
+                </cfif>
+           </cfloop>
+        </cfloop> --->
+        <cfreturn getCetacean>
+        <cfcatch>
+            <cfdump var="#cfcatch#" abort="true">    
+        </cfcatch>
+    </cftry>
     </cffunction>
 
     <cffunction name="getCetaceanFriends" access="public" returnformat="plain" output="true">
@@ -2043,7 +2158,7 @@
               
 
           </cfquery> --->
-          <cfquery name="qgetPermanentScar" datasource="#variables.dsn#">
+        <cfquery name="qgetPermanentScar" datasource="#variables.dsn#">
             SELECT PermanentScar.*, 
                    (SELECT STRING_AGG(TLU_ScarType.ScarTypeName, ', ') 
                     FROM TLU_ScarType 
@@ -2069,8 +2184,11 @@
                 ,Condition_Lesions.Status
                 ,Condition_Lesions.id
                 ,Condition_Lesions.PhotoNumber 
+                ,Condition_Lesions.SightingText 
                 ,Condition_Lesions.Region as CLRegion
                 ,Condition_Lesions.Comments 
+                ,Condition_Lesions.TypeName 
+                ,Condition_Lesions.permanentScar_date 
                 from Condition_Lesions
                 INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
                 INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
@@ -2091,6 +2209,15 @@
 
     <cffunction name="UpdateCetacean_LesionsByID" access="remote" returnformat="JSON" output="true">
         <!--- <cfdump var="#Cetacean_Survey#" abort='true'> --->
+
+        <cfif permanentScar_date neq '' >
+            <cfset permanentScar_date = permanentScar_date>
+        <cfelse>
+            <cfset permanentScar_date = ''>
+        </cfif>
+
+        <!--- <cfdump var="#permanentScar_date#" abort="true"> --->
+
         <cftry>
         <cfquery name="update_cetaceans"datasource="#variables.dsn#">
             UPDATE Condition_Lesions
@@ -2100,6 +2227,7 @@
             ,Region = '#region#'
             ,PhotoNumber = '#photoNumber#'
             ,Comments = '#comments#'
+            ,PermanentScar_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#permanentScar_date#" null="#IIF(len(trim(permanentScar_date)), false, true)#">
             WHERE ID = #ID#
         </cfquery>
         <cfcatch>

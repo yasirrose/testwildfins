@@ -16,7 +16,34 @@ $(document).ready(function () {
 //         document.getElementById('sightid').value = ret;
 //     }, 310);
 //     }
-
+$(document).ready(function() {
+    $('#LesionHistoryForm').DataTable({
+        "pageLength": 10,
+        "paging": false,
+        "info": false,
+        responsive: true,
+        "searching": false,
+        "order": [[0, 'asc']], 
+        "columnDefs": [
+            {
+                "targets": 0, // Date Seen column index (zero-based)
+                "type": "date",
+                "render": function(data, type, row) {
+                    // Parse the date in "mm/dd/yyyy" format to a JavaScript Date object
+                    var dateParts = data.split('/');
+                    if (dateParts.length === 3) {
+                        var year = dateParts[2];
+                        var month = dateParts[0];
+                        var day = dateParts[1];
+                        return month + '/' + day + '/' + year;
+                    } else {
+                        return data;
+                    }
+                }
+            }
+        ]
+    });
+});
 
     var handleBootstrapCombobox = function () {
         "use strict";
@@ -102,6 +129,10 @@ $(document).ready(function () {
 
     $(".multiple-select2").select2({
         placeholder: "Select a Cetacean Name/Code"
+    });
+
+    $(".multiple-search").select2({
+        placeholder: "Select a Cetacean Name/Codeeeee"
     });
 
 

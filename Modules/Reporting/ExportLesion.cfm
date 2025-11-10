@@ -1,4 +1,5 @@
-<cfif CGI.HTTP_REFERER eq '#Application.siteroot#index.cfm?Module=Reporting&Page=LesionsReport'>
+<!--- <cfdump var="#Application.siteroot#" abort="true"> --->
+<cfif CGI.HTTP_REFERER eq '#Application.siteroot#index.cfm?Module=Reporting&Page=LesionsReport' OR CGI.HTTP_REFERER eq 'https://test.wildfins.org/index.cfm?Module=Reporting&Page=LesionsReport'>
     <cfscript> 
         qFiltered1 = session.exportData;
         

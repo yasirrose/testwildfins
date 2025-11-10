@@ -2,7 +2,7 @@
    <cfif isdefined('form.PROJECT_ID') and form.project_id gt 0 and form.sight_id GT 0>
       <!-------------  Dolphine ---------------------------------->
       <cfparam name="form.PROJECT_ID" default="0">
-
+      
       <cfquery name="cetaceans" datasource="#Application.dsn#">
          select ID,Code,Name from Cetaceans order by Code ASC
       </cfquery>
@@ -18,6 +18,8 @@
          left join TLU_CetaceanSpecies on TLU_CetaceanSpecies.ID=Cetaceans.CetaceanSpecies  WHERE Cetacean_Sightings.Sighting_ID = #sight_id#  order by Cetacean_Sightings.Sighting_ID;
       </cfquery>
 
+      <!--- <cfdump var="#cetaceans_sight#" abort="true"> --->
+
       <cfquery name="getConditionLesions" datasource="#Application.dsn#">
          SELECT * FROM Condition_Lesions where Sighting_ID = #sight_id#
       </cfquery>
@@ -28,6 +30,7 @@
 
       <cfset getuserlist=Application.Accounts.getuserlist()>
       <cfset getLesionTypeData = Application.StaticDataNew.getLesionType()>
+      <cfset getScarTypeData = Application.StaticDataNew.getScarType()>
       <!---  Head Condition   --->
       <cfset getHeadNuchalCrest = Application.ConditionLesions.getHeadNuchalCrest()>
       <cfset getHeadLateralCervicalReg = Application.ConditionLesions.getHeadLateralCervicalReg()>
@@ -41,8 +44,35 @@
        <!---  Tail Condition   --->
       <cfset getTailTransversePro = Application.ConditionLesions.getTailTransversePro()>
 
+      <cfset qgetLesionScarType = Application.StaticDataNew.getLesionScarType()>
 
-      
+<!--- Separate data for Lesion and Scar types --->
+<cfset lesionTypeData = []>
+<cfset scarTypeData = []>
+
+<cfloop query="qgetLesionScarType">
+    <cfif Type EQ "Lesion">
+        <cfset ArrayAppend(lesionTypeData, {
+            ID = qgetLesionScarType.ID,
+            Name = qgetLesionScarType.Name,
+            Active = qgetLesionScarType.Active,
+            Type = qgetLesionScarType.Type
+        })>
+    <cfelseif Type EQ "Scar">
+        <cfset ArrayAppend(scarTypeData, {
+            ID = qgetLesionScarType.ID,
+            Name = qgetLesionScarType.Name,
+            Active = qgetLesionScarType.Active,
+            Type = qgetLesionScarType.Type
+        })>
+    </cfif>
+</cfloop>
+
+<!--- Output the separated data for debugging (optional) --->
+<!--- <cfdump var="#lesionTypeData#" >
+<cfdump var="#scarTypeData#" abort="true"> --->
+
+      <!--- <cfdump var="#getLesionTypeData#" abort="true"> --->
       
       
       <!---  Static data   --->
@@ -50,7 +80,7 @@
       <cfset bodyConditions = ['Emaciated','Underweight/Thin','Ideal','Overweight','Obese','CBD']>
       <cfset sides = ['L','R','L/R']>
 
-      <div id="cetacean" class="modal fade" role="dialog">
+      <div id="cetacean" class="modal fade" role="dialog" style="overflow:hidden;">
          <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
@@ -60,6 +90,28 @@
                </div>
 
                <style>
+                    .modal-body.cetaceansSighting_from {
+                        height: 89vh;
+                        overflow-y: auto !important;
+                    }
+                    .modal-body.cetaceansSighting_from::-webkit-scrollbar-track
+                    {
+                        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+                        background-color: ##F5F5F5;
+                    }
+
+                    .modal-body.cetaceansSighting_from::-webkit-scrollbar
+                    {
+                        width: 5px;
+                        background-color: ##F5F5F5;
+                    }
+
+                    .modal-body.cetaceansSighting_from::-webkit-scrollbar-thumb
+                    {
+                        border-radius: 10px;
+                        background-color: ##000000;
+                        border: 1px solid ##555555;
+                    }
                   .tddate{
                      width: 20% !important;
                   }
@@ -163,6 +215,8 @@
                   .dataTables_scroll .lison-history-responsive {
                      overflow: hidden;
                      overflow-x: auto;
+                     overflow-y: scroll;
+                     height: 300px;
                   }
                   .dataTables_scroll .lison-history-responsive .lesion-history-table {
                      width: 600px;
@@ -310,7 +364,27 @@
                                  </cfloop>
                               </select>
                            </div>
-                           
+
+                           <!--- <style>
+                              .select2-search__field {
+                                    pointer-events: auto !important;
+                                    position: relative;
+                                    z-index: 10000;
+                                 }
+                           </style> --->
+
+                           <!--- <select class="form-control multiple-search remove-multiple" id="" name="">
+                              <option value="">Select  Code</option>
+                              <option value="1">Code 1</option>
+                              <option value="2">Code 2</option>
+                              <option value="3">Code 3</option>
+                              <option value="4">Code 4</option>
+                              <option value="5">Code 5</option>
+                              <!--- <cfloop query="cetaceans">
+                                 <option value="#cetaceans.ID#"> #cetaceans.Name# | #cetaceans.Code# </option>
+                              </cfloop> --->
+                           </select> --->
+
                             <input type="hidden" name="set_cetacean_code" id="set_cetacean_code" value="0">     
 
                            <div class="form-group">
@@ -353,6 +427,8 @@
                                  <option value="1">Yes</option>
                                  <option value="2">No</option>
                                  <option value="3">Partial</option>
+                                 <option value="4">Mom Not Present</option>
+                                 <option value="5">CBD</option>
                               </select>
                            </div>
                            <div class="form-group">
@@ -528,6 +604,7 @@
                            </div>
                         </form>
                         <div id="condition_lesions_form_1">
+                           
                         </div>
                         <div id="condition_lesions_form">
                         <hr>
@@ -675,26 +752,24 @@
                               <div class="lesion-history-table">
                                  <div class="dataTables_scrollHead" >
                                     <div class="dataTables_scrollHeadInner" >
-                                    <table class="table table-striped table-bordered dataTable no-footer" role="grid">
+                                    <table  id="LesionHistoryForm" class="table table-striped table-bordered dataTable no-footer" role="grid">
                                        <thead>
                                           <tr role="row">
                                              <th  rowspan="1" colspan="1" >Date Seen</th>
                                              <th  rowspan="1" colspan="1" >Sighting No</th>
-                                             <th  rowspan="1" colspan="1" >Lesion Type</th>
+                                             <th  rowspan="1" colspan="1" >Type Name</th>
+                                             <th  rowspan="1" colspan="1" >Lesion/Scar Type</th>
                                              <th  rowspan="1" colspan="1" >Side</th>
                                              <th  rowspan="1" colspan="1" >Status</th>
                                              <th  rowspan="1" colspan="1" >Region</th>                                                
                                           </tr>
                                        </thead>
-                                    </table>
-                                    </div>
-                                 </div>
-                                 <div class="dataTables_scrollBody" style="position: relative; overflow: auto; max-height: 200px; width: 100%;">
-                                    <table class="table table-striped table-bordered dataTable no-footer dtr-inline" >
+
                                     <tbody id="lesion_table">
                                           
                                     </tbody>
                                     </table>
+                                 </div>
                                  </div>
                               </div>
                            </div>
@@ -725,21 +800,123 @@
                                     </select>
                                  </div>
                               </div>
+
+                              <div class="form-group">
+                                 <div class="label-wrap">
+                                    <label for="LesionScar_Type">Select Type:</label>
+                                 </div>
+                                 <div class="input-wrap">
+                                    <select class="form-control customLesionSelect" id="TypeName" name="TypeName" onchange="updateSecondDropdown()">
+                                       <option value="">Select  Type</option>
+                                       <option value="Lesion_Type">Lesion Type</option>
+                                       <option value="Scar_Type">Scar Type</option>
+                                       
+                                    </select>
+                                 </div>
+                              </div>
+
+                              <div class="form-group">
+                                 <div class="label-wrap">
+                                    <label for="Sighting Number">Sighting Number:</label>
+                                 </div>
+                                 <div class="input-wrap">
+                                    <input class="form-control" name="SightingText" id="SightingText" >
+                                 </div>
+                              </div>
+
                               <div class="form-group">
                                  <div class="label-wrap">
                                     <label for="body_condition">Lesion Type:</label>
                                  </div>
                                  <div class="input-wrap">
                                     <select class="form-control customLesionSelect" id="LesionType" name="LesionType">
-                                       <option value="">Select Lesion Type</option>
-                                       <cfloop query="getLesionTypeData">
-                                          <cfif Active eq 1>
-                                          <option value="#getLesionTypeData.LesionTypeName#">#getLesionTypeData.LesionTypeName#</option>
-                                          </cfif>
+                                       <option value="">Select Type</option>
+                                   </select>
+                                 </div>
+                              </div>
+
+                              <script>
+                                 // Preload data as JavaScript objects
+                                 const lesionTypeData = [
+                                     <cfloop array="#lesionTypeData#" index="lesion">
+                                         { id: "#lesion.ID#", name: "#lesion.Name#", active: #lesion.Active# },
+                                     </cfloop>
+                                 ];
+                             
+                                 const scarTypeData = [
+                                     <cfloop array="#scarTypeData#" index="scar">
+                                         { id: "#scar.ID#", name: "#scar.Name#", active: #scar.Active# },
+                                     </cfloop>
+                                 ];
+                             
+                                 // Function to update the second dropdown
+                                 function updateSecondDropdown() {
+                                     const selectedType = document.getElementById("TypeName").value;
+                                     const secondDropdown = document.getElementById("LesionType");
+                             
+                                     // Clear existing options
+                                     secondDropdown.innerHTML = '<option value="">Select Type</option>';
+                             
+                                     let data = [];
+                                     if (selectedType === "Lesion_Type") {
+                                         data = lesionTypeData.filter(item => item.active === 1);
+                                     } else if (selectedType === "Scar_Type") {
+                                         data = scarTypeData.filter(item => item.active === 1);
+                                     }
+                             
+                                     // Populate new options
+                                     data.forEach(item => {
+                                         const option = document.createElement("option");
+                                         option.value = item.name;
+                                         option.textContent = item.name;
+                                         secondDropdown.appendChild(option);
+                                     });
+
+                                       // const dateField = document.getElementById("permanentScar_date").closest('.form-group');
+                                       // const checkboxField = document.getElementById("permanentcheck").closest('.form-group');
+
+                                       // if (selectedType === "Scar_Type") {
+                                       //    dateField.style.display = 'block';
+                                       //    checkboxField.style.display = 'block';
+                                       // } else {
+                                       //    dateField.style.display = 'none';
+                                       //    checkboxField.style.display = 'none';
+                                       // }
+                                 }
+                             </script>
+
+
+                              <div class="form-group" >
+                                 <div class="label-wrap">
+                                    <label for="permanentScar_date"> Date:</label>
+                                 </div>
+                                 <div class="input-wrap">
+                                    <input type="date" class="form-control" id="permanentScar_date" name="permanentScar_date">
+                                 </div>
+                              </div>
+                              
+                              <div class="form-group" >
+                                 <div style="display: flex;">
+                                    <label for="permanentcheck">Check Permanent Scar:</label>
+                                    <input type="checkbox" style="margin-left: 20px; margin-top: -5px;" id="permanentcheck" name="permanentcheck">
+                                 </div>
+                                 
+                              </div>
+
+                              <div class="form-group">
+                                 <div class="label-wrap">
+                                    <label for="Side">Side:</label>
+                                 </div>
+                                 <div class="input-wrap">
+                                    <select class="form-control customLesionSelect" id="Side" name="Side">
+                                       <option value="">Select Side</option>
+                                       <cfloop from="1" to="#ArrayLen(sides)#" index="j">
+                                          <option value="#sides[j]#">#sides[j]#</option>
                                        </cfloop>
                                     </select>
                                  </div>
                               </div>
+
                               <div class="form-group">
                                  <div class="label-wrap">
                                     <label for="region">Region:</label>
@@ -754,19 +931,7 @@
                                     </select>
                                  </div>
                               </div>
-                              <div class="form-group">
-                                 <div class="label-wrap">
-                                    <label for="Side">Side:</label>
-                                 </div>
-                                 <div class="input-wrap">
-                                    <select class="form-control customLesionSelect" id="Side" name="Side">
-                                       <option value="">Select Side</option>
-                                       <cfloop from="1" to="#ArrayLen(sides)#" index="j">
-                                          <option value="#sides[j]#">#sides[j]#</option>
-                                       </cfloop>
-                                    </select>
-                                 </div>
-                              </div>
+
                               <div class="form-group">
                                  <div class="label-wrap">
                                     <label for="Status">Status:</label>
@@ -900,7 +1065,9 @@
                                        <cfelseif cetaceans_sight.wMomDropDown eq 3>
                                           Partial
                                        <cfelseif cetaceans_sight.wMomDropDown eq 4>
-                                          Partial
+                                          Mom Not Present   
+                                       <cfelseif cetaceans_sight.wMomDropDown eq 5>
+                                          CBD   
                                        </cfif>
                                     </div>
                                     <div class="col-md-1 CL Note_#cetaceans_sight.ID#">#cetaceans_sight.Note#</div> 
@@ -1097,7 +1264,123 @@
                                     </select>
                                  </div>
                               </div>
-                        <div class="form-group">
+
+                              
+
+                              <div class="form-group">
+                                 <div class="label-wrap">
+                                    <label for="LesionScar_Type">Select Type:</label>
+                                 </div>
+                                 <div class="input-wrap">
+                                    <select class="form-control customLesionSelect" id="TypeName" name="TypeName" disabled>
+                                       <option value="">Select  Type</option>
+                                       <option value="Lesion_Type">Lesion Type</option>
+                                       <option value="Scar_Type">Scar Type</option>
+                                       
+                                    </select>
+                                 </div>
+                              </div>
+
+                              <div class="form-group">
+                                 <div class="label-wrap">
+                                    <label for="Sighting Number">Sighting Number:</label>
+                                 </div>
+                                 <div class="input-wrap">
+                                    <input class="form-control" name="SightingText" id="SightingText" >
+                                 </div>
+                              </div>
+
+                              <div class="form-group" id="LesioyTypeDisplay" >
+                                 <div class="label-wrap">
+                                    <label for="body_condition">Lesion/Scar Type:</label>
+                                 </div>
+                                 <div class="input-wrap">
+                                    <!--- <cfdump var="#lesionTypeData#"> --->
+                                    <select class="form-control customLesionSelect" id="LesionType" name="LesionType" >
+                                       <option value="">Select Lesion/Scar Type</option>
+                                       <cfloop query="getLesionTypeData">
+                                          <cfif Active eq 1>
+                                          <option value="#getLesionTypeData.LesionTypeName#">#getLesionTypeData.LesionTypeName#</option>
+                                          </cfif>
+                                       </cfloop>
+                                    </select>
+                                 </div>
+                              </div>
+
+                              <div class="form-group" id="ScarTypeDisplay" >
+                                 <div class="label-wrap">
+                                    <label for="body_condition">Lesion/Scar Type:</label>
+                                 </div>
+                                 <div class="input-wrap">
+                                    <!--- <cfdump var="#lesionTypeData#"> --->
+                                    <select class="form-control customLesionSelect" id="ScarType" name="ScarType" >
+                                       <option value="">Select Lesion Type</option>
+                                       <cfloop query="getScarTypeData">
+                                          <cfif Active eq 1>
+                                          <option value="#getScarTypeData.ScarTypeName#">#getScarTypeData.ScarTypeName#</option>
+                                          </cfif>
+                                       </cfloop>
+                                    </select>
+                                 </div>
+                              </div>
+
+                              <div class="form-group" id="SetPermanentScar">
+                                 <div class="label-wrap">
+                                    <label for="permanentScar_date"> Date:</label>
+                                 </div>
+                                 <div class="input-wrap">
+                                    <input type="date" class="form-control" id="permanentScar_date" name="permanentScar_date">
+                                 </div>
+                              </div>
+                              
+                              <div class="form-group" id="SetPermanentScar">
+                                 <div style="display: flex;">
+                                    <label for="permanentcheck">Check Permanent Scar:</label>
+                                    <input type="checkbox"  style="margin-left: 20px; margin-top: -5px;" id="permanentcheck" name="permanentcheck">
+                                 </div>
+                                 
+                              </div>
+
+                              <!--- <script>
+                                 // Preload data as JavaScript objects
+                                 const lesionTypeData = [
+                                     <cfloop array="#lesionTypeData#" index="lesion">
+                                         { id: "#lesion.ID#", name: "#lesion.Name#", active: #lesion.Active# },
+                                     </cfloop>
+                                 ];
+                             
+                                 const scarTypeData = [
+                                     <cfloop array="#scarTypeData#" index="scar">
+                                         { id: "#scar.ID#", name: "#scar.Name#", active: #scar.Active# },
+                                     </cfloop>
+                                 ];
+                             
+                                 // Function to update the second dropdown
+                                 function updateSecondDropdown() {
+                                     const selectedType = document.getElementById("TypeName").value;
+                                     const secondDropdown = document.getElementById("LesionType");
+                             
+                                     // Clear existing options
+                                     secondDropdown.innerHTML = '<option value="">Select Type</option>';
+                             
+                                     let data = [];
+                                     if (selectedType === "Lesion_Type") {
+                                         data = lesionTypeData.filter(item => item.active === 1);
+                                     } else if (selectedType === "Scar_Type") {
+                                         data = scarTypeData.filter(item => item.active === 1);
+                                     }
+                             
+                                     // Populate new options
+                                     data.forEach(item => {
+                                         const option = document.createElement("option");
+                                         option.value = item.name;
+                                         option.textContent = item.name;
+                                         secondDropdown.appendChild(option);
+                                     });
+                                 }
+                             </script> --->
+
+                        <!--- <div class="form-group">
                            <div class="label-wrap">
                               <label for="body_condition">Lesion Type:</label>
                            </div>
@@ -1112,7 +1395,7 @@
                                  </cfloop>
                               </select>
                            </div>
-                        </div>
+                        </div> --->
                         <div class="form-group">
                            <div class="label-wrap">
                               <label for="region">Region:</label>

@@ -108,7 +108,8 @@
         <cfelse>
             <cfset Cetacean_SightingID = '0'>
         </cfif>
-<!---         <cfdump var="#qgetCetacean_code#" abort="true"> --->
+
+        
         
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -125,6 +126,40 @@
             <cfparam name="Status" default="">
             <cfparam name="PhotoNumber" default="">
             <cfparam name="Comments" default="">
+            <cfparam name="TypeName" default="">
+            <cfparam name="EnterDate" default="">
+            <cfparam name="permanentcheck" default="off">
+            <cfparam name="permanentScar_date" default="">
+            <cfparam name="sightingtext" default="">
+
+            <!--- <cfdump var="#form.sightingtext#" abort="true"> --->
+            
+                <cfif isDefined('form.permanentcheck') >
+                    <cfset permanentcheck = 'on'>
+                <cfelse>
+                    <cfset permanentcheck = 'off'>
+                </cfif>
+
+                <!--- <cfset permanentScar_date_null = IIF(isDefined("form.permanentScar_date") AND len(trim(form.permanentScar_date)), form.permanentScar_date, DE(""))> --->
+
+
+            <!--- <cfdump var="#permanentcheck#" abort="true"> --->
+            <!--- <cfdump var="#form.permanentScar_date#" > --->
+            
+            <!--- <cfif isdefined('form.permanentScar_date') >
+                <cfset permanentScar_date = form.permanentScar_date>
+            <cfelse>
+                <cfset permanentScar_date = ''>
+            </cfif> --->
+
+            <cfif isdefined('form.PermanentScar_date') AND len(trim(form.PermanentScar_date)) GT 0>
+                <cfset permanentScar_date = form.PermanentScar_date>
+                <cfset isNullPermanentScar = false>
+            <cfelse>
+                <cfset permanentScar_date = "">
+                <cfset isNullPermanentScar = true>
+            </cfif>
+
             <cfquery name="insert_lesions" datasource="#variables.dsn#" result='get_res'>
                 insert into Condition_Lesions (
                  Cetaceans_ID,
@@ -137,7 +172,13 @@
                  PhotoNumber,
                  Comments,
                  Cetacean_SightingsID,
-                 User_Name
+                 User_Name,
+                 TypeName,
+                 EnterDate,
+                 PermanentScar_date,
+                 Permanentcheck,
+                 SightingText
+                 
                 )
                 values(
                 <cfqueryparam  cfsqltype="cf_sql_varchar" value='#cl_cs_code#'>,
@@ -150,7 +191,13 @@
                 <cfqueryparam  cfsqltype="cf_sql_varchar" value='#PhotoNumber#'>,
                 <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Form.Comments#'>,
                 <cfqueryparam  cfsqltype="cf_sql_integer" value='#Cetacean_SightingID#'>,
-                <cfqueryparam  cfsqltype="cf_sql_varchar" value='#userinfo.USER_ID# _ #CompletedBy#'>
+                <cfqueryparam  cfsqltype="cf_sql_varchar" value='#userinfo.USER_ID# _ #CompletedBy#'>,
+                <cfqueryparam  cfsqltype="cf_sql_varchar" value='#form.TypeName#'>,
+                <cfqueryparam cfsqltype="cf_sql_timestamp" value="#Now()#">,
+                <cfqueryparam cfsqltype="cf_sql_date" value="#permanentScar_date#" null="#isNullPermanentScar#">,
+                <cfqueryparam cfsqltype="cf_sql_varchar" value="#permanentcheck#">,
+                <cfqueryparam cfsqltype="cf_sql_varchar" value="#sightingtext#">
+                
             )
             </cfquery>
             <cfif get_res.RECORDCOUNT eq 1 >
@@ -171,15 +218,40 @@
         <cfoutput>
             <cfparam name="lesion_Id" default="0">
             <cfparam name="Region" default="">
+
+            <cfif isDefined('form.LesionType') and LesionType NEQ ''>
+                <cfset LesionScar = form.LesionType>
+            <cfelse>
+                    <cfset LesionScar = form.scarType>
+            </cfif>
+
+            <cfif isDefined('form.permanentcheck') >
+                <cfset permanentcheck = 'on'>
+            <cfelse>
+                <cfset permanentcheck = 'off'>
+            </cfif>
+
+            <!--- <cfset permanentScar_date = IIF(isDefined("form.permanentScar_date") AND len(trim(form.permanentScar_date)), form.permanentScar_date, now())> --->
+
+            <cfif isdefined('form.permanentScar_date') >
+                <cfset permanentScar_date = form.permanentScar_date>
+            <cfelse>
+                <cfset permanentScar_date = ''>
+            </cfif>
+                
             <cfquery name="update_lesions" datasource="#variables.dsn#" result='get_res'>
                 update  Condition_Lesions set
                  LesionPresent =  <cfqueryparam  cfsqltype="cf_sql_varchar" value='#LesionPresent#'>,
-                 LesionType =  <cfqueryparam  cfsqltype="cf_sql_varchar" value='#LesionType#'>,
+                 LesionType =  <cfqueryparam  cfsqltype="cf_sql_varchar" value='#LesionScar#'>,
                  Region =  <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Region#' null="#IIF(Region EQ "" AND Region EQ " ", true, false)#">,
                  Side_L_R =  <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Side#'>,
                  Status  = <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Status#'>,
                  PhotoNumber = <cfqueryparam  cfsqltype="cf_sql_varchar" value='#PhotoNumber#'>,
-                 Comments =  <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Comments#'>
+                 Comments =  <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Comments#'>,
+                 SightingText =  <cfqueryparam  cfsqltype="cf_sql_varchar" value='#SightingText#'>,
+                 PermanentScar_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#permanentScar_date#" null="#IIF(len(trim(permanentScar_date)), false, true)#">,
+                 Permanentcheck =  <cfqueryparam cfsqltype="cf_sql_varchar" value="#Permanentcheck#">
+                
                  where ID =<cfqueryparam  cfsqltype="cf_sql_integer" value='#lesion_Id#'>
             </cfquery>
 
@@ -210,10 +282,12 @@
         <cfquery name="getLesion" datasource="#variables.dsn#">
             select * from Condition_Lesions where ID = #Lesion_ID#
         </cfquery>
+        
         <cfset response = StructNew()>
         <cfset response["ID"] = #getLesion.ID#>
         <!--- <cfset response["BodyCondition"] = #getLesion.BodyCondition#>  --->
         <cfset response["LesionPresent"] = #getLesion.LesionPresent#> 
+        <cfset response["TypeName"] = #getLesion.TypeName#>
         <cfset response["LesionType"] = #getLesion.LesionType#>
         <cfset response["Region"] = #getLesion.Region#>
         <cfset response["Side_L_R"] = #getLesion.Side_L_R#>
@@ -221,6 +295,9 @@
         <cfset response["Sighting_ID"] = #getLesion.Sighting_ID#>
         <cfset response["PhotoNumber"] = #getLesion.PhotoNumber#>
         <cfset response["Comments"] = #getLesion.Comments#>
+        <cfset response["permanentcheck"] = #getLesion.permanentcheck#>
+        <cfset response["permanentScar_date"] = #getLesion.permanentScar_date#>
+        <cfset response["SightingText"] = #getLesion.SightingText#>
         <!--- <cfset response["Head_NuchalCrest"] = #getLesion.Head_NuchalCrest#>
         <cfset response["Head_LateralCervicalReg"] = #getLesion.Head_LateralCervicalReg#>
         <cfset response["Head_FacialBones"] = #getLesion.Head_FacialBones#>
@@ -236,6 +313,7 @@
       <cffunction name="getRegionNamebyId" access="remote" returnformat="plain" output="true">
         <cfargument name="RegionID" type="any" required="true" default=""> 
         <cfset selectedRegions = "">
+
         <cfif #getConditionLesions.Region# NEQ "">
             <cfquery name="getRegionNames" datasource="#variables.dsn#">
                     SELECT RegionName from TLU_Regions WHERE ID in (#RegionID#)
@@ -243,7 +321,23 @@
             <cfset selectedRegions = ValueList(getRegionNames.RegionName,", ")>
         </cfif>
         <cfreturn selectedRegions> 
+        
     </cffunction>  
+
+    <cffunction name="getRegionNamebyIdWithSDRs" access="remote" returnformat="plain" output="true">
+        <cfargument name="RegionID" type="any" required="true" default=""> 
+        <cfset selectedRegions = "">
+
+        <cfif #RegionID# NEQ "">
+            <cfquery name="getRegionNames" datasource="#variables.dsn#">
+                    SELECT RegionName from TLU_Regions WHERE ID in (#RegionID#)
+            </cfquery>
+            <cfset selectedRegions = ValueList(getRegionNames.RegionName,", ")>
+        </cfif>
+        <cfreturn selectedRegions> 
+        
+    </cffunction>  
+
     <cffunction name="getRegionNamebyIdJSON" access="remote"  output="true">
         <cfargument name="RegionID" type="any" required="true" default="0">
         <cfif #RegionID# eq "">
@@ -269,6 +363,8 @@
                 and 
                 Cetacean_Sightings.Cetaceans_ID = #cl_cs_Id#
             </cfquery>
+
+            <!--- <cfdump var="testingg222" abort="true"> --->
           
                 <div id="lesion_history" class="modal fade" role="dialog">
                 <div class="modal-dialog">
@@ -278,9 +374,11 @@
                         <h4 class="modal-title">Lesion History Table</h4>
                         <div class="del_lesion" style="display:none"></div>
                     </div>
+                    
                     <div class="modal-body" style="overflow:hidden">
                         <cfif getConditionLesions.recordcount gt 0>
                         <cfset lastRow = getConditionLesions.recordcount>
+                        
                             <div class="row panel-heading" style="background:##011A35;overflow:hidden;color:##fff">
                                 <div class="col-md-1">Sr##</div>
                                 <div class="col-md-1">Lesion Present</div>
@@ -290,6 +388,7 @@
                                 <div class="col-md-2">Status</div>
                                 <div class="col-md-2">Actions</div>
                             </div>
+                            
                             <cfset i=0>
                             <div class="history_section">
                                 <cfloop query="getConditionLesions">
@@ -313,11 +412,13 @@
                                     </div>
                                 </div>
                                 </cfloop>
-                        </div>
+                            </div>
+                          
                         <cfelse>
                             <h2 style="text-align:center;color:red">There is no Lesions added yet!</h2>
                         </cfif>
                     </div>
+                
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default closeLesionHistoryModal">Close</button>
                     </div>
@@ -333,12 +434,24 @@
         <cfoutput> 
         <cfset  permissions ="#session['userdetails']['permissions']#">
 
+        <cfset currentDateOnly = DateFormat(Now(), "yyyy-mm-dd")>
+                <!--- <cfdump var="#currentDateOnly#" abort="true"> --->
+
             <cfquery name="getConditionLesions" datasource="#variables.dsn#">
-                select * from Condition_Lesions 
+                select  Condition_Lesions.*, 
+                    Survey_Sightings.SightingNumber as sighting_Number
+                FROM 
+                    Condition_Lesions
+                INNER JOIN 
+                    Survey_Sightings 
+                    ON Condition_Lesions.Sighting_ID = Survey_Sightings.id
                 where Condition_Lesions.Sighting_ID  = '#Sightningid#'
                 and 
                 Condition_Lesions.Cetaceans_ID = '#cl_cs_code#'
+               
             </cfquery>
+
+        <!--- <cfdump var="#getConditionLesions.sighting_Number#" > --->
 
                     <div class="">
                         <hr>
@@ -348,43 +461,71 @@
                             <div class="condition-details">
                         
                         <cfset lastRow = getConditionLesions.recordcount>
-                            <div class="row panel-heading" style="background:##011A35;overflow:hidden;color:##fff">
+                            <table class="table table-bordered table-striped" id="body_lesionssss" >
+                                
+                                <thead>
+                                    <!--- <div class="row panel-heading" style="background:##011A35;overflow:hidden;color:##fff"> --->
+                                    <tr>
+                           
                                 <!--- <div class="col-md-1">Sr##</div> --->
-                                <div class="col-md-1">Lesion Present</div>
-                                <div class="col-md-3">Lesion Type</div>
-                                <div class="col-md-1">Region</div>
-                                <div class="col-md-1">Side</div>
-                                <div class="col-md-1">Status</div>
-                                <div class="col-md-1">Photo Number</div>
-                                <div class="col-md-2">Comments</div>
-                                <div class="col-md-1">Actions</div>
-                            </div>
+                                <th style="background-color:##011A35; color:white;" >Lesion Present</th>
+                                <th style="background-color:##011A35; color:white;" >Sighting Number</th>
+                                <th style="background-color:##011A35; color:white;"> Type </th>
+                                <th style="background-color:##011A35; color:white;">Lesion/Scar Type</th>
+                                <th style="background-color:##011A35; color:white;">Region</th>
+                                <th style="background-color:##011A35; color:white;">Side</th>
+                                <th style="background-color:##011A35; color:white;">Status</th>
+                                <th style="background-color:##011A35; color:white;">Photo Number</th>
+                                <th style="background-color:##011A35; color:white;">Comments</th>
+                                <th style="background-color:##011A35; color:white;">Actions</th>
+                            
+                            </tr>
+                        <!--- </div> --->
+                            </thead>
+                        
+
+                            <tbody>
                             <cfset i=0>
                             <div class="history_section1">
                                 <cfloop query="getConditionLesions">
                                 <cfset i=i+1>
                                 <div class="row" id="lesionHistoryNew_#i#">
-                                    <div class="col-md-12 panel-heading p-10 m-b-5" style="background:##ccc;">
+                                    <!--- <div class="col-md-12 panel-heading p-10 m-b-5" style="background:##ccc;"> --->
+                                    <tr>
+                                    
                                         <!--- <div class="col-md-1 CL" >#i#</div> --->
-                                         <div class="col-md-1 CL" id="LesionPresent_#getConditionLesions.ID#">#getConditionLesions.LesionPresent#</div>
-                                        <div class="col-md-3 CL" id="LesionType_#getConditionLesions.ID#">#getConditionLesions.LesionType#</div> 
-                                        <div class="col-md-1 CL" id="Region_#getConditionLesions.ID#">#getRegionNamebyId(getConditionLesions.Region)#</div> 
-                                        <div class="col-md-1 CL" id="Side_L_R_#getConditionLesions.ID#">#getConditionLesions.Side_L_R#</div> 
-                                        <div class="col-md-1 CL" id="Status_#getConditionLesions.ID#">#getConditionLesions.Status#</div>
-                                        <div class="col-md-1 CL" id="PhotoNumber_#getConditionLesions.ID#">#getConditionLesions.PhotoNumber#</div>
-                                        <div class="col-md-2 CL" id="Comments_#getConditionLesions.ID#">#Left(getConditionLesions.Comments,10)#<cfif len(getConditionLesions.Comments) gt 10>
-                                        ...</cfif></div>
-                                        <div class="col-md-1 CL">
+                                        <td class=" CL" id="LesionPresent_#getConditionLesions.ID#" style="background-color:##ccc;">#getConditionLesions.LesionPresent#</td>
+                                        <td class=" CL" id="sightingtext_#getConditionLesions.ID#" style="background-color:##ccc;">
+                                            <cfif getConditionLesions.sightingtext NEQ ''>
+                                                #getConditionLesions.sightingtext#
+                                            <cfelse>
+                                                #getConditionLesions.sighting_Number#
+                                            </cfif>
+                                            <!--- #getConditionLesions.sighting_Number# --->
+                                        </td>
+                                        <td class=" CL" id="TypeName_#getConditionLesions.ID#" style="background-color:##ccc;">#getConditionLesions.TypeName#</td> 
+                                        <td class=" CL" id="LesionType_#getConditionLesions.ID#" style="background-color:##ccc;">#getConditionLesions.LesionType#  </td> 
+                                        <td class=" CL" id="Region_#getConditionLesions.ID#" style="background-color:##ccc;">#getRegionNamebyId(getConditionLesions.Region)#</td> 
+                                        <td class=" CL" id="Side_L_R_#getConditionLesions.ID#" style="background-color:##ccc;">#getConditionLesions.Side_L_R#</td> 
+                                        <td class=" CL" id="Status_#getConditionLesions.ID#" style="background-color:##ccc;">#getConditionLesions.Status#</td>
+                                        <td class=" CL" id="PhotoNumber_#getConditionLesions.ID#" style="background-color:##ccc;">#getConditionLesions.PhotoNumber#</td>
+                                        <td class=" CL" id="Comments_#getConditionLesions.ID#" style="background-color:##ccc;">#Left(getConditionLesions.Comments,10)#<cfif len(getConditionLesions.Comments) gt 10>
+                                        ...</cfif></td>
+                                        <td class=" CL" style="background-color:##ccc;">
                                             <div class="col-mad-6" style="display:inline-block;padding-right: 3px;">
                                             <button class="btn btn-xs btn-primary" type="button" <cfif permissions eq "full_access" or findNoCase("Modify/Update S-S-C", permissions) neq 0>onclick="getSingleLesion_Record(#ID#)"</cfif> id="add_model_class"><i class="fa fa-pencil-square-o"></i></button><br>
                                             </div> 
                                             <div class="col-mad-6" style="display:inline-block">
                                             <button type="button" class="btn btn-xs btn-primary" <cfif permissions eq "full_access" or findNoCase("Delete S-S-C", permissions) neq 0> onclick="deleteLesion_Record_New(#ID#, #i#)"</cfif>><i class="glyphicon glyphicon-trash"></i></button>
                                             </div>
-                                        </div>
-                                    </div>
+                                        </td>
+                                    
+                                    </tr>
+                                  <!--- </div> --->
                                 </div>
-                                </cfloop>
+                            </cfloop>
+                        </tbody>
+                        </table>
                         </div>
                         <cfelse>
                             <h2 style="text-align:center;color:red">There is no Lesions added yet!</h2>
@@ -394,6 +535,118 @@
                     </div>
         </cfoutput>
     </cffunction>
+
+
+
+    <cffunction name="getlesionsListHistoryWithSDRs" access="remote" returnformat="plain" output="true">
+        <cfargument name="cl_cs_Id" type="any" required="true" default=""> 
+        <cfargument name="Sightningid" type="any" required="true" default=""> 
+        <cfoutput> 
+        <cfset  permissions ="#session['userdetails']['permissions']#">
+
+        <cfset currentDateOnly = DateFormat(Now(), "yyyy-mm-dd")>
+                <!--- <cfdump var="#currentDateOnly#" abort="true"> --->
+
+            <cfquery name="getConditionLesionsWithSDRs" datasource="#variables.dsn#">
+              select  Condition_Lesions.*, 
+                    Survey_Sightings.SightingNumber as sighting_Number
+                FROM 
+                    Condition_Lesions
+                INNER JOIN 
+                    Survey_Sightings 
+                    ON Condition_Lesions.Sighting_ID = Survey_Sightings.id
+                where Condition_Lesions.Sighting_ID  = '#Sightningid#'
+                and 
+                Condition_Lesions.Cetaceans_ID = '#cl_cs_code#'
+                and Condition_Lesions.EnterDate = '#currentDateOnly#'
+            </cfquery>
+
+                            
+                        <!--- <cfdump var="test" abort="true"> --->
+                    <div class="">
+                        <hr>
+                         <h3>Body Condition and Lesions History Table</h3>
+                         <cfif getConditionLesionsWithSDRs.recordcount gt 0>
+                        <div class="comdition-lesions">
+                            <div class="condition-details">
+                        
+                        <cfset lastRow = getConditionLesionsWithSDRs.recordcount>
+                            <table class="table table-bordered table-striped" id="body_lesionssss" >
+                                
+                                <thead>
+                                    <!--- <div class="row panel-heading" style="background:##011A35;overflow:hidden;color:##fff"> --->
+                                    <tr>
+                           
+                                <!--- <div class="col-md-1">Sr##</div> --->
+                                <th style="background-color:##011A35; color:white;" >Lesion Present</th>
+                                <th style="background-color:##011A35; color:white;" >Sighting Number</th>
+                                <th style="background-color:##011A35; color:white;"> Type </th>
+                                <th style="background-color:##011A35; color:white;">Lesion/Scar Type</th>
+                                <th style="background-color:##011A35; color:white;">Region</th>
+                                <th style="background-color:##011A35; color:white;">Side</th>
+                                <th style="background-color:##011A35; color:white;">Status</th>
+                                <th style="background-color:##011A35; color:white;">Photo Number</th>
+                                <th style="background-color:##011A35; color:white;">Comments</th>
+                                <th style="background-color:##011A35; color:white;">Actions</th>
+                            
+                            </tr>
+                        <!--- </div> --->
+                            </thead>
+                        
+
+                            <tbody>
+                            <cfset i=0>
+                            <div class="history_section1">
+                                <cfloop query="getConditionLesionsWithSDRs">
+                                <cfset i=i+1>
+                                <div class="row" id="lesionHistoryNew_#i#">
+                                    <!--- <div class="col-md-12 panel-heading p-10 m-b-5" style="background:##ccc;"> --->
+                                    <tr>
+                                    
+                                        <!--- <div class="col-md-1 CL" >#i#</div> --->
+                                        <td class=" CL" id="LesionPresent_#getConditionLesionsWithSDRs.ID#" style="background-color:##ccc;">#getConditionLesionsWithSDRs.LesionPresent#</td>
+                                        <td class=" CL" id="sightingtext_#getConditionLesionsWithSDRs.ID#" style="background-color:##ccc;">
+                                            <cfif getConditionLesionsWithSDRs.sightingtext NEQ ''>
+                                                #getConditionLesionsWithSDRs.sightingtext#
+                                            <cfelse>
+                                                #getConditionLesionsWithSDRs.sighting_Number#
+                                            </cfif>
+                                            <!--- #getConditionLesionsWithSDRs.sightingtext# --->
+                                        </td>
+                                        <td class=" CL" id="TypeName_#getConditionLesionsWithSDRs.ID#" style="background-color:##ccc;">#getConditionLesionsWithSDRs.TypeName#</td> 
+                                        <td class=" CL" id="LesionType_#getConditionLesionsWithSDRs.ID#" style="background-color:##ccc;">#getConditionLesionsWithSDRs.LesionType#</td> 
+                                        <td class=" CL" id="Region_#getConditionLesionsWithSDRs.ID#" style="background-color:##ccc;">#getRegionNamebyIdWithSDRs(getConditionLesionsWithSDRs.Region)#</td> 
+                                        <td class=" CL" id="Side_L_R_#getConditionLesionsWithSDRs.ID#" style="background-color:##ccc;">#getConditionLesionsWithSDRs.Side_L_R#</td> 
+                                        <td class=" CL" id="Status_#getConditionLesionsWithSDRs.ID#" style="background-color:##ccc;">#getConditionLesionsWithSDRs.Status#</td>
+                                        <td class=" CL" id="PhotoNumber_#getConditionLesionsWithSDRs.ID#" style="background-color:##ccc;">#getConditionLesionsWithSDRs.PhotoNumber#</td>
+                                        <td class=" CL" id="Comments_#getConditionLesionsWithSDRs.ID#" style="background-color:##ccc;">#Left(getConditionLesionsWithSDRs.Comments,10)#<cfif len(getConditionLesionsWithSDRs.Comments) gt 10>
+                                        ...</cfif></td>
+                                        <td class=" CL" style="background-color:##ccc;">
+                                            <div class="col-mad-6" style="display:inline-block;padding-right: 3px;">
+                                            <button class="btn btn-xs btn-primary" type="button" <cfif permissions eq "full_access" or findNoCase("Modify/Update S-S-C", permissions) neq 0>onclick="getSingleLesion_Record(#ID#)"</cfif> id="add_model_class"><i class="fa fa-pencil-square-o"></i></button><br>
+                                            </div> 
+                                            <div class="col-mad-6" style="display:inline-block">
+                                            <button type="button" class="btn btn-xs btn-primary" <cfif permissions eq "full_access" or findNoCase("Delete S-S-C", permissions) neq 0> onclick="deleteLesion_Record_New(#ID#, #i#)"</cfif>><i class="glyphicon glyphicon-trash"></i></button>
+                                            </div>
+                                        </td>
+                                    
+                                    </tr>
+                                  <!--- </div> --->
+                                </div>
+                            </cfloop>
+                        </tbody>
+                        </table>
+                        </div>
+                        <cfelse>
+                            <h2 style="text-align:center;color:red">There is no Lesions added yet!</h2>
+                        </cfif>
+                            </div>
+                        </div>
+                    </div>
+        </cfoutput>
+    </cffunction>
+
+
 
 </cfcomponent>
 

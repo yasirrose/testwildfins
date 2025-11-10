@@ -65,7 +65,7 @@
                 SELECT CNRDATE as cnrdate, ID as cnID  from ST_CetaceanNecropsyReport 
                 where fnumber = '#form.FNUMBER#'            
             </cfquery>
-            <!--- <cfdump var="#qgetcetaceanNecropsyDate#" abort="true"> Nouman--->
+            
             <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
                 <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
                     UPDATE  ST_CetaceanNecropsyReport SET
@@ -304,7 +304,6 @@
                     WHERE
                         ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
                 </cfquery>
-                <!--- <cfdump var="#return_data#" abort="true"> Nouman--->
             </cfif>
             <cfcatch>
                 <cfdump var="#cfcatch#" abort="true">
@@ -392,6 +391,147 @@
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.ID#'>
         </cfquery>
+
+         <!--- <cfset var tables = [
+            "ST_HIForm",
+            "ST_LevelAForm",
+            "ST_HistoForm",
+            "ST_Blood_Values",
+            "ST_Toxicology",
+            "ST_Ancillary_Diagnostics",
+            "ST_SampleArchive",
+            "ST_CetaceanNecropsyReport",
+            "ST_Morphometrics"
+        ]>
+
+
+
+
+        <cfloop array="#tables#" index="tbl">
+            <!--- Step 1: Check if record exists based on Fnumber --->
+            <cfquery name="qGetRecord" datasource="#variables.dsn#">
+                SELECT ID FROM #tbl#
+                WHERE Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.Fnumber#">
+                and 
+                <cfif tbl EQ 'ST_Morphometrics' OR tbl EQ 'ST_CetaceanNecropsyReport'>
+                    deleted IS NULL
+                <cfelse>
+                    deleted != '1'
+                </cfif>
+            </cfquery>
+
+            <cfif qGetRecord.recordCount>
+                <!--- Step 2: If record found, update --->
+                <cfquery datasource="#variables.dsn#">
+                    UPDATE #tbl# SET
+                        date = <cfqueryparam cfsqltype="CF_SQL_DATE" value='#FORM.date#'>,
+                        ResearchTeam = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ResearchTeam#'>,
+                        Veterinarian = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Veterinarian#'>,
+                        BodyOfWater = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BodyOfWater#'>,
+                        species = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.species#'>,
+                        StTpye = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.StTpye#'>,
+                        NOAAStock = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NOAAStock#'>,
+                        Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Fnumber#'>,
+                        NMFS = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NMFS#'>,
+                        NDB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NDB#'>,
+                        NAA = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NAA#'>,
+                        code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.code#'>,
+                        hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.hera#'>,
+                        sex = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.sex#'>,
+                        ageClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ageClass#'>,
+                        Location = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Location#'>,
+                        lat = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.lat#'>,
+                        lon = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.lon#'>,
+                        county = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.county#'>,
+                        InitialCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.InitialCondition#'>,
+                        FinalCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.FinalCondition#'>,
+                        BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>,
+                        <cfif tbl NEQ 'ST_CetaceanNecropsyReport'>
+                             CompletedBy = <cfqueryparam cfsqltype="cf_sql_varchar" value='#CompletedBy#'>,
+                        </cfif>
+                        affiliatedID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.affiliatedID#'>,
+                        actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>,
+                        headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                    WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetRecord.ID#">
+                </cfquery>
+            <cfelse>
+                <!--- Step 3: If no record, insert new --->
+                <cfquery datasource="#variables.dsn#">
+                    INSERT INTO #tbl# (
+                        date,
+                        ResearchTeam,
+                        Veterinarian,
+                        BodyOfWater,
+                        species,
+                        StTpye,
+                        NOAAStock,
+                        Fnumber,
+                        NMFS,
+                        NDB,
+                        NAA,
+                        code,
+                        hera,
+                        sex,
+                        ageClass,
+                        Location,
+                        lat,
+                        lon,
+                        county,
+                        InitialCondition,
+                        FinalCondition,
+                        BriefHistory,
+                        <cfif tbl NEQ 'ST_CetaceanNecropsyReport'>
+                             CompletedBy,
+                        </cfif>
+                        affiliatedID,
+                        actualClass,
+                        headerImages
+                    ) VALUES (
+                        <cfqueryparam cfsqltype="CF_SQL_DATE" value='#FORM.date#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ResearchTeam#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Veterinarian#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BodyOfWater#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.species#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.StTpye#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NOAAStock#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Fnumber#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NMFS#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NDB#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NAA#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.code#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.hera#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.sex#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ageClass#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Location#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.lat#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.lon#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.county#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.InitialCondition#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.FinalCondition#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>,
+                        <cfif tbl NEQ 'ST_CetaceanNecropsyReport'>
+                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#CompletedBy#'>,
+                        </cfif>
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.affiliatedID#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>,
+                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                    )
+                </cfquery>
+            </cfif>
+        </cfloop> --->
+
+
+
+
+
+
+
+
+
+
+
+
+
         <cfcatch type="any">
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
@@ -493,6 +633,12 @@
         <cfargument name="Side" type="string" required="false" default="">
         <cfargument name="Status" type="string" required="false" default="">
         <cfargument name="LCE_ID" type="numeric" required="false">
+
+            <!--- <cfdump var="#arguments.LesionType#" > <br>
+            <cfdump var="#arguments.Region#" abort="true"> --->
+
+            <!--- <cfset LesionType = Replace(arguments.LesionType, ",", "- ", "all")> --->
+
         <cfif len(trim(LesionPresent)) GT 0 >
 			<cfloop from="1" to="#ListLen(LesionPresent)#" index="i">
                 <cfquery name="qInsertLesionData" datasource="#variables.dsn#">
@@ -505,11 +651,13 @@
                         <cfelse>
                             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(LesionType,i)#'>
                         </cfif>    
+
                         <cfif ListGetAt(Region,i) eq 0>
                             ,<cfqueryparam cfsqltype="cf_sql_varchar" value=''>
                         <cfelse>
                             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(Region,i)#'>
                         </cfif>    
+
                         <cfif ListGetAt(Side,i) eq 0>
                             ,<cfqueryparam cfsqltype="cf_sql_varchar" value=''>
                         <cfelse>
@@ -600,15 +748,7 @@
     </cffunction>
 
     <cffunction name="deleteCE" returntype="any" output="false" access="public" >
-        <!--- ST_PhysicalExamNotes
-
-        ST_HeartRate
-        ST_RespRate
-        ST_DrugsAdministered
-        ST_Biopsy
-        ST_Lesion           
-        NoumanAwan
-        --->
+  
         <cftry>
         <cfquery name="qdeleteCE" datasource="#variables.dsn#"  >
             Update ST_LiveCetaceanExam 
@@ -652,6 +792,7 @@
             ,TagedLat = ''
             ,TagedLon = ''
             ,RLD = ''
+            ,Deleted = 1
             where ID = #ID#
         </cfquery> 
         <cfquery name="qdeletePhysicalExamNotes" datasource="#Application.dsn#">
@@ -685,15 +826,11 @@
 
         </cftry>
        
-        
         <!--- <cfquery name="qdeleteCE" datasource="#variables.dsn#"  >
             Update ST_LiveCetaceanExam 
             set deleted = '1'
             where ID = #ID#
         </cfquery> --->
-
-
-
         <cfreturn True>
     </cffunction>
     <!--- <cffunction name="deleteCE" returntype="any" output="false" access="public" >
@@ -735,20 +872,293 @@
         <cfreturn True>
     </cffunction>
 
-    <cffunction name="getLCEFBNumber" returntype="any" output="false" access="public" >
-		
-        <cfquery name="qgetLCEFBNumber" datasource="#variables.dsn#"  >
-            SELECT ID,Fnumber from ST_LiveCetaceanExam where deleted != '1' order by Fnumber ASC
+    <cffunction name="getLCEFBNumber" returntype="any" output="false" access="public">
+        <cfquery name="qgetLCEFBNumber" datasource="#variables.dsn#">
+            WITH all_fnumbers AS (
+                SELECT Fnumber, ID, 1 AS priority
+                FROM ST_LiveCetaceanExam
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 2
+                FROM ST_HIForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 3
+                FROM ST_LevelAForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 4
+                FROM ST_HistoForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 5
+                FROM ST_Blood_Values
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 6
+                FROM ST_Toxicology
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 7
+                FROM ST_Ancillary_Diagnostics
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 8
+                FROM ST_SampleArchive
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 9
+                FROM ST_CetaceanNecropsyReport
+                WHERE deleted IS NULL
+    
+                UNION ALL
+                SELECT Fnumber, ID, 10
+                FROM ST_Morphometrics
+                WHERE deleted IS NULL
+            )
+            SELECT Fnumber, ID
+            FROM (
+                SELECT 
+                    Fnumber,
+                    ID,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY Fnumber 
+                        ORDER BY priority
+                    ) AS rn
+                FROM all_fnumbers
+            ) t
+            WHERE rn = 1
+            ORDER BY Fnumber ASC
         </cfquery>
+    
         <cfreturn qgetLCEFBNumber>
     </cffunction>
+    
+    
+    
+    <!--- <cffunction name="getLCEFBNumber" returntype="any" output="false" access="public" >
+
+        <!--- <cfquery name="qgetLCEFBNumber" datasource="#variables.dsn#"  >
+            SELECT ID,Fnumber from ST_LiveCetaceanExam where deleted != '1' order by Fnumber ASC
+        </cfquery> --->
+		
+        <cfquery name="qgetLCEFBNumber" datasource="#variables.dsn#">
+            SELECT Fnumber, ID FROM ST_LiveCetaceanExam WHERE deleted != '1'
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
+
+            )
+
+            ORDER BY Fnumber ASC
+        </cfquery>
+
+        <cfreturn qgetLCEFBNumber>
+    </cffunction> --->
 
     <cffunction name="getLiveCetaceanExamData" returntype="any" output="false" access="public" >
-		
-        <cfquery name="qgetLiveCetaceanExamData" datasource="#variables.dsn#"  >
-            SELECT * from ST_LiveCetaceanExam where ID = #LCEID# 
+
+        <cfargument name="LCEID" type="numeric" required="true">
+        <cfargument name="Fnumber" type="string" required="false">
+
+        <!--- <cfdump var="#arguments.Fnumber#" abort="true"> --->
+
+		<!--- <cfabort showerror="getLiveCetaceanExamData() called!"> --->
+        <!--- <cfquery name="qgetLiveCetaceanExamData" datasource="#variables.dsn#"  >
+            SELECT * from ST_LiveCetaceanExam where ID = #LCEID# And deleted != '1'
         </cfquery>
-        <cfreturn qgetLiveCetaceanExamData>
+
+        <cfreturn qgetLiveCetaceanExamData> --->
+
+        <cfset var result = {}>
+
+        <!--- First table check --->
+        <cfset var tables = [
+            "ST_LiveCetaceanExam",
+            "ST_HIForm",
+            "ST_LevelAForm",
+            "ST_HistoForm",
+            "ST_Blood_Values",
+            "ST_Toxicology",
+            "ST_Ancillary_Diagnostics",
+            "ST_SampleArchive",
+            "ST_CetaceanNecropsyReport",
+            "ST_Morphometrics"
+        ]>
+
+        <cfset var found = false>
+
+        <cfloop array="#tables#" index="tableName">
+            <cfquery name="qTemp" datasource="#variables.dsn#">
+                SELECT *
+                FROM #tableName#
+                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#LCEID#">
+                and  fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
+                AND 
+                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
+                    deleted IS NULL
+                <cfelse>
+                    deleted != '1'
+                </cfif>
+            </cfquery>
+
+            <cfif qTemp.recordCount GT 0>
+                <cfset result.data = duplicate(qTemp)>
+                <cfset result.sourceTableName = tableName>
+                <cfset found = true>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+
+        <cfif NOT found>
+            <cfset result.data = {}> 
+            <cfset result.sourceTableName = "NoneFound">
+        </cfif>
+
+        <cfreturn result>
+
     </cffunction>
 
     <cffunction name="getLCE_ten" returntype="any" output="false" access="public" >
@@ -950,6 +1360,14 @@
         </cfquery>
         <cfreturn qgetCetaceanSpecies>
     </cffunction>
+    <cffunction name="getCetaceanSpeciesForPDF" returntype="any" output="false" access="public" >
+        
+        <cfquery name="qgetCetaceanSpecies" datasource="#variables.dsn#">
+            SELECT * FROM TLU_CetaceanSpecies WHERE id = <cfqueryparam cfsqltype="cf_sql_integer" value="#form.species#">
+        </cfquery>
+        
+        <cfreturn qgetCetaceanSpecies>
+    </cffunction>
 
     <!---   HIForm Section    --->
 
@@ -1116,6 +1534,7 @@
         <cfif len(trim(HiType)) GT 0 >
             
 			<cfloop from="1" to="#ListLen(HiType)#" index="i">
+                
                 <cfquery name="qInsertHiExampData" datasource="#variables.dsn#">
                    Insert into ST_DynamicHI (TypeofHI,LocationofHI,GearCollected,TypeofGearCollected,GearDeposition,HI_ID)
                     values
@@ -1662,18 +2081,294 @@
         </cfquery>
         <cfreturn qgetHIDate>
     </cffunction>
-    <cffunction name="getHIFBNumber" returntype="any" output="false" access="public" >
-        <cfquery name="qgetHIFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_HIForm where deleted != '1' order by Fnumber ASC
+
+
+    <cffunction name="getHIFBNumber" returntype="any" output="false" access="public">
+        <cfquery name="qgetHIFBNumber" datasource="#Application.dsn#">
+            WITH all_fnumbers AS (
+                SELECT Fnumber, ID, 1 AS priority
+                FROM ST_HIForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 2
+                FROM ST_LiveCetaceanExam
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 3
+                FROM ST_LevelAForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 4
+                FROM ST_HistoForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 5
+                FROM ST_Blood_Values
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 6
+                FROM ST_Toxicology
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 7
+                FROM ST_Ancillary_Diagnostics
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 8
+                FROM ST_SampleArchive
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 9
+                FROM ST_CetaceanNecropsyReport
+                WHERE deleted IS NULL
+    
+                UNION ALL
+                SELECT Fnumber, ID, 10
+                FROM ST_Morphometrics
+                WHERE deleted IS NULL
+            )
+            SELECT Fnumber, ID
+            FROM (
+                SELECT 
+                    Fnumber,
+                    ID,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY Fnumber
+                        ORDER BY priority
+                    ) AS rn
+                FROM all_fnumbers
+            ) t
+            WHERE rn = 1
+            ORDER BY Fnumber ASC
         </cfquery>
+    
         <cfreturn qgetHIFBNumber>
     </cffunction>
+    
+
+
+    <!--- <cffunction name="getHIFBNumber" returntype="any" output="false" access="public" >
+        
+        <!--- <cfquery name="qgetHIFBNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_HIForm where deleted != '1' order by Fnumber ASC
+        </cfquery> --->
+        
+        <cfquery name="qgetHIFBNumber" datasource="#Application.dsn#"  >
+            SELECT Fnumber, ID from ST_HIForm where deleted != '1'
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
+                SELECT Fnumber FROM ST_HIForm WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
+
+            )
+
+
+             order by Fnumber ASC
+        </cfquery> 
+
+        <cfreturn qgetHIFBNumber>
+    </cffunction> --->
+
     <cffunction name="getHIData" returntype="any" output="false" access="public" >
         <!--- <cfdump var="#HI_ID#" abort="true"> --->
-        <cfquery name="qHIData" datasource="#Application.dsn#"  >
-            SELECT * from ST_HIForm where ID = #HI_ID#
+        <!--- <cfquery name="qHIData" datasource="#Application.dsn#"  >
+            SELECT * from ST_HIForm where ID = #HI_ID# And deleted != '1'
         </cfquery>
-        <cfreturn qHIData>
+        <cfreturn qHIData> --->
+
+        <!--- <cfargument name="HI_ID" type="numeric" required="true">
+        <cfargument name="Fnumber" type="string" required="false"> --->
+
+        <!--- <cfdump var="#arguments#" abort="true"> --->
+
+        <cfset var result = {}>
+
+        <!--- First table check --->
+        <cfset var tables = [
+            "ST_HIForm",
+            "ST_LiveCetaceanExam",
+            "ST_LevelAForm",
+            "ST_HistoForm",
+            "ST_Blood_Values",
+            "ST_Toxicology",
+            "ST_Ancillary_Diagnostics",
+            "ST_SampleArchive",
+            "ST_CetaceanNecropsyReport",
+            "ST_Morphometrics"
+        ]>
+
+        <cfset var found = false>
+
+        <cfloop array="#tables#" index="tableName">
+            <cfquery name="qTemp" datasource="#variables.dsn#">
+                SELECT *
+                FROM #tableName#
+                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#form.HI_ID#">
+                and fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
+                AND 
+                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
+                    deleted IS NULL
+                <cfelse>
+                    deleted != '1'
+                </cfif>
+            </cfquery>
+
+            <cfif qTemp.recordCount GT 0>
+                <cfset result.data = duplicate(qTemp)>
+                <cfset result.sourceTableName = tableName>
+                <cfset found = true>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+
+        <cfif NOT found>
+            <cfset result.data = {}> 
+            <cfset result.sourceTableName = "NoneFound">
+        </cfif>
+
+        <cfreturn result>
+
     </cffunction>
     <!--- <cffunction name="getHIData" returntype="any" output="false" access="public" >
         <cfquery name="qHIData" datasource="#Application.dsn#"  >
@@ -1696,13 +2391,14 @@
     </cffunction>
 
     <cffunction name="deleteHI" returntype="any" output="false" access="public" >	
-        <!--- NoumanAwan --->
+        
         <cftry>
             <cfquery name="qdeleteHI" datasource="#variables.dsn#"  >
                 Update ST_HIForm 
                 set pdfFiles = ''
                 ,Examtype = ''
                 ,Hifindings = ''
+                ,Deleted = 1
                 where ID = #HIForm_ID#
             </cfquery>
 
@@ -2035,17 +2731,289 @@
         </cfquery>
         <cfreturn qgetLevelADate>
     </cffunction>
-    <cffunction name="getLevelAFBNumber" returntype="any" output="false" access="public" >
-        <cfquery name="qgetLevelAFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_LevelAForm where deleted != '1' order by Fnumber ASC
+
+    <cffunction name="getLevelAFBNumber" returntype="any" output="false" access="public">
+        <cfquery name="qgetLevelAFBNumber" datasource="#Application.dsn#">
+            WITH all_fnumbers AS (
+                SELECT Fnumber, ID, 1 AS priority
+                FROM ST_LevelAForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 2
+                FROM ST_LiveCetaceanExam
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 3
+                FROM ST_HIForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 4
+                FROM ST_HistoForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 5
+                FROM ST_Blood_Values
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 6
+                FROM ST_Toxicology
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 7
+                FROM ST_Ancillary_Diagnostics
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 8
+                FROM ST_SampleArchive
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 9
+                FROM ST_CetaceanNecropsyReport
+                WHERE deleted IS NULL
+    
+                UNION ALL
+                SELECT Fnumber, ID, 10
+                FROM ST_Morphometrics
+                WHERE deleted IS NULL
+            )
+            SELECT Fnumber, ID
+            FROM (
+                SELECT 
+                    Fnumber,
+                    ID,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY Fnumber
+                        ORDER BY priority
+                    ) AS rn
+                FROM all_fnumbers
+            ) t
+            WHERE rn = 1
+            ORDER BY Fnumber ASC
         </cfquery>
+    
         <cfreturn qgetLevelAFBNumber>
     </cffunction>
-    <cffunction name="getLevelAData" returntype="any" output="false" access="public" >
-        <cfquery name="qgetLevelAData" datasource="#Application.dsn#"  >
-            SELECT * from ST_LevelAForm where ID = #LA_ID#
+    
+<!--- 
+    <cffunction name="getLevelAFBNumber" returntype="any" output="false" access="public" >
+        <!--- <cfquery name="qgetLevelAFBNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_LevelAForm where deleted != '1' order by Fnumber ASC
+        </cfquery> --->
+
+        <cfquery name="qgetLevelAFBNumber" datasource="#Application.dsn#"  >
+            SELECT Fnumber , ID from ST_LevelAForm where deleted != '1' 
+             UNION
+            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
+                SELECT Fnumber FROM ST_LevelAForm WHERE deleted != '1'
+            )
+            
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LevelAForm WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LiveCetaceanExam  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LevelAForm WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LiveCetaceanExam  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
+
+            )
+               
+            order by Fnumber ASC
         </cfquery>
-        <cfreturn qgetLevelAData>
+
+        <cfreturn qgetLevelAFBNumber>
+    </cffunction> --->
+
+    <cffunction name="getLevelAData" returntype="any" output="false" access="public" >
+        
+        <!--- <cfquery name="qgetLevelAData" datasource="#Application.dsn#"  >
+            SELECT * from ST_LevelAForm where ID = #LA_ID# And deleted != '1'
+        </cfquery>
+        <cfreturn qgetLevelAData> --->
+
+        <!--- <cfargument name="LA_ID" type="numeric" required="true">
+        <cfargument name="Fnumber" type="string" required="false"> --->
+
+        <!--- <cfdump var="#arguments#" abort="true"> --->
+
+        <cfset var result = {}>
+
+        <!--- First table check --->
+        <cfset var tables = [
+            "ST_LevelAForm",
+            "ST_LiveCetaceanExam",
+            "ST_HIForm",
+            "ST_HistoForm",
+            "ST_Blood_Values",
+            "ST_Toxicology",
+            "ST_Ancillary_Diagnostics",
+            "ST_SampleArchive",
+            "ST_CetaceanNecropsyReport",
+            "ST_Morphometrics"
+        ]>
+
+        <cfset var found = false>
+
+        <cfloop array="#tables#" index="tableName">
+            <cfquery name="qTemp" datasource="#variables.dsn#">
+                SELECT *
+                FROM #tableName#
+                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#LA_ID#">
+                and fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
+                AND 
+                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
+                    deleted IS NULL
+                <cfelse>
+                    deleted != '1'
+                </cfif>
+            </cfquery>
+
+            <cfif qTemp.recordCount GT 0>
+                <cfset result.data = duplicate(qTemp)>
+                <cfset result.sourceTableName = tableName>
+                <cfset found = true>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+
+        <cfif NOT found>
+            <cfset result.data = {}> 
+            <cfset result.sourceTableName = "NoneFound">
+        </cfif>
+
+        <cfreturn result>
+
     </cffunction>
     <!--- <cffunction name="getLevelAData" returntype="any" output="false" access="public" >
         <cfquery name="qgetLevelAData" datasource="#Application.dsn#"  >
@@ -2055,7 +3023,7 @@
     </cffunction> --->
     <cffunction name="getLevelADataByLCE" returntype="any" output="false" access="public" >
         <cfquery name="qgetLevelADataByLCE" datasource="#Application.dsn#"  >
-            SELECT * from ST_LevelAForm where LCE_ID = #LCEID#
+            SELECT * from ST_LevelAForm where LCE_ID = #LCEID# And deleted != '1'
         </cfquery>
         <cfreturn qgetLevelADataByLCE>
     </cffunction>
@@ -2066,7 +3034,7 @@
         <cfreturn qgetLevelA_ten>
     </cffunction>
      <cffunction name="deleteLA" returntype="any" output="false" access="public" >
-        <!--- NoumanAwan --->
+        
         <cftry>
             <cfquery name="qdeleteHI" datasource="#variables.dsn#"  >
                 Update ST_LevelAForm 
@@ -2081,6 +3049,7 @@
                 ,noOfAnimals = ''
                 ,TagsWere = ''
                 ,Restrand = ''
+                ,Deleted = 1
                 where ID = #level_A_ID#
             </cfquery>
 
@@ -2657,17 +3626,286 @@
         </cfquery>
         <cfreturn qgetHistoDate>
     </cffunction>
-    <cffunction name="getHistoFBNumber" returntype="any" output="false" access="public" >
-        <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_HistoForm where deleted != '1' order by Fnumber ASC
+
+    <cffunction name="getHistoFBNumber" returntype="any" output="false" access="public">
+        <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#">
+            WITH all_fnumbers AS (
+                SELECT Fnumber, ID, 1 AS priority
+                FROM ST_HistoForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 2
+                FROM ST_LiveCetaceanExam
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 3
+                FROM ST_HIForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 4
+                FROM ST_LevelAForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 5
+                FROM ST_Blood_Values
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 6
+                FROM ST_Toxicology
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 7
+                FROM ST_Ancillary_Diagnostics
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 8
+                FROM ST_SampleArchive
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 9
+                FROM ST_CetaceanNecropsyReport
+                WHERE deleted IS NULL
+    
+                UNION ALL
+                SELECT Fnumber, ID, 10
+                FROM ST_Morphometrics
+                WHERE deleted IS NULL
+            )
+            SELECT Fnumber, ID
+            FROM (
+                SELECT 
+                    Fnumber,
+                    ID,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY Fnumber
+                        ORDER BY priority
+                    ) AS rn
+                FROM all_fnumbers
+            ) t
+            WHERE rn = 1
+            ORDER BY Fnumber ASC
         </cfquery>
+    
         <cfreturn qgetHistoFBNumber>
-    </cffunction>
-    <cffunction name="getHistoData" returntype="any" output="false" access="public" >
-        <cfquery name="qHistoData" datasource="#Application.dsn#"  >
-            SELECT * from ST_HistoForm where ID = #His_ID#
+    </cffunction>   
+
+    <!--- <cffunction name="getHistoFBNumber" returntype="any" output="false" access="public" >
+        <!--- <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_HistoForm where deleted != '1' order by Fnumber ASC
+        </cfquery> --->
+
+        <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#"  >
+            SELECT Fnumber, ID from ST_HistoForm where deleted != '1' 
+            UNION
+            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
+                SELECT Fnumber FROM ST_HistoForm WHERE deleted != '1'
+            )
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_HistoForm WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LiveCetaceanExam  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_HistoForm WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LiveCetaceanExam  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_HistoForm WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LiveCetaceanExam  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
+
+            )
+
+            order by Fnumber ASC
         </cfquery>
-        <cfreturn qHistoData>
+
+        <cfreturn qgetHistoFBNumber>
+    </cffunction> --->
+
+    <cffunction name="getHistoData" returntype="any" output="false" access="public" >
+        <!--- <cfquery name="qHistoData" datasource="#Application.dsn#"  >
+            SELECT * from ST_HistoForm where ID = #His_ID# And deleted != '1'
+        </cfquery>
+        <cfreturn qHistoData> --->
+
+        <!--- <cfargument name="HI_ID" type="numeric" required="true">
+        <cfargument name="Fnumber" type="string" required="false"> --->
+
+        <!--- <cfdump var="#arguments#" abort="true"> --->
+
+        <cfset var result = {}>
+
+        <!--- First table check --->
+        <cfset var tables = [
+            "ST_HistoForm",
+            "ST_LiveCetaceanExam",
+            "ST_HIForm",
+            "ST_LevelAForm",
+            "ST_Blood_Values",
+            "ST_Toxicology",
+            "ST_Ancillary_Diagnostics",
+            "ST_SampleArchive",
+            "ST_CetaceanNecropsyReport",
+            "ST_Morphometrics"
+        ]>
+
+        <cfset var found = false>
+
+        <cfloop array="#tables#" index="tableName">
+            <cfquery name="qTemp" datasource="#variables.dsn#">
+                SELECT *
+                FROM #tableName#
+                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#His_ID#">
+                and Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
+                AND 
+                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
+                    deleted IS NULL
+                <cfelse>
+                    deleted != '1'
+                </cfif>
+            </cfquery>
+
+            <cfif qTemp.recordCount GT 0>
+                <cfset result.data = duplicate(qTemp)>
+                <cfset result.sourceTableName = tableName>
+                <cfset found = true>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+
+        <cfif NOT found>
+            <cfset result.data = {}> 
+            <cfset result.sourceTableName = "NoneFound">
+        </cfif>
+
+        <cfreturn result>
+
     </cffunction>
     <!--- <cffunction name="getHistoData" returntype="any" output="false" access="public" >
         <cfquery name="qHistoData" datasource="#Application.dsn#"  >
@@ -2683,19 +3921,20 @@
     </cffunction>
     <cffunction name="getHistoDataByLCE" returntype="any" output="false" access="public" >
         <cfquery name="qgetHistoDataByLCE" datasource="#Application.dsn#"  >
-            SELECT * from ST_HistoForm where LCE_ID = #LCEID#
+            SELECT * from ST_HistoForm where LCE_ID = #LCEID# And deleted != '1'
         </cfquery>
         <cfreturn qgetHistoDataByLCE>
     </cffunction>
     <cffunction name="deleteHisto" returntype="any" output="false" access="public" >
-        <!--- NoumanAwan --->
+        
         <cftry>
             <cfquery name="qdeleteHI" datasource="#variables.dsn#"  >
                 Update ST_HistoForm 
                 set histoDate = NULL
                 ,PathologistAccession = ''
                 ,SampleComments = ''
-                ,pdfFiles = ''           
+                ,pdfFiles = ''      
+                ,Deleted = 1     
                 where ID = #Histo_ID#
             </cfquery>
 
@@ -2898,7 +4137,7 @@
                 SELECT CNRDATE as cnrdate, ID as cnID  from ST_CetaceanNecropsyReport 
                 where fnumber = '#form.FNUMBER#'            
             </cfquery>
-            <!--- <cfdump var="#qgetcetaceanNecropsyDate#" abort="true"> --->
+            
             <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
                 <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
                     UPDATE  ST_CetaceanNecropsyReport SET
@@ -3109,10 +4348,59 @@
     </cffunction>
     <!--- get toxiform --->
     <cffunction name="gettoxiform" returntype="any" output="false" access="public" >
-        <cfquery name="qtoxiform" datasource="#Application.dsn#"  >
-            SELECT * from ST_Toxicology where ID = #Toxicology_ID#
+        <!--- <cfquery name="qtoxiform" datasource="#Application.dsn#"  >
+            SELECT * from ST_Toxicology where ID = #Toxicology_ID# And deleted != '1'
         </cfquery>
-        <cfreturn qtoxiform>
+        <cfreturn qtoxiform> --->
+
+        <cfset var result = {}>
+
+        <!--- First table check --->
+        <cfset var tables = [
+            "ST_Toxicology",
+            "ST_LiveCetaceanExam",
+            "ST_HIForm",
+            "ST_LevelAForm",
+            "ST_HistoForm",
+            "ST_Blood_Values",
+            "ST_Ancillary_Diagnostics",
+            "ST_SampleArchive",
+            "ST_CetaceanNecropsyReport",
+            "ST_Morphometrics"
+        ]>
+
+        <cfset var found = false>
+
+        <cfloop array="#tables#" index="tableName">
+            <cfquery name="qTemp" datasource="#variables.dsn#">
+                SELECT *
+                FROM #tableName#
+                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#Toxicology_ID#">
+                and Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
+                AND 
+                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
+                    deleted IS NULL
+                <cfelse>
+                    deleted != '1'
+                </cfif>
+            </cfquery>
+
+            <cfif qTemp.recordCount GT 0>
+                <cfset result.data = duplicate(qTemp)>
+                <cfset result.sourceTableName = tableName>
+                <cfset found = true>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+
+        <cfif NOT found>
+            <cfset result.data = {}> 
+            <cfset result.sourceTableName = "NoneFound">
+        </cfif>
+
+        <cfreturn result>
+
+
     </cffunction>
     
       <cffunction name="gettoxiform_ten" returntype="any" output="false" access="public" >
@@ -3136,12 +4424,222 @@
         <cfreturn qgettoxiformDate>
     </cffunction>
 
-    <cffunction name="gettoxifNumber" returntype="any" output="false" access="public" >
-        <cfquery name="qgettoxifNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_Toxicology where deleted != '1' order by Fnumber ASC
+    <cffunction name="gettoxifNumber" returntype="any" output="false" access="public">
+        <cfquery name="qgettoxifNumber" datasource="#Application.dsn#">
+            SELECT Fnumber, MIN(ID) AS ID
+            FROM (
+                SELECT Fnumber, ID
+                FROM ST_Toxicology
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_LiveCetaceanExam
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_HIForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_LevelAForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_HistoForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_Blood_Values
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_Ancillary_Diagnostics
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_SampleArchive
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_CetaceanNecropsyReport
+                WHERE deleted IS NULL
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_Morphometrics
+                WHERE deleted IS NULL
+            ) AS AllForms
+            GROUP BY Fnumber
+            ORDER BY Fnumber ASC
         </cfquery>
+    
         <cfreturn qgettoxifNumber>
     </cffunction>
+
+    <!--- <cffunction name="gettoxifNumber" returntype="any" output="false" access="public" >
+        <!--- <cfquery name="qgettoxifNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_Toxicology where deleted != '1' order by Fnumber ASC
+        </cfquery> --->
+
+        <cfquery name="qgettoxifNumber" datasource="#Application.dsn#"  >
+            SELECT Fnumber, ID from ST_Toxicology where deleted != '1' 
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
+                SELECT Fnumber FROM ST_Toxicology WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
+
+            )
+
+
+            order by Fnumber ASC
+        </cfquery>
+
+        <cfreturn qgettoxifNumber>
+    </cffunction> --->
+
+
+
     <!--- get toxi type --->
      <cffunction name="getToxitype" returntype="any" output="false" access="public" >
         <cfquery name="qgetToxitype" datasource="#Application.dsn#">
@@ -3203,7 +4701,7 @@
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Mercury#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Thallium#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Selenium#'>
-                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Iron#'>
+                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Ironn#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Copper#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Zinc#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Molybdenum#'>
@@ -3228,6 +4726,9 @@
             SELECT ID,Type from TLU_Sample_Type where ID = '#Tissue_type#'
         </cfquery>
             <!--- <cfdump var="#qgetType#" abort="true"> --->
+            
+            <!--- <cfoutput>iufiwfiwuhfeiw wefwef w w r wr wrwewereewrwr</cfoutput>
+            <cfdump  var="the value of iron is #FORM.Iron#"><cfabort> --->
         <cftry>
             <cfquery name="qToxiType_FormUpdate" datasource="#variables.dsn#"  result="return_data" >
                 UPDATE  ST_ToxiType SET
@@ -3239,7 +4740,7 @@
                 ,Mercury = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Mercury#'>
                 ,Thallium = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Thallium#'>
                 ,Selenium = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Selenium#'>
-                ,Iron = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Iron#'>
+                ,Iron = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Ironn#'>
                 ,Copper = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Copper#'>
                 ,Zinc = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Zinc#'>
                 ,Molybdenum = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Molybdenum#'>
@@ -3257,13 +4758,13 @@
     </cffunction>
     <!--- delete toxicology form --->
     <cffunction name="deletToxicology" returntype="any" output="false" access="public" >
-        <!--- NoumanAwan --->
-
+        
         <cftry>
 
             <cfquery name="qdeletToxicology" datasource="#variables.dsn#"  >
                 Update ST_Toxicology 
                 set pdfFiles = ''
+                ,deleted = '1'
                 where ID = #TX_ID#
             </cfquery>
             <cfquery name="qdeleteCBC" datasource="#Application.dsn#">
@@ -3384,7 +4885,7 @@
     </cffunction>
     <!--- Insert CBC form  (Blood Values) --->
     <cffunction name="CBCInsert" returntype="any" output="false" access="public" >
-        <!--- <cfdump var="#form#" abort="true"> --->
+        
         <cftry>
             <cfquery name="qCBCInsert" datasource="#variables.dsn#"  result="return_data" >
             INSERT INTO ST_CBC
@@ -3662,7 +5163,7 @@
     </cffunction>
     <!--- update chimestry --->
     <cffunction name="ChemisteryUpdate" returntype="any" output="false" access="public" >
-        <!--- <cfdump var="#form#" abort="true"> --->
+        
         <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
             SELECT ID from ST_chemistry where BV_ID = #form.bloodValues_ID#
         </cfquery>
@@ -4751,18 +6252,276 @@
         <cfreturn qgetBloodValuesDate>
     </cffunction>
 
-    <cffunction name="getBlood_VBNumber" returntype="any" output="false" access="public" >
-        <cfquery name="qgetBloodValuesFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_Blood_Values where deleted != '1' order by Fnumber ASC
+
+    <cffunction name="getBlood_VBNumber" returntype="any" output="false" access="public">
+        <cfquery name="qgetBloodValuesFBNumber" datasource="#Application.dsn#">
+            WITH AllForms AS (
+                SELECT Fnumber, ID, 'Blood_Values' AS SourceTable, 1 AS Priority
+                FROM ST_Blood_Values WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 'LiveCetaceanExam', 2
+                FROM ST_LiveCetaceanExam WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 'HIForm', 3
+                FROM ST_HIForm WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 'LevelAForm', 4
+                FROM ST_LevelAForm WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 'HistoForm', 5
+                FROM ST_HistoForm WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 'Toxicology', 6
+                FROM ST_Toxicology WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 'Ancillary_Diagnostics', 7
+                FROM ST_Ancillary_Diagnostics WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 'SampleArchive', 8
+                FROM ST_SampleArchive WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID, 'CetaceanNecropsyReport', 9
+                FROM ST_CetaceanNecropsyReport WHERE deleted IS NULL
+    
+                UNION ALL
+                SELECT Fnumber, ID, 'Morphometrics', 10
+                FROM ST_Morphometrics WHERE deleted IS NULL
+            )
+            SELECT Fnumber, ID
+            FROM (
+                SELECT 
+                    Fnumber, 
+                    ID,
+                    ROW_NUMBER() OVER (PARTITION BY Fnumber ORDER BY Priority) AS rn
+                FROM AllForms
+            ) x
+            WHERE rn = 1
+            ORDER BY Fnumber ASC
         </cfquery>
+    
         <cfreturn qgetBloodValuesFBNumber>
     </cffunction>
+    
+    <!--- <cffunction name="getBlood_VBNumber" returntype="any" output="false" access="public" >
+        <!--- <cfquery name="qgetBloodValuesFBNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_Blood_Values where deleted != '1' order by Fnumber ASC
+        </cfquery> --->
+
+        <cfquery name="qgetBloodValuesFBNumber" datasource="#Application.dsn#"  >
+            SELECT Fnumber, ID from ST_Blood_Values where deleted != '1'
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
+                SELECT Fnumber FROM ST_Blood_Values WHERE deleted != '1'
+            )
+
+            UNION
+            
+
+            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+
+            )
+            
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+               UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+                UNION
+                   UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+              SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
+
+            )
+            
+             order by Fnumber ASC
+        </cfquery>
+
+        <cfreturn qgetBloodValuesFBNumber>
+    </cffunction> --->
 
     <cffunction name="getBlood_VData" returntype="any" output="false" access="public" >
-        <cfquery name="qBloodValuesData" datasource="#Application.dsn#"  >
-            SELECT * from ST_Blood_Values where ID = #bloodValue_ID#
+        <!--- <cfquery name="qBloodValuesData" datasource="#Application.dsn#"  >
+            SELECT * from ST_Blood_Values where ID = #bloodValue_ID# And deleted != '1'
         </cfquery>
-        <cfreturn qBloodValuesData>
+        <cfreturn qBloodValuesData> --->
+
+        <!--- <cfargument name="HI_ID" type="numeric" required="true">
+        <cfargument name="Fnumber" type="string" required="false"> --->
+
+        <!--- <cfdump var="#arguments#" abort="true"> --->
+
+        <cfset var result = {}>
+
+        <!--- First table check --->
+        <cfset var tables = [
+            "ST_Blood_Values",
+            "ST_LiveCetaceanExam",
+            "ST_HIForm",
+            "ST_LevelAForm",
+            "ST_HistoForm",
+            "ST_Toxicology",
+            "ST_Ancillary_Diagnostics",
+            "ST_SampleArchive",
+            "ST_CetaceanNecropsyReport",
+            "ST_Morphometrics"
+        ]>
+
+        <cfset var found = false>
+
+        <cfloop array="#tables#" index="tableName">
+            <cfquery name="qTemp" datasource="#variables.dsn#">
+                SELECT *
+                FROM #tableName#
+                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#bloodValue_ID#">
+                and fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
+                And
+                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
+                    deleted IS NULL
+                <cfelse>
+                    deleted != '1'
+                </cfif>
+            </cfquery>
+
+            <cfif qTemp.recordCount GT 0>
+                <cfset result.data = duplicate(qTemp)>
+                <cfset result.sourceTableName = tableName>
+                <cfset found = true>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+
+        <cfif NOT found>
+            <cfset result.data = {}> 
+            <cfset result.sourceTableName = "NoneFound">
+        </cfif>
+
+        <cfreturn result> 
+
     </cffunction>
     <!--- <cffunction name="getBlood_VData" returntype="any" output="false" access="public" >
         <cfquery name="qBloodValuesData" datasource="#Application.dsn#"  >
@@ -4779,7 +6538,7 @@
     </cffunction>
     <cffunction name="getBlood_ValuesDataByLCE" returntype="any" output="false" access="public" >
         <cfquery name="qgetBlood_ValuesDataByLCE" datasource="#Application.dsn#"  >
-            SELECT * from ST_Blood_Values where LCE_ID = #LCEID#
+            SELECT * from ST_Blood_Values where LCE_ID = #LCEID# And deleted != '1'
         </cfquery>
         <cfreturn qgetBlood_ValuesDataByLCE>
     </cffunction>
@@ -4794,7 +6553,6 @@
 
     <cffunction name="deletBlood_V" returntype="any" output="false" access="public" >
 
-        <!--- NoumanAwan --->
         <!--- <cfquery name="qdeleteBlood_V" datasource="#variables.dsn#"  >
             Update ST_Blood_Values 
             set deleted = '1'
@@ -4839,6 +6597,7 @@
                     , Lab_Number = ''
                     , Diagnostic_Lab = ''
                     , pdfFiles = ''
+                    ,Deleted = 1
                 where ID = #bloodValues_ID#
             </cfquery>
 
@@ -5142,13 +6901,239 @@
         </cfquery>
         <cfreturn qgetNecropsyDate>
     </cffunction>
-
+    
     <cffunction name="getMorphometricsBNumber" returntype="any" output="false" access="public" >
-        <cfquery name="MorphometricsoFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_Morphometrics order by Fnumber ASC
+        <cfquery name="MorphometricsoFBNumber" datasource="#Application.dsn#">
+            WITH AllFNumbers AS (
+                SELECT Fnumber, ID, 'ST_Morphometrics' AS SourceTable
+                FROM ST_Morphometrics
+                WHERE deleted IS NULL
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_LiveCetaceanExam'
+                FROM ST_LiveCetaceanExam
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_HIForm'
+                FROM ST_HIForm
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_LevelAForm'
+                FROM ST_LevelAForm
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_HistoForm'
+                FROM ST_HistoForm
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_Blood_Values'
+                FROM ST_Blood_Values
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_Toxicology'
+                FROM ST_Toxicology
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_Ancillary_Diagnostics'
+                FROM ST_Ancillary_Diagnostics
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_SampleArchive'
+                FROM ST_SampleArchive
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_CetaceanNecropsyReport'
+                FROM ST_CetaceanNecropsyReport
+                WHERE deleted IS NULL
+            ),
+            Deduped AS (
+                SELECT 
+                    Fnumber,
+                    ID,
+                    ROW_NUMBER() OVER (PARTITION BY Fnumber ORDER BY 
+                        CASE SourceTable
+                            WHEN 'ST_Morphometrics' THEN 1
+                            WHEN 'ST_LiveCetaceanExam' THEN 2
+                            WHEN 'ST_HIForm' THEN 3
+                            WHEN 'ST_LevelAForm' THEN 4
+                            WHEN 'ST_HistoForm' THEN 5
+                            WHEN 'ST_Blood_Values' THEN 6
+                            WHEN 'ST_Toxicology' THEN 7
+                            WHEN 'ST_Ancillary_Diagnostics' THEN 8
+                            WHEN 'ST_SampleArchive' THEN 9
+                            WHEN 'ST_CetaceanNecropsyReport' THEN 10
+                        END
+                    ) AS rn
+                FROM AllFNumbers
+            )
+            SELECT Fnumber, ID
+            FROM Deduped
+            WHERE rn = 1
+            ORDER BY Fnumber ASC
         </cfquery>
         <cfreturn MorphometricsoFBNumber>
     </cffunction>
+
+    <!--- <cffunction name="getMorphometricsBNumber" returntype="any" output="false" access="public" >
+        <!--- <cfquery name="MorphometricsoFBNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_Morphometrics order by Fnumber ASC
+        </cfquery> --->
+
+        <cfquery name="MorphometricsoFBNumber" datasource="#Application.dsn#"  >
+            SELECT Fnumber, ID from ST_Morphometrics where deleted is null
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
+                SELECT Fnumber FROM ST_Morphometrics WHERE deleted is null
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
+            )  
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
+
+            )  
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
+
+            )
+
+            order by Fnumber ASC
+        </cfquery>
+
+        <cfreturn MorphometricsoFBNumber>
+    </cffunction> --->
 
     <cffunction name="getMorphometricsDate" returntype="any" output="false" access="public" >
         <cfquery name="MorphometricsDate" datasource="#Application.dsn#"  >
@@ -5157,31 +7142,341 @@
         <cfreturn MorphometricsDate>
     </cffunction>
 
+
     <cffunction name="getMorphometricsAllData" returntype="any" output="false" access="public" >
-        <cfquery name="qMorphometricsData" datasource="#Application.dsn#"  >
-            SELECT * from ST_Morphometrics where ID = #Morphometrics_ID#
+        <!--- <cfdump var="#Morphometrics_ID#" abort="true"> --->
+        <!--- <cfquery name="qMorphometricsData" datasource="#Application.dsn#"  >
+            SELECT * from ST_Morphometrics where ID = #Morphometrics_ID# And deleted is null
         </cfquery>
-        <cfreturn qMorphometricsData>
+        <cfreturn qMorphometricsData> --->
+
+         <cfset var result = {}>
+
+        <!--- First table check --->
+        <cfset var tables = [
+            "ST_Morphometrics",
+            "ST_LiveCetaceanExam",
+            "ST_HIForm",
+            "ST_LevelAForm",
+            "ST_HistoForm",
+            "ST_Blood_Values",
+            "ST_Toxicology",
+            "ST_Ancillary_Diagnostics",
+            "ST_SampleArchive",
+            "ST_CetaceanNecropsyReport"            
+        ]>
+
+        <cfset var found = false>
+
+        <cfloop array="#tables#" index="tableName">
+            <cfquery name="qTemp" datasource="#variables.dsn#">
+                SELECT *
+                FROM #tableName#
+                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#Morphometrics_ID#">
+                and Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
+                AND 
+                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
+                    deleted IS NULL
+                <cfelse>
+                    deleted != '1'
+                </cfif>
+            </cfquery>
+
+            <cfif qTemp.recordCount GT 0>
+                <cfset result.data = duplicate(qTemp)>
+                <cfset result.sourceTableName = tableName>
+                <cfset found = true>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+        
+
+        <cfif NOT found>
+            <cfset result.data = {}> 
+            <cfset result.sourceTableName = "NoneFound">
+        </cfif>
+
+        <cfreturn result>
+
     </cffunction>
+
+
     <cffunction name="getMorphometricsAllFnumberData" returntype="any" output="false" access="public" >
         <cfquery name="qMorphometricsData" datasource="#Application.dsn#" maxRows = "1" >
-            SELECT * from ST_Morphometrics where Fnumber = '#Morphometrics_ID#'
+            SELECT * from ST_Morphometrics where Fnumber = '#Morphometrics_ID#' and deleted is null
         </cfquery>
         <cfreturn qMorphometricsData>
     </cffunction>
 
-    <cffunction name="getAncillaryBNumber" returntype="any" output="false" access="public" >
-        <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_Ancillary_Diagnostics where deleted != '1' order by Fnumber ASC
+    <cffunction name="getAncillaryBNumber" returntype="any" output="false" access="public">
+        <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#">
+            SELECT Fnumber, MIN(ID) AS ID
+            FROM (
+                SELECT Fnumber, ID
+                FROM ST_Ancillary_Diagnostics
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_LiveCetaceanExam
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_HIForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_LevelAForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_HistoForm
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_Blood_Values
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_Toxicology
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_SampleArchive
+                WHERE deleted != '1'
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_CetaceanNecropsyReport
+                WHERE deleted IS NULL
+    
+                UNION ALL
+                SELECT Fnumber, ID
+                FROM ST_Morphometrics
+                WHERE deleted IS NULL
+            ) AS AllForms
+            GROUP BY Fnumber
+            ORDER BY Fnumber ASC
         </cfquery>
+    
         <cfreturn qgetHistoFBNumber>
     </cffunction>
+    
+    <!--- <cffunction name="getAncillaryBNumber" returntype="any" output="false" access="public" >
+        <!--- <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_Ancillary_Diagnostics where deleted != '1' order by Fnumber ASC
+        </cfquery> --->
+
+         <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#"  >
+            SELECT Fnumber, ID from ST_Ancillary_Diagnostics where deleted != '1'
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+
+            ) 
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
+
+            )
+
+            
+            
+            order by Fnumber ASC
+        </cfquery>
+
+        <cfreturn qgetHistoFBNumber>
+    </cffunction> --->
 
     <cffunction name="getAncillaryData" returntype="any" output="false" access="public" >
-        <cfquery name="qHistoData" datasource="#Application.dsn#"  >
-            SELECT * from ST_Ancillary_Diagnostics where ID = #AD_ID#
+        <!--- <cfquery name="qHistoData" datasource="#Application.dsn#"  >
+            SELECT * from ST_Ancillary_Diagnostics where ID = #AD_ID# And deleted != '1'
         </cfquery>
-        <cfreturn qHistoData>
+        <cfreturn qHistoData> --->
+
+        <cfset var result = {}>
+
+        <!--- First table check --->
+        <cfset var tables = [
+            "ST_Ancillary_Diagnostics",
+            "ST_LiveCetaceanExam",
+            "ST_HIForm",
+            "ST_LevelAForm",
+            "ST_HistoForm",
+            "ST_Blood_Values",
+            "ST_Toxicology",
+            "ST_SampleArchive",
+            "ST_CetaceanNecropsyReport",
+            "ST_Morphometrics"
+        ]>
+
+        <cfset var found = false>
+
+        <cfloop array="#tables#" index="tableName">
+            <cfquery name="qTemp" datasource="#variables.dsn#">
+                SELECT *
+                FROM #tableName#
+                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#AD_ID#">
+                and Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
+                AND 
+                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
+                    deleted IS NULL
+                <cfelse>
+                    deleted != '1'
+                </cfif>
+            </cfquery>
+
+            <cfif qTemp.recordCount GT 0>
+                <cfset result.data = duplicate(qTemp)>
+                <cfset result.sourceTableName = tableName>
+                <cfset found = true>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+
+        <cfif NOT found>
+            <cfset result.data = {}> 
+            <cfset result.sourceTableName = "NoneFound">
+        </cfif>
+
+        <cfreturn result>
+
+
     </cffunction>
     
     <cffunction name="getAncillary_ten" returntype="any" output="false" access="public" >
@@ -5192,18 +7487,18 @@
     </cffunction>
     <cffunction name="getAncillaryDataByLCE" returntype="any" output="false" access="public" >
         <cfquery name="qgetAncillaryDataByLCE" datasource="#Application.dsn#"  >
-            SELECT * from ST_Ancillary_Diagnostics where LCE_ID = #LCEID#
+            SELECT * from ST_Ancillary_Diagnostics where LCE_ID = #LCEID# And deleted != '1'
         </cfquery>
         <cfreturn qgetAncillaryDataByLCE>
     </cffunction>
     <cffunction name="deleteAncillary" returntype="any" output="false" access="public" >
-        <!--- NoumanAwan --->
-        
+                
         <cftry>
 
             <cfquery name="qdeletToxicology" datasource="#variables.dsn#"  >
                 Update ST_Ancillary_Diagnostics 
                 set pdfFiles = ''
+                ,Deleted = 1
                 where ID = #ADID#
             </cfquery>
             <cfquery name="qdeleteCBC" datasource="#Application.dsn#">
@@ -5263,7 +7558,11 @@
         
         <!---pdfFiles ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(fil,i)#'> --->
         <!--- <cfset fil = arrayToList(pd)> --->
-        <cfif len(trim(DiagnosticTest)) GT 0 >
+
+        <!--- <cfdump var="#DiagnosticTest#" abort="true"> --->
+
+         <cfif len(trim(DiagnosticTest)) GT 0 >
+            <!--- <cfdump var="#DiagnosticTest#" abort="true"> --->
 			<cfloop from="1" to="#ListLen(DiagnosticTest)#" index="i">
                 <cfquery name="qAncillaryReportInsert" datasource="#variables.dsn#">
                    Insert into ST_Ancillary_Report  (TestingDate,ADSampleType,DiagnosticTest,TestResults,DiagnosticLab,AD_ID)
@@ -5279,8 +7578,10 @@
                 </cfquery>
             </cfloop>
 		</cfif>
+
 		<cfreturn True>
 	</cffunction>
+
     <cffunction name="AncillaryReportGet"  returntype="any" output="false" access="remote" >
        <cfquery name="qAncillaryReportGet" datasource="#variables.dsn#">
             Select * from  ST_Ancillary_Report  
@@ -5309,12 +7610,24 @@
             <cfset FORM.euthanizedCB = "">
         </cfif>
        
+
+        
+
         <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
             <cftry>
             <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
                 SELECT CNRDATE as cnrdate, ID as cnID  from ST_CetaceanNecropsyReport 
                 where fnumber = '#form.FNUMBER#'            
             </cfquery>
+
+
+
+            
+
+
+
+
+
             <!--- <cfdump var="#qgetcetaceanNecropsyDate#" abort="true"> Nouman--->
             <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
                 <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
@@ -5416,6 +7729,9 @@
         <cfreturn LCE_ID>
     </cffunction>
     <cffunction name="SampleTypeInsert" returntype="any" output="false" access="public" >
+
+        
+
         <cftry>
             <cfquery name="qSampleTypeInsert" datasource="#variables.dsn#"  result="return_data" >
             INSERT INTO ST_SampleType
@@ -5432,6 +7748,7 @@
             ,SampleComments
             ,LCE_ID
             ,SA_ID
+            ,sampleAvailability
             ) 
             VALUES
             (
@@ -5447,6 +7764,7 @@
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.SampleComments#'>
             ,<cfqueryparam  value='#FORM.LCE_ID#'>
             ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.SA_ID#'>
+            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.sampleAvailability#'>
             )
         </cfquery>
         <cfcatch type="any">
@@ -5502,6 +7820,7 @@
             ,StorageType = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.StorageType#'>
             ,SampleComments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.SampleComments#'>
             ,LCE_ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.LCE_ID#'>
+            ,sampleAvailability = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.sampleAvailability#'>
             Where 
             ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.ST_ID#'>
         </cfquery>
@@ -5518,12 +7837,30 @@
         </cfquery>
         <cfreturn qgetSampleType_ten>
     </cffunction>
+
+
+
+
+
     <cffunction name="getSampleTypeIByID" returntype="any" output="false" access="public" >
         <cfquery name="qgetSampleTypeIByID" datasource="#Application.dsn#">
-            SELECT *  FROM ST_SampleType where SA_ID = #SEID# order by ID Desc
+            SELECT *  FROM ST_SampleType  WHERE SA_ID = #SEID# ORDER BY SampleID
         </cfquery>
         <cfreturn qgetSampleTypeIByID>
     </cffunction>
+
+
+
+    <!--- <cffunction name="getSampleTypeIByIDfordatatable" returntype="any" output="false" access="remote" returnformat="json" >
+        <cfquery name="qgetSampleTypeIByID" datasource="#Application.dsn#">
+            SELECT *  FROM ST_SampleType  WHERE SA_ID = #SEID# ORDER BY SampleID
+        </cfquery>
+        <cfreturn qgetSampleTypeIByID>
+    </cffunction> --->
+
+
+
+
     <cffunction name="getSampleTypeDataSingle" returntype="any" output="false" access="public" >
         <cfquery name="qgetSampleTypeDataSingle" datasource="#Application.dsn#">
             SELECT *  FROM ST_SampleType where ID = #STID# order by ID Desc
@@ -5538,20 +7875,294 @@
     </cffunction>
 
     <cffunction name="getSampleArchiveData" returntype="any" output="false" access="public" >
-        <cfquery name="qgetSampleArchiveData" datasource="#Application.dsn#"  >
-            SELECT * from ST_SampleArchive where ID = #SEID#
+        <!--- <cfquery name="qgetSampleArchiveData" datasource="#Application.dsn#"  >
+            SELECT * from ST_SampleArchive where ID = #SEID# And deleted != '1'
         </cfquery>
-        <cfreturn qgetSampleArchiveData>
-    </cffunction>
+        <cfreturn qgetSampleArchiveData> --->
 
+        <cfset var result = {}>
+
+        <!--- First table check --->
+        <cfset var tables = [
+            "ST_SampleArchive",
+            "ST_LiveCetaceanExam",
+            "ST_HIForm",
+            "ST_LevelAForm",
+            "ST_HistoForm",
+            "ST_Blood_Values",
+            "ST_Toxicology",
+            "ST_Ancillary_Diagnostics",
+            "ST_CetaceanNecropsyReport",
+            "ST_Morphometrics"
+        ]>
+
+        <cfset var found = false>
+
+        <cfloop array="#tables#" index="tableName">
+            <cfquery name="qTemp" datasource="#variables.dsn#">
+                SELECT *
+                FROM #tableName#
+                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#SEID#">
+                and Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
+                AND 
+                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
+                    deleted IS NULL
+                <cfelse>
+                    deleted != '1'
+                </cfif>
+            </cfquery>
+
+            <cfif qTemp.recordCount GT 0>
+                <cfset result.data = duplicate(qTemp)>
+                <cfset result.sourceTableName = tableName>
+                <cfset found = true>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+
+        <cfif NOT found>
+            <cfset result.data = {}> 
+            <cfset result.sourceTableName = "NoneFound">
+        </cfif>
+
+        <cfreturn result>
+
+    </cffunction>
     <cffunction name="getSampleArchiveFBNumber" returntype="any" output="false" access="remote" returnformat="json" >
-        <cfargument name="a"  required="false" default= 1>
-        <cfargument name="b"  required="false" default= 100>
-        <cfquery name="qgetSampleArchiveFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_SampleArchive where deleted != '1' order by Fnumber ASC 
+        <cfquery name="qgetSampleArchiveFBNumber" datasource="#Application.dsn#">
+            WITH AllFNumbers AS (
+                SELECT Fnumber, ID, 'ST_SampleArchive' AS SourceTable
+                FROM ST_SampleArchive
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_LiveCetaceanExam'
+                FROM ST_LiveCetaceanExam
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_HIForm'
+                FROM ST_HIForm
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_LevelAForm'
+                FROM ST_LevelAForm
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_HistoForm'
+                FROM ST_HistoForm
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_Blood_Values'
+                FROM ST_Blood_Values
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_Toxicology'
+                FROM ST_Toxicology
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_Ancillary_Diagnostics'
+                FROM ST_Ancillary_Diagnostics
+                WHERE deleted != '1'
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_CetaceanNecropsyReport'
+                FROM ST_CetaceanNecropsyReport
+                WHERE deleted IS NULL
+        
+                UNION ALL
+                SELECT Fnumber, ID, 'ST_Morphometrics'
+                FROM ST_Morphometrics
+                WHERE deleted IS NULL
+            ),
+            Deduped AS (
+                SELECT 
+                    Fnumber,
+                    ID,
+                    ROW_NUMBER() OVER (PARTITION BY Fnumber ORDER BY 
+                        CASE SourceTable
+                            WHEN 'ST_SampleArchive' THEN 1
+                            WHEN 'ST_LiveCetaceanExam' THEN 2
+                            WHEN 'ST_HIForm' THEN 3
+                            WHEN 'ST_LevelAForm' THEN 4
+                            WHEN 'ST_HistoForm' THEN 5
+                            WHEN 'ST_Blood_Values' THEN 6
+                            WHEN 'ST_Toxicology' THEN 7
+                            WHEN 'ST_Ancillary_Diagnostics' THEN 8
+                            WHEN 'ST_CetaceanNecropsyReport' THEN 9
+                            WHEN 'ST_Morphometrics' THEN 10
+                        END
+                    ) AS rn
+                FROM AllFNumbers
+            )
+            SELECT Fnumber, ID
+            FROM Deduped
+            WHERE rn = 1
+            ORDER BY Fnumber ASC
         </cfquery>
         <cfreturn qgetSampleArchiveFBNumber>
     </cffunction>
+
+    <!--- <cffunction name="getSampleArchiveFBNumber" returntype="any" output="false" access="remote" returnformat="json" >
+        <cfargument name="a"  required="false" default= 1>
+        <cfargument name="b"  required="false" default= 100>
+        <!--- <cfquery name="qgetSampleArchiveFBNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_SampleArchive where deleted != '1' order by Fnumber ASC 
+        </cfquery> --->
+
+        <cfquery name="qgetSampleArchiveFBNumber" datasource="#Application.dsn#"  >
+            SELECT Fnumber, ID from ST_SampleArchive where deleted != '1'
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
+                SELECT Fnumber FROM ST_SampleArchive WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+
+            )
+
+            UNION
+
+            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
+
+                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
+                UNION
+                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
+
+            )
+            
+             order by Fnumber ASC 
+        </cfquery>
+
+        <cfreturn qgetSampleArchiveFBNumber>
+    </cffunction> --->
+
     <cffunction name="getSampleFBNumberList" returntype="any" output="false" access="remote" returnformat="json">
         <cfquery name="qgetSampleFBNumberList" datasource="#Application.dsn#"  >
             SELECT ID,Fnumber from ST_SampleArchive where deleted != '1'  order by Fnumber ASC
@@ -5700,6 +8311,7 @@
         <cfquery name="qgetSampleData" datasource="#variables.dsn#">
             SELECT *  FROM ST_SampleDetail where ST_ID = #STID#
         </cfquery>
+        
         <cfreturn qgetSampleData>
     </cffunction>
     <cffunction name="getSampleDetailByID" returntype="any" output="false" access="public" >
@@ -5731,7 +8343,7 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
-        <!--- <cfdump var="#form#" abort="true"> --->
+        
         <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
             <cftry>
             <cfquery name="qgetSampleArchiveNecropsyDate" datasource="#Application.dsn#"  >
@@ -5739,6 +8351,9 @@
                 left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
                 where sa.ID = '#form.SAMPLEARCHIVESEID#'            
             </cfquery>
+
+                
+
             <cfif isDefined('qgetSampleArchiveNecropsyDate.cnID') AND qgetSampleArchiveNecropsyDate.cnID neq ''>
                 <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
                     UPDATE  ST_CetaceanNecropsyReport SET
@@ -5793,6 +8408,7 @@
                 ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
+                
                 WHERE
                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.SEID#'>
             </cfquery>
@@ -5808,8 +8424,7 @@
         <cfreturn True>
     </cffunction>
     <cffunction name="DeleteSampleType" returntype="any" output="false" access="public" >
-        <!--- NoumanAwan --->
-        
+             
         <cftry>
 
             <cfquery name="qdeleteCBC" datasource="#Application.dsn#">
@@ -5850,8 +8465,7 @@
         <cfreturn True>
     </cffunction>
     <cffunction name="deleteMorphometrics" returntype="any" output="false" access="public" >   
-                <!--- NoumanAwan --->
-        
+                        
                 <cftry>
 
                     <cfquery name="qdeletToxicology" datasource="#variables.dsn#"  >
@@ -5873,6 +8487,7 @@
                         ,Ventralupperleft = ''
                         ,Laterallowerleft = ''
                         ,Ventrallowerright = ''
+                        ,Deleted = 1
                         where ID = #form.Morphometricss_ID#
                     </cfquery>
         
@@ -6099,6 +8714,9 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
+        <cfif NOT isDefined('FORM.vetReview')>
+            <cfset FORM.vetReview = "">
+        </cfif>
         <cfif NOT isDefined('FORM.caseReportNBox')>
             <cfset FORM.caseReportNBox = "0">
         </cfif>
@@ -6123,6 +8741,9 @@
         <cfif NOT isDefined('FORM.PancreasFindings')>
             <cfset FORM.PancreasFindings = "">
         </cfif>
+        <cfif NOT isDefined('FORM.HistopathologyReport')>
+            <cfset FORM.HistopathologyReport = "">
+        </cfif>
       
        
 
@@ -6132,7 +8753,8 @@
         </cfquery>
         
             <cftry>
-                <!--- <cfdump var="awan" abort="true"> --->
+                <!--- <cfdump var="#form.HistopathologyReport#" abort="true"> --->
+                    
                 <cfquery name="qinsertCetaceanNecropsy" datasource="#variables.dsn#"  result="return_data">
                     INSERT INTO ST_CetaceanNecropsyReport
                     (
@@ -6402,6 +9024,10 @@
                     ,Colon
                     ,smallIntestine
                     ,AlimentarySystemComments
+                    ,vetReview
+                    ,vetInitials
+                    ,vetReviewDate
+                    ,HistopathologyReport
                     ) 
                     VALUES
                     (
@@ -6534,7 +9160,6 @@
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Gonads_Identified#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Testes_Length_LEFT#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Testes_Length_width#'>
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Glands_LEFT#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Glands_LEFT#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Testes_Length_right#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Testes_width_right#'>
@@ -6671,6 +9296,10 @@
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Colon#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.smallIntestine#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.AlimentarySystemComments#'>
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.vetReview#'>    
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.vetInitials#'>    
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.vetReviewDate#'>    
+                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.HistopathologyReport#'>    
                     )
                 </cfquery>
                 <cfcatch type="any">
@@ -6798,6 +9427,9 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
+        <cfif NOT isDefined('FORM.vetReview')>
+            <cfset FORM.vetReview = "">
+        </cfif>
         <cfif NOT isDefined('FORM.caseReportNBox')>
             <cfset FORM.caseReportNBox = "0">
         </cfif>
@@ -6822,7 +9454,13 @@
         <cfif NOT isDefined('FORM.PancreasFindings')>
             <cfset FORM.PancreasFindings = "">
         </cfif>
+        <cfif NOT isDefined('FORM.HistopathologyReport')>
+            <cfset FORM.HistopathologyReport = "">
+        </cfif>
         <cftry>
+
+            <!--- <cfdump var="#form.HistopathologyReport#" abort="true"> --->
+
             <cfquery name="qupdateCetaceanNecropsy" datasource="#variables.dsn#"  result="return_data" >
                 UPDATE  ST_CetaceanNecropsyReport SET 
                
@@ -7087,6 +9725,10 @@
                 ,smallIntestine = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.smallIntestine#'>
                 ,Colon = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Colon#'>
                 ,AlimentarySystemComments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.AlimentarySystemComments#'>
+                ,vetReview = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.vetReview#'>    
+                ,vetInitials = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.vetInitials#'>    
+                ,vetReviewDate = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.vetReviewDate#'>    
+                ,HistopathologyReport = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.HistopathologyReport#'>    
                 WHERE
                 fnumber =<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Fnumber#'>
             </cfquery>
@@ -7196,17 +9838,66 @@
     </cffunction>
     <!--- getCetaceanNecropsy  --->
     <cffunction name="getCetaceanNecropsy" returntype="any" output="false" access="public" >
-
-        <cftry>
+        <!--- <cfdump var="#form#" abort="true"> --->
+        <!--- <cftry>
             <cfquery name="qgetCetaceanNecropsy" datasource="#Application.dsn#" maxRows = "1">
-                SELECT * from ST_CetaceanNecropsyReport where fnumber = '#Nfieldnumber#'
+                SELECT * from ST_CetaceanNecropsyReport where fnumber = '#Nfieldnumber#' and deleted is null
             </cfquery>
            
             <cfcatch type="any">
                 <cfdump  var="#cfcatch#"><cfabort>
             </cfcatch>
         </cftry>
-        <cfreturn qgetCetaceanNecropsy>
+        <cfreturn qgetCetaceanNecropsy> --->
+
+         <cfset var result = {}>
+
+        <!--- First table check --->
+        <cfset var tables = [
+            "ST_CetaceanNecropsyReport",
+            "ST_LiveCetaceanExam",
+            "ST_HIForm",
+            "ST_LevelAForm",
+            "ST_HistoForm",
+            "ST_Blood_Values",
+            "ST_Toxicology",
+            "ST_Ancillary_Diagnostics",
+            "ST_SampleArchive",
+            "ST_Morphometrics"
+        ]>
+
+        <cfset var found = false>
+
+        <cfloop array="#tables#" index="tableName">
+            <cfquery name="qTemp" datasource="#variables.dsn#">
+                SELECT *
+                FROM #tableName#
+                WHERE Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Nfieldnumber#">
+                AND 
+                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
+                    deleted IS NULL
+                <cfelse>
+                    deleted != '1'
+                </cfif>
+            </cfquery>
+
+            <cfif qTemp.recordCount GT 0>
+                <cfset result.data = duplicate(qTemp)>
+                <cfset result.sourceTableName = tableName>
+                <cfset found = true>
+                <cfbreak>
+            </cfif>
+        </cfloop>
+        
+        <cfif NOT found>
+            <cfset result.data = {}> 
+            <cfset result.sourceTableName = "NoneFound">
+        </cfif>
+
+
+
+        <cfreturn result>
+
     </cffunction>
     <cffunction name="getAllData" returntype="any" output="false" access="public" >
 
@@ -7336,7 +10027,7 @@
             UNION
             SELECT Fnumber FROM ST_SampleArchive where deleted != '1'
             UNION
-            SELECT Fnumber FROM ST_CetaceanNecropsyReport
+            SELECT Fnumber FROM ST_CetaceanNecropsyReport where deleted is null
             ORDER BY Fnumber;
         </cfquery>
         <cfreturn qgetallfieldnumber>
@@ -7416,13 +10107,14 @@
     </cffunction>
     <!--- updateDynamicParasites  --->
     <cffunction name="updateDynamicParasites" returntype="any" output="false" access="public">
-        
+       
         <cftry>
             <cfquery name="qLympho" datasource="#variables.dsn#">
                 select * from ST_DynamicParasites 
                 where fnumber = '#Fnumber#'
              </cfquery>
             
+             
              <cfloop query="qLympho">
                 <cfset lp = 'PARASITES'&#qLympho.ID#>
                 <cfdump var ="#evaluate(lp)#">
@@ -7431,6 +10123,8 @@
                 <cfset ln = 'Parasitelocation'&#qLympho.ID#>
                 <cfdump var ="#evaluate(ln)#">
                 
+                
+
                 <cfquery name="qupdateDynamicParasites" datasource="#variables.dsn#"  result="return_data" >
                     UPDATE  ST_DynamicParasites SET
 
@@ -7451,8 +10145,7 @@
     </cffunction>
      <!--- delete Cetacean Necropsy --->
      <cffunction name="deletcetaceannecropsy" returntype="any" output="false" access="public" >
-        <!--- NoumanAwan --->    
-        <!--- <cfdump var="#form#" abort="true"> --->
+     
         <cftry>
 
             <cfquery name="qdeletToxicology" datasource="#variables.dsn#"  >
@@ -7604,6 +10297,7 @@
                 ,alimentaryImages = ''
                 ,centralNervousImages = ''
                 ,musculoskeletalImages = ''
+                ,Deleted = 1
                 
 
                 where ID = #report_ID#
@@ -7844,7 +10538,6 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
-        <!--- <cfdump var="#form#" abort="true"> --->
         <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
             <cftry>
                 <cfquery name="qgetMorphometricsNecropsyDate" datasource="#Application.dsn#"  >
@@ -8510,7 +11203,6 @@
 
 
     <cffunction name="AjaxbloodValueInsert" returntype="any" output="false" access="remote" returnformat="plain">
-        <!--- <cfdump var="#Fnumber#" abort="true"> --->
         <cfquery name="qgetLCEID" datasource="#Application.dsn#"  result="return_data" >
             SELECT ID from ST_Blood_Values where deleted != '1' and Fnumber = '#Fnumber#' 
         </cfquery>
@@ -9453,6 +12145,7 @@
             ,SampleComments=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportSampleComments#'>
             ,Sample_Date=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportSample_Date#'>
             ,Sample_Location=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportSample_Location#'>
+            ,sampleAvailability=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportsampleAvailability#'>
             
             where
             ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
@@ -9515,7 +12208,7 @@
             ,Mercury=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Mercury#'>
             ,Thallium=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Thallium#'>          
             ,Selenium=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Selenium#' >
-            ,Iron=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Iron#'>
+            ,Iron=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Ironn#'>
             ,Copper=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Copper#'>
             ,Zinc=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Zinc#'>
             ,Molybdenum=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Molybdenum#'>          
@@ -9615,6 +12308,9 @@
             SELECT HistoImages,id from ST_CetaceanNecropsyReport where Fnumber = '#Fnumber#' and caseReportBox = '1'
 
         </cfquery>
+
+        
+
         <cfreturn qgetPdfFiles>
     </cffunction>
 
@@ -9927,8 +12623,10 @@
                     OR lat LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     OR lon LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     OR county LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    OR fnumber LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    
 
-                )
+                ) and (deleted !='1' OR deleted is null)
                 GROUP BY fnumber, SourceTable
   
             </cfquery>        
@@ -10016,6 +12714,7 @@
                     OR RLD LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     OR ECGresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     OR Ultrasoundresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
+                    
                     
                 )
                 UNION
@@ -10126,8 +12825,6 @@
                     <cfset formDataStruct[fieldName] = fieldValue>
                 </cfif>
             </cfloop>
-
-            <!--- <cfdump var="#formDataStruct.RBC_MORPHOLOGY#" abort="true"> --->
 
             <cfif isDefined('formDataStruct.wbc_count')>
                 <cfset wbc_count = formDataStruct.wbc_count>
@@ -10349,10 +13046,6 @@
             <cfelse>
                 <cfset WBCMorphology_comment =''>
             </cfif>
-
-            <!--- ,RBC_Morphology =<cfqueryparam cfsqltype="cf_sql_varchar" value='#RBC_Morphology#'>            
-                ,WBC_Morphology =<cfqueryparam cfsqltype="cf_sql_varchar" value='#WBC_Morphology#'>
-            NoumanAwan --->
                      
         <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
             SELECT ID from ST_CBC where BV_ID = #form.bloodValues_ID#

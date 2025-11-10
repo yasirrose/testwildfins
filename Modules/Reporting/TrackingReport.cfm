@@ -37,7 +37,7 @@
                             <label class="col-lg-4 col-md-4 col-sm-12 control-label top-fld">Date Range</label>
                             <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                 <div id="Date-range" class="input-group">
-                                    <input type="text"  class="form-control" value="<cfif  isDefined('form.date')>#form.date#</cfif>" name="date" id="date" placeholder="Select Date Range">
+                                    <input type="text"  class="form-control" value="<cfif  isDefined('form.date')>#form.date#</cfif>" name="date" id="date" placeholder="Select Date Range"   >
                                     <span class="input-group-btn">
                                         <button type="button" class="btn btn-primary"onclick="showdate()"><i class="fa fa-calendar"></i></button>
                                     </span>
@@ -47,10 +47,10 @@
                         <div class="form-group col-lg-4 col-md-6 col-sm-12">
                             <label class="control-label col-sm-3 top-fld" >Field Number</label>
                             <div class="col-sm-9">
-                                <select class="form-control" name="sampleFN" id="sampleFN">
+                                <select class="form-control  search-box" name="sampleFN" id="sampleFN">
                                     <option value="">Select Field Number</option>                               
                                     <cfloop query="qgetSampleFBNumber">
-                                        <option value="#qgetSampleFBNumber.Fnumber#" >#qgetSampleFBNumber.Fnumber#</option>
+                                        <option value="#qgetSampleFBNumber.Fnumber#" <cfif isDefined('form.sampleFN') and form.sampleFN eq #qgetSampleFBNumber.Fnumber#>selected</cfif> > #qgetSampleFBNumber.Fnumber#</option>
                                     </cfloop>
                                 </select>
                             </div>
@@ -58,45 +58,71 @@
                         <div class="form-group col-lg-4 col-md-6 col-sm-12">
                             <label class="control-label col-sm-4 top-fld">Species</label>
                             <div class="col-sm-8">
-                                <select class="form-control" name="Species" id="Species">
+                                <select class="form-control search-box" name="Species" id="Species" multiple>
                                     <option value="">Select Species</option>
-                                        <cfloop query="#qgetCetaceanSpecies#">
-                                            <option value="#qgetCetaceanSpecies.ID#" >#qgetCetaceanSpecies.CetaceanSpeciesName#</option>
-                                        </cfloop>
+                                    <cfloop query="#qgetCetaceanSpecies#">
+                                        <option value="#qgetCetaceanSpecies.ID#" 
+                                            <cfif isDefined("form.Species") AND ListFind(form.Species, qgetCetaceanSpecies.ID)>
+                                                selected
+                                            </cfif>
+                                        >#qgetCetaceanSpecies.CetaceanSpeciesName#</option>
+                                    </cfloop>
                                 </select>
                             </div>
                         </div>
                         </div>
                         <div class="form-row">
-                        <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                            <label class="control-label col-sm-3 top-fld" >Sample Type</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" name="SampleType" id="SampleType">
-                                    <option value="">Select Sample Type</option>
-                                    <cfloop query="qgetSampleType">
-                                            <option value="#qgetSampleType.Type#" >#qgetSampleType.Type#</option>
-                                    </cfloop>
-                                </select>
+
+
+                            
+                            <cfif isDefined("form.SampleType")>
+                                <!-- Store selected values in session when form is submitted -->
+                                <cfset session.selectedSampleType = form.SampleType>
+                            </cfif>
+
+                            <div class="form-group col-lg-4 col-md-6 col-sm-12">
+                                <label class="control-label col-sm-3 top-fld">Sample Type</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control search-box customLesionSelect" id="SampleType" name="SampleType" multiple>
+                                        <cfloop query="qgetSampleType">
+                                            <option value="#qgetSampleType.Type#" <cfif isDefined("session.selectedSampleType") and listFind(session.selectedSampleType, qgetSampleType.Type)>selected</cfif>>#qgetSampleType.Type#</option>
+                                        </cfloop>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+
+                            <cfset session.selectedSampleType = "">
+
+
+
+
                         <div class="form-group col-lg-4 col-md-6 col-sm-12">
                             <label class="control-label col-sm-3 top-fld" >Storage Type</label>
                             <div class="col-sm-9">
-                                <select class="form-control" name="StorageType" id="StorageType">
+                                <select class="form-control search-box" name="StorageType" id="StorageType" multiple>
                                     <option value="">Select Storage Type</option>
                                         <cfloop from="1" to="#ArrayLen(StorageTypeArray)#" index="j">
-                                             <option value="#StorageTypeArray[j]#" >#StorageTypeArray[j]#</option>
-                                     </cfloop>
+                                            <option value="#StorageTypeArray[j]#"
+                                                <cfif isDefined("form.StorageType") AND ListFind(form.StorageType, StorageTypeArray[j])>
+                                                    selected
+                                                </cfif>
+                                                >#StorageTypeArray[j]#
+                                            </option>
+                                        </cfloop>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group col-lg-4 col-md-6 col-sm-12">
                             <label class="control-label col-sm-4 top-fld">Preservation Method</label>
                             <div class="col-sm-8">
-                                <select class="form-control" name="PreservationMethod" id="PreservationMethod">
+                                <select class="form-control search-box" name="PreservationMethod" id="PreservationMethod" multiple>
                                     <option value="">Select Preservation Method</option>
                                         <cfloop query="qgetPreservationMethod">
-                                                <option value="#qgetPreservationMethod.Method#" >#qgetPreservationMethod.Method#</option>
+                                            <option value="#qgetPreservationMethod.Method#"
+                                                <cfif isDefined("form.PreservationMethod") AND ListFind(form.PreservationMethod, qgetPreservationMethod.Method)>
+                                                    selected
+                                                </cfif>
+                                            >#qgetPreservationMethod.Method#</option>
                                         </cfloop>
                                 </select>
                             </div>
@@ -119,44 +145,83 @@
                 <cfset form.startDate = dateformat(form.date.split('-')[1],'YYYY-mm-dd')>
                 <cfset form.endDate   = dateformat(form.date.split('-')[2],'YYYY-mm-dd')>
             </cfif>
-
+            <!--- <cfdump var="#form.SampleType#" abort="true"> --->
             <!--- <cfif isdefined("form.date") and form.date EQ "">
                 <cfset form.startDate = '2000-01-01'>
                 <cfset form.endDate = dateformat(Now(),'YYYY-mm-dd')>
                 <!--- <cfset form.endDate   = dateformat(form.date.split('-')[2],'YYYY-mm-dd')> --->
             </cfif> --->
-
+           
+            
         
             <cfquery name="qgetSampleTrackingReport" datasource="#Application.dsn#">
-                SELECT SA.Fnumber, ST.SampleID,ST.BinNumber,ST.SampleType,ST.PreservationMethod,ST.AmountofSample,ST.UnitofSample,ST.StorageType,ST.SampleComments,ST.Sample_Date,ST.Sample_Location,SD.SADate,SD.SampleLocation,SD.SampleTracking,SD.LabSentto,SD.SampleNote,SD.subsampleDate,SD.Thawed,SD.Sample_available
-                FROM ST_SampleArchive as SA
-                LEFT JOIN ST_SampleType as ST ON SA.ID = ST.SA_ID   
-                LEFT JOIN ST_SampleDetail as SD ON ST.ID = SD.ST_ID   
-                Where 1=1 
-                <cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">
-                    and CONVERT(char(10), SA.date,126) BETWEEN '#form.startDate#' AND '#form.endDate#'
-                </cfif>
-                <cfif isdefined("form.sampleFN") and form.sampleFN neq "">
-                    and SA.Fnumber = '#form.sampleFN#'
-                </cfif>
-                <cfif isdefined("form.Species") and form.Species neq "">
-                    and SA.Species = '#form.Species#'
-                </cfif>                
-                <cfif isdefined("form.SampleType") and form.SampleType neq "">
-                    and ST.SampleType = '#form.SampleType#'
-                </cfif>
-                <cfif isdefined("form.StorageType") and form.StorageType neq "">
-                    and ST.StorageType = '#form.StorageType#'
-                </cfif>
-                <cfif isdefined("form.PreservationMethod") and form.PreservationMethod neq "">
-                    and ST.PreservationMethod = '#form.PreservationMethod#'
-                </cfif>
-                ORDER BY SA.ID DESC       
-            </cfquery>
+            
+               SELECT
+                SA.Fnumber,
+                ST.SampleID,
+                ST.BinNumber,
+                ST.SampleType,
+                ST.PreservationMethod,
+                ST.AmountofSample,
+                ST.UnitofSample,
+                ST.StorageType,
+                ST.SampleComments,
+                ST.Sample_Date,
+                ST.Sample_Location,
+                SD.SADate,
+                SD.SampleLocation,
+                SD.SampleTracking,
+                SD.LabSentto,
+                SD.SampleNote,
+                SD.subsampleDate,
+                SD.Thawed,
+                SD.Sample_available 
+            FROM ST_SampleArchive AS SA
+            LEFT JOIN ST_SampleType AS ST ON SA.ID = ST.SA_ID
+            LEFT JOIN ST_SampleDetail AS SD ON ST.ID = SD.ST_ID 
+            WHERE 1=1
+            AND (
+                SD.SADate = (
+                    SELECT MAX(SADate)
+                    FROM ST_SampleDetail
+                    WHERE ST_ID = ST.ID
+                )
+            )
+            
+            <cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">
+                and CONVERT(char(10), SA.date,126) BETWEEN '#form.startDate#' AND '#form.endDate#'
+            </cfif>
+            <cfif isdefined("form.sampleFN") and form.sampleFN neq "">
+                and SA.Fnumber = '#form.sampleFN#'
+            </cfif>
+            <cfif isdefined("form.Species") and form.Species neq "">
+                AND SA.Species IN (
+                    <cfqueryparam value="#form.Species#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                )
+            </cfif>               
+            <cfif isdefined("form.SampleType") and form.SampleType neq "">
+                AND ST.SampleType IN (
+                    <cfqueryparam value="#form.SampleType#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                )
+            </cfif>
+            <cfif isdefined("form.StorageType") and form.StorageType neq "">
+                and ST.StorageType IN (
+                    <cfqueryparam value="#form.StorageType#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                )
+            </cfif>
+            <cfif isdefined("form.PreservationMethod") and form.PreservationMethod neq "">
+                and ST.PreservationMethod IN (
+                    <cfqueryparam value="#form.PreservationMethod#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                )
+            </cfif>
+            ORDER BY SD.SADate DESC       
+        </cfquery>
+                                                                                                                           
             
             <div class="section-container  p-b-10" >
                 <cfif qgetSampleTrackingReport.recordcount NEQ 0>
-                    <table id="data-table" data-order='[[3,"desc"]]' class="table table-bordered table-hover panel" style="overflow: auto; display: block; border-radius: inherit;">
+                    
+                    <table id="data-table"  class="table table-bordered table-hover panel" style="overflow: auto; display: block; border-radius: inherit;">
                         <thead>
                          <tr class="inverse">
                             <th>Fnumber</th>

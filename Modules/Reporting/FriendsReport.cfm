@@ -1,5 +1,6 @@
 <cfset  permissions ="#session['userdetails']['permissions']#">
 <cfif permissions eq "full_access" or findNoCase("Run Report S-S-C", permissions) neq 0>
+   
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <cfset variables.dsn = "wildfins_new">
     <cfif structKeyExists(session, 'exportData')>
@@ -9,133 +10,141 @@
 
     <cfset qgetCetaceanSpecies = Application.StaticDataNew.getCetaceanSpecies()>
 
-    <cfif isdefined('form.cetaceanSpecies') and form.cetaceanSpecies neq ''>
-        <cfquery name="cetaceans" datasource="#variables.dsn#">
-             SELECT Cetaceans.ID,Cetaceans.Code,TLU_CetaceanSpecies.CetaceanSpeciesName
-            FROM Cetaceans
-            LEFT JOIN TLU_CetaceanSpecies
-            ON Cetaceans.CetaceanSpecies = TLU_CetaceanSpecies.ID
-            WHERE TLU_CetaceanSpecies.ID = '#form.cetaceanSpecies#'
-            order by code Asc
-        </cfquery>
-    </cfif>
    
-    <cfif (isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge')) and isdefined('form.CetaceanId') and  form.CetaceanId neq '0'>
-        <cfset qGetCetacean = Application.Cetaceans.getCetacean(argumentCollection="#Form#")>
-        <cfset Sighting_ID = ValueList(qGetCetacean.Sighting_ID,",")>
-        <cfset code = qGetCetacean.Code>
-        <cfif Sighting_ID NEQ ''>
-            <cfquery datasource="#variables.dsn#" name="allCount"  result="r">
-                SELECT CONCAT(Cetaceans.Code, ' - ', Cetaceans.Name) as CetaceanCodeName, Cetaceans.Sex,COUNT(*) as timesseen
-                FROM Cetacean_Sightings
-                inner join Cetaceans
-                on
-                Cetaceans.ID = Cetacean_Sightings.Cetaceans_ID
-                where Cetacean_Sightings.Sighting_ID IN (#Sighting_ID#)
-                AND Cetaceans.CODE != '#code#'
-                GROUP BY
-                Cetaceans.Name,Cetaceans.Code,Cetaceans.Sex,Cetaceans.ID
+    <cfif (isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge')) >
 
-            </cfquery>
+        <cfif StructKeyExists(Form, "cetaceanSpecies") AND Form.cetaceanSpecies NEQ "">
+            <cfset cetaceanSpeciesList = Form.cetaceanSpecies>
+        <cfelse>
+            <cfset cetaceanSpeciesList = "''">  
         </cfif>
-        <cfscript>
-            rowsPerPage = 100;
-            currentRecordCount = 100;
-            totalCount = allCount.recordCount;
-            if(totalCount == "")
-            {
-                totalCount=0;
-            }
-            if(isDefined('form.pge'))
-            {
-                pg = form.pge;
-            }else
-            {
-                pg = 1;
-            }
-            maxPagesBefore = 3;
-            maxPagesAfter = 3;
-            urlString = '';
-            pageVar = 'pg';
-            local.paginationStruct = StructNew();
-            local.multiUrlParamsReplace = "";
-            if (listLen(urlString,"&") GT 1)
-            {
-                local.multiUrlParamsReplace = "&";
-            }
-            local.paginationStruct["numberOfPages"] = Ceiling(totalCount/rowsPerPage);
-            if (totalCount == 0)
-                local.paginationStruct["startCount"] = 1;
-            else	
-                local.paginationStruct["startCount"] = (((pg-1) * rowsPerPage)+1);
-                local.paginationStruct["endCount"] = ((pg-1) * rowsPerPage)+currentRecordCount;
 
-            if(pg == 1)
-            {
-                if(totalCount gte rowsPerPage)
-                local.paginationStruct["nextCount"] = currentRecordCount;
-                else
-                local.paginationStruct["nextCount"] = totalCount;
-            }
-            else
-            {
-                if(totalCount lt local.paginationStruct["startCount"]+rowsPerPage )
-                {
-                    local.paginationStruct["nextCount"]=totalCount;
-                }
-                else
-                {
-                    local.paginationStruct["nextCount"] = ((((pg-1) * rowsPerPage))+rowsPerPage);
-                }
-            }
-            local.paginationStruct["totalCount"] = totalCount;
-            if (pg LT local.paginationStruct["numberOfPages"])
-            {
-                local.paginationStruct["nextLink"] = replace(urlString,"#local.multiUrlParamsReplace##pg#","")&pg+1;
-            }
-            if (pg LTE local.paginationStruct["numberOfPages"] AND pg GT 1)
-            {
-                local.paginationStruct["previousLink"] = replace(urlString,"#local.multiUrlParamsReplace##pg#","")&pg-1;
-            }
-            local.maxPages = maxPagesBefore + maxPagesAfter + 1 ;
-            local.startIndex = 1;
-            local.endIndex = local.paginationStruct["numberOfPages"] ;
-            if(local.paginationStruct["numberOfPages"] GT local.maxPages)
-            {
-                local.startIndex = pg - maxPagesBefore ;
-                local.endIndex = pg + maxPagesAfter ;
-                if (local.startIndex LT 1){
-                local.startIndex = 1 ;
-                local.endIndex = (local.startIndex + local.maxPages) - 1 ;
-                }
-                if (local.endIndex GT local.paginationStruct["numberOfPages"])
-                {
-                    local.startIndex = local.paginationStruct["numberOfPages"] - local.maxPages ;
-                    local.endIndex = local.paginationStruct["numberOfPages"] ;
-                }
-            }
-            if (local.endIndex GT 1)
-            {
-                local.displayLinks = ArrayNew(1);
-                for ( local.i=#local.startIndex#; local.i<=#local.endIndex#;local.i++)
-                {
-                    local.pageObj = StructNew();
-                    local.pageObj["pageNumber"] = local.i ;
-                    local.pageObj["pageLink"] = "&"&replace(urlString,"#local.multiUrlParamsReplace##pageVar#=#pg#","")&"#pageVar#="&local.i
-                if (pg EQ local.i)
-                    local.pageObj["isCurrentPage"] = true ;
-                else
-                    local.pageObj["isCurrentPage"] = false ;
-                    ArrayAppend(local.displayLinks,local.pageObj);
-                }			
-                local.paginationStruct["displayLinks"] = local.displayLinks ;
-            }
-            paginate = local.paginationStruct;
-        </cfscript>
+        <cfif isdefined("form.date") and form.date NEQ "">
+            <cfset form.startDate = dateformat(ListGetAt(form.date, 1, '-'), 'YYYY-MM-DD')>
+            <cfset form.endDate   = dateformat(ListGetAt(form.date, 2, '-'), 'YYYY-MM-DD')>
+        </cfif>
+
+        <!--- <cfquery datasource="#variables.dsn#" name="allCount" result="r">
+            SELECT DISTINCT
+                Survey_Sightings.SightingNumber,
+                Cetaceans.CetaceanSpecies,
+                Cetaceans.Code,
+                Cetaceans.Name,
+                Cetaceans.Sex,
+                Cetaceans.SourceSexed,
+                Cetaceans.FB_Number,
+                Cetaceans.YearOfBirth,
+                Cetaceans.FirstSightingDate as First_Sighting_Date,
+                Cetaceans.ImageName,
+                Cetaceans.SecondaryImage,
+                Cetaceans.DateDeath as DOD,
+                Cetaceans.DateOfBirthEstimate as DOB,
+                Cetaceans.DScore,
+                Surveys.Date as DateSeen,
+                Surveys.ID as Survey_ID,
+                Surveys.SurveyRoute as Survey_Route,
+                Survey_Sightings.ID as Sighting_ID,
+                Survey_Sightings.SightingNumber as SightingNo,
+                Survey_Sightings.Project_ID,
+                Survey_Sightings.SightingStart,
+                Survey_Sightings.FE_Species,
+                Surveys.BodyOfWater,
+                Surveys.SurveyType,
+                Cetacean_Sightings.bodyCondition,
+                Cetacean_Sightings.Fetals, 
+                Cetacean_Sightings.Calf, 
+                Cetacean_Sightings.Yoy,
+                CONCAT(Cetaceans.Code, ' - ', Cetaceans.Name) as CetaceanCodeName,
+                COUNT(Cetacean_Sightings.Sighting_ID) as timesseen
+            FROM Surveys
+            LEFT JOIN Survey_Sightings
+                ON Surveys.ID = Survey_Sightings.Project_ID
+            LEFT JOIN Cetacean_Sightings
+                ON Survey_Sightings.ID = Cetacean_Sightings.Sighting_ID
+            LEFT JOIN Cetaceans
+                ON Cetaceans.ID = Cetacean_Sightings.Cetaceans_ID
+            WHERE Survey_Sightings.FE_Species IN (<cfqueryparam value="#cetaceanSpeciesList#" cfsqltype="cf_sql_varchar" list="true">)
+            <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND form.endDate NEQ "">
+                AND CONVERT(char(10), Survey_Sightings.SightingStart, 126) BETWEEN <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date"> AND <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
+            </cfif>
+            AND Surveys.IsDeleted != <cfqueryparam cfsqltype="cf_sql_bit" value="1">
+            AND Survey_Sightings.IsDeleted != <cfqueryparam cfsqltype="cf_sql_bit" value="1">
+            AND Cetaceans.Code != ''
+            GROUP BY
+                Survey_Sightings.SightingNumber,
+                Cetaceans.CetaceanSpecies,
+                Cetaceans.Code,
+                Cetaceans.Name,
+                Cetaceans.Sex,
+                Cetaceans.SourceSexed,
+                Cetaceans.FB_Number,
+                Cetaceans.YearOfBirth,
+                Cetaceans.FirstSightingDate,
+                Cetaceans.ImageName,
+                Cetaceans.SecondaryImage,
+                Cetaceans.DateDeath,
+                Cetaceans.DateOfBirthEstimate,
+                Cetaceans.DScore,
+                Surveys.Date,
+                Surveys.ID,
+                Surveys.SurveyRoute,
+                Survey_Sightings.ID,
+                Survey_Sightings.Project_ID,
+                Survey_Sightings.SightingStart,
+                Survey_Sightings.FE_Species,
+                Surveys.BodyOfWater,
+                Surveys.SurveyType,
+                Cetacean_Sightings.bodyCondition,
+                Cetacean_Sightings.Fetals, 
+                Cetacean_Sightings.Calf, 
+                Cetacean_Sightings.Yoy
+            ORDER BY DateSeen DESC
+        </cfquery> --->
+
+        <cfquery datasource="#variables.dsn#" name="allCount" result="r">
+            SELECT DISTINCT
+                Surveys.ID as Survey_ID,
+                Survey_Sightings.ID as Sighting_ID,
+                Surveys.Date as DateSeen,
+                Surveys.SurveyRoute as Survey_Route,
+                Surveys.BodyOfWater,
+                Surveys.SurveyType,
+                Survey_Sightings.SightingNumber as SightingNo,
+                Survey_Sightings.Project_ID,
+                Survey_Sightings.SightingStart,                
+                STRING_AGG(Cetaceans.Code, ' ') AS CetaceanCodes
+            FROM Surveys
+            LEFT JOIN Survey_Sightings
+                ON Surveys.ID = Survey_Sightings.Project_ID
+            LEFT JOIN Cetacean_Sightings
+                ON Survey_Sightings.ID = Cetacean_Sightings.Sighting_ID
+            LEFT JOIN Cetaceans
+                ON Cetaceans.ID = Cetacean_Sightings.Cetaceans_ID
+            WHERE Survey_Sightings.FE_Species IN (<cfqueryparam value="#cetaceanSpeciesList#" cfsqltype="cf_sql_varchar" list="true">)
+            <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND form.endDate NEQ "">
+                AND CONVERT(char(10), Survey_Sightings.SightingStart, 126) BETWEEN <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date"> AND <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
+            </cfif>
+            AND Surveys.IsDeleted != <cfqueryparam cfsqltype="cf_sql_bit" value="1">
+            AND Survey_Sightings.IsDeleted != <cfqueryparam cfsqltype="cf_sql_bit" value="1">
+            AND Cetaceans.Code != ''
+            GROUP BY 
+                Surveys.ID,
+                Survey_Sightings.ID,
+                Surveys.Date,
+                Surveys.SurveyRoute,
+                Survey_Sightings.SightingNumber,
+                Survey_Sightings.Project_ID,
+                Survey_Sightings.SightingStart,
+                Survey_Sightings.FE_Species,
+                Surveys.BodyOfWater,
+                Surveys.SurveyType
+            ORDER BY DateSeen DESC
+        </cfquery>
+        
+        <!--- <cfdump var="#allCount#" abort="true"> --->
+
     </cfif>
-    <cfif  not isDefined('form.pge')>
-        <cfset pg = 1>
-    </cfif>
+
     <div id="content" class="content">
         <ol class="breadcrumb pull-right">
             <li><a href="javascript:;">Home</a></li>
@@ -148,33 +157,36 @@
                     <cfoutput>
                         <form action="#CGI.SCRIPT_NAME#?#CGI.QUERY_STRING#" name="searchAllReports" id="searchAllReports" method="post">
                             <div class="form-row">
-                                
-                                <input type="hidden" name="pge" id="pge" value="<cfif isdefined('form.CetaceanId') and  form.CetaceanId neq '0'>#pg#<cfelse>1</cfif>">
-                                
-                                <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-4 col-md-4 col-sm-12 control-label">Species</label>
-                                    <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
-                                    <select class="form-control" name="cetaceanSpecies" onchange="getcode()"required>
-                                            <option value="0">Select Species</option>
-                                            <cfloop query="#qgetCetaceanSpecies#">
-                                                <option class="species-option" value="#id#" <cfif isDefined('form.cetaceanSpecies') and form.cetaceanSpecies eq #id#>selected</cfif>>#CetaceanSpeciesName#</option>
+
+                                <div class="form-group col-lg-5 col-md-6 col-sm-12">
+                                    <label class="col-lg-3 col-md-3 col-sm-12 control-label">Species</label>
+                                    <div class="input-wrap col-lg-9 col-md-9 col-sm-12">
+                                        <select class="form-control search-box customLesionSelect" id="cetaceanSpecies" name="cetaceanSpecies" multiple required>
+                                            <cfloop query="qgetCetaceanSpecies">
+                                                <!--- <cfif Active eq 1>
+                                                </cfif> --->
+                                                    <option class="species-option" value="#id#" 
+                                                    <cfif isDefined('form.cetaceanSpecies') and ListFind(form.cetaceanSpecies, id)>selected</cfif>>
+                                                    #CetaceanSpeciesName#
+                                                </option>
                                             </cfloop>
                                         </select>
                                     </div>
                                 </div>
+
+                         
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-4 col-md-4 col-sm-12 control-label">Code</label>
+                                    <label class="col-lg-4 col-md-4 col-sm-12 control-label">Date Range</label>
                                     <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
-                                        <select class="form-control" name="CetaceanId"required>
-                                            <option id="first" value="0">Select Code</option>
-                                        <cfif isdefined('form.cetaceanSpecies') and form.cetaceanSpecies neq ''>
-                                            <cfloop query="#cetaceans#">
-                                                <option value="#ID#" <cfif isDefined('form.CetaceanId') and form.CetaceanId eq #ID#>selected</cfif>>#Code#</option>
-                                            </cfloop>
-                                        </cfif>
-                                        </select>
+                                        <div id="Date-range" class="input-group">
+                                            <input type="text"  class="form-control" name="date" id="date" placeholder="Select Date Range" value="<cfif isDefined('form.date') and form.date neq ''>#form.date#</cfif>">
+                                            <span class="input-group-btn">
+                                                <button type="button" id="dateButton" onclick="showdate()" class="btn btn-primary"><i class="fa fa-calendar"></i></button>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
+      
                             </div>  
                             <div class="form-row friend-btn-flex">
                                 <div class="col-lg-10 col-md-10 col-sm-9 text-right">
@@ -189,62 +201,39 @@
                 </div>
             </div>
         </div>
-        <cfif (isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge')) and isdefined('form.CetaceanId') and  form.CetaceanId neq '0'>
+        <cfif (isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge')) >
             <div class="section-container section-with-top-border"> 
                 <div class="">
-                    <table id="allReport"  class="table table-bordered table-hover Ftable" style="width: 374px;margin-left: inherit;">
+                    <table id="data-table"  class="table table-bordered table-hover Ftable" style="margin-left: inherit;">
                         <thead>
                         <tr class="inverse">
-                            <th>Friends(Code-Name)</th>
-                            <th>Sex</th>
-                            <th>Times Seen</th>
+                            <th>Survey ID</th>
+                            <th>Sighting ID</th>
+                            <th>Sighting Date</th>
+                            <th>Friends(Code)</th>
+                            <!--- <th>Sex</th>                             
+                            <th>Times Seen</th> --->
                         </tr>
                         </thead>
                         <tbody>
-                            <cfoutput query="allCount" startRow="#local.paginationStruct['startCount']#" maxRows ="#rowsPerPage#">
-                                <tr>
-                                    <td>#allCount.CetaceanCodeName#</td>
-                                    <td>#allCount.Sex#</td>
-                                    <td>#allCount.timesseen#</td>
-                                </tr>
-                            </cfoutput>
+                            <cfif isDefined('allCount')>
+                                <cfoutput query="allCount" >
+                                    <tr>
+                                        <td>#SURVEY_ID#</td>
+                                        <td>#Sighting_ID#</td>
+                                        <td>#DateFormat(SightingStart, "MM-DD-YYYY")#</td>
+                                        <td>#CetaceanCodes#</td>
+                                        <!--- <td>#allCount.Sex#</td>
+                                        <td>#allCount.timesseen#</td> --->
+                                    </tr>
+                                </cfoutput>
+                            </cfif>
                         </tbody>
                     </table>
                 </div>
-                <cfif allCount.recordCount neq 0>
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12 col-sm-12 text-right">
-                            <button type="button" onclick="excel()" class="btn btn-success width-123 m-r-5  ml-auto">Export Excel</button>
-                        </div>
-                    </div>
-                </cfif>   
+           
             </div>
-            <div class="row">
-                <cfscript>
-                    if(not StructIsEmpty(paginate)){
-                        writeOutput('<nav aria-label="Page" style="text-align: right;"><ul class="pagination">');
-                        if (StructKeyExists(paginate,"previousLink")){
-                            writeOutput('<li class="page-item"><a onclick="paginate(#paginate.previousLink#)" class="left" style="cursor: pointer;">&laquo; Previous</a></li>');
-                        }
-                        if (StructKeyExists(paginate,"displayLinks")){
-                            for ( i=1; i<=#ArrayLen(paginate.displayLinks)#;i++){
-                        
-                                thePage = paginate.displayLinks[i] ;
-                                if(thePage.isCurrentPage)
-                                    writeOutput('<li class="page-item active"><a href="##" class="pagingNumber" >#thePage.pageNumber# </a></li>');
-                                else
-                                writeOutput('<li class="page-item"><a onclick="paginate(#thePage.pageNumber#)" class="pagingNumber" style="cursor: pointer;" title="Go to page #thePage.pageNumber#" value="#thePage.pageNumber#" >#thePage.pageNumber#</a></li>');
-                            }
-                        }
-                        if(StructKeyExists(paginate,"nextLink")){
-                            writeOutput('<li class="page-item"><a onclick="paginate(#paginate.nextLink#)" class="left" style="cursor: pointer;">Next &raquo;</a></li>');
-                        }
-                        writeOutput('</ul></nav>');
-                        writeOutput('<p>Displaying #paginate.startCount# - #paginate.nextCount# records from #paginate.totalCount#</p>');
-                    }
-                </cfscript>
-             </div>
-            <cfset  session.exportData = allCount>
+      
         </cfif>
         <div class="footer" id="footer">
             <span class="pull-right">
@@ -267,13 +256,14 @@
     </div>
 </cfif>
 
-
 <style>
     .friend-btn-flex {
         flex-wrap: nowrap !important;
     }
-
     .text-left {
         text-align: left !important;
+    }
+    span.select2.select2-container.select2-container--default.select2-container--below {
+        width: 100% !important;
     }
 </style>

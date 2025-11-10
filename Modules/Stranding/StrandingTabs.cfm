@@ -1,6 +1,7 @@
 <cfset  permissions ="#session['userdetails']['permissions']#">
+   
 <cfif permissions eq "full_access" or findNoCase("ST", permissions) neq 0>
-    
+    <cfset qget = Application.Sighting.getSecuritySetting()> 
     <cfset getTeams=Application.SightingNew.getTeams()>
 
     <cfset qgetCetaceanSpecies=Application.Stranding.getCetaceanSpecies()>
@@ -48,14 +49,20 @@
     <cfparam  name="url.LCE_ID" DEFAULT="0">
     <cfparam  name="url.LCE_HID" DEFAULT="0">
 
+    <cfset hideform = 0>
+
     <cfif isDefined('SaveAndNew') >
-     
-        <cfif isDefined('form.ID') and form.ID neq "">
+
+        <!--- <cfdump var="#form.id#" abort="true"> --->
+
+         <cfif isDefined('form.ID') and form.ID neq "">
 
             <cfset Session.CeteacenExam = #form.ID#>
             <cfset form.LCE_ID = "#form.ID#">
             <cfset form.LCEID = "#form.ID#">
             <cfset form.CeteacenSelect = "#form.ID#">
+
+            
 
             <cfset Application.Stranding.CetaceanExamUpdate(argumentCollection="#Form#")>
             <cfif form.count neq "">
@@ -82,7 +89,7 @@
             <cfif isDefined('SaveandgotoAForm')>
                 <cflocation addtoken="no" url="#Application.siteroot#?Module=Stranding&Page=LevelAForm&LCE_ID=#form.ID#" >
             </cfif>
-        <cfelse>
+         <cfelse>
            
             <cfset LCE = Application.Stranding.LiveCetaceanExamInsert(argumentCollection="#Form#")>
             <cfset Session.CeteacenExam = #LCE#>
@@ -114,6 +121,8 @@
                 <cflocation addtoken="no" url="#Application.siteroot#?Module=Stranding&Page=LevelAForm&LCE_ID=#LCE#" >
             </cfif>
         </cfif>
+
+     <cfset hideform = 1>   
     <cfelseif isDefined('delete')>
         <cfset form.LCE_ID = "#form.ID#">
         <cfset Application.Stranding.deleteCE("#form#")>
@@ -157,11 +166,27 @@
     <cfset qgetLCEFBNumber=Application.Stranding.getLCEFBNumber()>
     <cfif url.LCEID neq 0>
         <cfset form.LCEID = url.LCEID>
-        <cfset qLCEData=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
-        <cfset qLCEDataa=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
-        <cfif #qLCEData.species# neq "">
-            <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qLCEData.species#")>
+        <cfset form.fnumber = url.fnumber>
+
+        <cfset resultData = Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
+
+        <!--- <cfset qLCEData=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
+        <cfset qLCEDataa=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")> --->
+           
+        <cfset qLCEData = resultData.data>
+        <cfset qLCEDataa = resultData.data>
+        <cfset sourceTableName = resultData.sourceTableName>
+        
+       
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&CetaceanExam" addtoken="no">
         </cfif>
+
+        <!--- <cfdump var="#form.LCEID#" abort="true"> --->
+
+        <!--- <cfif #qLCEData.species# neq "">
+            <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qLCEData.species#")>
+        </cfif> --->
         <cfset qgetHeartData = Application.Stranding.getHeartData(LCEID="#form.LCEID#")>
         <cfset qgetRespData = Application.Stranding.getRespData(LCEID="#form.LCEID#")>
         <cfset qgetDrugData = Application.Stranding.getDrugData(LCEID="#form.LCEID#")>
@@ -170,18 +195,64 @@
         <cfset qgetNewSectionData = Application.Stranding.getNewSectionData(LCEID="#form.LCEID#")>
     </cfif>
     
-    <cfif (isDefined('form.LCEID') and form.LCEID neq "")>
+    <cfif (isDefined('form.LCEID') and form.LCEID neq "" and isDefined('form.fnumber') and form.fnumber NEQ '')>
         <!--- <cfdump var="#form.LCE_ID#" abort="true"> --->
-         <cfif Session.CeteacenExam NEQ form.LCEID>
+        <cfif Session.CeteacenExam NEQ form.LCEID>
         <cfset Session.CeteacenExam = ''>
         </cfif>
-        <cfset qLCEData=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
-        <cfset qLCEDataa=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>       
+
+        <!--- <cfset qLCEData=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
+        <cfset qLCEDataa=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>    --->
+
+        <cfset resultData = Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
+        
+        <cfset sourceTableName = resultData.sourceTableName>
+        <cfset qLCEData = resultData.data>
+        <cfset qLCEDataa = resultData.data> 
+
+        <!---<cfif  CGI.REMOTE_ADDR eq '110.39.156.90'>
+            <cfdump var="test2" abort="true">
+        </cfif>--->
+
+
+
+            <cfset urlMap = {
+                "ST_HIForm": "HIForm&HIFormID=",
+                "ST_LevelAForm": "LevelAForm&LevelAID=",
+                "ST_HistoForm": "Histopathology&LCE_HID=",
+                "ST_Blood_Values": "BloodValue&BVID=",
+                "ST_Toxicology": "Toxicology&ToxiID=",
+                "ST_Ancillary_Diagnostics": "AncillaryDiagnostics&ADID=",
+                "ST_SampleArchive": "SampleArchive&SAID=",
+                "ST_CetaceanNecropsyReport": "NecropsyReport&NRID=",
+                "ST_Morphometrics": "Morphometrics&MorphoID="
+            }>
+
+            <cfif structKeyExists(urlMap, sourceTableName)>
+
+                <cfif sourceTableName EQ 'ST_CetaceanNecropsyReport' >
+                    <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##URLEncodedFormat(qLCEDataa.Fnumber)#">
+                <cfelse>
+                    <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##qLCEDataa.ID#&Fnumber=#URLEncodedFormat(qLCEDataa.Fnumber)#">
+                </cfif>
+
+
+                <cflocation url="#redirectUrl#" addtoken="no">
+
+             <cfelseif sourceTableName EQ 'NoneFound'>
+                    <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&CetaceanExam" addtoken="no">
+            </cfif>
+
+        <!---<cfif  CGI.REMOTE_ADDR eq '110.39.156.90'>
+                <cfdump var="#resultData#"  abort="true">
+            </cfif>--->
+        
+        
         <cfset qgetcetaceanDate=Application.Stranding.getcetaceanNecropsyDate(#form.LCEID#)>
-        <!--- <cfdump var="#qgetcetaceanDate.CNRDATE#" abort="true"> nouman--->
         <cfif #qLCEData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qLCEData.species#")>
         </cfif>
+
         <cfset qgetHeartData = Application.Stranding.getHeartData(LCEID="#form.LCEID#")>
         <cfset qgetRespData = Application.Stranding.getRespData(LCEID="#form.LCEID#")>
         <cfset qgetDrugData = Application.Stranding.getDrugData(LCEID="#form.LCEID#")>
@@ -191,13 +262,29 @@
     <cfelse>
         <cfset qLCEData=Application.Stranding.getLCE_ten()>
         <cfset qLCEDataa=Application.Stranding.getLCE_ten()>
+        <!--- <cfset sourceTableName = ""> --->
     </cfif>
 
         <!--- form.LCEID --->
         <cfif isDefined('Session.CeteacenExam') and Session.CeteacenExam NEQ ''>
             <cfset form.LCEID = #Session.CeteacenExam#>
           
-            <cfset qLCEData=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
+            <!--- <cfset qLCEData=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")> --->
+
+            <cfset resultData = Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
+
+        
+           
+        <cfset qLCEData = resultData.data>
+        <cfset qLCEDataa = resultData.data>
+        <cfset sourceTableName = resultData.sourceTableName>
+        <!---<cfif  CGI.REMOTE_ADDR eq '110.39.156.90'>
+            <cfdump var="test5" abort="true">
+        </cfif>--->
+
+        <cfif sourceTableName EQ 'NoneFound'>
+            <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&CetaceanExam" addtoken="no">
+        </cfif>
     
             <cfset qgetcetaceanDate=Application.Stranding.getcetaceanNecropsyDate(#form.LCEID#)>
             <!--- <cfdump var="#qgetcetaceanDate.CNRDATE#" abort="true"> --->
@@ -218,8 +305,22 @@
     <cfif isDefined('url.HIFormID') and url.HIFormID neq 0>
         <cfset form.HI_ID = '#url.HIFormID#'>
         <cfset form.LCEID = '#url.HIFormID#'>                
-       <cfset qgetHIData=Application.Stranding.getHIData("#form.LCEID#")>
-        <cfset qLCEDataa=Application.Stranding.getHIData("#form.LCEID#")>
+        <cfset form.Fnumber = '#url.fnumber#'>                
+        <!--- <cfset qgetHIData=Application.Stranding.getHIData("#form.LCEID#")>
+        <cfset qLCEDataa=Application.Stranding.getHIData("#form.LCEID#")> --->
+
+        <cfset resultHiFormData = Application.Stranding.getHIData("#form#")>
+        <cfset qgetHIData=  resultHiFormData.data>
+        <cfset qLCEDataa=  resultHiFormData.data>
+        <cfset sourceTableName=  resultHiFormData.sourceTableName>
+
+        
+
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&HIForm" addtoken="no">
+        </cfif> 
+        
+
         <cfset qgetcetaceanDate=Application.Stranding.getHIFormNecropsyDate(#form.LCEID#)>
         <cfif #qgetHIData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetHIData.species#")>
@@ -229,6 +330,9 @@
 
     
 <cfif isDefined('SaveAndNewHI') OR isDefined('SaveandgotoAForm') OR isDefined('SaveAndClose')>
+
+    <cfset hideform = 1>
+
     <!--- If updating existing data --->
 
         <cfif  isDefined('form.HIForm_ID') and form.HIForm_ID neq "">
@@ -291,7 +395,7 @@
 
         <!---   getting data on the basis of HI_ID  --->
         <!--- <cfif  isDefined('form.HI_ID') and form.HI_ID neq ""> --->
-            <cfif (isDefined('form.HI_ID') and form.HI_ID neq "") or (isDefined('form.LCE_HIID') and form.LCE_HIID neq '0')>
+            <cfif (isDefined('form.HI_ID') and form.HI_ID neq "" and isDefined('form.fnumber') and form.fnumber NEQ '') or (isDefined('form.LCE_HIID') and form.LCE_HIID neq '0')>
 
             <cfif Session.HIForm NEQ form.HI_ID>
                     <cfset Session.HIForm = ''> 
@@ -299,8 +403,47 @@
             <cfset form.LCEID = form.HI_ID>
             <!--- <cfset form.HI_ID = form.LCE_HIID> --->
             
-            <cfset qgetHIData=Application.Stranding.getHIData("#form.LCEID#")>
-            <cfset qLCEDataa=Application.Stranding.getHIData("#form.LCEID#")>
+            <!--- <cfset qgetHIData=Application.Stranding.getHIData("#form.LCEID#")>
+            <cfset qLCEDataa=Application.Stranding.getHIData("#form.LCEID#")> --->
+
+            
+
+            <cfset resultHiFormData = Application.Stranding.getHIData("#form#")>
+            <cfset qgetHIData=  resultHiFormData.data>
+            <cfset qLCEDataa=  resultHiFormData.data>
+
+            <cfset sourceTableName = resultHiFormData.sourceTableName>
+
+
+            <cfset urlMap = {
+                "ST_LiveCetaceanExam": "CetaceanExam&LCEID=",
+                "ST_LevelAForm": "LevelAForm&LevelAID=",
+                "ST_HistoForm": "Histopathology&LCE_HID=",
+                "ST_Blood_Values": "BloodValue&BVID=",
+                "ST_Toxicology": "Toxicology&ToxiID=",
+                "ST_Ancillary_Diagnostics": "AncillaryDiagnostics&ADID=",
+                "ST_SampleArchive": "SampleArchive&SAID=",
+                "ST_CetaceanNecropsyReport": "NecropsyReport&NRID=",
+                "ST_Morphometrics": "Morphometrics&MorphoID="
+            }>
+
+            <cfif structKeyExists(urlMap, sourceTableName)>
+
+               <cfif sourceTableName EQ 'ST_CetaceanNecropsyReport' >
+                    <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##URLEncodedFormat(qLCEDataa.Fnumber)#">
+                <cfelse>
+                    <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##qLCEDataa.ID#&Fnumber=#URLEncodedFormat(qLCEDataa.Fnumber)#">
+                </cfif>
+
+
+                <cflocation url="#redirectUrl#" addtoken="no">
+
+             <cfelseif sourceTableName EQ 'NoneFound'>
+                <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&HIForm" addtoken="no">
+            </cfif>
+
+            
+
             <cfset qgetcetaceanDate=Application.Stranding.getHIFormNecropsyDate(#form.LCEID#)>
 
             <cfif #qgetHIData.species# neq "">
@@ -315,7 +458,17 @@
         <cfset form.LCEID = #Session.HIForm#>
         <cfset form.HI_ID = #Session.HIForm#>
         
-        <cfset qgetHIData=Application.Stranding.getHIData("#form.LCEID#")>        
+        <!--- <cfset qgetHIData=Application.Stranding.getHIData("#form.LCEID#")>         --->
+
+        <cfset resultHiFormData = Application.Stranding.getHIData("#form#")>
+        <cfset qgetHIData=  resultHiFormData.data>
+        <cfset sourceTableName=  resultHiFormData.sourceTableName>
+        
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&HIForm" addtoken="no">
+        </cfif>
+        
+
         <cfset qgetcetaceanDate=Application.Stranding.getHIFormNecropsyDate(#form.LCEID#)>
         <cfif #qgetHIData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetHIData.species#")>
@@ -339,8 +492,7 @@
       <cfset qgetHIDate=Application.Stranding.getHIDate()>
       <!---  get all records order by Field Numbert Desc --->
       <cfset qgetHIFBNumber=Application.Stranding.getHIFBNumber()>
-
-
+   
     <!--- End of HIForm --->
 
     <!--- Start for Level A form --->
@@ -356,6 +508,9 @@
     <cfset qgetLevelAData=Application.Stranding.getLevelA_ten()>
     
     <cfif isDefined('SaveAndNewLA') > 
+
+        <cfset hideform = 1>
+
         <!--- If updating existing data --->
        
         <cfif  isDefined('form.level_A_ID') and form.level_A_ID neq "">
@@ -392,9 +547,20 @@
         
         <cfset form.LCEID = url.LevelAID>
         <cfset form.LA_ID = url.LevelAID>
-        <cfset qgetLevelAData=Application.Stranding.getLevelAData("#form.LCEID#")>
-        <cfset qLCEDataa=Application.Stranding.getLevelAData("#form.LCEID#")>
+        <cfset form.fnumber = url.fnumber>
+        <!--- <cfset qgetLevelAData=Application.Stranding.getLevelAData("#form.LCEID#")>
+        <cfset qLCEDataa=Application.Stranding.getLevelAData("#form.LCEID#")> --->
+
+        <cfset resultLAData = Application.Stranding.getLevelAData(argumentCollection="#Form#")>
+        <cfset qgetLevelAData = resultLAData.data>
+        <cfset qLCEDataa = resultLAData.data>
+        <cfset sourceTableName = resultLAData.sourceTableName>        
+
         <cfset qgetcetaceanDate=Application.Stranding.getLevelAFormNecropsyDate(#form.LA_ID#)>
+
+        <cfif sourceTableName EQ 'NoneFound'>
+            <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&LevelAForm" addtoken="no">
+        </cfif>
         
         <cfif #qgetLevelAData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetLevelAData.species#")>
@@ -402,13 +568,49 @@
     </cfif>
 <!---   getting data on the basis of LevelA ID  --->
 
-<cfif  isDefined('form.LA_ID') and form.LA_ID neq "">
+<cfif  isDefined('form.LA_ID') and form.LA_ID neq "" and isDefined('form.fnumber') and form.fnumber NEQ ''>
     <cfif Session.LevelAForm NEQ form.LA_ID>
         <cfset Session.LevelAForm = ''>
     </cfif>
     <cfset form.LCEID = form.LA_ID>
-    <cfset qgetLevelAData=Application.Stranding.getLevelAData("#form.LCEID#")>
-    <cfset qLCEDataa=Application.Stranding.getLevelAData("#form.LCEID#")>
+    <!--- <cfset qgetLevelAData=Application.Stranding.getLevelAData("#form.LCEID#")>
+    <cfset qLCEDataa=Application.Stranding.getLevelAData("#form.LCEID#")> --->
+
+    <cfset resultLAData = Application.Stranding.getLevelAData(argumentCollection="#Form#")>
+    <cfset qgetLevelAData = resultLAData.data>
+    <cfset qLCEDataa = resultLAData.data>
+
+    <cfset sourceTableName = resultLAData.sourceTableName>
+
+
+    <cfset urlMap = {
+        "ST_LiveCetaceanExam": "CetaceanExam&LCEID=",
+        "ST_HIForm": "HIForm&HIFormID=",
+        "ST_HistoForm": "Histopathology&LCE_HID=",
+        "ST_Blood_Values": "BloodValue&BVID=",
+        "ST_Toxicology": "Toxicology&ToxiID=",
+        "ST_Ancillary_Diagnostics": "AncillaryDiagnostics&ADID=",
+        "ST_SampleArchive": "SampleArchive&SAID=",
+        "ST_CetaceanNecropsyReport": "NecropsyReport&NRID=",
+        "ST_Morphometrics": "Morphometrics&MorphoID="
+    }>
+
+    <cfif structKeyExists(urlMap, sourceTableName)>
+
+        <cfif sourceTableName EQ 'ST_CetaceanNecropsyReport' >
+            <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##URLEncodedFormat(qLCEDataa.Fnumber)#">
+        <cfelse>
+            <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##qLCEDataa.ID#&Fnumber=#URLEncodedFormat(qLCEDataa.Fnumber)#">
+        </cfif>
+
+
+        <cflocation url="#redirectUrl#" addtoken="no">
+
+     <cfelseif sourceTableName EQ 'NoneFound'>
+        <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&LevelAForm" addtoken="no">
+
+    </cfif>
+
     <cfset qgetcetaceanDate=Application.Stranding.getLevelAFormNecropsyDate(#form.LA_ID#)>
    
     <cfif #qgetLevelAData.species# neq "">
@@ -419,8 +621,18 @@
 <cfif isDefined('Session.LevelAForm') and Session.LevelAForm NEQ ''> 
     <cfset form.LCEID = #Session.LevelAForm#>
     <cfset form.LA_ID = #Session.LevelAForm#>
-    <cfset qgetLevelAData=Application.Stranding.getLevelAData("#form.LCEID#")>
+    <!--- <cfset qgetLevelAData=Application.Stranding.getLevelAData("#form.LCEID#")> --->
     <!--- <cfset qLCEDataa=Application.Stranding.getLevelAData("#form.LCEID#")> --->
+
+    <cfset resultLAData = Application.Stranding.getLevelAData(argumentCollection="#Form#")>
+    <cfset qgetLevelAData = resultLAData.data>
+    <cfset sourceTableName = resultLAData.sourceTableName>
+    
+    <cfif sourceTableName EQ 'NoneFound'>
+        <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&LevelAForm" addtoken="no">
+    </cfif>
+
+
     <cfset qgetcetaceanDate=Application.Stranding.getLevelAFormNecropsyDate(#form.LA_ID#)>
 
     <cfif #qgetLevelAData.species# neq "">
@@ -430,12 +642,12 @@
 
 
 
-       <!---  get all records order by ID DESC--->
-       <cfset qgetLevelAID=Application.Stranding.getLevelAID()>
-       <!---  get all records order by Date Desc --->
-       <cfset qgetLevelADate=Application.Stranding.getLevelADate()>
-       <!---  get all records order by Field Numbert Desc --->
-       <cfset qgetLevelAFBNumber=Application.Stranding.getLevelAFBNumber()>
+    <!---  get all records order by ID DESC--->
+    <cfset qgetLevelAID=Application.Stranding.getLevelAID()>
+    <!---  get all records order by Date Desc --->
+    <cfset qgetLevelADate=Application.Stranding.getLevelADate()>
+    <!---  get all records order by Field Numbert Desc --->
+    <cfset qgetLevelAFBNumber=Application.Stranding.getLevelAFBNumber()>
         
     <!--- End for Level A form --->
 
@@ -463,9 +675,24 @@
     <cfif isDefined('url.LCE_HID') and url.LCE_HID neq 0>
         <cfset form.LCEID = url.LCE_HID>
         <cfset form.His_ID = url.LCE_HID>
+        <cfset form.fnumber = url.Fnumber>
+
+
         <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-        <cfset qgetHIDataa=Application.Stranding.getHistoData("#form.LCEID#")>
-        <cfset qLCEDataa=Application.Stranding.getHistoData("#form.LCEID#")>
+        <!--- <cfset qgetHIDataa=Application.Stranding.getHistoData("#form.LCEID#")>
+        <cfset qLCEDataa=Application.Stranding.getHistoData("#form.LCEID#")> --->
+
+        <cfset resultHistoData = Application.Stranding.getHistoData(argumentCollection="#Form#")>
+
+        <cfset qgetHIDataa = resultHistoData.data>
+        <cfset qLCEDataa = resultHistoData.data>
+
+        <cfset sourceTableName = resultHistoData.sourceTableName>
+
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Histopathology" addtoken="no">
+        </cfif>
+
         <cfset qgetcetaceanDate=Application.Stranding.getHistopathologyNecropsyDate(#form.His_ID#)>
         <!--- <cfdump var="#qgetcetaceanDate#" abort="true"> --->
         <cfset qgetHistoSampleData = Application.Stranding.getHistoSampleData(HI_ID="#form.LCEID#")>
@@ -475,6 +702,9 @@
     </cfif>
 
     <cfif isDefined('HistoSaveAndNew')>
+
+        <cfset hideform = 1>
+
         <cfset form.check = "1">
      
         <!--- If updating existing data --->
@@ -507,14 +737,52 @@
     </cfif>
 
     <!---   getting data on the basis of His_ID  --->
-    <cfif  isDefined('form.His_ID') and form.His_ID neq "">
+    <cfif  isDefined('form.His_ID') and form.His_ID neq "" and isDefined('form.fnumber') and form.fnumber NEQ ''>
         <cfif Session.Histo NEQ form.His_ID>
             <cfset Session.Histo = ''>
         </cfif>
         <cfset form.LCEID = form.His_ID>
         <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-        <cfset qgetHIDataa=Application.Stranding.getHistoData("#form.LCEID#")>
-        <cfset qLCEDataa=Application.Stranding.getHistoData("#form.LCEID#")>
+
+        <!--- <cfset qgetHIDataa=Application.Stranding.getHistoData("#form.LCEID#")>
+        <cfset qLCEDataa=Application.Stranding.getHistoData("#form.LCEID#")> --->
+
+        <cfset resultHistoData = Application.Stranding.getHistoData(argumentCollection="#Form#")>
+
+        <cfset qgetHIDataa = resultHistoData.data>
+        <cfset qLCEDataa = resultHistoData.data>
+
+        <cfset sourceTableName = resultHistoData.sourceTableName>
+
+         <cfset urlMap = {
+            "ST_LiveCetaceanExam": "CetaceanExam&LCEID=",
+            "ST_HIForm": "HIForm&HIFormID=",
+            "ST_LevelAForm": "LevelAForm&LevelAID=",
+            "ST_Blood_Values": "BloodValue&BVID=",
+            "ST_Toxicology": "Toxicology&ToxiID=",
+            "ST_Ancillary_Diagnostics": "AncillaryDiagnostics&ADID=",
+            "ST_SampleArchive": "SampleArchive&SAID=",
+            "ST_CetaceanNecropsyReport": "NecropsyReport&NRID=",
+            "ST_Morphometrics": "Morphometrics&MorphoID="
+        }>
+
+        <cfif structKeyExists(urlMap, sourceTableName)>
+
+           <cfif sourceTableName EQ 'ST_CetaceanNecropsyReport' >
+                <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##URLEncodedFormat(qLCEDataa.Fnumber)#">
+            <cfelse>
+                <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##qLCEDataa.ID#&Fnumber=#URLEncodedFormat(qLCEDataa.Fnumber)#">
+            </cfif>
+
+
+            <cflocation url="#redirectUrl#" addtoken="no">
+
+         <cfelseif sourceTableName EQ 'NoneFound'>
+            <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Histopathology" addtoken="no">
+
+        </cfif>
+
+
         <cfset qgetcetaceanDate=Application.Stranding.getHistopathologyNecropsyDate(#form.His_ID#)>
         <cfset qgetHistoSampleData = Application.Stranding.getHistoSampleData(HI_ID="#form.LCEID#")>
         <cfif #qgetHIDataa.species# neq "">
@@ -525,9 +793,22 @@
     <cfif isDefined('Session.Histo') and Session.Histo NEQ ''> 
         <cfset form.LCEID = #Session.Histo#>
         <cfset form.His_ID = #Session.Histo#>
+
+
         <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-        <cfset qgetHIDataa=Application.Stranding.getHistoData("#form.LCEID#")>
+        <!--- <cfset qgetHIDataa=Application.Stranding.getHistoData("#form.LCEID#")> --->
+
+        <cfset resultHistoData = Application.Stranding.getHistoData(argumentCollection="#Form#")>
+        <cfset qgetHIDataa = resultHistoData.data>
+        <cfset qLCEDataa = resultHistoData.data>
+        <cfset sourceTableName = resultHistoData.sourceTableName>
+
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Histopathology" addtoken="no">
+        </cfif>
+
         <!--- <cfset qLCEDataa=Application.Stranding.getHistoData("#form.LCEID#")> --->
+
         <cfset qgetcetaceanDate=Application.Stranding.getHistopathologyNecropsyDate(#form.His_ID#)>
         <!--- <cfdump var="#qgetcetaceanDate#" abort="true"> --->
         <cfset qgetHistoSampleData = Application.Stranding.getHistoSampleData(HI_ID="#form.LCEID#")>
@@ -541,7 +822,7 @@
     <cfset qgetHistoDate=Application.Stranding.getHistoDate()>
     <!---  get all records order by Field Numbert Desc --->
     <cfset qgetHistoFBNumber=Application.Stranding.getHistoFBNumber()>
-
+   
     <!--- end for Histo --->
 
     <!--- start for blood value --->
@@ -555,6 +836,9 @@
    
 
     <cfif isDefined('SaveAndNewBloodvalue') OR isDefined('SaveAndClose')>
+
+        <cfset hideform = 1>
+
         <!--- If updating existing data --->
        
         <cfif  isDefined('form.bloodValues_ID') and form.bloodValues_ID neq "">
@@ -595,14 +879,55 @@
         <cfset Application.Stranding.deleteBloodValuesRecord()>
     </cfif>
 
-    <cfif  isDefined('form.bloodValue_ID') and form.bloodValue_ID neq "">
+    <cfif  isDefined('form.bloodValue_ID') and form.bloodValue_ID neq "" and isDefined('form.fnumber') and form.fnumber NEQ ''>
         <cfif Session.bloodValue NEQ form.bloodValue_ID>
             <cfset Session.bloodValue = ''>
-            </cfif>
+        </cfif>
         <cfset form.LCEID = form.bloodValue_ID>
         <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-        <cfset qgetBloodValueData=Application.Stranding.getBlood_VData("#form.LCEID#")>
-        <cfset qLCEDataa=Application.Stranding.getBlood_VData("#form.LCEID#")>
+        <!--- <cfset qgetBloodValueData=Application.Stranding.getBlood_VData("#form.LCEID#")>
+        <cfset qLCEDataa=Application.Stranding.getBlood_VData("#form.LCEID#")> --->
+
+        <cfset result_BVData = Application.Stranding.getBlood_VData("#form.LCEID#")>
+        <cfset qgetBloodValueData = result_BVData.data>
+        <cfset qLCEDataa = result_BVData.data>
+
+
+        <cfset sourceTableName = result_BVData.sourceTableName>
+
+
+         <cfset urlMap = {
+            "ST_LiveCetaceanExam": "CetaceanExam&LCEID=",
+            "ST_HIForm": "HIForm&HIFormID=",
+            "ST_LevelAForm": "LevelAForm&LevelAID=",
+            "ST_HistoForm": "Histopathology&LCE_HID=",
+            "ST_Toxicology": "Toxicology&ToxiID=",
+            "ST_Ancillary_Diagnostics": "AncillaryDiagnostics&ADID=",
+            "ST_SampleArchive": "SampleArchive&SAID=",
+            "ST_CetaceanNecropsyReport": "NecropsyReport&NRID=",
+            "ST_Morphometrics": "Morphometrics&MorphoID="
+        }>
+
+        <cfif structKeyExists(urlMap, sourceTableName)>
+
+            <cfif sourceTableName EQ 'ST_CetaceanNecropsyReport' >
+                <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##URLEncodedFormat(qLCEDataa.Fnumber)#">
+            <cfelse>
+                <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##qLCEDataa.ID#&Fnumber=#URLEncodedFormat(qLCEDataa.Fnumber)#">
+            </cfif>
+
+
+            <cflocation url="#redirectUrl#" addtoken="no">
+
+         <cfelseif sourceTableName EQ 'NoneFound'>
+            <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&BloodValue" addtoken="no">
+        </cfif>
+
+        <!--- <cfif  CGI.REMOTE_ADDR eq '202.141.226.196'>
+            <cfdump var="#qLCEDataa#" abort="true">
+        </cfif> --->
+
+
         <cfset qgetcetaceanDate=Application.Stranding.getBloodValueNecropsyDate(#form.bloodValue_ID#)>
 
         <cfif #qgetBloodValueData.species# neq "">
@@ -632,7 +957,15 @@
         <cfset form.LCEID = #Session.bloodValue#>
         <cfset form.bloodValue_ID = #Session.bloodValue#>
         <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-        <cfset qgetBloodValueData=Application.Stranding.getBlood_VData("#form.LCEID#")>
+        <!--- <cfset qgetBloodValueData=Application.Stranding.getBlood_VData("#form.LCEID#")> --->
+
+        <cfset result_BVData = Application.Stranding.getBlood_VData("#form.LCEID#")>
+        <cfset qgetBloodValueData = result_BVData.data>
+        <cfset sourceTableName = result_BVData.sourceTableName>
+
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&BloodValue" addtoken="no">
+        </cfif>
       
         <cfset qgetcetaceanDate=Application.Stranding.getBloodValueNecropsyDate(#form.bloodValue_ID#)>
 
@@ -654,9 +987,22 @@
         <cfset form.LCEID = url.BVID>
         <cfset form.bloodValue_ID = url.BVID>
         <cfset form.bloodID = url.BVID>
+        <cfset form.fnumber = url.Fnumber>
         <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-        <cfset qgetBloodValueData=Application.Stranding.getBlood_VData("#form.LCEID#")>
-        <cfset qLCEDataa=Application.Stranding.getBlood_VData("#form.LCEID#")>      
+        <!--- <cfset qgetBloodValueData=Application.Stranding.getBlood_VData("#form.LCEID#")>
+        <cfset qLCEDataa=Application.Stranding.getBlood_VData("#form.LCEID#")>   --->
+        
+        <cfset result_BVData = Application.Stranding.getBlood_VData("#form.LCEID#")>
+        <cfset qgetBloodValueData = result_BVData.data>
+        <cfset qLCEDataa = result_BVData.data>
+
+
+        <cfset sourceTableName = result_BVData.sourceTableName>
+
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&BloodValue" addtoken="no">
+        </cfif>
+        
         <cfset qgetcetaceanDate=Application.Stranding.getBloodValueNecropsyDate(#form.bloodValue_ID#)>
         <cfif #qgetBloodValueData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetBloodValueData.species#")>
@@ -675,8 +1021,7 @@
         <!---  get all records order by Date Desc --->
         <cfset qgetBloodValueDate=Application.Stranding.getBlood_VDate()>
         <!---  get all records order by Field Numbert Desc --->
-        <cfset qgetBloodValueFBNumber=Application.Stranding.getBlood_VBNumber()>
-    
+        <cfset qgetBloodValueFBNumber=Application.Stranding.getBlood_VBNumber()> 
     
   
     <!--- end for blood value --->
@@ -687,17 +1032,32 @@
 
         <cfset ToxicologySelectoptions = ['High','Low','Critical Result','Corrected Result','None']>
         <cfif isDefined('SaveAndNewToxicology') OR isdefined('Add_new') >
+
+            <cfset hideform = 1>
+            <!--- <cfoutput>In the toxicology section<br></cfoutput> --->
             <!--- If updating existing data --->
             <cfif  isDefined('form.TX_ID') and form.TX_ID neq "">
+                <!--- <cfoutput>in the update toxicology section<br></cfoutput> --->
                 <cfset Session.Toxicology = #form.TX_ID#>
                 <cfset form.Toxi_ID = "#form.TX_ID#">
                 <cfset form.Toxicology_ID = "#TX_ID#">
                 <cfif form.tisu_type neq "" and form.tisu_type neq "0">
-                    
+                    <!--- <cfoutput>Toxicology form condition for non-empty tissue type...<br></cfoutput>
+                    <cfoutput>form.tisu_type: #form.tisu_type#<br></cfoutput>
+                    <cfoutput>form.Iron: #form.Ironn#<br></cfoutput>
+                    <cfoutput>form.Arsenic: #form.Arsenic#<br></cfoutput>
+                    <cfoutput>form.quantity_toxi: #form.quantity_toxi#<br></cfoutput> --->
+                    <!--- <cfdump var="#form#" abort="true"> --->
                     <cfset Application.Stranding.ToxiType_FormUpdate(argumentCollection="#Form#")>
                     <cfset Application.Stranding.Update_DynamicToxiType(argumentCollection="#Form#")>
                     <cfset Application.Stranding.DynamicToxiType_Insert(argumentCollection="#Form#")>
                 <cfelse>
+                    <!--- <cfoutput>Toxicology form condition for empty tissue type<br></cfoutput>
+                    <cfoutput>form.tisu_type: #form.tisu_type#<br></cfoutput>
+                    <cfoutput>form.Iron: #form.Ironn#<br></cfoutput>
+                    <cfoutput>form.Arsenic: #form.Arsenic#<br></cfoutput>
+                    <cfoutput>form.quantity_toxi: #form.quantity_toxi#<br></cfoutput> --->
+                    <!--- <cfdump var="#form#" abort="false"> --->
                     <cfset TT_ID =Application.Stranding.ToxiType_Insert(argumentCollection="#Form#")>
                     <cfset Application.Stranding.DynamicToxiType_Insert(argumentCollection="#Form#")>
                 </cfif>
@@ -707,7 +1067,11 @@
            
             <cfelse>     
                 <!--- If inserting new data --->
-               
+                <!--- <cfoutput>in the insert toxicology section<br></cfoutput>
+                <cfoutput>form.tisu_type: #form.tisu_type#<br></cfoutput>
+                <cfoutput>form.Iron: #form.Ironn#<br></cfoutput>
+                <cfoutput>form.Arsenic: #form.Arsenic#<br></cfoutput>
+                <cfoutput>form.quantity_toxi: #form.quantity_toxi#<br></cfoutput> --->
                 <cfset form.LCE_ID = url.LCE_ID>
                 <cfset Toxi_ID = Application.Stranding.Toxicology_FormInsert(argumentCollection="#Form#")>
                 <cfset Session.Toxicology = #Toxi_ID#>
@@ -724,25 +1088,63 @@
             </cfif>
     
         <cfelseif isDefined('deleteToxicology')>
+            
             <cfset Application.Stranding.deletToxicology("#form#")>
             <cfset form.Toxicology_ID = "">
         <cfelseif isDefined('deleteToxicologyAllRecord')>
+            
             <cfset Application.Stranding.deleteToxicologyAllRecord()>
             <cfset form.Toxicology_ID = "">
         </cfif>
       
         <!---   getting data on the basis of HI_ID  --->
-        <cfif  isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "">
+        <cfif  isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "" and isDefined('form.fnumber') and form.fnumber NEQ ''>
+            <!--- <cfoutput>in getting data on the basis of HI_ID<br></cfoutput> --->
             <cfif Session.Toxicology NEQ form.Toxicology_ID>
                 <cfset Session.Toxicology = ''>
-                </cfif>
+            </cfif>
             <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-            <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
-            <cfset qLCEDataa=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
+            <!--- <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
+            <cfset qLCEDataa=Application.Stranding.gettoxiform("#form.Toxicology_ID#")> --->
+
+            <cfset result_toxiData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
+            <cfset qgetToxicologyData = result_toxiData.data>
+            <cfset qLCEDataa = result_toxiData.data>
+            <cfset sourceTableName = result_toxiData.sourceTableName>
+
+           
+
+            <cfset urlMap = {
+                "ST_LiveCetaceanExam": "CetaceanExam&LCEID=",
+                "ST_HIForm": "HIForm&HIFormID=",
+                "ST_LevelAForm": "LevelAForm&LevelAID=",
+                "ST_HistoForm": "Histopathology&LCE_HID=",
+                "ST_Blood_Values": "BloodValue&BVID=",
+                "ST_Ancillary_Diagnostics": "AncillaryDiagnostics&ADID=",
+                "ST_SampleArchive": "SampleArchive&SAID=",
+                "ST_CetaceanNecropsyReport": "NecropsyReport&NRID=",
+                "ST_Morphometrics": "Morphometrics&MorphoID="
+            }>
+
+            <cfif structKeyExists(urlMap, sourceTableName)>
+
+                <cfif sourceTableName EQ 'ST_CetaceanNecropsyReport' >
+                    <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##URLEncodedFormat(qLCEDataa.Fnumber)#">
+                <cfelse>
+                    <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##qLCEDataa.ID#&Fnumber=#URLEncodedFormat(qLCEDataa.Fnumber)#">
+                </cfif>
+
+
+                <cflocation url="#redirectUrl#" addtoken="no">
+
+             <cfelseif sourceTableName EQ 'NoneFound'>
+                <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Toxicology" addtoken="no">
+
+            </cfif>
+
             <cfset qgetcetaceanDate=Application.Stranding.getToxicologyNecropsyDate(#form.Toxicology_ID#)>
             <cfset TissueTypeForTable =Application.Stranding.getTissueTypeForTable(#form.Toxicology_ID#)>
 
-            
 
             <cfif #qgetToxicologyData.species# neq "">
                 <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetToxicologyData.species#")>
@@ -758,14 +1160,26 @@
                 <cfset qgetDynamicToxitype=Application.Stranding.getDynamicToxitype_ten()>
             </cfif>
         <cfelse>
+            <!--- <cfoutput>in the else of in getting data on the basis of HI_ID<br></cfoutput> --->
             <cfset qgetToxitype=Application.Stranding.getToxitype_ten()>
             <cfset qgetToxicologyData=Application.Stranding.gettoxiform_ten()>
             <!--- <cfset qLCEDataa=Application.Stranding.gettoxiform_ten()> --->
         </cfif>
 
         <cfif isDefined('Session.Toxicology') and Session.Toxicology NEQ ''>
+            <!--- <cfoutput>in the session.toxicology section<br></cfoutput> --->
             <cfset form.Toxicology_ID = #Session.Toxicology#>
-            <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
+
+            <!--- <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")> --->
+
+            <cfset result_toxiData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
+            <cfset qgetToxicologyData = result_toxiData.data>
+            <cfset sourceTableName = result_toxiData.sourceTableName>
+
+            <cfif sourceTableName EQ 'NoneFound'>
+                <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Toxicology" addtoken="no">
+            </cfif>
+
             <cfset qgetcetaceanDate=Application.Stranding.getToxicologyNecropsyDate(#form.Toxicology_ID#)>
             <cfset TissueTypeForTable =Application.Stranding.getTissueTypeForTable(#form.Toxicology_ID#)>
             <cfif #qgetToxicologyData.species# neq "">
@@ -780,9 +1194,23 @@
         </cfif>
         
         <cfif isDefined('url.ToxiID') and url.ToxiID NEQ '0'>
+            <!--- <cfoutput>in the url.toxicology section<br></cfoutput> --->
             <cfset form.Toxicology_ID = url.ToxiID>
-            <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
-            <cfset qLCEDataa=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
+            <cfset form.fnumber = url.fnumber>
+
+            <!--- <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
+            <cfset qLCEDataa=Application.Stranding.gettoxiform("#form.Toxicology_ID#")> --->
+
+            <cfset result_toxiData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
+            <cfset qgetToxicologyData = result_toxiData.data>
+            <cfset qLCEDataa = result_toxiData.data>
+            <cfset sourceTableName = result_toxiData.sourceTableName>
+            
+            <cfif sourceTableName EQ 'NoneFound'>
+                <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&HIForm" addtoken="no">
+            </cfif> 
+           
+
             <cfset qgetcetaceanDate=Application.Stranding.getToxicologyNecropsyDate(#form.Toxicology_ID#)>
             <cfset TissueTypeForTable =Application.Stranding.getTissueTypeForTable(#form.Toxicology_ID#)>
             <cfif #qgetToxicologyData.species# neq "">
@@ -803,8 +1231,7 @@
         <!--- <cfdump var="#qgetToxicologyDate#" abort="true"> --->
         <!---  get all records order by Field Numbert Desc --->
         <cfset qgetToxicologyFBNumber=Application.Stranding.gettoxifNumber()>
-         
-
+     
         <!--- end for Toxicology --->
 
 
@@ -814,6 +1241,9 @@
 
 
         <cfif isDefined('SaveAndNewAncillaryDiagnostics') OR isDefined('SaveAndClose')>
+
+            <cfset hideform = 1>
+
             <!--- If updating existing data --->
             <cfif  isDefined('form.ADID') and form.ADID neq "">
                 <cfset Session.Ancillary = #form.ADID#>
@@ -848,14 +1278,48 @@
 
       
         <!---   getting data on the basis of AD_ID  --->
-        <cfif  isDefined('form.AD_ID') and form.AD_ID neq "">
+        <cfif  isDefined('form.AD_ID') and form.AD_ID neq "" and isDefined('form.fnumber') and form.fnumber NEQ ''>
             <cfif Session.Ancillary NEQ form.AD_ID>
                 <cfset Session.Ancillary = ''>
-                </cfif>
+            </cfif>
             <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-            <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>
-            <!--- <cfdump var="#qgetAncillaryData#" abort="true"> --->
-            <cfset qLCEDataa=Application.Stranding.getAncillaryData("#form.AD_ID#")>
+            <!--- <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>
+            <cfset qLCEDataa=Application.Stranding.getAncillaryData("#form.AD_ID#")> --->
+
+            <cfset resultAD_Data = Application.Stranding.getAncillaryData("#form.AD_ID#")>
+            <cfset qgetAncillaryData = resultAD_Data.data>
+            <cfset qLCEDataa = resultAD_Data.data>
+            <cfset sourceTableName = resultAD_Data.sourceTableName>
+
+            <cfset urlMap = {
+                "ST_LiveCetaceanExam": "CetaceanExam&LCEID=",
+                "ST_HIForm": "HIForm&HIFormID=",
+                "ST_LevelAForm": "LevelAForm&LevelAID=",
+                "ST_HistoForm": "Histopathology&LCE_HID=",
+                "ST_Blood_Values": "BloodValue&BVID=",
+                "ST_Toxicology": "Toxicology&ToxiID=",
+                "ST_SampleArchive": "SampleArchive&SAID=",
+                "ST_CetaceanNecropsyReport": "NecropsyReport&NRID=",
+                "ST_Morphometrics": "Morphometrics&MorphoID="
+            }>
+
+            <cfif structKeyExists(urlMap, sourceTableName)>
+
+               <cfif sourceTableName EQ 'ST_CetaceanNecropsyReport' >
+                    <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##URLEncodedFormat(qLCEDataa.Fnumber)#">
+                <cfelse>
+                    <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##qLCEDataa.ID#&Fnumber=#URLEncodedFormat(qLCEDataa.Fnumber)#">
+                </cfif>
+
+
+                <cflocation url="#redirectUrl#" addtoken="no">
+
+             <cfelseif sourceTableName EQ 'NoneFound'>
+                <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&AncillaryDiagnostics" addtoken="no">
+
+            </cfif>
+
+
             <cfset qgetcetaceanDate=Application.Stranding.getAncillaryDiagnosticsNecropsyDate(#form.AD_ID#)>
             <cfif #qgetAncillaryData.species# neq "">
                 <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetAncillaryData.species#")>
@@ -866,7 +1330,16 @@
         
         <cfif isDefined('Session.Ancillary') and Session.Ancillary NEQ ''> 
             <cfset form.AD_ID = #Session.Ancillary#>
-            <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>
+            <!--- <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")> --->
+
+            <cfset resultAD_Data = Application.Stranding.getAncillaryData("#form.AD_ID#")>
+            <cfset qgetAncillaryData = resultAD_Data.data>
+            <cfset sourceTableName = resultAD_Data.sourceTableName>
+            
+            <cfif sourceTableName EQ 'NoneFound'>
+                <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&AncillaryDiagnostics" addtoken="no">
+            </cfif>
+
             <cfset qgetcetaceanDate=Application.Stranding.getAncillaryDiagnosticsNecropsyDate(#form.AD_ID#)>
             <cfif #qgetAncillaryData.species# neq "">
                 <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetAncillaryData.species#")>
@@ -875,8 +1348,21 @@
         </cfif>
         <cfif isDefined('url.ADID') and url.ADID NEQ '0'> 
             <cfset form.AD_ID = url.ADID>
-            <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>
-            <cfset qLCEDataa=Application.Stranding.getAncillaryData("#form.AD_ID#")> 
+            <cfset form.fnumber = url.fnumber>
+
+            <!--- <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>
+            <cfset qLCEDataa=Application.Stranding.getAncillaryData("#form.AD_ID#")>  --->
+
+            <cfset resultAD_Data = Application.Stranding.getAncillaryData("#form.AD_ID#")>
+            <cfset qgetAncillaryData = resultAD_Data.data>
+            <cfset qLCEDataa = resultAD_Data.data>
+            <cfset sourceTableName = resultAD_Data.sourceTableName>
+
+            <cfif sourceTableName EQ 'NoneFound'>
+                <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&AncillaryDiagnostics" addtoken="no">
+            </cfif> 
+            
+
             <cfset qgetcetaceanDate=Application.Stranding.getAncillaryDiagnosticsNecropsyDate(#form.AD_ID#)>
             <cfif #qgetAncillaryData.species# neq "">
                 <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetAncillaryData.species#")>
@@ -907,7 +1393,9 @@
     <cfset qgetPreservationMethod=Application.StaticDataNew.getPreservationMethod()>
 
     <cfif isDefined('SaveAndNewSampleArchive')>
-        
+
+        <cfset hideform = 1>
+
         <cfif isDefined('form.SampleArchiveSEID') and form.SampleArchiveSEID neq "">
             <cfset Session.SampleArchive = #form.SampleArchiveSEID#>
             <cfset form.SEID = "#SampleArchiveSEID#">
@@ -955,12 +1443,49 @@
     
 
 
-    <cfif  isDefined('form.SEID') and form.SEID neq "">
+    <cfif  isDefined('form.SEID') and form.SEID neq "" and isDefined('form.fnumber') and form.fnumber NEQ ''>
         <cfif Session.SampleArchive NEQ form.SEID>
             <cfset Session.SampleArchive = ''>
         </cfif>
-        <cfset qgetSampleData=Application.Stranding.getSampleArchiveData("#form.SEID#")>
-        <cfset qLCEDataa=Application.Stranding.getSampleArchiveData("#form.SEID#")>
+
+        <!--- <cfset qgetSampleData=Application.Stranding.getSampleArchiveData("#form.SEID#")>
+        <cfset qLCEDataa=Application.Stranding.getSampleArchiveData("#form.SEID#")> --->
+
+        <cfset resultSA_Data = Application.Stranding.getSampleArchiveData("#form.SEID#")>
+        <cfset qgetSampleData = resultSA_Data.data>
+        <cfset qLCEDataa = resultSA_Data.data>
+        <cfset sourceTableName = resultSA_Data.sourceTableName>
+
+        <cfset urlMap = {
+            "ST_LiveCetaceanExam": "CetaceanExam&LCEID=",
+            "ST_HIForm": "HIForm&HIFormID=",
+            "ST_LevelAForm": "LevelAForm&LevelAID=",
+            "ST_HistoForm": "Histopathology&LCE_HID=",
+            "ST_Blood_Values": "BloodValue&BVID=",
+            "ST_Toxicology": "Toxicology&ToxiID=",
+            "ST_Ancillary_Diagnostics": "AncillaryDiagnostics&ADID=",
+            "ST_CetaceanNecropsyReport": "NecropsyReport&NRID=",
+            "ST_Morphometrics": "Morphometrics&MorphoID="
+        }>
+
+        <cfif structKeyExists(urlMap, sourceTableName)>
+
+           <cfif sourceTableName EQ 'ST_CetaceanNecropsyReport' >
+                <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##URLEncodedFormat(qLCEDataa.Fnumber)#">
+            <cfelse>
+                <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##qLCEDataa.ID#&Fnumber=#URLEncodedFormat(qLCEDataa.Fnumber)#">
+            </cfif>
+
+
+            <cflocation url="#redirectUrl#" addtoken="no">
+
+         <cfelseif sourceTableName EQ 'NoneFound'>
+            <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&SampleArchive" addtoken="no"> 
+        </cfif>
+
+
+
+
         <cfif #qgetSampleData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetSampleData.species#")>
         </cfif>
@@ -982,10 +1507,26 @@
         <cfset qgetSampleTypeIByID=Application.Stranding.getSampleType_ten()>
         <cfset qgetSampleTypeDataSingle = #qgetSampleTypeIByID#>
     </cfif>
+
+
     <cfif isDefined('url.SAID') and url.SAID NEQ '0'> 
+
         <cfset form.SEID = url.SAID>
-        <cfset qgetSampleData=Application.Stranding.getSampleArchiveData("#form.SEID#")>
-        <cfset qLCEDataa=Application.Stranding.getSampleArchiveData("#form.SEID#")> 
+        <cfset form.fnumber = url.fnumber>
+
+        <!--- <cfset qgetSampleData=Application.Stranding.getSampleArchiveData("#form.SEID#")>
+        <cfset qLCEDataa=Application.Stranding.getSampleArchiveData("#form.SEID#")>  --->
+
+        <cfset resultSA_Data = Application.Stranding.getSampleArchiveData("#form.SEID#")>
+        <cfset qgetSampleData = resultSA_Data.data>
+        <cfset qLCEDataa = resultSA_Data.data>
+         <cfset sourceTableName = resultSA_Data.sourceTableName>
+
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&SampleArchive" addtoken="no">
+        </cfif> 
+
+
         <cfif #qgetSampleData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetSampleData.species#")>
         </cfif>
@@ -1001,10 +1542,23 @@
         </cfif>--->
         <cfset qgetcetaceanDate=Application.Stranding.getcetaceanexamDate(#form.SEID#)>
     </cfif>
+
+
     <cfif isDefined('Session.SampleArchive') and Session.SampleArchive NEQ ''> 
+
         <cfset form.SEID = #Session.SampleArchive#>
 
-        <cfset qgetSampleData=Application.Stranding.getSampleArchiveData("#form.SEID#")>
+        <!--- <cfset qgetSampleData=Application.Stranding.getSampleArchiveData("#form.SEID#")> --->
+
+        <cfset resultSA_Data = Application.Stranding.getSampleArchiveData("#form.SEID#")>
+        <cfset qgetSampleData = resultSA_Data.data>
+        <cfset qLCEDataa = resultSA_Data.data>
+        <cfset sourceTableName = resultSA_Data.sourceTableName>
+
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&SampleArchive" addtoken="no">
+        </cfif>
+
         <!--- <cfset qLCEDataa=Application.Stranding.getSampleArchiveData("#form.SEID#")> --->
         <cfif #qgetSampleData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetSampleData.species#")>
@@ -1026,52 +1580,53 @@
 
 
     <cfif (isDefined('form.LCEID') and form.LCEID neq "") || (isDefined('form.bloodValue_ID') and form.bloodValue_ID neq "") || (isDefined('form.His_ID') and form.His_ID neq "") || (isDefined('form.LA_ID') and form.LA_ID neq "") || (isDefined('form.HI_ID') and form.HI_ID neq "") || (isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "") || (isDefined('form.AD_ID') and form.AD_ID neq "") || (isDefined('form.Nfieldnumber') and form.Nfieldnumber neq "") || (isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "")>
-        <!--- <cfdump var="#form.Toxicology_ID#" abort="true"> --->
+
+       
         <!--- ceteceanExam test--->
         <cfif isDefined('form.LCEID') and form.LCEID neq "">        
             <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-                SELECT Fnumber from ST_LiveCetaceanExam where ID = #form.LCEID#
+                SELECT Fnumber from ST_LiveCetaceanExam where ID = #form.LCEID# and fnumber = '#form.fnumber#' and deleted !='1'
             </cfquery>
         </cfif>
         <!--- HiForm --->
         <cfif isDefined('form.HI_ID') and form.HI_ID neq "">        
             <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-                SELECT Fnumber from ST_HIForm where ID = #form.HI_ID#
+                SELECT Fnumber from ST_HIForm where ID = #form.HI_ID# and fnumber = '#form.fnumber#' and deleted !='1'
             </cfquery>
         </cfif>
         
         <!--- LevelAForm --->
         <cfif isDefined('form.LA_ID') and form.LA_ID neq "">        
             <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-                SELECT Fnumber from ST_LevelAForm where ID = #form.LA_ID#
+                SELECT Fnumber from ST_LevelAForm where ID = #form.LA_ID# and fnumber = '#form.fnumber#' and deleted !='1'
             </cfquery>
         </cfif>
 
         <!--- Histopathalogy --->
         <cfif isDefined('form.His_ID') and form.His_ID neq "">        
             <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-                SELECT Fnumber from ST_HistoForm where ID = #form.His_ID#
+                SELECT Fnumber from ST_HistoForm where ID = #form.His_ID# and fnumber = '#form.fnumber#' and deleted !='1'
             </cfquery>
         </cfif>
 
         <!--- Blood value --->
         <cfif isDefined('form.bloodValue_ID') and form.bloodValue_ID neq "">        
             <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-                SELECT Fnumber from ST_Blood_Values where ID = #form.bloodValue_ID#
+                SELECT Fnumber from ST_Blood_Values where ID = #form.bloodValue_ID# and fnumber = '#form.fnumber#' and deleted !='1'
             </cfquery>
         </cfif>
         
         <!--- Toxicology --->
         <cfif isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "">        
             <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-                SELECT Fnumber from ST_Toxicology where ID = #form.Toxicology_ID#
+                SELECT Fnumber from ST_Toxicology where ID = #form.Toxicology_ID# and fnumber = '#form.fnumber#' and deleted !='1'
             </cfquery>
         </cfif>
 
         <!--- Ancillary Diagnostics --->
         <cfif isDefined('form.AD_ID') and form.AD_ID neq "">        
             <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-                SELECT Fnumber from ST_Ancillary_Diagnostics where ID = #form.AD_ID#
+                SELECT Fnumber from ST_Ancillary_Diagnostics where ID = #form.AD_ID# and fnumber = '#form.fnumber#' and deleted !='1'
             </cfquery>
         </cfif>
 
@@ -1086,14 +1641,15 @@
         <!--- Morphometrics --->
         <cfif isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "">        
             <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-                SELECT Fnumber from ST_Morphometrics where ID = #form.Morphometrics_ID#
+                SELECT Fnumber from ST_Morphometrics where ID = #form.Morphometrics_ID# and fnumber = '#form.fnumber#' and deleted is null
             </cfquery>
         </cfif>
-
         
         <cfquery name="qgetSampleDataByLCE" datasource="#Application.dsn#" maxRows = "1">
-            SELECT ID from ST_SampleArchive where Fnumber = '#qgetLiveCetaceanExam.Fnumber#'
+            SELECT ID from ST_SampleArchive where Fnumber = '#qgetLiveCetaceanExam.Fnumber#' and deleted !='1'
         </cfquery>
+
+
 
 
         <cfif isDefined('qgetSampleDataByLCE.ID') and qgetSampleDataByLCE.ID neq "">
@@ -1102,10 +1658,34 @@
             <cfset form.SEID = ''>
         </cfif>
 
+
+
+
         <!--- <cfdump var="#qgetSampleDataByLCE.ID#" abort="true">--->
 
-        <cfif isDefined('form.SEID') and form.SEID neq "">
-        <cfset qgetSampleData=Application.Stranding.getSampleArchiveData("#form.SEID#")>
+        <cfif isDefined('form.SEID') and form.SEID neq "" and isDefined('form.fnumber') and form.fnumber NEQ ''>
+
+        <!--- <cfset qgetSampleData=Application.Stranding.getSampleArchiveData("#form.SEID#")> --->
+
+        <cfset resultSA_Data = Application.Stranding.getSampleArchiveData("#form.SEID#")>
+        <cfset qgetSampleData = resultSA_Data.data>
+        <cfset sourceTableName = resultSA_Data.sourceTableName>
+
+        <cfset queryString = CGI.QUERY_STRING>
+        <cfset isHiformPresent = reFind("(&|^)SampleArchive(&|$)", queryString) GT 0>
+
+        <cfif (isDefined('sourceTableName') and sourceTableName eq 'ST_SampleArchive') and isHiformPresent eq 'yes'>            
+            <cfset qLCEDataa=  resultSA_Data.data>
+        </cfif>
+
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&SampleArchive" addtoken="no">
+        </cfif> 
+
+        <!--- <cfset qLCEDataa = resultSA_Data.data> --->
+
+
+
         <cfif #qgetSampleData.species# neq "">
             <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetSampleData.species#")>
         </cfif>
@@ -2604,7 +3184,9 @@
     <cfparam  name="form.report" DEFAULT="emptys">
 
     <cfif isDefined('form.save')>
-        <!--- <cfdump var="#form#" abort="true"> --->
+
+        <cfset hideform = 1>
+
         <cfset form.report_ID ='#form.report_ID#'>
         <cfif form.report_ID eq '' >
             <cfset CNR = Application.Stranding.CetaceanNecropsyinsert(argumentCollection="#Form#")>
@@ -2614,7 +3196,7 @@
             <cfset  Application.Stranding.DynamicNutritioninsert(argumentCollection="#Form#")>
             <cfset  Application.Stranding.DynamicLymphoreticularinsert(argumentCollection="#Form#")>
             <cfset  Application.Stranding.DynamicParasitesinsert(argumentCollection="#Form#")>
-        <cfelse>
+         <cfelse>
             <cfset Session.CetaceanNecropsy = #form.report_ID#>
             <cfset Application.Stranding.updateCetaceanNecropsy(argumentCollection="#Form#")>
             <cfset Application.Stranding.updateDynamicNutrition(argumentCollection="#Form#")>
@@ -2627,11 +3209,11 @@
              
         </cfif>
         
-    <cfelseif isDefined('deleteNecropsyRecord')>
+     <cfelseif isDefined('deleteNecropsyRecord')>
         
         <cfset Application.Stranding.deletcetaceannecropsy("#form#")>
         <cfset form.fnumber = ''>
-    <cfelseif isDefined('deletCetaceanNecropsyAllRecord')>
+     <cfelseif isDefined('deletCetaceanNecropsyAllRecord')>
         <cfset Application.Stranding.deletCetaceanNecropsyAllRecord()>
     </cfif>
     <cfset qgetallfieldnumbers = application.Stranding.getallfieldnumber()>
@@ -2644,9 +3226,36 @@
             <cfset Session.CetaceanNecropsy = ''>  
        </cfif>
         <cfset form.field = form.Nfieldnumber>
-            <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>          
-            <cfset qLCEDataa=Application.Stranding.getCetaceanNecropsy("#form.field#")>
-            <cfset qgetcetaceanDate.CNRDATE= qLCEDataa.CNRDATE>
+
+            <!--- <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>          
+            <cfset qLCEDataa=Application.Stranding.getCetaceanNecropsy("#form.field#")> --->
+
+            <cfset result_NecropsyData = Application.Stranding.getCetaceanNecropsy("#form.field#")>
+            <cfset qgetCetaceanNecropsy = result_NecropsyData.data>
+            <cfset qLCEDataa = result_NecropsyData.data>
+            <cfset sourceTableName = result_NecropsyData.sourceTableName>
+
+            <cfset urlMap = {
+                "ST_LiveCetaceanExam": "CetaceanExam&LCEID=",
+                "ST_HIForm": "HIForm&HIFormID=",
+                "ST_LevelAForm": "LevelAForm&LevelAID=",
+                "ST_HistoForm": "Histopathology&LCE_HID=",
+                "ST_Blood_Values": "BloodValue&BVID=",
+                "ST_Toxicology": "Toxicology&ToxiID=",
+                "ST_Ancillary_Diagnostics": "AncillaryDiagnostics&ADID=",
+                "ST_SampleArchive": "SampleArchive&SAID=",
+                "ST_Morphometrics": "Morphometrics&MorphoID="
+            }>
+
+            <cfif structKeyExists(urlMap, sourceTableName)>
+                <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##qLCEDataa.ID#&Fnumber=#URLEncodedFormat(qLCEDataa.Fnumber)#">
+                <cflocation url="#redirectUrl#" addtoken="no">
+
+             <cfelseif sourceTableName EQ 'NoneFound'>
+                <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&NecropsyReport" addtoken="no">
+            </cfif>
+
+             <cfset qgetcetaceanDate.CNRDATE= qLCEDataa.CNRDATE>
 
             <cfset qgetAllData=Application.Stranding.getAllData("#form.field#")>        
             <cfset qgetNutritional=Application.Stranding.getNutritional("#form.field#")>   
@@ -2861,19 +3470,28 @@
                
     </cfif>
 
-    <!---TodayWorking22  --->
+    <!--- PDF--->
     <cfif isDefined('createPdf')>
         <cfset form.field = form.Fnumber>
         <cfset form.Nfieldnumber = form.Fnumber>
         <cfset form.Morphometrics_ID = form.Fnumber>
-        <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.Nfieldnumber#")> 
+        <cfset form.LCEID = form.Fnumber>
+        <!--- <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.Nfieldnumber#")>     --->
+
+        <cfset result_NecropsyData = Application.Stranding.getCetaceanNecropsy("#form.field#")>
+        <cfset qgetCetaceanNecropsy = result_NecropsyData.data>
+        
+
+        <cfif isDefined('qgetCetaceanNecropsy.species') and qgetCetaceanNecropsy.species neq ''>
+            <cfset qgetCetaceanSpecies=Application.Stranding.getCetaceanSpeciesForPDF("#qgetCetaceanNecropsy.species#")>         
+        </cfif>
+  
        <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllFnumberData("#form.Morphometrics_ID#")>
        <cfset qgetVeterinarians= Application.StaticDataNew.getVeterinarians()>
        <cfset getTeams=Application.SightingNew.getTeams()>
     <cfoutput>
     <cfsavecontent variable="myVariableName">
    
-    <!---TodayWorking22 --->
     <body  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
             <table  id="Table_01" width="100%" height="" border="0" cellpadding="0" cellspacing="0">
                 <tr>
@@ -2902,10 +3520,7 @@
                                             <td style="line-height: 0; padding-top:50px; text-align: center; font-size: 24px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">#qgetCetaceanNecropsy.Fnumber#</td>
                                         </tr>	
                                         <tr>
-                                            <td style="line-height: 0; padding-top:20px; text-align: center; font-size: 14px; font-family: Arial, Helvetica, sans-serif;">Bottlenose Dolphin</td>
-                                        </tr>	
-                                        <tr>
-                                            <td style="line-height: 0; padding-top:20px; text-align: center; font-size: 14px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;"><i>Tursiops truncatus</i></td>
+                                            <td style="line-height: 0; padding-top:20px; text-align: center; font-size: 14px; font-family: Arial, Helvetica, sans-serif;"><cfif isDefined('qgetCetaceanSpecies')>#qgetCetaceanSpecies.CETACEANSPECIESNAME#<cfelse> </cfif></td>
                                         </tr>	
                                         <cfif isDefined('qgetCetaceanNecropsy.Date') and #qgetCetaceanNecropsy.Date# neq "" >	
                                             <tr>
@@ -3352,7 +3967,7 @@
                                             </tr>
                                             
                                             <tr>
-                                                <td style="line-height: 0; padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Nutritional Condition—Internal</td>
+                                                <td style="line-height: 0; padding-top:20px; text-align: center; font-size: 22px; font-weight: 600; font-family: Arial, Helvetica, sans-serif;">Nutritional Condition-Internal</td>
                                             </tr>
                                         
                                         <cfif isDefined('qgetCetaceanNecropsy.muscular_comments') and #qgetCetaceanNecropsy.muscular_comments# neq "" >
@@ -3827,7 +4442,17 @@
         <cfset form.field = #Session.CetaceanNecropsy# >
         <cfset form.NFIELDNUMBER = #Session.CetaceanNecropsy# >
 
-        <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>          
+        <!--- <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>  --->
+        <cfset result_NecropsyData = Application.Stranding.getCetaceanNecropsy("#form.field#")>
+        <cfset qgetCetaceanNecropsy = result_NecropsyData.data>
+        <cfset qLCEDataa = result_NecropsyData.data>
+        <cfset sourceTableName = result_NecropsyData.sourceTableName>
+
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&NecropsyReport" addtoken="no">
+        </cfif>
+        
+        
         <!--- <cfset qLCEDataa=Application.Stranding.getCetaceanNecropsy("#form.field#")> --->
         <cfset qgetcetaceanDate.CNRDATE= qLCEDataa.CNRDATE>
         <cfset qgetAllData=Application.Stranding.getAllData("#form.field#")>        
@@ -3845,10 +4470,20 @@
         <cfset form.field = url.NRID >
         <cfset form.NFIELDNUMBER = url.NRID >
 
-        <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>   
-<!---         <cfdump var="#qgetCetaceanNecropsy#" abort="true">        --->
-        <cfset qLCEDataa=Application.Stranding.getCetaceanNecropsy("#form.field#")> 
-        <cfset qgetcetaceanDate.CNRDATE= qLCEDataa.CNRDATE>
+        <!--- <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>   
+        <cfset qLCEDataa=Application.Stranding.getCetaceanNecropsy("#form.field#")>  --->
+
+        <cfset result_NecropsyData = Application.Stranding.getCetaceanNecropsy("#form.field#")>
+        <cfset qgetCetaceanNecropsy = result_NecropsyData.data>
+        <cfset qLCEDataa = result_NecropsyData.data>
+        <cfset sourceTableName = result_NecropsyData.sourceTableName>
+        
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&NecropsyReport" addtoken="no">
+        </cfif>
+
+
+        <!--- <cfset qgetcetaceanDate.CNRDATE= qLCEDataa.CNRDATE> --->
         <cfset qgetAllData=Application.Stranding.getAllData("#form.field#")>        
         <cfset qgetNutritional=Application.Stranding.getNutritional("#form.field#")>     
         <cfset qgetLymphoreticular=Application.Stranding.getLymphoreticular("#form.field#")>
@@ -3866,6 +4501,7 @@
 <!--- start for Morphometrics --->
 <cfset qgetMorphometricsData=Application.Stranding.getMorphomatrics_ten()>
 <cfif isDefined('SaveAndNewMorphometrics') OR isDefined('SaveAndClose')>
+    <cfset hideform = 1>
     <cfif  isDefined('form.Morphometricss_ID') and form.Morphometricss_ID neq "">
         <!--- If update data --->
         <cfset Application.Stranding.MorphometricsFormUpdate(argumentCollection="#Form#")>
@@ -3886,12 +4522,50 @@
 </cfif>
 
    <!---   getting data on the basis of HI_ID  --->
-   <cfif  isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "">
+   <cfif  isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "" and isDefined('form.fnumber') and form.fnumber NEQ ''>
     <cfif Session.Morphometrics NEQ form.Morphometrics_ID>
         <cfset Session.Morphometrics = ''>
     </cfif>
-        <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
-    <cfset qLCEDataa=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")> 
+
+    <!--- <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
+    <cfset qLCEDataa=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>  --->
+
+    <cfset resultMor_data = Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
+    <cfset qgetMorphometricsData = resultMor_data.data>
+    <cfset qLCEDataa = resultMor_data.data>
+    <cfset sourceTableName = resultMor_data.sourceTableName>
+
+
+
+    <cfset urlMap = {
+        "ST_LiveCetaceanExam": "CetaceanExam&LCEID=",
+        "ST_HIForm": "HIForm&HIFormID=",
+        "ST_LevelAForm": "LevelAForm&LevelAID=",
+        "ST_HistoForm": "Histopathology&LCE_HID=",
+        "ST_Blood_Values": "BloodValue&BVID=",
+        "ST_Toxicology": "Toxicology&ToxiID=",
+        "ST_Ancillary_Diagnostics": "AncillaryDiagnostics&ADID=",
+        "ST_SampleArchive": "SampleArchive&SAID=",
+        "ST_CetaceanNecropsyReport": "NecropsyReport&NRID="        
+    }>
+
+    <cfif structKeyExists(urlMap, sourceTableName)>
+
+        <cfif sourceTableName EQ 'ST_CetaceanNecropsyReport' >
+                <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##URLEncodedFormat(qLCEDataa.Fnumber)#">
+        <cfelse>
+            <cfset redirectUrl = "#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&#urlMap[sourceTableName]##qLCEDataa.ID#&Fnumber=#URLEncodedFormat(qLCEDataa.Fnumber)#">
+        </cfif>
+
+
+        <cflocation url="#redirectUrl#" addtoken="no">
+
+     <cfelseif sourceTableName EQ 'NoneFound'>
+        <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Morphometrics" addtoken="no">
+    </cfif>
+
+
+
     <cfset qgetcetaceanDate=Application.Stranding.getMorphometricsNecropsyDate(#form.Morphometrics_ID#)>
     <cfif #qgetMorphometricsData.species# neq "">
         <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetMorphometricsData.species#")>
@@ -3899,8 +4573,21 @@
 </cfif>
 <cfif isDefined('url.MorphoID') and url.MorphoID NEQ '0'> 
     <cfset form.Morphometrics_ID = url.MorphoID>
-    <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
-    <cfset qLCEDataa=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
+    <cfset form.fnumber = url.fnumber>
+
+    <!--- <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
+    <cfset qLCEDataa=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")> --->
+
+    <cfset resultMor_data = Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
+    <cfset qgetMorphometricsData = resultMor_data.data>
+    <cfset qLCEDataa = resultMor_data.data>
+    <cfset sourceTableName = resultMor_data.sourceTableName>
+
+
+    <cfif sourceTableName EQ 'NoneFound'>
+        <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Morphometrics" addtoken="no">
+    </cfif>
+
     <cfset qgetcetaceanDate=Application.Stranding.getMorphometricsNecropsyDate(#form.Morphometrics_ID#)>
     <cfif #qgetMorphometricsData.species# neq "">
         <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetMorphometricsData.species#")>
@@ -3908,7 +4595,16 @@
 </cfif>
 <cfif isDefined('Session.Morphometrics') and Session.Morphometrics NEQ ''> 
     <cfset form.Morphometrics_ID = #Session.Morphometrics#>
-    <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
+
+    <!--- <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")> --->
+    <cfset resultMor_data = Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
+    <cfset qgetMorphometricsData = resultMor_data.data>
+    <cfset sourceTableName = resultMor_data.sourceTableName>
+
+    <cfif sourceTableName EQ 'NoneFound'>
+        <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Morphometrics" addtoken="no">
+    </cfif>
+
     <cfset qgetcetaceanDate=Application.Stranding.getMorphometricsNecropsyDate(#form.Morphometrics_ID#)>
     <cfif #qgetMorphometricsData.species# neq "">
         <cfset getCetaceansCode=Application.SightingNew.getCetaceansCode(CETACEAN_SPECIES="#qgetMorphometricsData.species#")>
@@ -3924,55 +4620,58 @@
   
     <cfif isDefined('form.LCEID') and form.LCEID neq "">        
         <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-            SELECT Fnumber from ST_LiveCetaceanExam where ID = #form.LCEID#
+            SELECT Fnumber from ST_LiveCetaceanExam where ID = #form.LCEID# and fnumber = '#form.fnumber#' and deleted !='1'
         </cfquery>
     </cfif>
     <!--- HiForm --->
     <cfif isDefined('form.HI_ID') and form.HI_ID neq "">        
         <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-            SELECT Fnumber from ST_HIForm where ID = #form.HI_ID#
+            SELECT Fnumber from ST_HIForm where ID = #form.HI_ID# and fnumber = '#form.fnumber#' and deleted !='1'
         </cfquery>
     </cfif>
     
     <!--- LevelAForm --->
     <cfif isDefined('form.LA_ID') and form.LA_ID neq "">        
         <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-            SELECT Fnumber from ST_LevelAForm where ID = #form.LA_ID#
+            SELECT Fnumber from ST_LevelAForm where ID = #form.LA_ID# and fnumber = '#form.fnumber#' and deleted !='1'
         </cfquery>
     </cfif>
 
     <!--- Histopathalogy --->
     <cfif isDefined('form.His_ID') and form.His_ID neq "">        
         <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-            SELECT Fnumber from ST_HistoForm where ID = #form.His_ID#
+            SELECT Fnumber from ST_HistoForm where ID = #form.His_ID# and fnumber = '#form.fnumber#' and deleted !='1'
         </cfquery>
     </cfif>
+
 
     <!--- Blood value --->
     <cfif isDefined('form.bloodValue_ID') and form.bloodValue_ID neq "">        
         <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-            SELECT Fnumber from ST_Blood_Values where ID = #form.bloodValue_ID#
+            SELECT Fnumber from ST_Blood_Values where ID = #form.bloodValue_ID# and fnumber = '#form.fnumber#' and deleted !='1'
         </cfquery>
     </cfif>
     
     <!--- Toxicology --->
     <cfif isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "">        
         <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-            SELECT Fnumber from ST_Toxicology where ID = #form.Toxicology_ID#
+            SELECT Fnumber from ST_Toxicology where ID = #form.Toxicology_ID# and fnumber = '#form.fnumber#' and deleted !='1'
         </cfquery>
     </cfif>
 
     <!--- Sample Archive --->
     <cfif isDefined('form.SEID') and form.SEID neq "">        
         <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-            SELECT Fnumber from ST_SampleArchive where ID = #form.SEID#
+            SELECT Fnumber from ST_SampleArchive where ID = #form.SEID#  and deleted !='1'
         </cfquery>
     </cfif>
+
+
 
     <!--- Ancillary Diagnostics --->
     <cfif isDefined('form.AD_ID') and form.AD_ID neq "">        
         <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-            SELECT Fnumber from ST_Ancillary_Diagnostics where ID = #form.AD_ID#
+            SELECT Fnumber from ST_Ancillary_Diagnostics where ID = #form.AD_ID# and fnumber = '#form.fnumber#' and deleted !='1'
         </cfquery>
     </cfif>
 
@@ -3987,27 +4686,45 @@
     <!--- Morphometrics --->
     <cfif isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "">        
         <cfquery name="qgetLiveCetaceanExam" datasource="#Application.dsn#">
-            SELECT Fnumber from ST_Morphometrics where ID = #form.Morphometrics_ID#
+            SELECT Fnumber from ST_Morphometrics where ID = #form.Morphometrics_ID# and fnumber = '#form.fnumber#' and deleted is null
         </cfquery>
     </cfif>
 
 
     <!--- start for CetaceanExam --->
     <cfquery name="qgetCetaceanExamDataByfn" datasource="#Application.dsn#" maxRows = "1">
-        SELECT ID from ST_LiveCetaceanExam where Fnumber = '#qgetLiveCetaceanExam.Fnumber#'
+        SELECT ID, fnumber from ST_LiveCetaceanExam where Fnumber = '#qgetLiveCetaceanExam.Fnumber#' and deleted !='1'
     </cfquery>
 
     <cfif isDefined('qgetCetaceanExamDataByfn.ID') and qgetCetaceanExamDataByfn.ID neq "">
         <cfset form.LCEID = qgetCetaceanExamDataByfn.ID>
         <cfset form.CeteacenSelect = "#qgetCetaceanExamDataByfn.ID#">
+        <cfset form.CeteacenFnumberSelect = "#qgetCetaceanExamDataByfn.fnumber#">
     <cfelse>
         <cfset form.LCEID = ''>
         <cfset form.CeteacenSelect = ''>
+        <cfset form.CeteacenFnumberSelect = ''>
     </cfif>
 
-    <cfif (isDefined('form.LCEID') and form.LCEID neq "")>
+   
+
+    <cfif (isDefined('form.LCEID') and form.LCEID neq "" and  isDefined('form.fnumber') and form.fnumber neq '')>
+
+        <cfset resultData = Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>
   
-        <cfset qLCEData=Application.Stranding.getLiveCetaceanExamData(argumentCollection="#Form#")>     
+        <cfset sourceTableName= resultData.sourceTableName>
+          
+         <cfset queryString = CGI.QUERY_STRING>
+         <cfset isHiformPresent = reFind("(&|^)CetaceanExam(&|$)", queryString) GT 0>
+
+        <cfif (isDefined('sourceTableName') and sourceTableName eq 'ST_LiveCetaceanExam') and isHiformPresent eq 'yes'>            
+            <cfset qLCEData= resultData.data>
+        </cfif>
+
+        <cfif sourceTableName EQ 'NoneFound'>
+            <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&CetaceanExam" addtoken="no">
+        </cfif>
+        
         <cfset qgetHeartData = Application.Stranding.getHeartData(LCEID="#form.LCEID#")>
         <cfset qgetRespData = Application.Stranding.getRespData(LCEID="#form.LCEID#")>
         <cfset qgetDrugData = Application.Stranding.getDrugData(LCEID="#form.LCEID#")>
@@ -4020,7 +4737,7 @@
     <!--- end for CetaceanExam --->
    <!--- for Hi form --->
     <cfquery name="qgetHIFOrmDataByfn" datasource="#Application.dsn#" maxRows = "1">
-        SELECT ID from ST_HIForm where Fnumber = '#qgetLiveCetaceanExam.Fnumber#'
+        SELECT ID from ST_HIForm where Fnumber = '#qgetLiveCetaceanExam.Fnumber#' and deleted !='1'
     </cfquery>
 
     <cfif isDefined('qgetHIFOrmDataByfn.ID') and qgetHIFOrmDataByfn.ID neq "">
@@ -4032,11 +4749,33 @@
 
         <!---   getting data on the basis of HI_ID  --->
     <!--- <cfif  isDefined('form.HI_ID') and form.HI_ID neq ""> --->
-        <cfif (isDefined('form.HI_ID') and form.HI_ID neq "") or (isDefined('form.LCE_HIID') and form.LCE_HIID neq '0')>
+        <cfif (isDefined('form.HI_ID') and form.HI_ID neq "" and isDefined('form.fnumber') and form.fnumber NEQ '') or (isDefined('form.LCE_HIID') and form.LCE_HIID neq '0')>
 
             <cfset form.LCEID = form.HI_ID>
             
-            <cfset qgetHIData=Application.Stranding.getHIData("#form.LCEID#")>
+            <!--- <cfset qgetHIData=Application.Stranding.getHIData("#form.LCEID#")> --->
+
+            <cfset resultHiFormData = Application.Stranding.getHIData("#form#")>
+            <cfset qgetHIData=  resultHiFormData.data>
+            <cfset sourceTableName = resultHiFormData.sourceTableName>
+
+            <cfset queryString = CGI.QUERY_STRING>
+            <cfset isHiformPresent = reFind("(&|^)HIForm(&|$)", queryString) GT 0>
+
+            <cfif (isDefined('sourceTableName') and sourceTableName eq 'ST_HIForm') and isHiformPresent eq 'yes'>            
+                <cfset qLCEDataa=  resultHiFormData.data>
+            </cfif>
+
+            <cfif sourceTableName EQ 'NoneFound'>
+                <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&HIForm" addtoken="no">
+            </cfif>
+
+
+    
+             <!---<cfif  CGI.REMOTE_ADDR eq '110.39.156.90'>
+                        <cfdump var="#isHiformPresent#" abort="true">
+                </cfif>--->
+
          
 
             <cfset qgetHiExamData = Application.Stranding.getHiExamData(LCEID="#form.LCEID#")>
@@ -4045,7 +4784,7 @@
 
     <!--- start for level a form --->
         <cfquery name="qgetLevelAFormDataByfn" datasource="#Application.dsn#" maxRows = "1">
-            SELECT ID from ST_LevelAForm where Fnumber = '#qgetLiveCetaceanExam.Fnumber#'
+            SELECT ID from ST_LevelAForm where Fnumber = '#qgetLiveCetaceanExam.Fnumber#' and deleted !='1'
         </cfquery>
 
         <cfif isDefined('qgetLevelAFormDataByfn.ID') and qgetLevelAFormDataByfn.ID neq "">
@@ -4054,16 +4793,34 @@
             <cfset form.LA_ID = ''>
         </cfif>
             
-        <cfif  isDefined('form.LA_ID') and form.LA_ID neq "">
+        <cfif  isDefined('form.LA_ID') and form.LA_ID neq "" and isDefined('form.fnumber') and form.fnumber NEQ ''>
 
             <cfset form.LCEID = form.LA_ID>
-            <cfset qgetLevelAData=Application.Stranding.getLevelAData("#form.LCEID#")>
+
+            <!--- <cfset qgetLevelAData=Application.Stranding.getLevelAData("#form.LCEID#")> --->
+
+            <cfset resultLAData = Application.Stranding.getLevelAData(argumentCollection="#Form#")>
+            <cfset qgetLevelAData = resultLAData.data>
+            <!--- <cfset qLCEDataa = resultLAData.data> --->
+            <cfset sourceTableName = resultLAData.sourceTableName>
+
+            <cfset queryString = CGI.QUERY_STRING>
+            <cfset isHiformPresent = reFind("(&|^)LevelAForm(&|$)", queryString) GT 0>
+
+            <cfif (isDefined('sourceTableName') and sourceTableName eq 'ST_LevelAForm') and isHiformPresent eq 'yes'>            
+                <cfset qLCEDataa=  resultLAData.data>
+            </cfif>
+
+             <cfif sourceTableName EQ 'NoneFound'>
+                <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&LevelAForm" addtoken="no">
+            </cfif>
+
          
         </cfif>
     <!--- end for level a form --->
     <!--- strat for Histopathology--->
         <cfquery name="qgetHistopathologyDataByfn" datasource="#Application.dsn#" maxRows = "1">
-            SELECT ID from ST_HistoForm where Fnumber = '#qgetLiveCetaceanExam.Fnumber#'
+            SELECT ID from ST_HistoForm where Fnumber = '#qgetLiveCetaceanExam.Fnumber#' and deleted !='1'
         </cfquery>
 
         <cfif isDefined('qgetHistopathologyDataByfn.ID') and qgetHistopathologyDataByfn.ID neq "">
@@ -4072,12 +4829,31 @@
             <cfset form.His_ID = ''>
         </cfif>
 
+
         <!---   getting data on the basis of His_ID  --->
-        <cfif  isDefined('form.His_ID') and form.His_ID neq "">
+        <cfif  isDefined('form.His_ID') and form.His_ID neq "" and isDefined('form.fnumber') and form.fnumber NEQ ''>
 
             <cfset form.LCEID = form.His_ID>
             <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-            <cfset qgetHIDataa=Application.Stranding.getHistoData("#form.LCEID#")>
+
+            <!--- <cfset qgetHIDataa=Application.Stranding.getHistoData("#form.LCEID#")> --->
+
+            <cfset resultHistoData = Application.Stranding.getHistoData(argumentCollection="#Form#")>
+
+            <cfset qgetHIDataa = resultHistoData.data>
+            <!--- <cfset qLCEDataa = resultHistoData.data> --->
+            <cfset sourceTableName = resultHistoData.sourceTableName>
+
+            <cfset queryString = CGI.QUERY_STRING>
+            <cfset isHiformPresent = reFind("(&|^)Histopathology(&|$)", queryString) GT 0>
+
+            <cfif (isDefined('sourceTableName') and sourceTableName eq 'ST_HistoForm') and isHiformPresent eq 'yes'>            
+                <cfset qLCEDataa=  resultHistoData.data>
+            </cfif>
+
+            <cfif sourceTableName EQ 'NoneFound'>
+                <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Histopathology" addtoken="no">
+            </cfif>         
 
             <cfset qgetHistoSampleData = Application.Stranding.getHistoSampleData(HI_ID="#form.LCEID#")>
            
@@ -4087,7 +4863,7 @@
     
     <!--- start for blood value --->
     <cfquery name="qgetBloodValueDataByfn" datasource="#Application.dsn#" maxRows = "1">
-        SELECT ID from ST_Blood_Values where Fnumber = '#qgetLiveCetaceanExam.Fnumber#'
+        SELECT ID from ST_Blood_Values where Fnumber = '#qgetLiveCetaceanExam.Fnumber#' and deleted !='1'
     </cfquery>
 
     <cfif isDefined('qgetBloodValueDataByfn.ID') and qgetBloodValueDataByfn.ID neq "">
@@ -4096,11 +4872,25 @@
         <cfset form.bloodValue_ID = ''>
     </cfif>
     
-    <cfif isDefined('form.bloodValue_ID') and form.bloodValue_ID NEQ ''> 
+    <cfif isDefined('form.bloodValue_ID') and form.bloodValue_ID NEQ '' and isDefined('form.fnumber') and form.fnumber NEQ ''> 
         <cfset form.LCEID = "#form.bloodValue_ID#">
         <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-        <cfset qgetBloodValueData=Application.Stranding.getBlood_VData("#form.LCEID#")>
-     
+        <!--- <cfset qgetBloodValueData=Application.Stranding.getBlood_VData("#form.LCEID#")> --->
+
+        <cfset result_BVData = Application.Stranding.getBlood_VData("#form.LCEID#")>
+        <cfset qgetBloodValueData = result_BVData.data>
+        <cfset sourceTableName = result_BVData.sourceTableName>
+
+        <cfset queryString = CGI.QUERY_STRING>
+        <cfset isHiformPresent = reFind("(&|^)BloodValue(&|$)", queryString) GT 0>
+
+        <cfif (isDefined('sourceTableName') and sourceTableName eq 'ST_Blood_Values') and isHiformPresent eq 'yes'>            
+            <cfset qLCEDataa=  result_BVData.data>
+        </cfif>
+      
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&BloodValue" addtoken="no">
+        </cfif>
 
         <cfset form.bloodID = "#form.bloodValue_ID#" >
         <cfset qgetCBC_Data=Application.Stranding.getCBC_Data("#form.bloodID#")>
@@ -4116,7 +4906,7 @@
     
     <!--- start for texcology --->
       <cfquery name="qgetToxicologyDataByfn" datasource="#Application.dsn#" maxRows = "1">
-        SELECT ID from ST_Toxicology where Fnumber = '#qgetLiveCetaceanExam.Fnumber#'
+        SELECT ID from ST_Toxicology where Fnumber = '#qgetLiveCetaceanExam.Fnumber#' and deleted !='1'
     </cfquery>
 
     <cfif isDefined('qgetToxicologyDataByfn.ID') and qgetToxicologyDataByfn.ID neq "">
@@ -4125,11 +4915,27 @@
         <cfset form.Toxicology_ID = ''>
     </cfif>
 
-    <cfif isDefined('form.Toxicology_ID') and form.Toxicology_ID NEQ ''>
+    <cfif isDefined('form.Toxicology_ID') and form.Toxicology_ID NEQ '' and isDefined('form.fnumber') and form.fnumber NEQ ''>
         <cfset form.Toxicology_ID = #form.Toxicology_ID#>
-        <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
+        <!--- <cfset qgetToxicologyData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")> --->
+
+        <cfset result_toxiData=Application.Stranding.gettoxiform("#form.Toxicology_ID#")>
+        <cfset qgetToxicologyData = result_toxiData.data>
+        <cfset sourceTableName = result_toxiData.sourceTableName>
+
+        <cfset queryString = CGI.QUERY_STRING>
+        <cfset isHiformPresent = reFind("(&|^)Toxicology(&|$)", queryString) GT 0>
+
+        <cfif (isDefined('sourceTableName') and sourceTableName eq 'ST_Toxicology') and isHiformPresent eq 'yes'>            
+            <cfset qLCEDataa=  result_toxiData.data>
+        </cfif>
+
+        <cfif sourceTableName EQ 'NoneFound'>
+            <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Toxicology" addtoken="no">
+        </cfif>
+        
       
-            <cfset TissueTypeForTable =Application.Stranding.getTissueTypeForTable(#form.Toxicology_ID#)>
+        <cfset TissueTypeForTable =Application.Stranding.getTissueTypeForTable(#form.Toxicology_ID#)>
         <cfif isdefined('form.Tissue_type') and form.Tissue_type neq "">
             <cfset qgetToxitype=Application.Stranding.getToxitype("#form.Tissue_type#,#form.TX_ID#")>
             <cfset qgetDynamicToxitype=Application.Stranding.getDynamicToxitype("#form.Tissue_type#")>
@@ -4139,7 +4945,7 @@
     <!--- end for texcology --->
     <!--- start for Ancillary --->
     <cfquery name="qgetAncillaryDataByfn" datasource="#Application.dsn#" maxRows = "1">
-        SELECT ID from ST_Ancillary_Diagnostics where Fnumber = '#qgetLiveCetaceanExam.Fnumber#'
+        SELECT ID from ST_Ancillary_Diagnostics where Fnumber = '#qgetLiveCetaceanExam.Fnumber#' and deleted !='1'
     </cfquery>
 
     <cfif isDefined('qgetAncillaryDataByfn.ID') and qgetAncillaryDataByfn.ID neq "">
@@ -4148,10 +4954,29 @@
         <cfset form.AD_ID = ''>
     </cfif>
 
-    <cfif  isDefined('form.AD_ID') and form.AD_ID neq "">
+    <cfif  isDefined('form.AD_ID') and form.AD_ID neq "" and isDefined('form.fnumber') and form.fnumber NEQ ''>
 
         <!----this qgetHIData variable fetching data for show data accordingly id,date,FN--->
-        <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>       
+        <!--- <cfset qgetAncillaryData=Application.Stranding.getAncillaryData("#form.AD_ID#")>   --->
+        
+        <cfset resultAD_Data = Application.Stranding.getAncillaryData("#form.AD_ID#")>
+        <cfset qgetAncillaryData = resultAD_Data.data>
+         <cfset sourceTableName = resultAD_Data.sourceTableName>
+
+         
+
+        <cfset queryString = CGI.QUERY_STRING>
+        <cfset isHiformPresent = reFind("(&|^)AncillaryDiagnostics(&|$)", queryString) GT 0>
+
+        <cfif (isDefined('sourceTableName') and sourceTableName eq 'ST_Ancillary_Diagnostics') and isHiformPresent eq 'yes'>            
+            <cfset qLCEDataa=  resultAD_Data.data>
+        </cfif>
+
+        <cfif sourceTableName EQ 'NoneFound'>
+            <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&AncillaryDiagnostics" addtoken="no">
+        </cfif>
+            
+        
         <cfset qAncillaryReportGet=Application.Stranding.AncillaryReportGet("#form.AD_ID#")>
     </cfif>
 
@@ -4159,7 +4984,7 @@
 
     <!--- start for NecropsyReport --->
         <cfquery name="qgetNecropsyReportDataByfn" datasource="#Application.dsn#" maxRows = "1">
-            SELECT ID from ST_CetaceanNecropsyReport where Fnumber = '#qgetLiveCetaceanExam.Fnumber#'
+            SELECT ID from ST_CetaceanNecropsyReport where Fnumber = '#qgetLiveCetaceanExam.Fnumber#' and deleted is null
         </cfquery>
 
         <cfif isDefined('qgetNecropsyReportDataByfn.ID') and qgetNecropsyReportDataByfn.ID neq "">
@@ -4172,7 +4997,28 @@
 
             <cfset form.field = form.Nfieldnumber>
             <!--- <cfdump var="#form.field#">--->
-                <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>          
+                <!--- <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy("#form.field#")>           --->
+            <cfset result_NecropsyData = Application.Stranding.getCetaceanNecropsy("#form.field#")>
+            <cfset qgetCetaceanNecropsy = result_NecropsyData.data>
+            <cfset sourceTableName = result_NecropsyData.sourceTableName>
+
+            <cfset queryString = CGI.QUERY_STRING>
+            <cfset isHiformPresent = reFind("(&|^)NecropsyReport(&|$)", queryString) GT 0>
+
+            <cfif (isDefined('sourceTableName') and sourceTableName eq 'ST_CetaceanNecropsyReport') and isHiformPresent eq 'yes'>            
+                <cfset qLCEDataa=  result_NecropsyData.data>
+            </cfif>
+
+            <cfif sourceTableName EQ 'NoneFound'>
+                <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&NecropsyReport" addtoken="no">
+            </cfif>
+
+            <!--- <cfset qLCEDataa = result_NecropsyData.data> --->
+
+
+
+            <!--- <cfdump var="#result_NecropsyData#" abort="true"> --->
+            
               
             <cfset qgetAllData=Application.Stranding.getAllData("#form.field#")>
             
@@ -4188,7 +5034,7 @@
     <!--- end for NecropsyReport --->
     <!--- start for Morpho --->
     <cfquery name="qgetMorphometricsDataByfn" datasource="#Application.dsn#" maxRows = "1">
-        SELECT ID from ST_Morphometrics where Fnumber = '#qgetLiveCetaceanExam.Fnumber#'
+        SELECT ID from ST_Morphometrics where Fnumber = '#qgetLiveCetaceanExam.Fnumber#' and deleted is null
     </cfquery>
 
     <cfif isDefined('qgetMorphometricsDataByfn.ID') and qgetMorphometricsDataByfn.ID neq "">
@@ -4199,12 +5045,27 @@
 
     
    <!---   getting data on the basis of HI_ID  --->
-   <cfif  isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "">
+   <cfif  isDefined('form.Morphometrics_ID') and form.Morphometrics_ID neq "" and isDefined('form.fnumber') and form.fnumber NEQ ''>
 
   
-        <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
+        <!--- <cfset qgetMorphometricsData=Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")> --->
+
+        <cfset resultMor_data = Application.Stranding.getMorphometricsAllData("#form.Morphometrics_ID#")>
+        <cfset qgetMorphometricsData = resultMor_data.data>
+        <cfset sourceTableName = resultMor_data.sourceTableName>
+
+        <cfset queryString = CGI.QUERY_STRING>
+        <cfset isHiformPresent = reFind("(&|^)Morphometrics(&|$)", queryString) GT 0>
+
+        <cfif (isDefined('sourceTableName') and sourceTableName eq 'ST_Morphometrics') and isHiformPresent eq 'yes'>            
+            <cfset qLCEDataa=  resultMor_data.data>
+        </cfif>
+        
+        <cfif sourceTableName EQ 'NoneFound'>
+           <cflocation url="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Morphometrics" addtoken="no">
+        </cfif>        
    
-</cfif>
+    </cfif>
 
     <!--- end for Morpho --->
 
@@ -6101,7 +6962,7 @@
             <!-- begin breadcrumb -->
             <ol class="breadcrumb pull-right">
                 <li><a href="javascript:;">Stranding</a></li>
-                <li><a href="javascript:;">Cetacean Exam</a></li>
+                <li id="ListText" ><a href="javascript:;">Cetacean Exam</a></li>
             </ol>
             <!-- end breadcrumb -->
             <!-- begin page-header -->
@@ -6149,38 +7010,66 @@
                             <select class="form-control search-box" name="LCEID" id="LCEID" onChange="cetaceanExamFieldNumberform()">
                                 <option value="">Select Field Number</option>
                                 <cfloop query="qgetLCEFBNumber">
-                                    <option value="#qgetLCEFBNumber.ID#" <cfif isDefined('form.CeteacenSelect') and form.CeteacenSelect eq #qgetLCEFBNumber.ID#>selected</cfif>>#qgetLCEFBNumber.Fnumber#</option>
+                                    <option 
+                                        value="#qgetLCEFBNumber.ID#" 
+                                        data-fnumber="#qgetLCEFBNumber.Fnumber#"
+                                        <cfif isDefined('form.CeteacenSelect') and form.CeteacenSelect eq #qgetLCEFBNumber.ID# and isdefined('form.fnumber') and form.fnumber eq qgetLCEFBNumber.Fnumber>selected</cfif>>
+                                        #qgetLCEFBNumber.Fnumber#
+                                    </option>
                                 </cfloop>
                             </select>
+
+                             <input type="hidden" name="Fnumber" id="FnumberHidden">
                         </div>
                     </form>
                     </div>
                 </div>
-                <div class="col-md-3 reset-btn">
-                    <input type="button" name="reset" id="reset" class="btn btn-default" value="Reset" onClick="ResetAll()"/>
+                <div class="col-md-6 reset-btn d-flex">
+                    <input type="button" name="reset" id="reset" class="btn btn-default" value="Reset" onClick="ResetAll()"/> 
+                    <button type="button" onclick="gotobottomFunction()" style="margin-top: 2px; margin-left: 10px;" class="btn btn-primary" id="mybutton" title="Go to bottom">Go to Bottom</button>
+                     
                 </div>
+
+                <div class="col-md-3 d-flex fixed-top" style="justify-content: flex-end;">
+                    <button type="button" id="rollup" name="rollup" class="btn btn-primary rollupbtn" style="margin-top: 18px;" onclick="rolldown()"> <cfif #hideform# eq 1> Roll Down<cfelse> Roll Up </cfif> </button>
+                </div>
+                
+                
+               
+
             </div>
+
+            
 
             <!---start for HIForm --->
             <div class="row" id="HIformSerch" style="display:none;">
             
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
-                    <form  action="" method="post" id="myHiFormFieldNumber">
-                        <label for="sel1">Search By Field Number:</label>
-                        <div class="input"> 
-                            <select class="form-control search-box" name="HI_ID" onChange="hiFormFieldNumber()">
-                                <option value="">Select Field Number</option>
-                                <cfloop query="qgetHIFBNumber">
-                                    <option value="#qgetHIFBNumber.ID#" <cfif isDefined('form.HI_ID') and form.HI_ID eq #qgetHIFBNumber.ID#>selected</cfif>>#qgetHIFBNumber.Fnumber#</option>
-                                </cfloop>
-                            </select>
-                        </div>
-                    </form>
+                        <form  action="" method="post" id="myHiFormFieldNumber">
+                            <label for="sel1">Search By Field Number:</label>
+                            <div class="input"> 
+                                <select class="form-control search-box" name="HI_ID" id="HI_ID" onChange="hiFormFieldNumber()">
+                                    <option value="">Select Field Number</option>
+                                    <cfloop query="qgetHIFBNumber">
+                                        <option value="#qgetHIFBNumber.ID#" data-fnumber="#qgetHIFBNumber.Fnumber#" <cfif isDefined('form.HI_ID') and form.HI_ID eq #qgetHIFBNumber.ID# and isdefined('form.fnumber') and form.fnumber eq qgetHIFBNumber.fnumber>selected</cfif>>#qgetHIFBNumber.Fnumber#</option>
+                                    </cfloop>
+                                </select>
+
+                                <input type="hidden" id="HiHiddenFnumber" name="Fnumber">
+
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="col-md-3 reset-btn">
-                    <input type="button" name="reset" id="" class="btn btn-default" value="Reset" onClick="ResetAll()"/>                
+                <div class="col-md-6 reset-btn d-flex">
+                    <input type="button" name="reset" id="reset" class="btn btn-default" value="Reset" onClick="ResetAll()"/> 
+                    <button type="button" onclick="gotobottomFunction()" style="margin-top: 2px; margin-left: 10px;" class="btn btn-primary" id="mybutton" title="Go to bottom">Go to Bottom</button>
+                      
+                </div>
+
+                <div class="col-md-3 d-flex fixed-top" style="justify-content: flex-end;">
+                    <button type="button" id="rollup" name="rollup" class="btn btn-primary rollupbtn" style="margin-top: 18px;" onclick="rolldown()"> <cfif #hideform# eq 1> Roll Down<cfelse> Roll Up </cfif> </button>
                 </div>
 
             </div>
@@ -6194,19 +7083,29 @@
                     <form  action="" method="post" id="myLevelAFormFieldNumber">
                         <label for="sel1">Search Level A By Field Number:</label>
                         <div class="input"> 
-                            <select class="form-control search-box" name="LA_ID" onChange="levelAFormFieldNumber()">
+                            <select class="form-control search-box" name="LA_ID" id="LA_ID" onChange="levelAFormFieldNumber()">
                                 <option value="">Select Field Number</option>
                                 <cfloop query="qgetLevelAFBNumber">
-                                    <option value="#qgetLevelAFBNumber.ID#" <cfif isDefined('form.LA_ID') and form.LA_ID eq #qgetLevelAFBNumber.ID#>selected</cfif>>#qgetLevelAFBNumber.Fnumber#</option>
+                                    <option value="#qgetLevelAFBNumber.ID#" data-fnumber="#qgetLevelAFBNumber.Fnumber#" <cfif isDefined('form.LA_ID') and form.LA_ID eq #qgetLevelAFBNumber.ID# and isdefined('form.fnumber') and form.fnumber eq qgetLevelAFBNumber.fnumber>selected</cfif>>#qgetLevelAFBNumber.Fnumber#</option>
                                 </cfloop>
                             </select>
+
+                            <input type="hidden" id="LAHiddenFnumber" name="Fnumber">
+
                         </div>
                     </form>
                     </div>
                 </div>
-                <div class="col-md-3 reset-btn">
-                    <input type="button" name="reset" id="" class="btn btn-default" value="Reset" onClick="ResetAll()"/>                
+                <div class="col-md-6 reset-btn d-flex">
+                    <input type="button" name="reset" id="reset" class="btn btn-default" value="Reset" onClick="ResetAll()"/> 
+                    <button type="button" onclick="gotobottomFunction()" style="margin-top: 2px; margin-left: 10px;" class="btn btn-primary" id="mybutton" title="Go to bottom">Go to Bottom</button>
+                      
                 </div>
+
+                <div class="col-md-3 d-flex fixed-top" style="justify-content: flex-end;">
+                    <button type="button" id="rollup" name="rollup" class="btn btn-primary rollupbtn" style="margin-top: 18px;" onclick="rolldown()"> <cfif #hideform# eq 1> Roll Down<cfelse> Roll Up </cfif> </button>
+                </div>
+
                 <!--- <cfif  isDefined('form.HI_ID') and form.HI_ID neq "">
                     <div class="col-lg-3 col-md-4">
                         <div class="form-group input-group select-width">
@@ -6264,22 +7163,30 @@
                 </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
-                    <form  action="" method="post" id="myformHistopathologyByFieldNumber">
-                        <label for="sel1">Search Histopathology By Field Number:</label>
-                        <div class="input"> 
-                            <select class="form-control search-box" name="His_ID" onChange="formHistopathologyByFieldNumber()">
-                                <option value="">Select Field Number</option>
-                                <cfloop query="qgetHistoFBNumber">
-                                    <option value="#qgetHistoFBNumber.ID#" <cfif isDefined('form.His_ID') and form.His_ID eq #qgetHistoFBNumber.ID#>selected</cfif>>#qgetHistoFBNumber.Fnumber#</option>
-                                </cfloop>
-                            </select>
-                        </div>
-                    </form>
+                        <form  action="" method="post" id="myformHistopathologyByFieldNumber">
+                            <label for="sel1">Search Histopathology By Field Number:</label>
+                            <div class="input"> 
+                                <select class="form-control search-box" name="His_ID" id="His_ID" onChange="formHistopathologyByFieldNumber()">
+                                    <option value="">Select Field Number</option>
+                                    <cfloop query="qgetHistoFBNumber">
+                                        <option value="#qgetHistoFBNumber.ID#" data-fnumber="#qgetHistoFBNumber.fnumber#" <cfif isDefined('form.His_ID') and form.His_ID eq #qgetHistoFBNumber.ID# and isDefined('form.fnumber') and form.fnumber eq qgetHistoFBNumber.fnumber>selected</cfif>>#qgetHistoFBNumber.Fnumber#</option>
+                                    </cfloop>
+                                </select>
+                                    <input type="hidden" id="HistoHiddenFnumber" name="Fnumber">
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="col-md-3 reset-btn">
-                    <input type="button" name="reset" id="" class="btn btn-default" value="Reset" onClick="ResetAll()"/>                
+                <div class="col-md-6 reset-btn d-flex">
+                    <input type="button" name="reset" id="reset" class="btn btn-default" value="Reset" onClick="ResetAll()"/> 
+                    <button type="button" onclick="gotobottomFunction()" style="margin-top: 2px; margin-left: 10px;" class="btn btn-primary" id="mybutton" title="Go to bottom">Go to Bottom</button>
+                      
                 </div>
+
+                <div class="col-md-3 d-flex fixed-top" style="justify-content: flex-end;">
+                    <button type="button" id="rollup" name="rollup" class="btn btn-primary rollupbtn" style="margin-top: 18px;" onclick="rolldown()"> <cfif #hideform# eq 1> Roll Down<cfelse> Roll Up </cfif> </button>
+                </div>
+
                 <!--- <cfif isDefined('form.HI_ID') and form.HI_ID neq "">
                     <div class="col-lg-3 col-md-4">
                         <div class="form-group input-group select-width">
@@ -6324,22 +7231,32 @@
                 </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group blood-from-froup input-group select-width">
-                    <form  action="" method="post" id="myformBloodValueByFieldNum">
-                        <label for="sel1">Search Blood Values By Field Number:</label>
-                        <div class="input"> 
-                            <select class="form-control search-box" name="bloodValue_ID" onChange="formBloodValueByFieldNum()">
-                                <option value="">Select Field Number</option>
-                                <cfloop query="qgetBloodValueFBNumber">
-                                    <option value="#qgetBloodValueFBNumber.ID#" <cfif isDefined('form.bloodValue_ID') and form.bloodValue_ID eq #qgetBloodValueFBNumber.ID#>selected</cfif>>#qgetBloodValueFBNumber.Fnumber#</option>
-                                </cfloop>
-                            </select>
-                        </div>
-                    </form>
+                        <form  action="" method="post" id="myformBloodValueByFieldNum">
+                            <label for="sel1">Search Blood Values By Field Number:</label>
+                            <div class="input"> 
+                                <select class="form-control search-box" name="bloodValue_ID" id="bloodValue_ID" onChange="formBloodValueByFieldNum()">
+                                    <option value="">Select Field Number</option>
+                                    <cfloop query="qgetBloodValueFBNumber">
+                                        <option value="#qgetBloodValueFBNumber.ID#" data-fnumber="#qgetBloodValueFBNumber.fnumber#" <cfif isDefined('form.bloodValue_ID') and form.bloodValue_ID eq #qgetBloodValueFBNumber.ID# and isDefined('form.fnumber') and form.fnumber eq qgetBloodValueFBNumber.fnumber>selected</cfif>>#qgetBloodValueFBNumber.Fnumber#</option>
+                                    </cfloop>
+                                </select>
+
+                                <input type="hidden" name="Fnumber" id="BV_HiddenValue">
+
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="col-md-3 reset-btn">
-                    <input type="button" name="reset" id="" class="btn btn-default" value="Reset" onClick="ResetAll()"/>                
+                <div class="col-md-6 reset-btn d-flex">
+                    <input type="button" name="reset" id="reset" class="btn btn-default" value="Reset" onClick="ResetAll()"/> 
+                    <button type="button" onclick="gotobottomFunction()" style="margin-top: 2px; margin-left: 10px;" class="btn btn-primary" id="mybutton" title="Go to bottom">Go to Bottom</button>
+                      
                 </div>
+
+                <div class="col-md-3 d-flex fixed-top" style="justify-content: flex-end;">
+                    <button type="button" id="rollup" name="rollup" class="btn btn-primary rollupbtn" style="margin-top: 18px;" onclick="rolldown()"> <cfif #hideform# eq 1> Roll Down<cfelse> Roll Up </cfif> </button>
+                </div>
+
                 <!--- <cfif isDefined('form.HI_ID') and form.HI_ID neq "">
                     <div class="col-lg-3 col-md-4">
                         <div class="form-group blood-from-froup input-group select-width">
@@ -6371,18 +7288,27 @@
                     <form  action="" method="post" id="myformToxicologybyFieldNumber">
                         <label for="sel1">Search Toxicology By Field Number:</label>
                         <div class="input"> 
-                            <select class="form-control search-box" name="Toxicology_ID" onChange="formToxicologybyFieldNumber()">
+                            <select class="form-control search-box" name="Toxicology_ID" id="Toxicology_ID" onChange="formToxicologybyFieldNumber()">
                                 <option value="">Select Field Number</option>
                                 <cfloop query="qgetToxicologyFBNumber">
-                                    <option value="#qgetToxicologyFBNumber.ID#" <cfif isDefined('form.Toxicology_ID') and form.Toxicology_ID eq #qgetToxicologyFBNumber.ID#>selected</cfif>>#qgetToxicologyFBNumber.Fnumber#</option>
+                                    <option value="#qgetToxicologyFBNumber.ID#" data-fnumber="#qgetToxicologyFBNumber.fnumber#" <cfif isDefined('form.Toxicology_ID') and form.Toxicology_ID eq #qgetToxicologyFBNumber.ID# and isDefined('form.fnumber') and form.fnumber eq qgetToxicologyFBNumber.fnumber>selected</cfif>>#qgetToxicologyFBNumber.Fnumber#</option>
                                 </cfloop>
                             </select>
+
+                            <input type="hidden" id="Toxi_hiddenFnumber" name="Fnumber">
+
                         </div>
                     </form>
                     </div>
                 </div>
-                <div class="col-md-3 reset-btn">
-                    <input type="button" name="reset" id="" class="btn btn-default" value="Reset" onClick="ResetAll()"/>                
+                <div class="col-md-6 reset-btn d-flex">
+                    <input type="button" name="reset" id="reset" class="btn btn-default" value="Reset" onClick="ResetAll()"/> 
+                    <button type="button" onclick="gotobottomFunction()" style="margin-top: 2px; margin-left: 10px;" class="btn btn-primary" id="mybutton" title="Go to bottom">Go to Bottom</button>
+                      
+                </div>
+
+                <div class="col-md-3 d-flex fixed-top" style="justify-content: flex-end;">
+                    <button type="button" id="rollup" name="rollup" class="btn btn-primary rollupbtn" style="margin-top: 18px;" onclick="rolldown()"> <cfif #hideform# eq 1> Roll Down<cfelse> Roll Up </cfif> </button>
                 </div>
          
             </div>
@@ -6395,19 +7321,29 @@
                     <form  action="" method="post" id="myformAncillaryDiagnosticsSerchByFieldNumber">
                         <label for="sel1">Search Ancillary By Field Number:</label>
                         <div class="input"> 
-                            <select class="form-control search-box" name="AD_ID" onChange="formAncillaryDiagnosticsSerchByFieldNumber()">
+                            <select class="form-control search-box" name="AD_ID" id="AD_ID" onChange="formAncillaryDiagnosticsSerchByFieldNumber()">
                                 <option value="">Select Field Number</option>
                                 <cfloop query="qgetAnclillaryFBNumber">
-                                    <option value="#qgetAnclillaryFBNumber.ID#" <cfif isDefined('form.AD_ID') and form.AD_ID eq #qgetAnclillaryFBNumber.ID#>selected</cfif>>#qgetAnclillaryFBNumber.Fnumber#</option>
+                                    <option value="#qgetAnclillaryFBNumber.ID#" data-fnumber="#qgetAnclillaryFBNumber.fnumber#" <cfif isDefined('form.AD_ID') and form.AD_ID eq #qgetAnclillaryFBNumber.ID# and isDefined('form.fnumber') and form.fnumber eq qgetAnclillaryFBNumber.fnumber>selected</cfif>>#qgetAnclillaryFBNumber.Fnumber#</option>
                                 </cfloop>
                             </select>
+
+                            <input type="hidden" id="AD_HiddenFnumber" name="Fnumber">
+
                         </div>
                     </form>
                     </div>
                 </div>
-                <div class="col-md-3 reset-btn">
-                    <input type="button" name="reset" id="" class="btn btn-default" value="Reset" onClick="ResetAll()"/>                
+                <div class="col-md-6 reset-btn d-flex">
+                    <input type="button" name="reset" id="reset" class="btn btn-default" value="Reset" onClick="ResetAll()"/> 
+                    <button type="button" onclick="gotobottomFunction()" style="margin-top: 2px; margin-left: 10px;" class="btn btn-primary" id="mybutton" title="Go to bottom">Go to Bottom</button>
+                      
                 </div>
+
+                <div class="col-md-3 d-flex fixed-top" style="justify-content: flex-end;">
+                    <button type="button" id="rollup" name="rollup" class="btn btn-primary rollupbtn" style="margin-top: 18px;" onclick="rolldown()"> <cfif #hideform# eq 1> Roll Down<cfelse> Roll Up </cfif> </button>
+                </div>
+
                 <!--- <cfif isDefined('form.AD_ID') and form.AD_ID neq "">
                     <div class="col-lg-3 col-md-4">
                         <div class="form-group input-group select-width">
@@ -6482,25 +7418,35 @@
                 </div>--->
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
-                    <form  id="fieldform" action="" method="post" >
-                        <label for="sel1">Search Sample Archive By Field Number:</label>
-                        <div class="input"> 
-                            <input type="hidden" name="searchField" value="" id="searchField">
-                            <input type="hidden" name="fielnumb" value="" id="fielnumb">
-                            <select class="form-control search-box" name="SEID" id="fieldList" onchange="fieldnum()">
-                                <option value="">Select Field Number</option>
-                                <cfloop query="qgetSampleFBNumber">
-                                    <option value="#qgetSampleFBNumber.ID#" <cfif isDefined('form.SEID') and form.SEID eq #qgetSampleFBNumber.ID#>selected</cfif>>#qgetSampleFBNumber.Fnumber#</option>
-                                </cfloop>
-                               
-                            </select>
-                        </div>
-                    </form>
+                        <form  id="fieldform" action="" method="post" >
+                            <label for="sel1">Search Sample Archive By Field Number:</label>
+                            <div class="input"> 
+                                <input type="hidden" name="searchField" value="" id="searchField">
+                                <input type="hidden" name="fielnumb" value="" id="fielnumb">
+                                <select class="form-control search-box" name="SEID" id="fieldList" onchange="fieldnum()">
+                                    <option value="">Select Field Number</option>
+                                    <cfloop query="qgetSampleFBNumber">
+                                        <option value="#qgetSampleFBNumber.ID#" data-fnumber="#qgetSampleFBNumber.fnumber#" <cfif isDefined('form.SEID') and form.SEID eq #qgetSampleFBNumber.ID# and isDefined('form.fnumber') and form.fnumber eq qgetSampleFBNumber.fnumber>selected</cfif>>#qgetSampleFBNumber.Fnumber#</option>
+                                    </cfloop>
+                                
+                                </select>
+
+                                <input type="hidden" id="SA_hiddenFnumber" name="Fnumber">
+
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="col-md-3 reset-btn">
-                    <input type="button" name="reset" id="" class="btn btn-default" value="Reset" onClick="ResetAll()"/>                
+                <div class="col-md-6 reset-btn d-flex">
+                    <input type="button" name="reset" id="reset" class="btn btn-default" value="Reset" onClick="ResetAll()"/> 
+                    <button type="button" onclick="gotobottomFunction()" style="margin-top: 2px; margin-left: 10px;" class="btn btn-primary" id="mybutton" title="Go to bottom">Go to Bottom</button>
+                     
                 </div>
+
+                <div class="col-md-3 d-flex fixed-top" style="justify-content: flex-end;">
+                    <button type="button" id="rollup" name="rollup" class="btn btn-primary rollupbtn" style="margin-top: 18px;" onclick="rolldown()"> <cfif #hideform# eq 1> Roll Down<cfelse> Roll Up </cfif> </button>
+                </div>
+
                 <!--- <cfif isDefined('form.SEID') and form.SEID neq "">
                     <div class="col-lg-3 col-md-4">
                         <div class="form-group input-group select-width">
@@ -6545,9 +7491,15 @@
                     </form>
                     </div>
                 </div>     
-                <div class="col-md-3 reset-btn">
-                    <input type="button" name="reset" id="" class="btn btn-default" value="Reset" onClick="ResetAll()"/>                
-                </div>         
+                <div class="col-md-6 reset-btn d-flex">
+                    <input type="button" name="reset" id="reset" class="btn btn-default" value="Reset" onClick="ResetAll()"/> 
+                    <button type="button" onclick="gotobottomFunction()" style="margin-top: 2px; margin-left: 10px;" class="btn btn-primary" id="mybutton" title="Go to bottom">Go to Bottom</button>
+                      
+                </div> 
+                
+                <div class="col-md-3 d-flex fixed-top" style="justify-content: flex-end;">
+                    <button type="button" id="rollup" name="rollup" class="btn btn-primary rollupbtn" style="margin-top: 18px;" onclick="rolldown()"> <cfif #hideform# eq 1> Roll Down<cfelse> Roll Up </cfif> </button>
+                </div>
             
             </div>
 
@@ -6557,22 +7509,32 @@
                
                 <div class="col-lg-3 col-md-4">
                     <div class="form-group input-group select-width">
-                    <form  action="" method="post" id="myformMorphometricsSerchByFieldNumber">
-                        <label for="sel1">Search Morphometrics By Field Number:</label>
-                        <div class="input"> 
-                            <select class="form-control search-box" name="Morphometrics_ID" onChange="formMorphometricsSerchByFieldNumber()">
-                                <option value="">Select Field Number</option>
-                                <cfloop query="MorphometricsoFBNumber">
-                                    <option value="#MorphometricsoFBNumber.ID#" <cfif isDefined('form.Morphometrics_ID') and form.Morphometrics_ID eq #MorphometricsoFBNumber.ID#>selected</cfif>>#MorphometricsoFBNumber.Fnumber#</option>
-                                </cfloop>
-                            </select>
-                        </div>
-                    </form>
+                        <form  action="" method="post" id="myformMorphometricsSerchByFieldNumber">
+                            <label for="sel1">Search Morphometrics By Field Number:</label>
+                            <div class="input"> 
+                                <select class="form-control search-box" name="Morphometrics_ID" id="Morphometrics_ID" onChange="formMorphometricsSerchByFieldNumber()">
+                                    <option value="">Select Field Number</option>
+                                    <cfloop query="MorphometricsoFBNumber">
+                                        <option value="#MorphometricsoFBNumber.ID#" data-fnumber="#MorphometricsoFBNumber.fnumber#" <cfif isDefined('form.Morphometrics_ID') and form.Morphometrics_ID eq #MorphometricsoFBNumber.ID# and isDefined('form.fnumber') and form.fnumber eq MorphometricsoFBNumber.fnumber>selected</cfif>>#MorphometricsoFBNumber.Fnumber#</option>
+                                    </cfloop>
+                                </select>
+
+                                <input type="hidden" id="Mor_hiddenFnumber" name="Fnumber">
+
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="col-md-3 reset-btn">
-                    <input type="button" name="reset" id="" class="btn btn-default" value="Reset" onClick="ResetAll()"/>                
-                </div>               
+                <div class="col-md-6 reset-btn d-flex">
+                    <input type="button" name="reset" id="reset" class="btn btn-default" value="Reset" onClick="ResetAll()"/> 
+                    <button type="button" onclick="gotobottomFunction()" style="margin-top: 2px; margin-left: 10px;" class="btn btn-primary" id="mybutton" title="Go to bottom">Go to Bottom</button>
+                      
+                </div>
+                
+                <div class="col-md-3 d-flex fixed-top" style="justify-content: flex-end;">
+                    <button type="button" id="rollup" name="rollup" class="btn btn-primary rollupbtn" style="margin-top: 18px;" onclick="rolldown()"> <cfif #hideform# eq 1> Roll Down<cfelse> Roll Up </cfif> </button>
+                </div>
+
             </div>
 
             <!--- end for Morphometrics --->
@@ -6581,9 +7543,36 @@
             <form id="myforma" action="" method="post" enctype="multipart/form-data" autocomplete="on">
                 
                 <input type="hidden"  name="Site_url" id="Site_url" value="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs">
+
                 <input type="hidden"  name="ID" id="qLCEDataID" value="#qLCEData.ID#">
+
+                <!--- <cfif structKeyExists(qLCEData, "recordcount") AND qLCEData.recordcount GT 0>
+                    <input type="hidden" name="ID" id="qLCEDataID" value="#qLCEData.ID#">
+                <cfelse>
+                    <input type="hidden" name="ID" id="qLCEDataID" value="">
+                </cfif>
+
+                <cfif structKeyExists(qLCEDataa, "recordcount") AND qLCEDataa.recordcount GT 0>
+                    
+                    <input type="hidden" name="f_number" id="f_number" value="#qLCEDataa.Fnumber#">
+                <cfelse>
+                    <input type="hidden" name="f_number" id="f_number" value="">
+                </cfif> --->
+
+                <!--- <cfif CGI.REMOTE_ADDR eq '202.141.226.196'>
+                    <cfdump var="#qLCEDataa#" abort="true">
+                </cfif> --->
+                
+                <!--- <cfif  CGI.REMOTE_ADDR eq '202.141.226.196'>
+                    <cfdump var="#session#" abort="true">
+                </cfif> --->
+
+                <input type="hidden"  name="f_number" id="f_number" value="#qLCEDataa.Fnumber#">
+
+
+                <input type="hidden" id="deleted" value="#qLCEData.deleted#">
                 <input type="hidden"  name="removeSession" id="removeSession" value="">
-                <div class="form-wrapper cetacean-exam-wrapper">  
+                <div class="form-wrapper cetacean-exam-wrapper" id="displayform" <cfif #hideform# eq 0><cfelse>hidden</cfif> >  
                     <div class="row cetacean-exam-holder">
                         <div class="col-lg-6">
                             <div class="form-holder blue-bg pb-2">  
@@ -6598,6 +7587,9 @@
                                                         <div class="input">
                                                             <input type="text" value="#qLCEDataa.Fnumber#" class="form-control" name="Fnumber" id="Fnumber" required>
                                                         </div>
+                                                        <!--- <cfif  CGI.REMOTE_ADDR eq '110.39.156.90'>
+                                                            <cfdump var="#qLCEDataa.id#" >
+                                                        </cfif> --->
                                                         <span style="color:red; display:none;" id="requiredFnumber">This field is required</span>
                                                     </div>
                                                 </div>
@@ -6649,13 +7641,13 @@
                                                     </div>
                                                 </div>
                                             </div> 
-                                       <!--- <cfif isDefined('qLCEDataa.species') and #qLCEDataa.species# neq "" > --->
+                                           <!--- <cfif isDefined('qLCEDataa.species') and #qLCEDataa.species# neq "" > --->
 
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                 <div class="input-group">
                                                     <label class="code-padd">Code</label>                                               
-                                                    <select class="form-control" name="code" id="code" onChange="getFbAndSex()">
+                                                    <!--- <select class="form-control" name="code" id="code" onChange="getFbAndSex()">
                                                         <option value="">Select Code</option>
                                                         <cfif isDefined('qLCEDataa.species') and #qLCEDataa.species# neq "" >
                                                             <cfloop query="getCetaceansCode">
@@ -6663,12 +7655,28 @@
                                                                         #getCetaceansCode.code# </option>
                                                             </cfloop>
                                                         </cfif>                                                
+                                                    </select> --->
+                                                    
+                                                    <select class="form-control" name="code" id="code" onChange="getFbAndSex()">
+                                                        <option value="">Select Code</option>
+
+                                                        <cfif isDefined("qLCEDataa.species") AND len(trim(qLCEDataa.species))>
+                                                            <cfif isDefined("getCetaceansCode") AND isQuery(getCetaceansCode)>
+                                                                <cfloop query="getCetaceansCode">
+                                                                    <option value="#getCetaceansCode.id#" 
+                                                                        <cfif getCetaceansCode.id EQ qLCEDataa.code>selected</cfif>>
+                                                                        #getCetaceansCode.code#
+                                                                    </option>
+                                                                </cfloop>
+                                                            </cfif>
+                                                        </cfif>
                                                     </select>
+
                                                 </div>
                                             </div>
-                                        </div>
+                                         </div>
 
-                                        <div class="col-sm-6"> 
+                                         <div class="col-sm-6"> 
                                             <div class="form-group m-0">
                                                 <div class="input-group">
                                                     <label class="AI-label">Additional Identifier</label>
@@ -6677,16 +7685,16 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div> 
-                                        <div class="col-sm-6">
+                                         </div> 
+                                         <div class="col-sm-6">
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <label class="">HERA/FB No.</label>
                                                     <input class="input-style xl-width" type="text" onblur="headerDataSave()" value="<cfif isDefined('qLCEDataa.hera')>#qLCEDataa.hera#</cfif> " name="hera" id="hera">
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-6">
+                                         </div>
+                                         <div class="col-sm-6">
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <label class="sex-label">Sex</label>
@@ -6700,8 +7708,8 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                        </div> 
-                                        <div class="col-sm-6">
+                                         </div> 
+                                         <div class="col-sm-6">
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <label class="ageclass-label">Age Class</label>
@@ -6715,8 +7723,8 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-6">
+                                         </div>
+                                         <div class="col-sm-6">
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <label class="ageclass-label">Actual Age</label>
@@ -6733,8 +7741,8 @@
                                                     </select> --->
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
+                                         </div>
+                                         <div class="col-sm-6 ">
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <label class="">Initial Condition</label>
@@ -6748,8 +7756,8 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-6 ">
+                                         </div>
+                                         <div class="col-sm-6 ">
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <label class="">Final Condition</label>
@@ -6763,35 +7771,35 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                        </div> 
-                                        <div class="col-sm-12" style="margin-bottom: 10px;">
+                                         </div> 
+                                         <div class="col-sm-12" style="margin-bottom: 10px;">
                                             <label>Location</label>
                                             <textarea class="form-control textareaCustomReset locations-textarea" onblur="headerDataSave()" id="Location" name="Location"
                                                 maxlength="512"><cfif isDefined('qLCEDataa.Location')>#qLCEDataa.Location#</cfif></textarea>
-                                        </div>
+                                         </div>
 
-                                        <div class="col-sm-6">
+                                         <div class="col-sm-6">
                                             <div class="form-group">
                                                 <div class="input-group">
                                                     <label class="lat-one">Lat</label>
                                                     <input class="input-style xl-width" onblur="headerDataSave()" onfocusout="checkValue(this)" type="text" value="<cfif isDefined('qLCEDataa.lat')>#qLCEDataa.lat#</cfif>" name="lat" id="AtLatitude">
                                                 </div>
                                             </div>
-                                        </div> 
-                                        <div class="col-sm-6">
+                                         </div> 
+                                         <div class="col-sm-6">
                                             <div class="form-group ">
                                                 <div class="input-group">
                                                     <label class="lon-one">Lon</label>
                                                     <input class="input-style xl-width" onblur="headerDataSave()" onfocusout="checkValue(this)" type="text" value="<cfif isDefined('qLCEDataa.lon')>#qLCEDataa.lon#</cfif>" name="lon" id="AtLongitude">
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-12">
+                                         </div>
+                                         <div class="col-sm-12">
                                             <div class="form-group justify-content-end">
                                                 <input type="button" id="verifyLocation" class="btn btn-skyblue" value="Verify" onclick="checkLatLng()">
                                             </div>
-                                        </div> 
-                                        <div class=" col-sm-6 ">
+                                         </div> 
+                                         <div class=" col-sm-6 ">
                                             <div class="form-group">
                                                 <div class="input-group flex-center">
                                                     <label class="county-label">County</label>
@@ -6805,8 +7813,8 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                        </div>   
-                                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                                         </div>   
+                                         <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
                                             <div class="form-group">
                                                 <div class="input-group flex-center">
                                                     <label class="">Euthanized</label>
@@ -6828,6 +7836,10 @@
                                             <div class="col-lg-12">
                                                 <div class="form-group input-group flex-center">
                                                     <label>Team Members</label>
+                                                     <!--- <cfif  CGI.REMOTE_ADDR eq '110.39.156.90'>
+                                                        <cfdump var="#qLCEDataa.id#" >
+                                                    </cfif> --->
+
                                                     <div class="input"> 
 
                                                             <select class="form-control search-box" multiple="multiple" name="ResearchTeam"
@@ -6968,15 +7980,18 @@
                                                     </cfif>	
                                                 </div> 
                                             </div>
-                                            <button type="submit" value="caseReport"  id="caseReport" name="caseReport" class="btn btn-pink btn-save">Generate Report
-                                            </button>
-                                     <!---working ---> 
+                                            
+                                            <button type="submit" value="caseReport"  id="caseReport" name="caseReport" class="btn btn-pink btn-save">Generate Report</button>
                                     </div>
+                                </div>
+                                <div>
+                                    <input type="submit" id="hearderSaveButton" style="float: right;"
+                                 name="SaveAndNew" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event, 'LCEID')">
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                 </div>
 
                
                  <!-- Nav tabs -->
@@ -6984,16 +7999,36 @@
 
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs my-tabs" role="tablist">
-                      <li role="presentation" id="CetaceanExamPage_tab" class="active"><a href="##CetaceanExamPage" onclick="showCetaceanSearchBar()" aria-controls="CetaceanExamPage" role="tab" data-toggle="tab">CetaceanExam</a></li>
-                      <li role="presentation" id="HIForm_tab"><a href="##HIForm" onclick="showHISearchBar()" aria-controls="HIForm" role="tab" data-toggle="tab">HIForm</a></li>
-                      <li role="presentation"><a href="##LevelAForm" aria-controls="LevelAForm" onclick="showLASearchBar()" role="tab" data-toggle="tab">Level A Form</a></li>
-                      <li role="presentation"><a href="##HistoForm" onclick="HIstoFormSerch()"  aria-controls="HistoForm" role="tab" data-toggle="tab">Histopathology</a></li>
-                      <li role="presentation"><a href="##BloodValue" onclick="showBloodValueSerch()"  aria-controls="BloodValue" role="tab" data-toggle="tab">Blood Value</a></li>
-                      <li role="presentation"><a href="##Toxicology" onclick="showToxicologySerch()"  aria-controls="Toxicology" role="tab" data-toggle="tab">Toxicology</a></li>
-                      <li role="presentation"><a href="##AncillaryDiagnostics" onclick="showAncillaryDiagnosticsSerch()"  aria-controls="AncillaryDiagnostics" role="tab" data-toggle="tab">Ancillary Diagnostics</a></li>
-                      <li role="presentation"><a href="##SampleArchive" onclick="showSampleArchiveSerch()"  aria-controls="SampleArchive" role="tab" data-toggle="tab">Sample Archive</a></li>
-                      <li role="presentation"><a href="##NecropsyReport" onclick="showNecropsyReportSerch()"  aria-controls="NecropsyReport" role="tab" data-toggle="tab">Necropsy Report</a></li>
-                      <li role="presentation"><a href="##Morphometrics" onclick="showMorphometricsSerch()"  aria-controls="Morphometrics" role="tab" data-toggle="tab">Morphometrics</a></li>
+                      <li role="presentation" id="CetaceanExamPage_tab" class="active">
+                        <a href="##CetaceanExamPage" onclick="showCetaceanSearchBar()" aria-controls="CetaceanExamPage" role="tab" data-toggle="tab">CetaceanExam</a>
+                      </li>
+                      <li role="presentation" id="HIForm_tab">
+                        <a href="##HIForm" onclick="showHISearchBar()" aria-controls="HIForm" role="tab" data-toggle="tab">HIForm</a>
+                      </li>
+                      <li role="presentation">
+                        <a href="##LevelAForm" aria-controls="LevelAForm" onclick="showLASearchBar()" role="tab" data-toggle="tab">Level A Form</a>
+                      </li>
+                      <li role="presentation">
+                        <a href="##HistoForm" onclick="HIstoFormSerch()"  aria-controls="HistoForm" role="tab" data-toggle="tab">Histopathology</a>
+                      </li>
+                      <li role="presentation">
+                        <a href="##BloodValue" onclick="showBloodValueSerch()"  aria-controls="BloodValue" role="tab" data-toggle="tab">Blood Value</a>
+                      </li>
+                      <li role="presentation">
+                        <a href="##Toxicology" onclick="showToxicologySerch()"  aria-controls="Toxicology" role="tab" data-toggle="tab">Toxicology</a>
+                      </li>
+                      <li role="presentation">
+                        <a href="##AncillaryDiagnostics" onclick="showAncillaryDiagnosticsSerch()"  aria-controls="AncillaryDiagnostics" role="tab" data-toggle="tab">Ancillary Diagnostics</a>
+                      </li>
+                      <li role="presentation">
+                        <a href="##SampleArchive" onclick="showSampleArchiveSerch()"  aria-controls="SampleArchive" role="tab" data-toggle="tab">Sample Archive</a>
+                      </li>
+                      <li role="presentation">
+                        <a href="##NecropsyReport" onclick="showNecropsyReportSerch()"  aria-controls="NecropsyReport" role="tab" data-toggle="tab">Necropsy Report</a>
+                      </li>
+                      <li role="presentation">
+                        <a href="##Morphometrics" onclick="showMorphometricsSerch()"  aria-controls="Morphometrics" role="tab" data-toggle="tab">Morphometrics</a>
+                      </li>
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content my-content">
@@ -7001,10 +8036,18 @@
                         <input type='hidden' name='autoSaveValue' id="autoSaveValue" value='CetaceanExam'>                     
                         <input type="hidden" name="codeID" value="#qLCEDataa.code#" id="codeID">
                         <h5 class="mb-1"><strong>Documents</strong></h5>
-                        <input type="hidden" name="pdfFiles" value="#qLCEData.pdfFiles#" id="pdfFiles">
+
+
+                        <!--- <input type="hidden" name="pdfFiles" value="#qLCEData.pdfFiles#" id="pdfFiles"> --->
+                        
+                        <cfif structKeyExists(qLCEData, "recordcount") AND qLCEData.recordcount GT 0>
+                            <input type="hidden" name="pdfFiles" id="pdfFiles" value="#qLCEData.pdfFiles#">
+                        <cfelse>
+                            <input type="hidden" name="pdfFiles" id="pdfFiles" value="">
+                        </cfif>
+
                         <div class="form-holder choose-images">  
                             <div class="form-group" id="find">
-                            <!---  <button type="submit" value="caseReport"  id="caseReport" name="caseReport" class="btn btn-pink btn-save">Case Report</button> --->
                                 <div class="row" id="startExam">
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                         <div class="form-group">
@@ -7015,7 +8058,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <cfset imgss = ValueList(qLCEData.pdfFiles,",")>
+
+                                <cfif structKeyExists(qLCEData, "recordcount") and qLCEData.recordcount GT 0 and structKeyExists(qLCEData, "pdfFiles")>
+                                    <cfset imgss = ValueList(qLCEData.pdfFiles, ",")>
+                                <cfelse>
+                                    <cfset imgss = "">
+                                </cfif>
+
+                                <!--- <cfset imgss = ValueList(qLCEData.pdfFiles,",")> --->
+
                                 <div id="previousimagesExam" class="PDFInline choose-images-detail">
                                     <CFIF listLen(imgss)> 
                                         <cfloop list="#imgss#" item="item" index="index">
@@ -7035,7 +8086,18 @@
                                     </cfif>	
                                 </div>
                             </div>
-                            <input class="input-style xl-width" type="checkbox" value="1" name="caseReportBox" id="caseReportBox" <cfif (isdefined('qLCEData.caseReportBox') and  qLCEData.caseReportBox eq '1')>checked</cfif>>
+
+                            <!--- <input class="input-style xl-width" type="checkbox" value="1" name="caseReportBox" id="caseReportBox" <cfif (isdefined('qLCEData.caseReportBox') and  qLCEData.caseReportBox eq '1')>checked</cfif>> --->
+
+                            <cfif structKeyExists(qLCEData, "recordcount") and qLCEData.recordcount GT 0 and structKeyExists(qLCEData, "caseReportBox") and qLCEData.caseReportBox EQ "1">
+                                <cfset caseReportChecked = "checked">
+                            <cfelse>
+                                <cfset caseReportChecked = "">
+                            </cfif>
+
+                            <input class="input-style xl-width" type="checkbox" value="1" name="caseReportBox" id="caseReportBox" #caseReportChecked#>
+
+
                         </div>
 
                         <div class="form-holder">
@@ -7669,7 +8731,7 @@
                                     <div class="form-group">
                                         <label for="body_condition">Lesion Type:</label>
                                         <div class="input-wrap">
-                                            <select class="form-control customLesionSelect" id="LesionType" >
+                                            <select class="form-control customLesionSelect search-box" multiple id="LesionType" >
                                                 <option value="">Select Lesion Type</option>
                                                 <cfloop query="getLesionTypeData">
                                                     <cfif Active eq 1>
@@ -7685,9 +8747,9 @@
                                 <div class="col-lg-2 col-md-4 col-sm-6 col-xs-6 p-rl-4">
                                     <div class="form-group">
                                         <label for="region">Region:</label>
-                                        <div class="input-wrap body-water">
-                                            <select class="form-control selected-region"id="Region">
-                                            <option value="">Select Region</option>
+                                        <div class="input-wrap body-water flex-input-wrap">
+                                            <select class="form-control selected-region search-box" multiple="multiple" id="Region">
+                                            <option value="">N/A</option>
                                             <cfset counter = 1>
                                                 <cfloop query="getRegions">
                                                     <option value="#getRegions.ID#">#counter&' - '&getRegions.RegionName#</option>
@@ -7732,7 +8794,7 @@
                             </div>
                             <div class="col-lg-1">
                             </div>
-                            <div class="col-lg-5 col-md-6 col-sm-12 col-xs-12">
+                            <div class="col-lg-7 col-md-9 col-sm-12 col-xs-12">
                                 <table class="table table-bordered table-hover" id="lesionHistory" <cfif isDefined('qgetLesionData') AND #qgetLesionData.recordcount# gt 0><cfelse> hidden</cfif>>
                                     <thead>
                                         <tr>
@@ -7752,8 +8814,14 @@
                                             <tr id="tr_#ID#">
                                                 <td id="idd" hidden>#ID#</td>
                                                 <td id="L_present#ID#">#qgetLesionData.LesionPresent#</td>
-                                                <td id="L_type#ID#">#qgetLesionData.LesionType#</td>
-                                                <td id="L_region#ID#">#qgetLesionData.Region#</td>
+                                                <td id="L_type#ID#">
+                                                    #replace(qgetLesionData.LesionType,"- ",",","all")#
+                                                    <!--- #Replace(qgetLesionData.LesionType, "  ", "<br>", "all")# --->
+                                                    <!--- #qgetLesionData.LesionType# --->
+                                                </td>
+                                                <td id="L_region#ID#">
+                                                    #Replace(qgetLesionData.Region, "  ", "<br>", "all")#
+                                                </td>
                                                 <td id="L_side#ID#">#qgetLesionData.Side#</td>
                                                 <td id="L_status#ID#">#qgetLesionData.Status#</td>
                                                 <td id="">
@@ -7781,7 +8849,7 @@
                             <input type="hidden" id="idForUpdate" value="">
                             <input type="hidden" id="idForUpdateSampleReport" value="">
                             <input type="hidden" id="idForUpdatetoxicology" value="">
-                            <div class="col-lg-5 col-md-6 col-sm-12 col-xs-12 justify-content-end">
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 justify-content-end">
                                 <input type="button" class="btn btn-success" id="addNewLesion" value="Add New Lesion" onClick="AddNewLesion()"/>
                             </div>
                                 
@@ -7996,7 +9064,7 @@
                             </div>
                         </cfif> --->
                         <div class="flex-center flex-wrap bottons-wrap tabdesign-foot-btns">
-                            <input type="submit" id="SaveAndNew" name="SaveAndNew" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">
+                            <input type="submit" id="SaveAndNew" name="SaveAndNew" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event, 'LCEID')">
                             <!--- <input type="submit" id="SaveAndClose" class="btn btn-green m-rl-4" value="Save and Close" name="SaveAndClose" onclick="chkreq(event)"> --->
                             <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.LCEID') and form.LCEID neq "")>
                                 <input type="submit" id="" name="delete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
@@ -8013,7 +9081,15 @@
                       <div role="tabpanel" class="tab-pane" id="HIForm">
                     
                         <h5 class="mb-1"><strong>Documents</strong></h5>
-                         <input type="hidden" name="HIFormpdfFiles" value="#qgetHIData.pdfFiles#" id="HIFormpdfFiles">
+
+                         <!--- <input type="hidden" name="HIFormpdfFiles" value="#qgetHIData.pdfFiles#" id="HIFormpdfFiles"> --->
+
+                         <cfif structKeyExists(qgetHIData, "recordcount") AND qgetHIData.recordcount GT 0>
+                            <input type="hidden" name="HIFormpdfFiles" id="HIFormpdfFiles" value="#qgetHIData.pdfFiles#">
+                        <cfelse>
+                            <input type="hidden" name="HIFormpdfFiles" id="HIFormpdfFiles" value="">
+                        </cfif>
+
                          <div class="form-holder">  
                             <div class="form-group" id="find">
                                 <div class="row" id="start">
@@ -8027,7 +9103,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <cfset imgss = ValueList(qgetHIData.pdfFiles,",")>
+
+                                <cfif structKeyExists(qgetHIData, "recordcount") and qgetHIData.recordcount GT 0 and structKeyExists(qgetHIData, "pdfFiles")>
+                                    <cfset imgss = ValueList(qgetHIData.pdfFiles, ",")>
+                                <cfelse>
+                                    <cfset imgss = "">
+                                </cfif>
+
+                                <!--- <cfset imgss = ValueList(qgetHIData.pdfFiles,",")> --->
+
                                 <div id="HIFormPreviousimages" class="PDFInline">
                                     <CFIF listLen(imgss)> 
                                         <cfloop list="#imgss#" item="item" index="index">
@@ -8044,7 +9128,20 @@
                                         </cfloop>
                                     </cfif>	
                                 </div>
-                                <input class="input-style xl-width" type="checkbox" value="1" name="caseReportHIBox" id="caseReportHIBox" <cfif (isdefined('qgetHIData.caseReportBox') and  qgetHIData.caseReportBox eq '1')>checked</cfif>>
+
+
+                                <!--- <input class="input-style xl-width" type="checkbox" value="1" name="caseReportHIBox" id="caseReportHIBox" <cfif (isdefined('qgetHIData.caseReportBox') and  qgetHIData.caseReportBox eq '1')>checked</cfif>> --->
+
+                                <cfif structKeyExists(qgetHIData, "recordcount") and qgetHIData.recordcount GT 0 and structKeyExists(qgetHIData, "caseReportBox") and qgetHIData.caseReportBox EQ "1">
+                                    <cfset caseReportChecked = "checked">
+                                <cfelse>
+                                    <cfset caseReportChecked = "">
+                                </cfif>
+
+                                <input class="input-style xl-width" type="checkbox" value="1" name="caseReportHIBox" id="caseReportHIBox" #caseReportChecked#>
+
+
+
                             </div>
                         </div>  
                        
@@ -8059,7 +9156,33 @@
                                     <cfset qgetHIData=Application.Stranding.getHI_ten()>
                                 </cfif> --->
                                 <h5 class="mb-1"><strong>HI Exam</strong></h5>
-                                <input type="hidden"  name="HIForm_ID" id="HIForm_ID" value="#qgetHIData.ID#">
+
+
+                                <!--- <input type="hidden"  name="HIForm_ID" id="HIForm_ID" value="#qgetHIData.ID#"> --->
+
+                                <cfif structKeyExists(qgetHIData, "recordcount") AND qgetHIData.recordcount GT 0>
+                                    <input type="hidden" name="HIForm_ID" id="HIForm_ID" value="#qgetHIData.ID#">
+                                <cfelse>
+                                    <input type="hidden" name="HIForm_ID" id="HIForm_ID" value="">
+                                </cfif>
+
+                                <cfset selectedExamtype = "">
+                                <cfset selectedHifindings = "">
+                                <cfset selectedContributedtoStrandingEvent = "">
+
+                                <cfif structKeyExists(qgetHIData, "recordcount") AND qgetHIData.recordcount GT 0>
+                                    <cfif structKeyExists(qgetHIData, "Examtype")>
+                                        <cfset selectedExamtype = qgetHIData.Examtype>
+                                    </cfif>
+                                    <cfif structKeyExists(qgetHIData, "Hifindings")>
+                                        <cfset selectedHifindings = qgetHIData.Hifindings>
+                                    </cfif>
+                                     <cfif structKeyExists(qgetHIData, "ContributedtoStrandingEvent")>
+                                        <cfset selectedContributedtoStrandingEvent = qgetHIData.ContributedtoStrandingEvent>
+                                    </cfif>
+                                </cfif>
+
+
                                 <!--- <input type="hidden"  name="ID" value="#qgetHIData.ID#"> --->
                                 <!--- <input type="hidden" name="LCE_ID" value="#qgetHIData.LCE_ID#"> --->                               
                                 <div class="form-holder">  
@@ -8072,7 +9195,7 @@
                                                         <select class="form-control" name="Examtype" id="Examtype">
                                                             <option value="">Select Exam type</option>
                                                             <cfloop from="1" to="#ArrayLen(Examtype)#" index="j">
-                                                                <option value="#Examtype[j]#" <cfif #Examtype[j]# eq #qgetHIData.Examtype#>selected</cfif>>#Examtype[j]#</option>
+                                                                <option value="#Examtype[j]#" <cfif #Examtype[j]# eq #selectedExamtype#>selected</cfif>>#Examtype[j]#</option>
                                                             </cfloop>
                                                         </select>
                                                     </div>
@@ -8085,9 +9208,9 @@
                                                         <!--- <input class="finding" type="text" name="Hifindings" id="Hifindings" value="#qgetHIData.Hifindings#"> --->
                                                         <select class="form-control" name="Hifindings" id="Hifindings">
                                                             <option value="">Select</option>
-                                                            <option value="Yes"<cfif isdefined('qgetHIData.Hifindings') and #qgetHIData.Hifindings# eq 'Yes'>selected</cfif>>Yes</option>
-                                                            <option value="No"<cfif isdefined('qgetHIData.Hifindings') and #qgetHIData.Hifindings# eq 'No'>selected</cfif>>No</option>
-                                                            <option value="CBD"<cfif isdefined('qgetHIData.Hifindings') and #qgetHIData.Hifindings# eq 'CBD'>selected</cfif>>CBD</option>
+                                                            <option value="Yes" <cfif selectedHifindings EQ "Yes">selected</cfif>>Yes</option>
+                                                            <option value="No" <cfif selectedHifindings EQ "No">selected</cfif>>No</option>
+                                                            <option value="CBD" <cfif selectedHifindings EQ "CBD">selected</cfif>>CBD</option>
                                                             
                                                         </select>
                                                     </div>
@@ -8113,7 +9236,8 @@
                                                         <select class="form-control" name="ContributedtoStrandingEvent" id="ContributedtoStrandingEvent">
                                                             <option value="">Select Contributed to Stranding Event</option>
                                                             <cfloop from="1" to="#ArrayLen(ContributedtoStrandingEvent)#" index="j">
-                                                                <option value="#ContributedtoStrandingEvent[j]#" >#ContributedtoStrandingEvent[j]#</option>
+                                                                <option value="#ContributedtoStrandingEvent[j]#" <cfif#ContributedtoStrandingEvent[j]# eq #selectedContributedtoStrandingEvent#>selected</cfif>
+                                                                >#ContributedtoStrandingEvent[j]#</option>
                                                             </cfloop>
                                                         </select>
                                                     </div>
@@ -8263,7 +9387,7 @@
                                             </div>
                                         </cfif> --->
                                         <div class="flex-center flex-wrap bottons-wrap tabdesign-foot-btns">
-                                            <input type="submit" id="SaveAndNewHI" name="SaveAndNewHI" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">
+                                            <input type="submit" id="SaveAndNewHI" name="SaveAndNewHI" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event, 'HI_ID')">
                                             <!--- <input type="submit" id="SaveAndClose" class="btn btn-green m-rl-4" name="SaveAndClose" value="Save and Close" onclick="chkreq(event)"> --->
                                             <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.LCEID') and form.LCEID neq "")>
                                                 <input type="submit" id="" name="hiRecordDelete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
@@ -8280,7 +9404,17 @@
                     <div role="tabpanel" class="tab-pane" id="LevelAForm">
                      <!--- working LevelAForm--->
                      <h5 class="mb-1"><strong>Documents</strong></h5>
+
+
                      <input type="hidden" name="LApdfFiles" value="#qgetLevelAData.pdfFiles#" id="LApdfFiles">
+
+                     <!--- <cfif structKeyExists(qgetLevelAData, "recordcount") AND qgetLevelAData.recordcount GT 0>
+                        <input type="hidden" name="LApdfFiles" id="LApdfFiles" value="#qgetLevelAData.pdfFiles#">
+                    <cfelse>
+                        <input type="hidden" name="LApdfFiles" id="LApdfFiles" value="">
+                    </cfif> --->
+
+
                      <div class="form-holder">  
                          <div class="form-group" id="find">
                              <div class="row" id="LAstart">
@@ -8292,16 +9426,18 @@
                                          </div>
                                      </div>
                                  </div>
-                                 <!--- <div class="col-lg-2 col-md-4 col-sm-6 col-xs-6">
-                                     <div class="form-group">
-                                         <div class="input-group flex-center">
-                                             <label class="">NRT Report Field</label>
-                                             <input class="input-style xl-width" type="checkbox" value="1" name="NRT_report" id="NRT_report" <cfif isdefined('qgetLevelAData.NRT_report') and  qgetLevelAData.NRT_report  eq 1>checked</cfif>>
-                                         </div>
-                                     </div>
-                                 </div> --->
                              </div>
-                             <cfset imgss = ValueList(qgetLevelAData.pdfFiles,",")>
+
+                             <cfif structKeyExists(qgetLevelAData, "recordcount") and qgetLevelAData.recordcount GT 0 and structKeyExists(qgetLevelAData, "pdfFiles")>
+                                <cfset imgss = ValueList(qgetLevelAData.pdfFiles, ",")>
+                            <cfelse>
+                                <cfset imgss = "">
+                            </cfif>
+
+
+                             <!--- <cfset imgss = ValueList(qgetLevelAData.pdfFiles,",")> --->
+
+
                              <div id="LevelAFormpreviousimages" class="PDFInline">
                                  <CFIF listLen(imgss)> 
                                      <cfloop list="#imgss#" item="item" index="index">
@@ -8319,12 +9455,62 @@
                                      </cfloop>
                                  </cfif>
                                 </div>
-                                <input class="input-style xl-width" type="checkbox" value="1" name="caseReportLABox" id="caseReportLABox" <cfif (isdefined('qgetLevelAData.caseReportBox') and  qgetLevelAData.caseReportBox eq '1')>checked</cfif>>	
+
+
+                                <!--- <input class="input-style xl-width" type="checkbox" value="1" name="caseReportLABox" id="caseReportLABox" <cfif (isdefined('qgetLevelAData.caseReportBox') and  qgetLevelAData.caseReportBox eq '1')>checked</cfif>>	 --->
+
+                                 <cfif structKeyExists(qgetLevelAData, "recordcount") and qgetLevelAData.recordcount GT 0 and structKeyExists(qgetLevelAData, "caseReportBox") and qgetLevelAData.caseReportBox EQ "1">
+                                    <cfset caseReportChecked = "checked">
+                                <cfelse>
+                                    <cfset caseReportChecked = "">
+                                </cfif>
+
+                            <input class="input-style xl-width" type="checkbox" value="1" name="caseReportLABox" id="caseReportLABox" #caseReportChecked#>
+
+
                          </div>
                      </div>
                     
                     <h5 class="mb-1"><strong>Stranding Event Details</strong></h5>
-                    <input type="hidden"  name="level_A_ID" id="level_A_ID" value="#qgetLevelAData.ID#">
+
+
+                    <!--- <input type="hidden"  name="level_A_ID" id="level_A_ID" value="#qgetLevelAData.ID#"> --->
+
+                     <!--- <cfif structKeyExists(qgetLevelAData, "recordcount") AND qgetLevelAData.recordcount GT 0>
+                        <input type="hidden" name="level_A_ID" id="level_A_ID" value="#qgetLevelAData.ID#">
+                    <cfelse>
+                        <input type="hidden" name="level_A_ID" id="level_A_ID" value="">
+                    </cfif> --->
+
+                     <cfset levelA_ID = "">
+                    <cfset selectedILAD = "">
+                    <cfset ILADComment = "">
+                    <cfset selectedCarcassStatus = "">
+                    <cfset CarcassStatusLat = "">
+                    <cfset CarcassStatusLon = "">
+                    <cfset GroupEventChecked = "">
+                    <cfset selectedGroupEventType = "">
+                    <cfset noOfAnimals = "">
+                    <cfset TagsWereList = "">
+                    <cfset RestrandChecked = "">
+
+                    <cfif structKeyExists(qgetLevelAData, "recordcount") AND qgetLevelAData.recordcount GT 0>
+                        <cfif structKeyExists(qgetLevelAData, "ID")><cfset levelA_ID = qgetLevelAData.ID></cfif>
+                        <cfif structKeyExists(qgetLevelAData, "ILAD")><cfset selectedILAD = qgetLevelAData.ILAD></cfif>
+                        <cfif structKeyExists(qgetLevelAData, "ILADComment")><cfset ILADComment = qgetLevelAData.ILADComment></cfif>
+                        <cfif structKeyExists(qgetLevelAData, "CarcassStatus")><cfset selectedCarcassStatus = qgetLevelAData.CarcassStatus></cfif>
+                        <cfif structKeyExists(qgetLevelAData, "CarcassStatusLat")><cfset CarcassStatusLat = qgetLevelAData.CarcassStatusLat></cfif>
+                        <cfif structKeyExists(qgetLevelAData, "CarcassStatusLon")><cfset CarcassStatusLon = qgetLevelAData.CarcassStatusLon></cfif>
+                        <cfif structKeyExists(qgetLevelAData, "GroupEvent") AND qgetLevelAData.GroupEvent EQ 1><cfset GroupEventChecked = "checked"></cfif>
+                        <cfif structKeyExists(qgetLevelAData, "GroupEventType")><cfset selectedGroupEventType = qgetLevelAData.GroupEventType></cfif>
+                        <cfif structKeyExists(qgetLevelAData, "noOfAnimals")><cfset noOfAnimals = qgetLevelAData.noOfAnimals></cfif>
+                        <cfif structKeyExists(qgetLevelAData, "TagsWere")><cfset TagsWereList = ValueList(qgetLevelAData.TagsWere, ",")></cfif>
+                        <cfif structKeyExists(qgetLevelAData, "Restrand") AND qgetLevelAData.Restrand EQ 1><cfset RestrandChecked = "checked"></cfif>
+                    </cfif>
+
+                    <input type="hidden" name="level_A_ID" id="level_A_ID" value="#levelA_ID#">
+
+
                     <div class="form-holder">  
                         <div class="form-group">
                             <div class="row">
@@ -8335,7 +9521,7 @@
                                             <select class="form-control" name="ILAD" id="ILAD">
                                                 <option value="">Select Initial Disposition</option>
                                                 <cfloop from="1" to="#ArrayLen(ILAD)#" index="j">
-                                                    <option value="#ILAD[j]#" <cfif #ILAD[j]# eq #qgetLevelAData.ILAD#>selected</cfif>>#ILAD[j]#</option>
+                                                    <option value="#ILAD[j]#" <cfif #ILAD[j]# eq #selectedILAD#>selected</cfif>>#ILAD[j]#</option>
                                                 </cfloop>
                                             </select>
                                         </div>
@@ -8345,7 +9531,7 @@
                                     <div class="form-group flex-center">
                                         <label >Comment</label>
                                         <textarea class="form-control textareaCustomReset locations-textarea" name="ILADComment"
-                                            maxlength="2048">#qgetLevelAData.ILADComment#</textarea>
+                                            maxlength="2048">#ILADComment#</textarea>
                                     </div>
                                 </div> 
                                 <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
@@ -8355,7 +9541,7 @@
                                             <select class="form-control" name="CarcassStatus" id="CarcassStatus">
                                                 <option value="">Select Carcass Status</option>
                                                 <cfloop from="1" to="#ArrayLen(CarcassStatus)#" index="j">
-                                                    <option value="#CarcassStatus[j]#" <cfif #CarcassStatus[j]# eq #qgetLevelAData.CarcassStatus#>selected</cfif>>#CarcassStatus[j]#</option>
+                                                    <option value="#CarcassStatus[j]#" <cfif #CarcassStatus[j]# eq #selectedCarcassStatus#>selected</cfif>>#CarcassStatus[j]#</option>
                                                 </cfloop>
                                             </select>
                                         </div>
@@ -8365,13 +9551,13 @@
                                     <div class="form-group">
                                         <div class="input-group flex-center">
                                             <label class="CarcassStatusLat-label">Lat</label>
-                                            <input class="input-style xl-width" type="text" value="#qgetLevelAData.CarcassStatusLat#" name="CarcassStatusLat" id="CarcassStatusLat" onblur="checkValue(this)">
+                                            <input class="input-style xl-width" type="text" value="#CarcassStatusLat#" name="CarcassStatusLat" id="CarcassStatusLat" onblur="checkValue(this)">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group flex-center">
                                             <label class="CarcassStatusLon-label">Lon</label>
-                                            <input class="input-style xl-width" type="text" value="#qgetLevelAData.CarcassStatusLon#" name="CarcassStatusLon" id="CarcassStatusLon" onblur="checkValue(this)">
+                                            <input class="input-style xl-width" type="text" value="#CarcassStatusLon#" name="CarcassStatusLon" id="CarcassStatusLon" onblur="checkValue(this)">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -8400,7 +9586,7 @@
                                                 id="GroupEventType">
                                                 <option value="">Select Carcass Status</option>
                                                 <cfloop from="1" to="#ArrayLen(LAGroupEventType)#" index="j">
-                                                    <option value="#LAGroupEventType[j]#" <cfif #LAGroupEventType[j]# eq #qgetLevelAData.GroupEventType#>selected</cfif>>#LAGroupEventType[j]#</option>
+                                                    <option value="#LAGroupEventType[j]#" <cfif #LAGroupEventType[j]# eq #selectedGroupEventType#>selected</cfif>>#LAGroupEventType[j]#</option>
                                                 </cfloop>
                                             </select>
                                         </div>
@@ -8410,7 +9596,7 @@
                                     <div class="form-group">
                                         <div class="input-group flex-center">
                                             <label class="noOfAnimals-label">Number of Animals (Max 3 digit)</label>
-                                            <input class="input-style xl-width" type="text" value="#qgetLevelAData.noOfAnimals#" name="noOfAnimals" id="noOfAnimals" onchange="maxnum()">
+                                            <input class="input-style xl-width" type="text" value="#noOfAnimals#" name="noOfAnimals" id="noOfAnimals" onchange="maxnum()">
                                         </div>
                                     </div>
                                 </div> 
@@ -8421,7 +9607,7 @@
                                             <select class="form-control search-box" multiple="multiple" name="TagsWere"
                                             id="TagsWere">
                                             <cfloop from="1" to="#ArrayLen(TagsWere)#" index="j">
-                                                <option value="#TagsWere[j]#" <cfif ListFind(ValueList(qgetLevelAData.TagsWere,","),#TagsWere[j]#)>selected</cfif>>#TagsWere[j]#</option>
+                                                <option value="#TagsWere[j]#" <cfif ListFind(TagsWereList,#TagsWere[j]#)>selected</cfif>>#TagsWere[j]#</option>
                                             </cfloop>
                                             </select>
                                         </div>
@@ -8459,7 +9645,7 @@
                             </div>
               
                             <div class="flex-center flex-wrap bottons-wrap tabdesign-foot-btns">
-                                <input type="submit" id="SaveAndNew" name="SaveAndNewLA" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">
+                                <input type="submit" id="SaveAndNew" name="SaveAndNewLA" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event, 'LA_ID')">
                                 <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.LCEID') and form.LCEID neq "")>
                                     <input type="submit" id="" name="levelAformDelete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                                 </cfif>
@@ -8473,7 +9659,32 @@
                     </div>
                     <!--- start for histo --->
             <div role="tabpanel" class="tab-pane" id="HistoForm">
-                <input type="hidden"  name="Histo_ID" id="Histo_ID" value="#qgetHIDataa.ID#">        
+
+                
+               <!--- <input type="hidden"  name="Histo_ID" id="Histo_ID" value="#qgetHIDataa.ID#">
+
+                <cfif structKeyExists(qgetToxicologyData, "recordcount") AND qgetToxicologyData.recordcount GT 0>
+                    <input type="hidden" name="Histo_ID" id="Histo_ID" value="#qgetToxicologyData.ID#">
+                <cfelse>
+                    <input type="hidden" name="Histo_ID" id="Histo_ID" value="">
+                </cfif> --->
+
+                <cfset Histo_ID = "">
+                <cfset histoDate = "">
+                <cfset PathologistAccession = "">
+                <cfset SampleComments = "">
+                
+
+                <cfif structKeyExists(qgetHIDataa, "recordcount") AND qgetHIDataa.recordcount GT 0>
+                    <cfif structKeyExists(qgetHIDataa, "ID")><cfset Histo_ID = qgetHIDataa.ID></cfif>
+                    <cfif structKeyExists(qgetHIDataa, "histoDate")><cfset histoDate = qgetHIDataa.histoDate></cfif>
+                    <cfif structKeyExists(qgetHIDataa, "PathologistAccession")><cfset PathologistAccession = qgetHIDataa.PathologistAccession></cfif>
+                    <cfif structKeyExists(qgetHIDataa, "SampleComments")><cfset SampleComments = qgetHIDataa.SampleComments></cfif>
+                    
+                </cfif>
+
+                <input type="hidden"  name="Histo_ID" id="Histo_ID" value="#Histo_ID#">
+
                 <div class="form-holder">  
                     <div class="form-group">
                         <div class="row">
@@ -8482,7 +9693,7 @@
                                     <label class="">Histopathology Date</label>
                                         <div class="input-group date " id="datetimepicker_Date_sad">
                                             <input type="text" placeholder="mm/dd/yyyy" name="HistopathologyDate" id="HistopathologyDate"
-                                            class="form-control" value='#DateTimeFormat(qgetHIDataa.histoDate, "MM/dd/YYYY")#' />
+                                            class="form-control" value='#DateTimeFormat(histoDate, "MM/dd/YYYY")#' />
                                             <span class="input-group-addon time-icon"> <span class="glyphicon glyphicon-calendar"></span> </span>
                                         </div>
                                 </div>
@@ -8492,7 +9703,7 @@
                                 <div class="form-group">
                                     <div class="input-group flex-center">
                                         <label class="">Pathologist Accession Number</label>
-                                        <input class="input-style xl-width" type="text" value="#qgetHIDataa.PathologistAccession#" name="PathologistAccession" id="PathologistAccession">
+                                        <input class="input-style xl-width" type="text" value="#PathologistAccession#" name="PathologistAccession" id="PathologistAccession">
                                     </div>
                                 </div>
                             </div>     
@@ -8500,7 +9711,7 @@
                             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                                 <div class="form-group flex-center">
                                     <label class="scomment-label">Remarks</label>
-                                    <textarea class="form-control textareaCustomReset locations-textarea" maxlength="2048" id="SampleCommentsID" name="SampleCommentss">#trim(qgetHIDataa.SampleComments)#</textarea>
+                                    <textarea class="form-control textareaCustomReset locations-textarea" maxlength="2048" id="SampleCommentsID" style="resize: vertical;" name="SampleCommentss">#trim(SampleComments)#</textarea>
                                 </div>
                             </div>             
                         </div>
@@ -8509,7 +9720,17 @@
                 </div>
                   
                     <h5 class="mb-1"><strong>Documents</strong></h5>
-                    <input type="hidden" name="HistoPdfFiles" value="#qgetHIDataa.pdfFiles#" id="HistoPdfFiles">
+
+                    <!--- <input type="hidden" name="HistoPdfFiles" value="#qgetHIDataa.pdfFiles#" id="HistoPdfFiles"> --->
+
+
+
+                    <cfif structKeyExists(qgetHIDataa, "recordcount") AND qgetHIDataa.recordcount GT 0>
+                        <input type="hidden" name="HistoPdfFiles" id="HistoPdfFiles" value="#qgetHIDataa.pdfFiles#">
+                    <cfelse>
+                        <input type="hidden" name="HistoPdfFiles" id="HistoPdfFiles" value="">
+                    </cfif> 
+
                     <div class="form-holder">  
                         <div class="form-group" id="find">
                             <div class="row" id="Histostart">
@@ -8522,7 +9743,18 @@
                                     </div>
                                 </div>
                             </div>
-                            <cfset imgss = ValueList(qgetHIDataa.pdfFiles,",")>
+
+                            <!--- <cfset imgss = ValueList(qgetHIDataa.pdfFiles,",")> --->
+
+
+
+                            <cfif structKeyExists(qgetHIDataa, "recordcount") and qgetHIDataa.recordcount GT 0 and structKeyExists(qgetHIDataa, "pdfFiles")>
+                                <cfset imgss = ValueList(qgetHIDataa.pdfFiles, ",")>
+                            <cfelse>
+                                <cfset imgss = "">
+                            </cfif>
+
+
                             <div id="HIstoPreviousPDF" class="PDFInline">
                                 <CFIF listLen(imgss)> 
                                     <cfloop list="#imgss#" item="item" index="index">
@@ -8540,7 +9772,20 @@
                                     </cfloop>
                                 </cfif>
                                </div>
-                           <input class="input-style xl-width" type="checkbox" value="1" name="caseReportHistoBox" id="caseReportHistoBox" <cfif (isdefined('qgetHIDataa.caseReportBox') and  qgetHIDataa.caseReportBox eq '1')>checked</cfif>>	
+
+
+                           <!--- <input class="input-style xl-width" type="checkbox" value="1" name="caseReportHistoBox" id="caseReportHistoBox" <cfif (isdefined('qgetHIDataa.caseReportBox') and  qgetHIDataa.caseReportBox eq '1')>checked</cfif>> --->
+
+                           <cfif structKeyExists(qgetHIDataa, "recordcount") and qgetHIDataa.recordcount GT 0 and structKeyExists(qgetHIDataa, "caseReportBox") and qgetHIDataa.caseReportBox EQ "1">
+                                <cfset caseReportChecked = "checked">
+                            <cfelse>
+                                <cfset caseReportChecked = "">
+                            </cfif>
+
+                            <input class="input-style xl-width" type="checkbox" value="1" name="caseReportHistoBox" id="caseReportHistoBox" #caseReportChecked#>
+
+
+
                         </div>
                     </div>
 
@@ -8551,7 +9796,7 @@
                             <div class="form-group">
                                 <div class="input-group flex-center" id="sampleT">
                                     <label class="county-label ">Sample Type</label>
-                                    <select class="form-control search-box" name="" id="SampleType">
+                                    <select class="form-control search-box" multiple name="" id="SampleType">
                                         <option value="">Select Sample</option>
                                         <cfloop query="qgetSampleType">
                                             <cfif status  neq 0>
@@ -8564,6 +9809,18 @@
                             </div>
                             <span id="stypee" class="sampleType_error"></span>
                         </div>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const sampleSelect = document.getElementById("SampleType");
+                                const hiddenInput = document.getElementById("stype");
+                            
+                                sampleSelect.addEventListener("change", function () {
+                                    let selectedValues = Array.from(sampleSelect.selectedOptions).map(option => option.value);
+                                    hiddenInput.value = selectedValues.join(",");  
+                                });
+                            });
+                        </script>
 
                         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                             <div class="form-group input-group flex-center">
@@ -8583,7 +9840,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                             <div class="form-group flex-center">
                                 <label class="snotes-label">Results</label>
-                                <textarea type="text" class="form-control textareaCustomReset locations-textarea" id="SampleNote" maxlength="512"></textarea>
+                                <textarea type="text" class="form-control textareaCustomReset locations-textarea" id="SampleNote" maxlength="850" style="resize: vertical;"></textarea>
                                 <input type="hidden" name="SampleNote" id="snotes">
                             </div>
                         </div>
@@ -8630,7 +9887,7 @@
                     <div class="flex-center flex-row flex-wrap">
                    
                         <div class="flex-center flex-wrap bottons-wrap">
-                            <input type="submit" id="SaveAndNew" name="HistoSaveAndNew" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">                        
+                            <input type="submit" id="SaveAndNew" name="HistoSaveAndNew" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event, 'His_ID')">                        
                             <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.LCEID') and form.LCEID neq "")>
                                 <input type="submit" id="" name="histoDelete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                             </cfif>
@@ -8683,6 +9940,7 @@
             
             <!--- Start for blood value --->
             <div role="tabpanel" class="tab-pane" id="BloodValue">
+
                 <input type="hidden"  name="BloodVal_ID" id="BloodVal_ID" value="#qgetBloodValueData.ID#">
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12"> 
@@ -8764,7 +10022,7 @@
                        <input class="input-style xl-width" type="checkbox" value="1" name="caseReportBVBox" id="caseReportBVBox" <cfif (isdefined('qgetBloodValueData.caseReportBox') and  qgetBloodValueData.caseReportBox eq '1')>checked</cfif>>	
                     </div>
                 </div>
-                <!--- <form id="CBCForm">  --->
+                
                 <h5 class="mb-1"><strong>CBC</strong></h5>
                 <div class="form-holder blood-form-holder cust-v-sec">  
                     <div class="form-group blood-from-froup cust-v-row">
@@ -9284,18 +10542,9 @@
                                     </div>
                                 </div>
                             </cfif>
-                             <!---<cfif findNoCase("Read only ST", permissions) eq 0>
-                                <div class="flex-center flex-row flex-wrap d-flex">
-                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
-                                    </div>
-                                </div>
-                            </cfif> --->
                         </div>
                     </div>
                 </div>
-                <!--- </form> 
-                <form id="Fibrinogen">--->
                 <h5 class="mb-1"><strong>Fibrinogen</strong></h5>
                 <div class="form-holder blood-form-holder cust-v-sec">  
                     <div class="form-group blood-from-froup cust-v-row">
@@ -9334,17 +10583,9 @@
                                     </div>
                                 </div>
                             </cfif> 
-                              <!---<cfif findNoCase("Read only ST", permissions) eq 0>
-                                <div class="flex-center flex-row flex-wrap d-flex">
-                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
-                                    </div>
-                                </div>
-                            </cfif>--->
                         </div>
                     </div>
                 </div>
-                <!--- </form>    --->
                 <h5 class="mb-1"><strong>Chemistry</strong></h5>
                 <div class="form-holder blood-form-holder cust-v-sec">  
                     <div class="form-group blood-from-froup cust-v-row">
@@ -10359,13 +11600,6 @@
                                     </div>
                                 </div>
                             </cfif> 
-                            <!--- <cfif findNoCase("Read only ST", permissions) eq 0>
-                                <div class="flex-center flex-row flex-wrap d-flex">
-                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
-                                    </div>
-                                </div>
-                            </cfif> --->
                         </div>
                     </div>
                 </div>
@@ -10651,13 +11885,6 @@
                                     </div>
                                 </div>
                             </cfif>
-                            <!--- <cfif findNoCase("Read only ST", permissions) eq 0>
-                                <div class="flex-center flex-row flex-wrap d-flex">
-                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
-                                    </div>
-                                </div>
-                            </cfif> --->
                         </div>
                     </div>
                 </div>
@@ -10700,13 +11927,6 @@
                                     </div>
                                 </div>
                             </cfif>
-                            <!--- <cfif findNoCase("Read only ST", permissions) eq 0>
-                                <div class="flex-center flex-row flex-wrap d-flex">
-                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
-                                    </div>
-                                </div>
-                            </cfif> --->
                         </div>
                     </div>
                 </div>
@@ -11356,13 +12576,6 @@
                                     </div>
                                 </div>
                             </cfif>
-                            <!--- <cfif findNoCase("Read only ST", permissions) eq 0>
-                                <div class="flex-center flex-row flex-wrap d-flex">
-                                    <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                        <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">  
-                                    </div>
-                                </div>
-                            </cfif> --->
                             <button type="button" onclick="gotoTopFunction()"  id="myBtn" title="Go to top">Back to Top</button>
                         </div>
                     </div>
@@ -11378,7 +12591,6 @@
                         <cfset qgetHIData=Application.Stranding.getBlood_V_ten()>
                     </cfif> --->
                     <input type="hidden"  name="bloodValues_ID" id="bloodValues_ID" value="#qgetBloodValueData.ID#">
-                    <!--- <input type="hidden" name="LCE_ID" value="#qgetBloodValueData.LCE_ID#"> --->
                     <!--- this input field is using for check in stranding.cfc for general Update function --->
                     <input type="hidden"  name="check" value="1">
                     <input type="hidden"  name="blood_toxi" value="1">
@@ -11386,20 +12598,12 @@
     
                     <cfif findNoCase("Read only ST", permissions) eq 0>
                         <div class="flex-center flex-row flex-wrap d-flex">
-                            <!--- <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                <input type="submit" id="ToLevelAForm" class="btn btn-skyblue m-rl-4" name="SaveandgotoToxicology" value="Save and go to Toxicology" onclick="chkreq(event)">
-                                <input type="button" id="ToIR" class="btn btn-skyblue m-rl-4" value="Save and go to  Incident Report">
-                                <input type="button" id="ToSamples" class="btn btn-skyblue m-rl-4" value="Save and go to  Samples">
-                            </div> --->
+                        
                             <div class="flex-center flex-row flex-wrap d-flex bottons-wrap">
-                                <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">
-                                <!--- <input type="submit" id="SaveAndClose" class="btn btn-green m-rl-4" name="SaveAndClose" value="Save and Close" onclick="chkreq(event)"> --->
+                                <input type="submit" id="SaveAndNewBloodvalue" name="SaveAndNewBloodvalue" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event, 'bloodValue_ID')">
                                 <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.LCEID') and form.LCEID neq "")>
                                     <input type="submit" id="" name="bloodValueDelete" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                                 </cfif>
-                                <!--- <cfif (permissions eq "full_access")>
-                                    <input type="submit" id="deleteBloodValuesRecord" name="deleteBloodValuesRecord" class="btn btn-orange m-rl-4" value="Delete All Records" onclick="if(confirm('Are you sure to Delete All Records?')){}else{return false;};">
-                                </cfif> --->
                             </div>
                         </div>
                     </cfif>
@@ -11409,16 +12613,34 @@
                 
                 <!--- Start for Toxicology --->
                 <div role="tabpanel" class="tab-pane" id="Toxicology">
-                    <input type="hidden"  name="TX_ID" id="TX_IDValue" value="#qgetToxicologyData.ID#">
+
+                    <cfif structKeyExists(qgetToxicologyData, "recordcount") AND qgetToxicologyData.recordcount GT 0>
+                        <input type="hidden" name="TX_ID" id="TX_IDValue" value="#qgetToxicologyData.ID#">
+                    <cfelse>
+                        <input type="hidden" name="TX_ID" id="TX_IDValue" value="">
+                    </cfif>
+                    
+                    <!--- <input type="hidden"  name="TX_ID" id="TX_IDValue" value="#qgetToxicologyData.ID#"> --->
+                    
+                    
                     <input type="hidden" id="Toxicology_IDValue"  name="Toxicology_ID" value="">
                     <input type="hidden" name="tisu_type" value="#qgetToxitype.Tissue_type#">
                     <input type="hidden" name="toxi_type_ID" value="#qgetToxitype.ID#">
                     
                     <!--- this input field is using for check in stranding.cfc for general Update function --->
                     <input type="hidden"  name="check" value="1">
+
+                   
             
                     <h5 class="mb-1"><strong>Documents</strong></h5>
-                    <input type="hidden" name="toxipdfFiles" value="#qgetToxicologyData.pdfFiles#" id="toxipdfFiles">
+
+                     <cfif structKeyExists(qgetToxicologyData, "recordcount") AND qgetToxicologyData.recordcount GT 0>
+                       <input type="hidden" name="toxipdfFiles" value="#qgetToxicologyData.pdfFiles#" id="toxipdfFiles">
+                    <cfelse>
+                        <input type="hidden" name="toxipdfFiles" value="" id="toxipdfFiles">
+                    </cfif>
+
+                    <!--- <input type="hidden" name="toxipdfFiles" value="#qgetToxicologyData.pdfFiles#" id="toxipdfFiles"> --->
                     <div class="form-holder">  
                         <div class="form-group" id="find">
                             <div class="row" id="TXstart">
@@ -11430,16 +12652,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-2 col-md-4 col-sm-6 col-xs-6">
-                                    <div class="form-group">
-                                        <div class="input-group flex-center">
-                                            <label class="">NRT Report Field</label>
-                                            <input class="input-style xl-width" type="checkbox" value="1" name="NRT_report" id="NRT_report" <cfif isdefined('qgetLevelAData.NRT_report') and  qgetLevelAData.NRT_report  eq 1>checked</cfif>>
-                                        </div>
-                                    </div>
-                                </div> --->
                             </div>
-                            <cfset imgss = ValueList(qgetToxicologyData.pdfFiles,",")>
+
+                            <cfif structKeyExists(qgetToxicologyData, "recordcount") and qgetToxicologyData.recordcount GT 0 and structKeyExists(qgetToxicologyData, "pdfFiles")>
+                                <cfset imgss = ValueList(qgetToxicologyData.pdfFiles, ",")>
+                            <cfelse>
+                                <cfset imgss = "">
+                            </cfif>
+
+
+                            <!--- <cfset imgss = ValueList(qgetToxicologyData.pdfFiles,",")> --->
                             <div id="Toxipreviousimages" class="PDFInline">
                                 <CFIF listLen(imgss)> 
                                     <cfloop list="#imgss#" item="item" index="index">
@@ -11457,7 +12679,16 @@
                                     </cfloop>
                                 </cfif>	
                             </div>
-                            <input class="input-style xl-width" type="checkbox" value="1" name="caseReportToxiBox" id="caseReportToxiBox" <cfif (isdefined('qgetToxicologyData.caseReportBox') and  qgetToxicologyData.caseReportBox eq '1')>checked</cfif>>
+                            <!--- <input class="input-style xl-width" type="checkbox" value="1" name="caseReportToxiBox" id="caseReportToxiBox" <cfif (isdefined('qgetToxicologyData.caseReportBox') and  qgetToxicologyData.caseReportBox eq '1')>checked</cfif>> --->
+
+                            <cfif structKeyExists(qgetToxicologyData, "recordcount") and qgetToxicologyData.recordcount GT 0 and structKeyExists(qgetToxicologyData, "caseReportBox") and qgetToxicologyData.caseReportBox EQ "1">
+    <cfset caseReportChecked = "checked">
+<cfelse>
+    <cfset caseReportChecked = "">
+</cfif>
+
+<input class="input-style xl-width" type="checkbox" value="1" name="caseReportToxiBox" id="caseReportToxiBox" #caseReportChecked#>
+
                         </div>
                     </div>   
            
@@ -11480,15 +12711,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                </div>    
-                                    <!-- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
-                                    <div class="form-group blood-from-froup type form-group-my-input">
-                                        <div class="input-group ">
-                                            <input type="text" class="quantity-toxi-field" id="quantity" name="quantity_toxi" maxlength="8" value="#qgetToxitype.quantity_toxi#">
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> -->
+                                </div> 
                             </div>
                             <div class="row dry-weight-row">
                                 <div class="col-lg-2 col-md-4 col-sm-4 blood-column">
@@ -11578,7 +12801,7 @@
                                     <div class="form-group blood-from-froup thre-rw">
                                         <div class="input-group ">
                                             <label class="">Iron</label>
-                                            <input class="Iron" type="text" maxlength="8" value="#qgetToxitype.Iron#" name="Iron" onblur="checkValue(this)" id="Iron"><span>ug/g dry</span> 
+                                            <input class="Iron" type="text" maxlength="8" value="#qgetToxitype.Iron#" name="Ironn" onblur="checkValue(this)" id="Ironn"><span>ug/g dry</span> 
                                         </div>
                                     </div>
                                 </div>                      
@@ -11609,26 +12832,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup thre-rw">
-                                        <div class="input-group ">
-                                            <label class="">Reference Range</label>
-                                            <input class="Molybdenum _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Molybdenum_Reference_Range#" name="Molybdenum_Reference_Range"  id="Molybdenum _Reference_Range"><span>ug/g dry</span> 
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group result-row">
-                                            <label class="county-label">Sample Result</label>
-                                            <select class="form-control" name="Molybdenum_Sample_Result" id="Molybdenum_Sample_Result">
-                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Molybdenum_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                </cfloop>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --->
     
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -11638,26 +12841,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup thre-rw">
-                                        <div class="input-group ">
-                                            <label class="">Reference Range</label>
-                                            <input class="Manganese _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Manganese_Reference_Range#" name="Manganese_Reference_Range"  id="Manganese _Reference_Range"><span>ug/g dry</span> 
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group result-row">
-                                            <label class="county-label">Sample Result</label>
-                                            <select class="form-control" name="Manganese_Sample_Result" id="Manganese_Sample_Result">
-                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Manganese_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                </cfloop>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --->
      
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
                                     <div class="form-group blood-from-froup thre-rw">
@@ -11667,26 +12850,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup thre-rw">
-                                        <div class="input-group ">
-                                            <label class="">Reference Range</label>
-                                            <input class="Cobalt _Reference_Range" type="text" maxlength="8" value="#qgetToxitype.Cobalt_Reference_Range#" name="Cobalt_Reference_Range"  id="Cobalt _Reference_Range"><span>ug/g dry</span> 
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                    <div class="form-group blood-from-froup">
-                                        <div class="input-group result-row">
-                                            <label class="county-label">Sample Result</label>
-                                            <select class="form-control" name="Cobalt_Sample_Result" id="Cobalt_Sample_Result">
-                                                <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                    <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetToxitype.Cobalt_Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                </cfloop>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div> --->
+                                
                                 
                                 <cfif isDefined('qgetDynamicToxitype') AND #qgetDynamicToxitype.recordcount# gt 0>
                                     <input type="hidden" id="saad" value="#qgetDynamicToxitype.recordcount#" name="count">
@@ -11699,26 +12863,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                            <div class="form-group blood-from-froup thre-rw">
-                                                <div class="input-group ">
-                                                    <label class="">Reference Range</label>
-                                                    <input class=" _Reference_Range toxi-field" type="text" maxlength="8" value="#qgetDynamicToxitype.Reference_Range#" name="toxirange#qgetDynamicToxitype.ID#"  id=" _Reference_Range"><span>ug/g dry</span> 
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 blood-column">
-                                            <div class="form-group blood-from-froup">
-                                                <div class="input-group result-row">
-                                                    <label class="county-label">Sample Result</label>
-                                                    <select class="form-control" name="toxireport#qgetDynamicToxitype.ID#" id="_Sample_Result">
-                                                        <cfloop from="1" to="#ArrayLen(ToxicologySelectoptions)#" index="j">
-                                                            <option value="#ToxicologySelectoptions[j]#" <cfif #ToxicologySelectoptions[j]# eq #qgetDynamicToxitype.Sample_Result#>selected</cfif>>#ToxicologySelectoptions[j]#</option>
-                                                        </cfloop>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div> --->
                                     </cfloop>
                                 </cfif>
                                 <div id="Toxi"> </div>
@@ -11730,7 +12874,7 @@
                                         <div class="col-lg-12" style="margin-top: 15px;">
                                             <div class="simple-accession-table" style="overflow: auto;">
                                                 <div class="responsive-tale">
-                                                    <!--- <cfif isDefined('qAncillaryReportGet') AND #qAncillaryReportGet.recordcount# gt 0><cfelse> hidden</cfif> test--->
+                                                 
                                                     <table class="table table-bordered table-hover" id="AncillaryTable2" >
                                                         <thead>
                                                             <tr>
@@ -11766,7 +12910,7 @@
                                                                         <td id="Mercury#ID#">#TissueTypeForTable.Mercury#</td> 
                                                                         <td id="Thallium#ID#">#TissueTypeForTable.Thallium#</td> 
                                                                         <td id="Selenium#ID#">#TissueTypeForTable.Selenium#</td> 
-                                                                        <td id="Iron#ID#">#TissueTypeForTable.Iron#</td> 
+                                                                        <td id="Ironn#ID#">#TissueTypeForTable.Iron#</td> 
                                                                         <td id="Copper#ID#">#TissueTypeForTable.Copper#</td> 
                                                                         <td id="Zinc#ID#">#TissueTypeForTable.Zinc#</td> 
                                                                         <td id="Molybdenum#ID#">#TissueTypeForTable.Molybdenum#</td> 
@@ -11795,14 +12939,10 @@
                     </div>
                     <cfif findNoCase("Read only ST", permissions) eq 0>
                         <div class="flex-center flex-row flex-wrap">
-                            <!--- <div class="flex-center flex-row flex-wrap bottons-wrap">
-                                <input type="submit" id="ToLevelAForm" class="btn btn-skyblue m-rl-4" name="SaveandgotoAncillaryDiagnostics" value="Save and go to Ancillary Diagnostics" onclick="chkreq(event)">
-                                <input type="button" id="ToIR" class="btn btn-skyblue m-rl-4" value="Save and go to  Incident Report">
-                                <input type="button" id="ToSamples" class="btn btn-skyblue m-rl-4" value="Save and go to  Samples">
-                            </div> --->
+                    
                             <div class="flex-center flex-wrap bottons-wrap">
-                                <input type="submit" id="SaveAndNew" name="SaveAndNewToxicology" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">
-                                <!--- <input type="submit" id="SaveAndClose" class="btn btn-green m-rl-4" name="SaveAndClose" value="Save and Close" onclick="chkreq(event)"> --->
+                                <input type="submit" id="SaveAndNew" name="SaveAndNewToxicology" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event, 'Toxicology_ID')">
+                          
                                 <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.Toxicology_ID') and form.Toxicology_ID neq "")>
                                     <input type="submit" id="" name="deleteToxicology" class="btn btn-orange rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
                                 </cfif>
@@ -11814,6 +12954,9 @@
                     </cfif>
                     
             </div>
+
+
+            
             <!---END for Toxicology --->
             <!--- start for AncillaryDiagnostics --->
             <div role="tabpanel" class="tab-pane" id="AncillaryDiagnostics">
@@ -11824,14 +12967,23 @@
                     <input type="hidden" name="LCE_ID" value="#url.LCE_ID#">
                     <input type="hidden"  name="ADID" id="ADID" value="">
                 </cfif>
-                <!--- <input type="hidden"  name="check" value="1">
-                <input type="hidden"  name="histopathology_fields" value="1"> --->
+              
                 <!---Sample Collection --->
                 <cfif !isDefined('qgetAncillaryData')>
                     <cfset qgetAncillaryData=Application.Stranding.getAncillary_ten()>
-                </cfif>    
+                </cfif>
+
+               
+
                 <h5 class="mb-1"><strong>Documents</strong></h5>
-                <input type="hidden" name="ADpdfFiles" value="#qgetAncillaryData.pdfFiles#" id="ADpdfFiles">
+
+                 <cfif isdefined('qgetAncillaryData.LCE_ID')>
+                    <input type="hidden" name="ADpdfFiles" value="#qgetAncillaryData.pdfFiles#" id="ADpdfFiles">
+                <cfelse>
+                     <input type="hidden" name="ADpdfFiles" value="" id="ADpdfFiles">
+                </cfif>
+
+                <!--- <input type="hidden" name="ADpdfFiles" value="#qgetAncillaryData.pdfFiles#" id="ADpdfFiles"> --->
                 <div class="form-holder">  
                     <div class="form-group" id="find">
                         <div class="row" id="ADstart">
@@ -11845,7 +12997,14 @@
                             </div>
                            
                         </div>
-                        <cfset imgss = ValueList(qgetAncillaryData.pdfFiles,",")>
+
+                         <cfif isdefined('qgetAncillaryData.LCE_ID')>
+                             <cfset imgss = ValueList(qgetAncillaryData.pdfFiles,",")>
+                        <cfelse>
+                             <cfset imgss = ''>
+                        </cfif>
+
+                        <!--- <cfset imgss = ValueList(qgetAncillaryData.pdfFiles,",")> --->
                         <div id="ADpreviousimages" class="PDFInline">
                             <CFIF listLen(imgss)> 
                                 <cfloop list="#imgss#" item="item" index="index">
@@ -11863,16 +13022,33 @@
                                 </cfloop>
                             </cfif>
                         </div>
-                        <input class="input-style xl-width" type="checkbox" value="1" name="caseReportADBox" id="caseReportADBox" <cfif (isdefined('qgetAncillaryData.caseReportBox') and  qgetAncillaryData.caseReportBox eq '1')>checked</cfif>>	
+
+
+                        <!--- <input class="input-style xl-width" type="checkbox" value="1" name="caseReportADBox" id="caseReportADBox" <cfif (isdefined('qgetAncillaryData.caseReportBox') and  qgetAncillaryData.caseReportBox eq '1')>checked</cfif>>	 --->
+
+                        <cfif structKeyExists(qgetAncillaryData, "recordcount") AND qgetAncillaryData.recordcount GT 0 
+                        AND structKeyExists(qgetAncillaryData, "LCE_ID") 
+                        AND structKeyExists(qgetAncillaryData, "caseReportBox") 
+                        AND qgetAncillaryData.caseReportBox EQ "1">
+                        <cfset caseReportChecked = "checked">
+                    <cfelse>
+                        <cfset caseReportChecked = "">
+                    </cfif>
+
+                    <input class="input-style xl-width" type="checkbox" value="1" name="caseReportADBox" id="caseReportADBox" #caseReportChecked#>
+
+
+
                     </div>
                 </div>
+
                 <div class="form-holder blue-bg sample-accession-form">
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
                             <div class="form-input-holder">
                                 <div class="form-group input-group flex-center">
                                     <label class="">Diagnostic Test</label>
-                                    <select class="form-control" id="DiagnosticTest">
+                                    <select class="form-control search-box" multiple="multiple" id="DiagnosticTest">
                                         <option value="">Select Diagnostic Test</option>
                                         <cfloop query="qgetDiagnosticTest">
                                             <option value="#qgetDiagnosticTest.Diagnostic#">#qgetDiagnosticTest.Diagnostic#</option>
@@ -11980,7 +13156,10 @@
                                                     <tr id="tr_#ID#">
 
                                                         <td hidden id="AAncillaryPDF_#ID#">#qAncillaryReportGet.pdfFiles#</td>
-                                                        <td id="DiagnosticTest_#ID#">#qAncillaryReportGet.DiagnosticTest#</td>
+                                                        <td id="DiagnosticTest_#ID#">
+                                                            #replace(qAncillaryReportGet.DiagnosticTest,"-",",","all")#
+                                                            
+                                                        </td>
                                                         <td id="AncillaryDiagnosticsSampleType_#ID#">#qAncillaryReportGet.ADSampleType#</td>
                                                         <td id="TestResults_#ID#">#qAncillaryReportGet.TestResults#</td>
                                                         <td id="DiagnosticLab_#ID#">#qAncillaryReportGet.DiagnosticLab#</td>
@@ -12024,7 +13203,7 @@
                             <input type="button" id="ToSamples" class="btn btn-skyblue m-rl-4" value="Save and go to  Samples">
                         </div> --->
                         <div class="flex-center flex-wrap bottons-wrap">
-                            <input type="submit" id="SaveAndNew" name="SaveAndNewAncillaryDiagnostics" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">
+                            <input type="submit" id="SaveAndNew" name="SaveAndNewAncillaryDiagnostics" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event, 'AD_ID')">
                             <!--- <input type="submit" id="SaveAndClose" class="btn btn-green m-rl-4" name="SaveAndClose" value="Save and Close" onclick="chkreq(event)"> --->
                             <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('form.AD_ID') and form.AD_ID neq "")>
                                 <input type="submit" id="" name="deleteAncillary" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};">
@@ -12049,11 +13228,25 @@
                 <cfelse>
                     <input type="hidden" class="saaad" name="LCE_ID" value="#url.LCE_ID#">
                 </cfif> --->
-                <cfif isDefined('form.SEID') and form.SEID neq '' >
+
+                <!--- comment from naveed 21 july 2025 --->
+                <!--- <cfif isDefined('form.SEID') and form.SEID neq '' >
+                    <cfdump var="test seid" abort="true">
                     <input type="hidden" id="SampleArchiveSEID" name="SampleArchiveSEID" value="#qgetSampleData.ID#">
                     <input type="hidden" id="SEIDValue" name="SEID" value="">
                 <cfelse>
                     <input type="hidden" id="SampleArchiveSEID" name="SampleArchiveSEID" value="#qgetSampleData.ID#">                    
+                </cfif> --->
+
+                <cfif isDefined('form.SEID') and form.SEID neq ''>
+                    <cfif isDefined('qgetSampleData') and qgetSampleData.recordcount GT 0>
+                        <input type="hidden" id="SampleArchiveSEID" name="SampleArchiveSEID" value="#qgetSampleData.ID#">
+                    <cfelse>
+                        <input type="hidden" id="SampleArchiveSEID" name="SampleArchiveSEID" value="">
+                    </cfif>
+                    <input type="hidden" id="SEIDValue" name="SEID" value="">
+                <cfelse>
+                    <input type="hidden" id="SampleArchiveSEID" name="SampleArchiveSEID" value="">
                 </cfif>
                                 <!---  Following logic to get the data from the HI table and seting value to qgetSampleData variable --->
                     <!--- <cfset qgetSampleData=Application.Stranding.getSampleType_ten()> --->
@@ -12137,7 +13330,7 @@
                                     <div class="form-group">
                                         <div class="input-group flex-center">
                                             <label class="county-label extra-w ">Sample Type</label>
-                                            <select class="form-control search-box" name="SampleType" id="SampleType">
+                                            <select class="form-control search-box" multiple name="SampleType" id="SampleType">
                                                 <option value="">Select Sample Type</option>
                                                 <cfloop query="qgetSampleType">
                                                     <cfif status  neq 0>
@@ -12147,7 +13340,20 @@
                                             </select>
                                         </div>
                                     </div>
-                                </div>                
+                                </div>  
+                                
+                                <!--- <script>
+                                    document.addEventListener("DOMContentLoaded", function () {
+                                        const sampleSelect = document.getElementById("SampleType");
+                                        const hiddenInput = document.getElementById("stype");
+                                    
+                                        sampleSelect.addEventListener("change", function () {
+                                            let selectedValues = Array.from(sampleSelect.selectedOptions).map(option => option.value);
+                                            hiddenInput.value = selectedValues.join(",");  
+                                        });
+                                    });
+                                </script> --->
+                                
                                 <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
                                     <div class="form-group">
                                         <div class="input-group flex-center">
@@ -12163,12 +13369,30 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6" id="sampleAvailability">
+                                    <div class="form-group">
+                                        <div class="input-group flex-center" >
+                                            <label class="county-label">Sample Availability</label>
+                                            <select class="form-control" id="sampleAvailability" name="sampleAvailability" >
+                                                <option value="0">Select Availability</option>
+                                                <cfloop from="1" to="#ArrayLen(Availbility)#" index="j">
+                                                    <option value="#Availbility[j]#" <cfif #Availbility[j]# eq #qgetSampleTypeDataSingle.sampleAvailability#>selected</cfif> >#Availbility[j]#</option>
+                                                </cfloop>
+                                            </select>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
                                 <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
                                     <div class="form-group">
                                         <div class="input-group flex-center">
                                             <label class="am-l">Amount of Sample</label>
                                             <cfif isDefined("qgetSampleTypeDataSingle.AmountofSample") AND qgetSampleTypeDataSingle.AmountofSample neq ''>
-                                                <cfset formattedAmount = NumberFormat(qgetSampleTypeDataSingle.AmountofSample, '9.99')>
+                                                <cfif isNumeric(qgetSampleTypeDataSingle.AmountofSample)>
+                                                    <cfset formattedAmount = NumberFormat(qgetSampleTypeDataSingle.AmountofSample, '9.99')>
+                                                <cfelse>
+                                                    <cfset formattedAmount = '#qgetSampleTypeDataSingle.AmountofSample#'>
+                                                </cfif>
                                               <cfelse>
                                                 <cfset formattedAmount = ''>
                                               </cfif>
@@ -12220,6 +13444,7 @@
                         <!--- <div class="flex-center flex-row flex-wrap"> --->
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 s-content two-btn two-btn-wrap">
                                 <input type="submit" id="SaveAndNewSampleArchive" name="SaveAndNewSampleArchive" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">
+                              
                                 <!--- <input type="submit" id="SaveAndClose" class="btn btn-green m-rl-4" value="Save and Close" name="SaveAndClose" onclick="chkreq(event)"> --->
                                 <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('qgetSampleTypeIByID.ID') and qgetSampleTypeIByID.ID neq "") AND ('#session.userdetails.email eq 'annesleeman@gmail.com'#' or '#session.userdetails.email eq 'joesleeman@me.com'#' or '#session.userdetails.email eq 'tldz.dev1@gmail.com'#' or '#session.userdetails.email eq 'asleeman@centersoft.net'#')>
                                     <input type="submit" id="" name="deleteSampleAechive" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){deleteit()}else{return false;};" >
@@ -12428,6 +13653,12 @@
                 </div>
 
 
+
+
+
+
+
+
                 <input type="hidden" id="idForUpdate" value="">
                 <div class="form-holder blue-bg"<cfif isDefined('qgetSampleTypeIByID') AND #qgetSampleTypeIByID.recordcount# gt 0><cfelse> hidden</cfif>>
                     <div class="row">
@@ -12437,10 +13668,11 @@
                             <table class="table table-bordered table-hover" id="lasttable" >
                                 <thead>
                                     <tr>
-                                        <th>Sample ID</th>
+                                        <th>SampleID</th>
                                         <th>Bin Number</th>
                                         <th>Sample Type</th>
                                         <th>Preservation Method</th>
+                                        <th>Sample Availability</th>
                                         <th>Amount of sample</th>
                                         <th>Unit of sample</th>
                                         <th>Storage Type</th>
@@ -12519,6 +13751,7 @@
                                                 <td id="reportBinNumber#ID#">#qgetSampleTypeIByID.BinNumber#</td>
                                                 <td id="reportSampleType#ID#">#qgetSampleTypeIByID.SampleType#</td>
                                                 <td id="reportPreservationMethod#ID#">#qgetSampleTypeIByID.PreservationMethod#</td>
+                                                <td id="reportsampleAvailability#ID#">#qgetSampleTypeIByID.sampleAvailability#</td>
                                                 <td id="reportAmountofSample#ID#">#qgetSampleTypeIByID.AmountofSample#</td>
                                                 <td id="reportUnitofSample#ID#">#qgetSampleTypeIByID.UnitofSample#</td>
                                                 <td id="reportStorageType#ID#">#qgetSampleTypeIByID.StorageType#</td>
@@ -12538,22 +13771,9 @@
                                                     </cfif>
                                                 </cfif>
 
-                                                <!--- <cfif isDefined('qgetSampleData')> --->
-                                                    <!--- <td id="archivedate">#qgetSampleTypeIByID.maindate#</td> --->
-                                                <!--- </cfif> --->
-                                                <!--- <td id="reportSample_Date#ID#">#qgetSampleTypeIByID.Sample_Date#</td>
-                                                <cfif isDefined('qgetSampleDetailData')>
-                                                    <cfloop query="qgetSampleDetailData">
-                                                        <td>#qgetSampleDetailData.SADate#</td>
-                                                    </cfloop>    
-                                                </cfif> --->
 
                                                 <td id="reportSample_Location#ID#">#qgetSampleTypeIByID.Sample_Location#</td>
-                                                <!--- <cfif isDefined('qgetSampleDetailData')>
-                                                    <cfloop query="qgetSampleDetailData">
-                                                        <td>#qgetSampleDetailData.SampleLocation#</td>
-                                                    </cfloop>    
-                                                </cfif> --->
+                                           
                                                 <cfif isDefined('qgetSampleDetailData')>
                                                     <cfif isDefined('qgetSampleDataaaa')>   
                                                         <cfloop index="i" from="1" to="#maxCount#">
@@ -12600,24 +13820,6 @@
                     </form>
                 </div>                     
          
-                <!--- <cfif (permissions eq "full_access")>
-                    <div class="row mt-4 file-tabdesign-row">
-                        <form id="myform" enctype="multipart/form-data" action="" method="post" >
-                            <div class="col-lg-12 dis-flex just-center choose-file-tabdesign">
-                                <div class="form-group select-width">
-                                    <cfif (permissions eq "full_access")>
-                                        <input type="file" name="sampleArchiveSpecialFile" required>
-                                    </cfif>
-                                </div>
-                                <div class="form-group select-width">
-                                    <cfif (permissions eq "full_access")>
-                                        <button type="submit" class="btn btn-success">Import</button>
-                                    </cfif>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </cfif>                    --->
             </div>   
 
             <!--- end for SampleArchive --->
@@ -12625,10 +13827,50 @@
             <!--- start for NecropsyReport --->
             <div role="tabpanel" class="tab-pane my-tab-pane" id="NecropsyReport">                
                 <input type='hidden' name='report' id="report" value='#form.report#'>
-                <input type='hidden' name='report_ID' id="repotrt_ID" value='#qgetCetaceanNecropsy.ID#'>
-                <input type='hidden' name='fieldno' id="fieldno" value='#form.fieldnumber#'>
-                <input type='hidden' name='fieldnoo' id="fieldnoo" value='#qgetCetaceanNecropsy.Fnumber#'>
-                <input type='hidden' name='form_id' id="form_id" value='#qgetCetaceanNecropsy.ID#'>
+                <!--- <input type='hidden' name='report_ID' id="repotrt_ID" value='#qgetCetaceanNecropsy.ID#'> --->
+                <input type='hidden' name='fieldno' id="fieldno" value='#form.fieldnumber#' >
+                <!--- <input type='hidden' name='fieldnoo' id="fieldnoo" value='#qgetCetaceanNecropsy.Fnumber#'> --->
+                <!--- <input type='hidden' name='form_id' id="form_id" value='#qgetCetaceanNecropsy.ID#'> --->
+
+                  <!--- <cfif  CGI.REMOTE_ADDR eq '202.141.226.196'>
+                        <cfdump var="#CGI.QUERY_STRING#" abort="true">
+                    </cfif> --->
+                   
+                <!--- <cfset queryString = CGI.QUERY_STRING>
+
+                <cfset isNecropsyReportPresent = reFind("(&|^)NecropsyReport(&|$)", queryString) GT 0>
+
+                <cfif NOT isNecropsyReportPresent>
+                    <cfset qgetCetaceanNecropsy = Application.Stranding.getCetaceanNecropsy_ten()>
+                </cfif> --->
+
+                <!--- <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy_ten()> --->
+                <!--- <cfset qgetNutritional=Application.Stranding.getNutritional_ten()>
+                <cfset qgetLymphoreticular=Application.Stranding.getLymphoreticular_ten()>
+                <cfset qgetParasites=Application.Stranding.getParasites_ten()> --->
+
+                 <cfset repotrt_ID = "">
+                 <cfset Veterinarians = "">
+                 <cfset Prosectors = "">
+                 <cfset Tentative = "">
+                 <cfset deathcause = "">
+                 <cfset fieldnoo = "">
+                
+
+                <cfif structKeyExists(qgetCetaceanNecropsy, "recordcount") AND qgetCetaceanNecropsy.recordcount GT 0>
+                    <cfif structKeyExists(qgetCetaceanNecropsy, "ID")><cfset repotrt_ID = qgetCetaceanNecropsy.ID></cfif>
+                    <cfif structKeyExists(qgetCetaceanNecropsy, "Fnumber")><cfset fieldnoo = qgetCetaceanNecropsy.Fnumber></cfif>
+                     <cfif structKeyExists(qgetCetaceanNecropsy, "attendingVeterinarian")><cfset Veterinarians = ValueList(qgetCetaceanNecropsy.attendingVeterinarian, ",")></cfif>
+                     <cfif structKeyExists(qgetCetaceanNecropsy, "Prosectors")><cfset Prosectors = ValueList(qgetCetaceanNecropsy.Prosectors, ",")></cfif>
+                     <cfif structKeyExists(qgetCetaceanNecropsy, "Tentative")><cfset Tentative = qgetCetaceanNecropsy.Tentative></cfif>
+                     <cfif structKeyExists(qgetCetaceanNecropsy, "deathcause")><cfset deathcause = qgetCetaceanNecropsy.deathcause></cfif>
+                    
+                </cfif>
+
+                <input type='hidden' name='fieldnoo' id="fieldnoo" value='#fieldnoo#'>
+                <input type='hidden' name='form_id' id="form_id" value='#repotrt_ID#'>
+                <input type='hidden' name='report_ID' id="repotrt_ID" value='#repotrt_ID#'>
+
                 <div class="sec-two">    
                     <div class="row">
                         <div class="col-lg-5">
@@ -12639,7 +13881,7 @@
                                 <select class="stl-op search-box" multiple="multiple" name="attendingVeterinarian" id="attendingVeterinarian">
                                     <cfloop query="qgetVeterinarians">
                                         <!--- <cfif status eq 1> --->
-                                            <option value="#qgetVeterinarians.ID#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.attendingVeterinarian,","),#qgetVeterinarians.ID#)>selected</cfif>>#qgetVeterinarians.Veterinarians#</option>
+                                            <option value="#qgetVeterinarians.ID#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.attendingVeterinarian, ","),#qgetVeterinarians.ID#)>selected</cfif>>#qgetVeterinarians.Veterinarians#</option>
                                         <!--- </cfif> --->
                                     </cfloop>
                                 </select>
@@ -12656,7 +13898,7 @@
                                 <select class="stl-op search-box" multiple="multiple" name="Prosectors" id="Prosectors">
                                     <cfloop query="getTeams">
                                         <!--- <cfif active eq 1> --->
-                                            <option value="#getTeams.RT_ID#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.Prosectors,","),#getTeams.RT_ID#)>selected</cfif>>#getTeams.RT_MemberName#</option>
+                                            <option value="#getTeams.RT_ID#"<cfif ListFind(Prosectors,#getTeams.RT_ID#)>selected</cfif>>#getTeams.RT_MemberName#</option>
                                         <!--- </cfif> --->
                                     </cfloop>
                                 </select>
@@ -12670,8 +13912,8 @@
                             <div class="cust-fld"><label class="fl-lbl">Tentative Gross Diagnosis</label>
                             </div>
                             <div class="cust-inp">
-                                <!-- <input type="text" name="Tentative" placeholder="Expandable field to multi-line" value="#qgetCetaceanNecropsy.Tentative#"class="text-field"> -->
-                                <textarea id="top-area" name="Tentative" rows="6" class="text-field" cols="50" >#qgetCetaceanNecropsy.Tentative#</textarea>
+                                <!--- <input type="text" name="Tentative" placeholder="Expandable field to multi-line" value="#qgetCetaceanNecropsy.Tentative#"class="text-field"> --->
+                                <textarea id="top-area" name="Tentative" rows="6" class="text-field" cols="50" maxlength="4000" >#Tentative#</textarea>
                             </div>
                             </div>
                         </div>
@@ -12680,8 +13922,8 @@
                                 <div class="cust-fld"><label class="fl-lbl">Cause of Death</label>
                                 </div>
                                 <div class="cust-inp">
-                                    <!-- <input type="text" name="deathcause" placeholder="Expandable field to multi-line" value="#qgetCetaceanNecropsy.deathcause#"class="text-field"> -->
-                                    <textarea id="top-area" name="deathcause" rows="1" class="text-field" cols="50"  maxlength="1024" >#qgetCetaceanNecropsy.deathcause#</textarea>
+                                    <!--- <input type="text" name="deathcause" placeholder="Expandable field to multi-line" value="#qgetCetaceanNecropsy.deathcause#"class="text-field"> --->
+                                    <textarea id="top-area" name="deathcause" rows="1" class="text-field" cols="50"  maxlength="1024" >#deathcause#</textarea>
                                 </div>
                             </div>
                         </div>
@@ -12694,11 +13936,20 @@
                             </div>
                             <div class="cust-fld"><button type="button" onclick="histoUploadshowPictures()" name="histoUpload"class="upld-btn upld-btns">Upload</button></div>
                             </div>
+                            
+                            <cfif structKeyExists(qgetCetaceanNecropsy, "recordcount") and qgetCetaceanNecropsy.recordcount GT 0 and structKeyExists(qgetCetaceanNecropsy, "pdfFiles")>
+                                <cfset HistoImagess = ValueList(qgetCetaceanNecropsy.HistoImages, ",")>
+                                <input type="hidden" name="histoImages" value="#HistoImagess#" id="histoImages">
+                            <cfelse>
+                                <cfset HistoImagess = "">
+                                <input type="hidden" name="histoImages" value="" id="histoImages">
+                            </cfif>
             
-            
-                            <cfset HistoImagess = ValueList(qgetCetaceanNecropsy.HistoImages,",")> 
+                            <!--- <cfset HistoImagess = ValueList(qgetCetaceanNecropsy.HistoImages,",")>  --->
+
                             <!--- <input type="hidden" name="imagesFile2" value="#imgss#" id="imagesFile2"> --->
-                            <input type="hidden" name="histoImages" value="#HistoImagess#" id="histoImages">
+
+                            <!--- <input type="hidden" name="histoImages" value="#HistoImagess#" id="histoImages"> --->
                     
                             <div id="histoUpload" >
                              <CFIF listLen(HistoImagess)>  
@@ -12718,8 +13969,20 @@
                                         </span>
                                     </cfloop>
                                 </cfif>
-                            </div>  
-                            <input class="input-style xl-width" type="checkbox" value="1" name="caseReportNBox" id="caseReportNBox" <cfif (isdefined('qgetCetaceanNecropsy.caseReportBox') and  qgetCetaceanNecropsy.caseReportBox eq '1')>checked</cfif>>
+                            </div> 
+                            
+                            
+                            <!--- <input class="input-style xl-width" type="checkbox" value="1" name="caseReportNBox" id="caseReportNBox" <cfif (isdefined('qgetCetaceanNecropsy.caseReportBox') and  qgetCetaceanNecropsy.caseReportBox eq '1')>checked</cfif>> --->
+
+                             <cfif structKeyExists(qgetCetaceanNecropsy, "recordcount") and qgetCetaceanNecropsy.recordcount GT 0 and structKeyExists(qgetCetaceanNecropsy, "caseReportBox") and qgetCetaceanNecropsy.caseReportBox EQ "1">
+                                <cfset caseReportChecked = "checked">
+                            <cfelse>
+                                <cfset caseReportChecked = "">
+                            </cfif>
+
+                            <input class="input-style xl-width" type="checkbox" value="1" name="caseReportNBox" id="caseReportNBox" #caseReportChecked#>
+
+
             
                             <!-- modal -->
                             <div class="modal fade" id="myModala" role="dialog">
@@ -12768,7 +14031,19 @@
                                             </cfif>
                                         </cfloop>
                                     </cfif>
-                                    <textarea id="top-area" name="" rows="1" class="text-field" cols="50"  maxlength="1024" readonly="readonly">#myList#</textarea>
+                                    <!--- <textarea id="top-area" name="" rows="1" class="text-field" cols="50"  maxlength="1024" readonly="readonly">#myList#</textarea> --->
+
+                                    <!--- <cfdump var="#qgetCetaceanNecropsy.HistopathologyReport#"> --->
+
+                                    <select class="form-control search-box" multiple="multiple" name="HistopathologyReport" id="HistopathologyReport">
+                                        <cfloop query="#qgetDiagnosticLab#">
+                                            <cfif status eq 1>
+                                                <cfset isSelected = ListFind(qgetCetaceanNecropsy.HistopathologyReport, qgetDiagnosticLab.Diagnostic, ",")>
+                                                <option value="#qgetDiagnosticLab.Diagnostic#" <cfif isSelected GT 0>selected</cfif>>#qgetDiagnosticLab.Diagnostic#</option>
+                                            </cfif>
+                                        </cfloop>
+                                        
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -13051,7 +14326,7 @@
                 <cfif isDefined('qgetCetaceanNecropsy.Fnumber')  and #qgetCetaceanNecropsy.Fnumber# neq "empty">
                 
                     <cfquery name="qgetLCEID" datasource="#Application.dsn#"  result="return_data" >
-                        SELECT ID from ST_LiveCetaceanExam where deleted != '1' and Fnumber = '#qgetCetaceanNecropsy.Fnumber#' 
+                        SELECT ID from ST_LiveCetaceanExam where deleted !='1' and Fnumber = '#qgetCetaceanNecropsy.Fnumber#' 
                     </cfquery>
                     <!--- <cfdump var="#qgetLCEID.ID#" abort="true"> --->
                     <cfif  #qgetLCEID.ID# eq " ">
@@ -13078,7 +14353,7 @@
         </div>
         <div class="col-lg-7" Style="display:none;">
             <label class="fl-lbl">If skin lesion present, please describe</label>
-            <textarea id="top-area" name="lessiondescribe" rows="12" cols="120">#qgetCetaceanNecropsy.lessiondescribe#</textarea>
+            <textarea id="top-area" name="lessiondescribe" maxlength="4000" rows="12" cols="120">#qgetCetaceanNecropsy.lessiondescribe#</textarea>
         </div>
         <div class="col-lg-12 fldarea">
             <label class="fl-lbl">Comments</label>
@@ -14791,7 +16066,7 @@
             <div class="sys-colum clm-15" style="margin: 0;">
                 <h3 class="sys-title">ESOPHAGUS</h3>
             </div>
-            <!--- NoumanAwan --->
+            
             <div class="" style="margin-right: 33px;width: 200px;">
                 <select class="stl-op search-box"multiple="multiple" name="Esophagus" id="">
                     <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
@@ -14890,8 +16165,8 @@
             </div>
             <div class="" style="margin-right: 33px;width: 200px;">
                 <p></p>
-                <!--- NoumanAwan --->
-<!---                 <cfif ListFind(ValueList(qgetCetaceanNecropsy.Kidney_right,","),#Alimentary_SystemArray[j]#)>selected</cfif> --->
+                
+            <!--- <cfif ListFind(ValueList(qgetCetaceanNecropsy.Kidney_right,","),#Alimentary_SystemArray[j]#)>selected</cfif> --->
                 <select class="stl-op search-box"multiple="multiple" name="Forestomach" id="">
                     <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
                         <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.Forestomach,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
@@ -14981,7 +16256,7 @@
             </div>
             <div class="" style="margin-right: 33px;width: 200px;">
                 <p></p>
-                <!--- NoumanAwan --->
+                
                 <select class="stl-op search-box"multiple="multiple" name="glandularStomach" id="">
                     <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
                         <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.glandularStomach,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
@@ -15071,7 +16346,7 @@
             </div>
             <div class="" style="margin-right: 33px;width: 200px;">
                 <p></p>
-                <!--- NoumanAwan --->
+                
                 <select class="stl-op search-box"multiple="multiple" name="Pylorus" id="">
                     <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
                         <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.Pylorus,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
@@ -15161,7 +16436,7 @@
             </div>
             <div class="" style="margin-right: 33px;width: 200px;">
                 <p></p>
-                <!--- NoumanAwan --->
+                
                 <select class="stl-op search-box"multiple="multiple" name="smallIntestine" id="">
                     <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
                         <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.smallIntestine,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
@@ -15251,7 +16526,7 @@
             </div>
             <div class="" style="margin-right: 33px;width: 200px;">
                 <p></p>
-                <!--- NoumanAwan --->
+                
                 <select class="stl-op search-box"multiple="multiple" name="Colon" id="">
                     <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
                         <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.Colon,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
@@ -15355,7 +16630,7 @@
                     </div>
                     <div class="" style="margin-right: 33px;width: 200px;">
                         <p></p>
-                        <!--- NoumanAwan --->
+                        
                         <select class="stl-op search-box"multiple="multiple" name="PancreasFindings" id="">
                             <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
                                 <option value="#Alimentary_SystemArray[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.PancreasFindings,","),#Alimentary_SystemArray[j]#)>selected</cfif>>#Alimentary_SystemArray[j]#</option>
@@ -15369,14 +16644,7 @@
                     <div class="cust-fld"><label class="fl-lbl">Pancreas Findings</label>
                     </div>
                     <div class="cust-inp">                     
-                        <!--- <select class="stl-op" name="PancreasFindings" id="PancreasFindings">
-                            <option value="">Select</option>
-                            <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'No Findings'>selected</cfif>>No Findings</option>
-                            <option value="Trauma"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Trauma'>selected</cfif>>Trauma</option>
-                            <option value="Masses"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Masses'>selected</cfif>>Masses</option>
-                            <option value="Engorged"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Engorged'>selected</cfif>>Engorged</option>
-                            <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Other'>selected</cfif>>Other</option>
-                        </select> --->
+                    
                     </div>
                 </div>
             </div>
@@ -15393,52 +16661,12 @@
         <div class="row ">
             <div class="col-lg-12">
                 <h3 class="sys-title" style="margin-top: 20px;">Comments</h3>
-                <!--- <label class="fl-lbl">Comments</label> NoumanAwan--->
+                <!--- <label class="fl-lbl">Comments</label> --->
                 <textarea id="top-area" name="AlimentarySystemComments" rows="10" cols="120"  maxlength="4000" >#qgetCetaceanNecropsy.AlimentarySystemComments#</textarea>            
             </div>
         </div>
     </div>
-    <!--- <div class="row pt-30">
-        <div class="col-lg-12">
-        <div class="col-lg-4">
-            <div class="cust-row btm-rw">
-                <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">PANCREAS</h3></div></label>
-                </div>
-                <div class="cust-inp">
-                    <select class="stl-op" name="PANCREAS" id="PANCREAS">
-                        <option value="">Select</option>
-                        <option value="Examined"<cfif isdefined('qgetCetaceanNecropsy.PANCREAS') and  qgetCetaceanNecropsy.PANCREAS  eq 'Examined'>selected</cfif>>Examined</option>
-                        <option value="NE" <cfif isdefined('qgetCetaceanNecropsy.PANCREAS') and  qgetCetaceanNecropsy.PANCREAS  eq 'NE'>selected</cfif>>NE</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="cust-row">
-                <div class="cust-fld"><label class="fl-lbl">Pancreas Findings</label>
-                </div>
-                <div class="cust-inp">
-                    <select class="stl-op" name="PancreasFindings" id="PancreasFindings">
-                        <option value="">Select</option>
-                        <option value="No Findings"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'No Findings'>selected</cfif>>No Findings</option>
-                        <option value="Trauma"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Trauma'>selected</cfif>>Trauma</option>
-                        <option value="Masses"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Masses'>selected</cfif>>Masses</option>
-                        <option value="Engorged"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Engorged'>selected</cfif>>Engorged</option>
-                        <option value="Other"<cfif isdefined('qgetCetaceanNecropsy.PancreasFindings') and  qgetCetaceanNecropsy.PancreasFindings  eq 'Other'>selected</cfif>>Other</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="cust-row describe-rw">
-                <!--- <div class="cust-fld"><label class="fl-lbl">Describe</label>
-                </div> --->
-                <div class="cust-inp">
-                    <input type="text" placeholder="Other" class="text-field" name="PANCREASOthers"value="#qgetCetaceanNecropsy.PANCREASOthers#">
-                </div>
-            </div>
-        </div>
-    </div> --->
+
     </div>
     <div class="row pt-30">
         <div class="col-lg-12">
@@ -15452,14 +16680,7 @@
                         <option value="Yes"<cfif isdefined('qgetCetaceanNecropsy.GIFOREIGNMATERIAL') and  qgetCetaceanNecropsy.GIFOREIGNMATERIAL  eq 'Yes'>selected</cfif>>Yes</option>
                         <option value="No"<cfif isdefined('qgetCetaceanNecropsy.GIFOREIGNMATERIAL') and  qgetCetaceanNecropsy.GIFOREIGNMATERIAL  eq 'No'>selected</cfif>>No</option>
                     </select>
-                    <!---<select class="stl-op search-box" multiple="multiple" name=" GIFOREIGNMATERIAL" id="GIFOREIGNMATERIAL">
-                       
-                        <cfloop query="qGIForeignMaterial">
-                            <cfif status eq 1 >
-                                <option value="#qGIForeignMaterial.GIForeignMaterial#"<cfif ListFind(ValueList(qgetCetaceanNecropsy.GIFOREIGNMATERIAL,","),#qGIForeignMaterial.GIForeignMaterial#)>selected</cfif>>#qGIForeignMaterial.GIForeignMaterial#</option>
-                            </cfif>
-                        </cfloop>
-                    </select>--->
+           
                 </div> 
             </div>
         </div>
@@ -15498,14 +16719,7 @@
                 <div class="cust-fld"><label class="fl-lbl">GI Foreign Material Type</label>
                 </div>
                 <div class="cust-inp ">
-                    <!--- <select class="stl-op search-box" multiple="multiple" name="GIForeignMaterialType" id="GIForeignMaterialType" >
-                       <option value="">Select</option>
-                        <cfloop array="#material_type#" item="item" index="j">
-                            <option value="#item#" <cfif isdefined('qgetCetaceanNecropsy.GIForeignMaterialType') and  qgetCetaceanNecropsy.GIForeignMaterialType  eq #item#>selected</cfif>>#item#</option>
-                            
-                        </cfloop>
-                    </select> --->
-
+                   
                     <select class="stl-op search-box" multiple="multiple" name="GIForeignMaterialType" id="GIForeignMaterialType">
                         <cfloop from="1" to="#ArrayLen(material_type)#" index="j">
                             <option value="#material_type[j]#" <cfif ListFind(ValueList(qgetCetaceanNecropsy.GIForeignMaterialType,","),#material_type[j]#)>selected</cfif>
@@ -15756,10 +16970,10 @@
                 
                 <div class="col-lg-4">
                     <div class="cust-row">
-                        <div class="cust-fld"><label class="fl-lbl">Parasite Type</label>
+                        <div class="cust-fld"><label class="fl-lbl">Parasite Typesss</label>
                         </div>
                         <div class="cust-inp">
-                            <select class="stl-op" name="ParasiteType#qgetParasites.id#" id="ParasiteType">
+                            <select class="stl-op" name="ParasiteType#qgetParasites.id#" id="ParasiteType" required>
                                 
                                 <cfloop query="qgetParasiteType">
                                     <cfif status eq 1 >
@@ -15770,6 +16984,28 @@
                         </div>
                     </div>
                 </div>
+
+                <!--- <div class="col-lg-4">
+                    <div class="cust-row">
+                        <div class="cust-fld">
+                            <label class="fl-lbl">Parasite Type</label>
+                        </div>
+                        <div class="cust-inp">
+                            <select class="stl-op" name="ParasiteType#qgetParasites.id#[]" id="ParasiteType" multiple>
+                                <cfloop query="qgetParasiteType">
+                                    <cfif status eq 1>
+                                        <option value="#qgetParasiteType.type#"
+                                            <cfif isdefined('qgetParasites.ParasiteType') and listFind(qgetParasites.ParasiteType, qgetParasiteType.type, ",")>
+                                                selected
+                                            </cfif>
+                                        >#qgetParasiteType.type#</option>
+                                    </cfif>
+                                </cfloop>
+                            </select>
+                        </div>
+                    </div>
+                </div> --->
+
                 <div class="col-lg-4">
                     <div class="cust-row describe-rw">
                         <div class="cust-fld"><label class="fl-lbl">Location</label>
@@ -15788,7 +17024,7 @@
             </div>
             </cfloop>
             <cfelse>
-            <div class="col-lg-12 parasitediv ">
+        <div class="col-lg-12 parasitediv ">
             <div class="col-lg-4">
                 <div class="cust-row btm-rw">
                     <div class="cust-fld"><label class="fl-lbl"><div class="mid-t"><h3 class="m-0">PARASITES</h3></div></label>
@@ -15808,7 +17044,7 @@
                     <div class="cust-fld"><label class="fl-lbl">Parasite Type</label>
                     </div>
                     <div class="cust-inp">
-                        <select class="stl-op" name="ParasiteType" id="ParasiteType">
+                        <select class="stl-op" name="ParasiteType" id="ParasiteType" required>
                             <cfloop query="qgetParasiteType">
                                 <cfif status eq 1 >
                                     <option value="#qgetParasiteType.type#">#qgetParasiteType.type#</option>
@@ -15820,8 +17056,7 @@
             </div>
             <div class="col-lg-4">
                 <div class="cust-row describe-rw">
-                    <div class="cust-fld"><label class="fl-lbl">Location</label>
-                    </div>
+                  <div class="cust-fld"><label class="fl-lbl">Location</label></div>  
                     <div class="cust-inp">
                         <select class="stl-op" name="Parasitelocation" id="Parasitelocation">
                             <cfloop query="qgetParasiteLocation">
@@ -15833,13 +17068,92 @@
                     </div>
                 </div>
             </div>
-            </div>
-            </cfif>
+         </div>
+
+        </cfif>
             <div  id="newparasite"></div>
             <div class="col-lg-12">
             <div class="simple-button pt-15 align-right">
             <input type="hidden" name="dynamic_parasite" value="" id="dynamic_parasite">
             <input type="button" id="Add_newparasite" name="Add_newparasite" class="upld-btn" value="Add New" onclick="newparasite()">
+
+        <div class="row " style="margin-top: 10px; margin-bottom: 20px;" >
+
+  
+            <div class="col-lg-4">
+                <div class="area-check align-right" style="margin-left: 20px; float: left;">
+                    <label class="check-cust-fld">Vet Review</label>
+                    <input class="check-bxt-fld" type="checkbox" value="1" name="vetReview" <cfif (isdefined('qgetCetaceanNecropsy.vetReview') and  qgetCetaceanNecropsy.vetReview eq '1') || (isdefined('qgetCetaceanNecropsy.vetReview') and  qgetCetaceanNecropsy.vetReview eq 'Yes')>checked</cfif> >
+                </div>
+            </div>
+
+            
+
+
+            <!-- <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                <div class="form-group">
+                    <div class="input-group flex-center">
+                        <label class="">Vet Review</label>
+                        <input class="input-style xl-width" type="checkbox" value="1" name="vetReview" <cfif (isdefined('qgetCetaceanNecropsy.vetReview') and  qgetCetaceanNecropsy.vetReview eq '1') || (isdefined('qgetCetaceanNecropsy.vetReview') and  qgetCetaceanNecropsy.vetReview eq 'Yes')>checked</cfif> >
+                    </div>                                          
+                </div>
+            </div> -->
+           
+             
+            <div class="col-lg-4">
+                <div class="cust-row">
+                  <div class="cust-fld w-cust-fld"><label class="fl-lbl">Vet Review Date</label>
+                    </div>
+                    <div class="cust-inp">
+                        <div class="input-group date " id="datetimepicker_vet" style="width: 100%;">
+                            <input type="text" placeholder="mm/dd/yyyy" name="vetReviewDate" id="vetReviewDate" class="form-control"  value="<cfif isDefined('qgetCetaceanNecropsy.vetReviewDate') and #DateTimeFormat(qgetCetaceanNecropsy.vetReviewDate, 'MM/DD/YYYY')# neq ''>#DateTimeFormat(qgetCetaceanNecropsy.vetReviewDate, 'MM/dd/YYYY')#</cfif>" />
+                            <span class="input-group-addon time-icon"> <span class="glyphicon glyphicon-calendar"></span> </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                <div class="form-group">
+                   <div class="input-group ">  
+                    <label class="date-padd">Necropsy Date</label>
+                    <div class="input-group flex-center date " id="datetimepicker_vet">
+                        <input type="text" placeholder="mm/dd/yyyy" name="vetReviewDate" id="vetReviewDate" class="form-control" />
+                        <span class="input-group-addon time-icon"> <span class="glyphicon glyphicon-calendar"></span> </span>
+                    </div>
+                    </div>
+                </div>
+            </div> -->
+            
+
+            <div class="col-lg-4">
+                <div class="cust-row describe-rw">
+                  <div class="cust-fld w-cust-fld"><label class="fl-lbl">Vet Initials</label>
+                    </div>
+                    <div class="cust-inp">
+                       
+                        <input type="text"name="vetInitials" value="#qgetCetaceanNecropsy.vetInitials#" class="text-field" <cfif (permissions neq "full_access" and findNoCase("Editable VR", permissions) eq 0)> readonly </cfif> >
+                        
+                    </div>
+                </div>
+            </div>
+           
+            <!-- <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+                <div class="form-group">
+                    <div class="input-group flex-center">
+                        <label class="">Vet Initials</label>
+                        
+                        <input type="text"name="vetInitials" value="#qgetCetaceanNecropsy.vetInitials#"  class="text-field " <cfif (permissions neq "full_access" and findNoCase("Editable VA", permissions) eq 0) > readonly disabled </cfif> >
+                        
+                    </div>                                          
+                </div>
+            </div> -->
+            
+
+        </div>
+            
         </div>
         </div>
         </div>
@@ -15887,8 +17201,10 @@
             <!--- end for NecropsyReport --->
 
             <!--- start for Morphometrics --->
-            <div role="tabpanel" class="tab-pane" id="Morphometrics">  
+            <div role="tabpanel" class="tab-pane" id="Morphometrics"> 
+
                 <input type='hidden' name='Morphometricss_ID' id="Morphometricss_ID" value='#qgetMorphometricsData.ID#'>
+                
                 <div class="row pt-20">              
                 <div class="full-img-sec">
                     <div class="row">
@@ -15898,18 +17214,7 @@
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <!-- <div class="mb-1 cust-row right-panel-rw">
-                                <label class="fishtwo-labelone">Estimated Weight</label>
-                                <div class="input"> 
-                                    <input class="input-style weight-input text-field" type="text" name="EstimatedWeight" id="EstimatedWeight" value="#qgetMorphometricsData.EstimatedWeight#">
-
-                                    <select class="input-style " name="EstimatedWeightUnit">
-                                        <option value="lbs" <cfif '#qgetMorphometricsData.EstimatedWeightUnit#' eq 'lbs'>selected</cfif> >lbs</option>
-                                        <option value="kg" <cfif '#qgetMorphometricsData.EstimatedWeightUnit#' eq 'kg'>selected</cfif>>kg</option>
-                                    </select>
-                                </div>
-                            </div> -->
-
+                    
                             <div class="cust-row right-panel-rw">
                                 <div class="right-fld"><label class="fl-lbl">Weight</label>
                                 </div>
@@ -16129,7 +17434,7 @@
                                 </div>
                             
                                 <div class="col-lg-8 col-md-8 col-sm-6 col-xs-6 mt-4 s-content two-btn two-btn-wrap two-btn-align">
-                                <input type="submit" id="SaveAndNewMorphometrics" name="SaveAndNewMorphometrics" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event)">
+                                <input type="submit" id="SaveAndNewMorphometrics" name="SaveAndNewMorphometrics" class="btn btn-pink m-rl-4" value="Save" onclick="chkreq(event, 'Morphometrics_ID')">
                                 <!--- <input type="submit" id="SaveAndClose" class="btn btn-green m-rl-4" value="Save and Close" name="SaveAndClose" onclick="chkreq(event)"> --->
                                 <cfif (permissions eq "full_access" or findNoCase("Delete ST", permissions) neq 0) AND (isDefined('qgetMorphometricsData.ID') and qgetMorphometricsData.ID neq "")>
                                     <input type="submit" id="" name="deleteMorphometrics" class="btn btn-orange m-rl-4" value="Delete" onclick="if(confirm('Are you sure to Delete ?')){}else{return false;};" >
@@ -16375,7 +17680,7 @@
                                 <div class="form-group">
                                     <div class="input-group flex-center">
                                         <label class="county-label extra-w ">Sample Type</label>
-                                        <select class="form-control" name="reportSampleType" id="reportSampleType">
+                                        <select class="form-control search-box" multiple name="reportSampleType" id="reportSampleType">
                                             <option value="">Select Sample Type</option>
                                             <cfloop query="qgetSampleType">
                                                 <cfif status  neq 0>
@@ -16401,6 +17706,21 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                                <div class="form-group">
+                                    <div class="input-group flex-center" >
+                                        <label class="county-label">Sample Availability</label>
+                                        <select class="form-control" id="reportsampleAvailability" name="reportsampleAvailability" >
+                                            <option value="0">Select Availability</option>
+                                            <cfloop from="1" to="#ArrayLen(Availbility)#" index="j">
+                                                <option value="#Availbility[j]#" >#Availbility[j]#</option>
+                                            </cfloop>
+                                        </select>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+
                             <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
                                 <div class="form-group">
                                     <div class="input-group flex-center">
@@ -16459,9 +17779,22 @@
     </cfoutput>
 
     <style>
+
+        .select2-container .select2-selection--multiple .select2-selection__rendered{
+            white-space: normal !important;
+        }
         td, th, table, tr {
             word-wrap: break-word;
             word-break: break-all;
+        }
+        #lesionHistory tr th{
+            white-space: nowrap;
+        }
+        .flex-input-wrap .select2-container--default .select2-selection--multiple .select2-selection__choice__remove{
+            width: max-content !important;
+        }
+        .w-cust-fld {
+            text-align: left;
         }
         .quantity-toxi-field {
             width: 100%;
@@ -19920,7 +21253,7 @@ html body .bloodValues-date-form.form-holder.blue-bg.pb-2 input:focus {
         .form-input-holder label {
             width: 69%;
         }
-    /*******END******/
+     /*******END******/
 
         @media (max-width: 1200px) {
         .nflex {
@@ -20641,3 +21974,4 @@ html body .bloodValues-date-form.form-holder.blue-bg.pb-2 input:focus {
         <h3 class="text-danger">You do not have access to this page.<h3>
     </div>
 </cfif>
+

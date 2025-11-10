@@ -456,6 +456,10 @@
                 <input type="hidden" name="project_id" value="#form.PROJECT_ID#">
               </form>
             </div>
+            <!--- <cfif isDefined('form.sight_id') and form.sight_id neq 0>
+              <cfdump var="#sight_id#" abort="true">
+            </cfif> --->
+            
           </cfif>
           <div class="col-md-3 reset-btn">
             <input type="button" name="reset" id="reset" class="btn btn-default" value="Reset" onClick="ResetAll()"/>
@@ -818,24 +822,53 @@
                         </select>
                       </div>
                     </div>
+                    
                     <div class="form-group">
-                    <label class="col-lg-5 col-md-5 col-sm-12 control-label">Habitat Depth</label>
+                    <label class="col-lg-5 col-md-5 col-sm-12 control-label">At Depth</label>
                       <div class="input col-lg-5 col-md-9 col-sm-12 col-xs-12">
                       <input type="text" value="#qGetSightings.HabitatDepth#" name="HabitatDepth" id="HabitatDepth" onblur="checkValue(this)"  class="form-control inputCustomReset" />
                       </div>
                     </div>
+
                     <div class="form-group">
-                      <label class="col-lg-5 col-md-5 col-sm-12 control-label">Habitat Type</label>
-                      <div class="input col-lg-5 col-md-9 col-sm-12 col-xs-12">
-                        <select class="form-control selectCustomReset" id="value" name="HabitatType">
-                          <option value="0">Select</option>
-                          <cfloop query="getHabitatList">
-                            <cfif active eq 1 or (active eq 0 and qGetSightings.HabitatType eq HabitatID)>
-                              <option value="#HabitatID#" <cfif qGetSightings.HabitatType eq #HabitatID#>selected</cfif>>#HabitatName#</option>
-                            </cfif>
-                          </cfloop>
-                        </select>
+                      <label class="col-lg-5 col-md-5 col-sm-12 control-label">End Depth</label>
+                        <div class="input col-lg-5 col-md-9 col-sm-12 col-xs-12">
+                        <input type="text" value="#qGetSightings.EndDepth#"  name="EndDepth" id="EndDepth" onblur="checkValue(this)"  class="form-control inputCustomReset" />
+                        </div>
                       </div>
+
+                    <div class="form-group">
+
+                      <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-btn">
+                                <button class="btn btn-inverse" type="button">Habitat Type</button>
+                            </div>
+                            <select class="form-control search-box" multiple="multiple" name="HabitatType" id="HabitatType">
+                                <cfloop query="getHabitatList">
+                                    <cfif active eq 1 or (active eq 0 and ListFind(qGetSightings.HabitatType, getHabitatList.HabitatID))>
+                                        <option value="#getHabitatList.HabitatID#" <cfif ListFind(qGetSightings.HabitatType, getHabitatList.HabitatID)>selected</cfif>>#getHabitatList.HabitatName#</option>
+                                    </cfif>
+                                </cfloop>
+                            </select>
+                        </div>
+                      </div>
+                        
+
+                         <!--- <label class="col-lg-5 col-md-5 col-sm-12 control-label">Habitat Type</label>
+                      
+                        <div class="input col-lg-5 col-md-9 col-sm-12 col-xs-12">
+                          <select class="form-control selectCustomReset" id="value" name="HabitatType">
+                            <option value="0">Select</option>
+                            <cfloop query="getHabitatList">
+                              <cfif active eq 1 or (active eq 0 and qGetSightings.HabitatType eq HabitatID)>
+                                <option value="#HabitatID#" <cfif qGetSightings.HabitatType eq #HabitatID#>selected</cfif>>#HabitatName#</option>
+                              </cfif>
+                            </cfloop>
+                          </select>
+                        </div> --->
+
+
                     </div>
                     <div class="form-group">
                       <label class="col-lg-5 col-md-5 col-sm-12 control-label">Air Temp</label>
@@ -901,9 +934,15 @@
                       </div>
                     </div>
                     <div class="form-group">
-                      <label class="col-lg-5 col-md-5 col-sm-12 control-label">DO</label>
+                      <label class="col-lg-5 col-md-5 col-sm-12 control-label">DO (%)</label>
                       <div class="input col-lg-7 col-md-9 col-sm-12 col-xs-12">
                         <input type="text" value="#qGetSightings.DO#" name="DO" id="DO" onblur="checkValue(this)" class="form-control inputCustomReset" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-lg-5 col-md-5 col-sm-12 control-label">DO (mg/L)</label>
+                      <div class="input col-lg-7 col-md-9 col-sm-12 col-xs-12">
+                        <input type="text" value="#qGetSightings.dissolvedOxygen#" name="dissolvedOxygen" id="dissolvedOxygen" onblur="checkValue(this)" class="form-control inputCustomReset" />
                       </div>
                     </div>
                     <div class="form-group">
@@ -1186,7 +1225,7 @@
                               <div class="input col-lg-12 col-md-12 col-sm-12 col-xs-12 meter-input">
                                 <select class="form-control selectCustomReset"  name="groupeSelect1" >
                                   <option value="">Select Group</option>
-                                  <cfdump var="#qGetSightings.groupeSelect1#">
+                                  <!--- <cfdump var="#qGetSightings.groupeSelect1#"> --->
                                   <option value="main" <cfif qGetSightings.groupeSelect1 eq "main">selected</cfif>>Main</option>
                                   <option value="sub" <cfif qGetSightings.groupeSelect1 eq "sub">selected</cfif>>Sub</option>
                                 </select>
@@ -1823,7 +1862,7 @@
                 <input type="submit" class="btn btn-success update set-btn-margin" id="update2" value="Update Survey and Clear" name="update_data_clear_pro">
               </cfif>
               <cfif permissions eq "full_access" or findNoCase("Add Entry Data S-S-C", permissions) neq 0>
-                <a class="btn btn-success sighting_required set-btn-margin test" href="##" data-toggle="modal" data-target="##cetacean"  onclick="empty_Lesions_history()">Cetacean</a>
+                <a class="btn btn-success sighting_required set-btn-margin " href="##" data-toggle="modal" data-target="##cetacean"  onclick="empty_Lesions_history()">Cetacean</a>
               </cfif>
               <button type="button" class="btn btn-success set-btn-margin" id="btn_CS_history">Cetacean Sighting History</button>
               <cfif permissions eq "full_access" or findNoCase("Delete S-S-C", permissions) neq 0>
@@ -1837,14 +1876,14 @@
               <cfif permissions eq "full_access" or findNoCase("Modify/Update S-S-C", permissions) neq 0>
                 <input type="submit" class="btn btn-success update set-btn-margin" id="update2" value="Update Survey and Clear" name="update_data_clear_pro">
               </cfif>
-              <a class="btn btn-success sighting_required set-btn-margin test123" href="##" data-toggle="modal" data-target="##cetacean">Cetacean</a>
+              <a class="btn btn-success sighting_required set-btn-margin " href="##" data-toggle="modal" data-target="##cetacean">Cetacean</a>
               <button type="button" class="btn btn-success set-btn-margin" id="btn_CS_history">Cetacean Sighting History</button>
             </cfif>
           <cfelse>
             <cfif permissions eq "full_access" or findNoCase("Add Entry Data S-S-C", permissions) neq 0>
               <input type="submit" class="btn btn-success set-btn-margin after_add_survey" value="Save Sighting & Go To Cetacean Sighting" name="add_survey">
               <input type="submit" class="btn btn-success set-btn-margin after_add_survey" value="Save Sighting & Go To Next Sighting" name="add_survey_clear">
-              <a class="btn btn-success sighting_required set-btn-margin testabx" href="##" data-toggle="modal" data-target="##cetacean">Cetacean</a>
+              <a class="btn btn-success sighting_required set-btn-margin " href="##" data-toggle="modal" data-target="##cetacean">Cetacean</a>
             </cfif>
             <button type="button" class="btn btn-success set-btn-margin" id="btn_CS_history">Cetacean Sighting History</button>
           </cfif>
@@ -1855,9 +1894,13 @@
             <input type="hidden" class="btn btn-success set-btn-margin" name="sight_delete" value="Delete Sighting">
           </form>
       </div>
+      
       <!-- end row --> 
     </div>
   </div>
+
+  
+
 </cfoutput> 
 <script>
   function sightingDelete() {

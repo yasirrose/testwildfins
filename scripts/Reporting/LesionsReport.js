@@ -58,11 +58,17 @@ function clearAll(){
 	$('select[name="Body_DorsalRidgeScapula"]').val('');
 	$('select[name="Body_Ribs"]').val('');
 	$('select[name="Tail_TransversePro"]').val('');
+	$('select[name="TypeName"]').val('');
 	$('#LesionType').val(null).trigger('change');
 }
 function excel(){
 	form=document.getElementById('searchAllReports');
-	form.action='http://test.wildfins.org/index.cfm?Module=Reporting&Page=ExportLesion';
+	// console.log(location.protocol)
+	if (location.protocol === 'https:') {
+        form.action = 'https://test.wildfins.org/index.cfm?Module=Reporting&Page=ExportLesion';
+    } else {
+        form.action = 'http://test.wildfins.org/index.cfm?Module=Reporting&Page=ExportLesion';
+    }
 	form.submit();
 	form.action='';
 }

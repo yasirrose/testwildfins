@@ -837,6 +837,7 @@
 		<cfquery name="qgetCetaceansCode" datasource="#variables.dsn#">
             SELECT code,id,Name FROM Cetaceans where CetaceanSpecies = #Cetacean_Species# order by code asc
         </cfquery>
+        
 		<cfreturn qgetCetaceansCode>
     </cffunction>    
 	<cffunction name="getCetaceansCodeForTracking" returnformat="JSON" returntype="any" output="false" access="remote" >
@@ -1250,11 +1251,13 @@
 		<cfreturn return_data>
 	</cffunction>
 <!---- Sight Isnert----->
-	<cffunction name="InsertSight" returntype="any" output="false" access="public">
+    <cffunction name="InsertSight" returntype="any" output="false" access="public">
+        <!--- <cfdump var="#form#" abort="true"> --->
         <cfargument default="" name="Survey">
         <cfargument default="" name="PreySpeciesName">
         <cfargument default="" name="BehaviorName">
         <cfargument default="" name="AssocBio">
+        <cfargument default="" name="HabitatType">
         <cfargument  name="project_id" default="0">
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -1278,7 +1281,8 @@
 			<cfset project_id = form.project_id >
 		<cfelse>
 			<cfset project_id = qgetSurvey.id>
-		</cfif>
+        </cfif>
+    
         <!---getting time for all Divetime fields and caculating total time --->
         <cfset dd= "2021-8-9">
         <cfset totaltimes = []>
@@ -1311,13 +1315,14 @@
             <cfelse>
                 <cfset arrayAppend(totaltimes, '')>
             </cfif>
-        </cfloop>   
+        </cfloop>  
+        <cftry>  
         <cfquery name="qInsert" datasource="#variables.dsn#" result="return_data" >
             INSERT INTO Survey_Sightings (
             Project_ID,
             SightingNumber,SightingStart,SightingEnd,Survey,Location,ICW_Start,
             InitialLatitude,InitialLongitude,AtLatitude,AtLongitude,EndLatitude,EndLongitude,
-            WaveHeight,Weather,Glare,GlareDirection,Sightability,Beaufort,HabitatDepth,HabitatType,AirTemp,WaterTemp,WindSpeed,WindDirection,Tide,Salinity,
+            WaveHeight,Weather,Glare,GlareDirection,Sightability,Beaufort,HabitatDepth,EndDepth,HabitatType,AirTemp,WaterTemp,WindSpeed,WindDirection,Tide,Salinity,
             InitialHeading,GeneralHeading,FinalHeading,AssocBio,
             FE_Species,FE_TotalCetaceans_Min,FE_TotalCetaceans_Max,FE_TotalCetacean_Best,FE_TotalCalves_Min,FE_TotalCalves_Max,FE_TotalCalves_Best,
             FE_YoungOfYear_Min,FE_YoungOfYear_Max,FE_YoungOfYear_Best,
@@ -1337,6 +1342,7 @@
             FE_TotalAdults_takes,
             pH,
             DO,
+            dissolvedOxygen,
             Conductivity,
             BehavioralSpecifics1,
             BehavioralSpecificsN1,
@@ -1408,7 +1414,8 @@
            <cfqueryparam  cfsqltype="cf_sql_integer" value='#Sightability#' null="#IIF(Sightability EQ "", true, false)#">,
            <cfqueryparam  cfsqltype="cf_sql_integer" value='#Beaufort#' null="#IIF(Beaufort EQ "", true, false)#">,
            <cfqueryparam  cfsqltype="cf_sql_varchar" value='#HabitatDepth#' null="#IIF(HabitatDepth EQ "", true, false)#">,
-           <cfqueryparam  cfsqltype="cf_sql_integer" value='#HabitatType#' null="#IIF(HabitatType EQ "", true, false)#">,
+           <cfqueryparam  cfsqltype="cf_sql_varchar" value='#EndDepth#' null="#IIF(EndDepth EQ "", true, false)#">,
+           <cfqueryparam  cfsqltype="cf_sql_varchar" value='#HabitatType#' null="#IIF(HabitatType EQ "", true, false)#">,
            <cfqueryparam  cfsqltype="cf_sql_varchar" value='#AirTemp#' null="#IIF(AirTemp EQ "", true, false)#">,
            <cfqueryparam  cfsqltype="cf_sql_varchar" value='#WaterTemp#' null="#IIF(WaterTemp EQ "", true, false)#">,
            <cfqueryparam  cfsqltype="cf_sql_varchar" value='#WindSpeed#' null="#IIF(WindSpeed EQ "", true, false)#">,
@@ -1465,6 +1472,7 @@
            <cfqueryparam  cfsqltype="cf_sql_varchar" value='#FE_TotalAdults_takes#' null="#IIF(FE_TotalAdults_takes EQ "", true, false)#">,
            <cfqueryparam  cfsqltype="cf_sql_varchar" value='#pH#' null="#IIF(pH EQ "", true, false)#">,
            <cfqueryparam  cfsqltype="cf_sql_varchar" value='#DO#' null="#IIF(DO EQ "", true, false)#">,
+           <cfqueryparam  cfsqltype="cf_sql_varchar" value='#dissolvedOxygen#' null="#IIF(dissolvedOxygen EQ "", true, false)#">,
            <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Conductivity#' null="#IIF(Conductivity EQ "", true, false)#">,
            <cfqueryparam  cfsqltype="cf_sql_varchar" value='#BehavioralSpecifics1#' null="#IIF(BehavioralSpecifics1 EQ "", true, false)#">,
            <cfqueryparam  cfsqltype="cf_sql_integer" value='#BehavioralSpecificsN1#' null="#IIF(BehavioralSpecificsN1 EQ "", true, false)#">,
@@ -1518,12 +1526,17 @@
            
            )
         </cfquery>
+           <cfcatch>
+            <cfset error="#cfcatch#">
+        </cfcatch>
+      </cftry>
 		<cfreturn return_data>
     
 	</cffunction>
     
    <!---- get qUpdate sight ---->
     <cffunction name="qUpdateProject_SIGHT" returntype="any" output="false" access="public" >
+        
         <cfquery name="qgetdate" datasource="#variables.dsn#"  >
 	        SELECT [DATE] as pro_date from Surveys where id = #form.project_id#
 		</cfquery>
@@ -1553,7 +1566,14 @@
 			<cfset AssocBio=form.AssocBio >
 		<cfelse>
 			<cfset AssocBio=''>
-		</cfif>
+        </cfif>
+
+        <cfif isdefined('HabitatType')>
+			<cfset HabitatType = HabitatType >
+		<cfelse>
+			<cfset HabitatType=''>
+        </cfif>
+        <!--- <cfdump var="#HabitatType#" abort="true"> --->
         <cfset dd= "2021-8-9">
         <cfset totaltimes = []>
         <cfset StratTimeDive = "StratTimeDive">
@@ -1607,7 +1627,8 @@
              Sightability = <cfqueryparam  cfsqltype="cf_sql_integer" value='#Sightability#' null="#IIF(Sightability EQ "", true, false)#">,
              Beaufort =  <cfqueryparam  cfsqltype="cf_sql_integer" value='#Beaufort#' null="#IIF(Beaufort EQ "", true, false)#">,
              HabitatDepth = <cfqueryparam  cfsqltype="cf_sql_varchar" value='#HabitatDepth#' null="#IIF(HabitatDepth EQ "", true, false)#">,
-             HabitatType =   <cfqueryparam  cfsqltype="cf_sql_integer" value='#HabitatType#' null="#IIF(HabitatType EQ "", true, false)#">,
+             EndDepth = <cfqueryparam  cfsqltype="cf_sql_varchar" value='#EndDepth#' null="#IIF(EndDepth EQ "", true, false)#">,
+             HabitatType =   <cfqueryparam  cfsqltype="cf_sql_varchar" value='#HabitatType#' null="#IIF(HabitatType EQ "", true, false)#">,
              AirTemp = <cfqueryparam  cfsqltype="cf_sql_varchar" value='#AirTemp#' null="#IIF(AirTemp EQ "", true, false)#">,
              WaterTemp =  <cfqueryparam  cfsqltype="cf_sql_varchar" value='#WaterTemp#' null="#IIF(WaterTemp EQ "", true, false)#">,
              WindSpeed =  <cfqueryparam  cfsqltype="cf_sql_varchar" value='#WindSpeed#' null="#IIF(WindSpeed EQ "", true, false)#">,
@@ -1663,6 +1684,7 @@
              FE_TotalAdults_takes = <cfqueryparam  cfsqltype="cf_sql_varchar" value='#FE_TotalAdults_takes#' null="#IIF(FE_TotalAdults_takes EQ "", true, false)#">,
              pH = <cfqueryparam  cfsqltype="cf_sql_varchar" value='#pH#' null="#IIF(pH EQ "", true, false)#">,
              DO = <cfqueryparam  cfsqltype="cf_sql_varchar" value='#DO#' null="#IIF(DO EQ "", true, false)#">,
+             dissolvedOxygen = <cfqueryparam  cfsqltype="cf_sql_varchar" value='#dissolvedOxygen#' null="#IIF(dissolvedOxygen EQ "", true, false)#">,
              Conductivity = <cfqueryparam  cfsqltype="cf_sql_varchar" value='#Conductivity#' null="#IIF(Conductivity EQ "", true, false)#">,
             BehavioralSpecifics1 = <cfqueryparam  cfsqltype="cf_sql_varchar" value='#BehavioralSpecifics1#' null="#IIF(BehavioralSpecifics1 EQ "", true, false)#">,
             BehavioralSpecificsN1 = <cfqueryparam  cfsqltype="cf_sql_integer" value='#BehavioralSpecificsN1#' null="#IIF(BehavioralSpecificsN1 EQ "", true, false)#">,

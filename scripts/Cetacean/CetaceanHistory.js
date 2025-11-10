@@ -47,7 +47,71 @@ $(document).ready(function() {
 
 
 
+$(document).ready(function() {
+	$('#data-table').DataTable({
+		"pageLength": 10,
+		"paging": false,
+		"info": false,
+		responsive: true,
+		"searching": false,
+		"columnDefs": [
+            {
+                "targets": 2, // Date Seen column index (zero-based)
+                "type": "date",
+                "render": function(data, type, row) {
+                    // Parse the date in "mm/dd/yyyy" format to a JavaScript Date object
+                    var dateParts = data.split('/');
+                    if (dateParts.length === 3) {
+                        var year = dateParts[2];
+                        var month = dateParts[0];
+                        var day = dateParts[1];
+                        return month + '/' + day + '/' + year;
+                    } else {
+                        return data;
+                    }
+                }
+            }
+        ]
+	});
+} );
 
+$(document).ready(function() {
+	$('#friends').DataTable({
+		"pageLength": 10,
+		"paging": false,
+		"info": false,
+		responsive: true,
+		"searching": false,
+	});
+} );
+
+$(document).ready(function() {
+	$('#survey_table').DataTable({
+		"pageLength": 10,
+		"paging": false,
+		"info": false,
+		responsive: true,
+		"searching": false,
+		"columnDefs": [
+            {
+                "targets": 1, // Date Seen column index (zero-based)
+                "type": "date",
+                "render": function(data, type, row) {
+                    // Parse the date in "mm/dd/yyyy" format to a JavaScript Date object
+                    var dateParts = data.split('/');
+                    if (dateParts.length === 3) {
+                        var year = dateParts[2];
+                        var month = dateParts[0];
+                        var day = dateParts[1];
+                        return month + '/' + day + '/' + year;
+                    } else {
+                        return data;
+                    }
+                }
+            }
+        ]
+	});
+} );
 
 
  handleGoogleMap = function() {

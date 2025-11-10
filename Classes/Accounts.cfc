@@ -96,7 +96,12 @@
    <cfquery name="query" datasource="#variables.dsn#" result="userupdated">
     UPDATE users SET first_name = '#firstName#', last_name = '#lastName#' , user_name = '#username#',permissions = '#permissions#' , user_email = '#userEmail#' , user_type = '#userTypForm#' ,status ='#userStatus#' ,group_id = '#groupID#' , group_member = 'Y'
  where user_id = '#form.userId#' 
-     </cfquery>
+     </cfquery> 
+
+     
+
+     <cfreturn  userupdated>
+
 </cffunction>
 
 <!------- User getroles ---------->

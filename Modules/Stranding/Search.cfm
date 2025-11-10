@@ -57,43 +57,43 @@
                                 <td>
                        
                                     <cfif qgetTrackingList.SourceTable eq 'Cetacean Exam'>
-                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&CetaceanExam&LCEID=#qgetTrackingList.ID#" class="linkhisto">
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&CetaceanExam&LCEID=#qgetTrackingList.ID#&Fnumber=#URLEncodedFormat(qgetTrackingList.Fnumber)#" class="linkhisto">
                                             Open
                                         </a>  
                                                           
                                     </cfif>
                                     <cfif qgetTrackingList.SourceTable eq 'HI Form'>
-                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&HIForm&HIFormID=#qgetTrackingList.ID#" class="linkhisto">
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&HIForm&HIFormID=#qgetTrackingList.ID#&Fnumber=#URLEncodedFormat(qgetTrackingList.Fnumber)#" class="linkhisto">
                                             Open
                                         </a>                                    
                                     </cfif>
                                     <cfif qgetTrackingList.SourceTable eq 'Level A Form'>
-                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&LevelAForm&LevelAID=#qgetTrackingList.ID#" class="linkhisto">
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&LevelAForm&LevelAID=#qgetTrackingList.ID#&Fnumber=#URLEncodedFormat(qgetTrackingList.Fnumber)#" class="linkhisto">
                                             Open
                                         </a>                                    
                                     </cfif>
                                     <cfif qgetTrackingList.SourceTable eq 'Histopathology'>
-                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Histopathology&LCE_HID=#qgetTrackingList.ID#" class="linkhisto">
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Histopathology&LCE_HID=#qgetTrackingList.ID#&Fnumber=#URLEncodedFormat(qgetTrackingList.Fnumber)#" class="linkhisto">
                                             Open
                                         </a>                                    
                                     </cfif>
                                     <cfif qgetTrackingList.SourceTable eq 'Blood Value'>
-                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&BloodValue&BVID=#qgetTrackingList.ID#" class="linkhisto">
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&BloodValue&BVID=#qgetTrackingList.ID#&Fnumber=#URLEncodedFormat(qgetTrackingList.Fnumber)#" class="linkhisto">
                                             Open
                                         </a>                                    
                                     </cfif>
                                     <cfif qgetTrackingList.SourceTable eq 'Toxicology'>
-                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Toxicology&ToxiID=#qgetTrackingList.ID#" class="linkhisto">
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Toxicology&ToxiID=#qgetTrackingList.ID#&Fnumber=#URLEncodedFormat(qgetTrackingList.Fnumber)#" class="linkhisto">
                                             Open
                                         </a>                                    
                                     </cfif>
                                     <cfif qgetTrackingList.SourceTable eq 'Ancillary Diagnostics'>
-                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&AncillaryDiagnostics&ADID=#qgetTrackingList.ID#" class="linkhisto">
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&AncillaryDiagnostics&ADID=#qgetTrackingList.ID#&Fnumber=#URLEncodedFormat(qgetTrackingList.Fnumber)#" class="linkhisto">
                                             Open
                                         </a>                                    
                                     </cfif>
                                     <cfif qgetTrackingList.SourceTable eq 'Sample Archive'>
-                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&SampleArchive&SAID=#qgetTrackingList.ID#" class="linkhisto">
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&SampleArchive&SAID=#qgetTrackingList.ID#&Fnumber=#URLEncodedFormat(qgetTrackingList.Fnumber)#" class="linkhisto">
                                             Open
                                         </a>                                    
                                     </cfif>
@@ -103,7 +103,7 @@
                                         </a>                                    
                                     </cfif>
                                     <cfif qgetTrackingList.SourceTable eq 'Morphometrics'>
-                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Morphometrics&MorphoID=#qgetTrackingList.ID#" class="linkhisto">
+                                        <a id="" href="#Application.siteroot#/?Module=Stranding&Page=StrandingTabs&Morphometrics&MorphoID=#qgetTrackingList.ID#&Fnumber=#URLEncodedFormat(qgetTrackingList.Fnumber)#" class="linkhisto">
                                             Open
                                         </a>                                    
                                     </cfif>

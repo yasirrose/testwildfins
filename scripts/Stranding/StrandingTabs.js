@@ -1,14 +1,20 @@
+
+
 $(document).ready(function() {
+  $('#lasttable').DataTable({
+    "pageLength": 100,
+    "scrollX": true,
+    "paging": false,
+    "info": false,
+    responsive: true,
+    dom: 'rtip',
+    columnDefs: [
+      { type: 'natural', targets: 0 }
+      ],
+      order: [[ 0, 'asc' ]]
+});
   handleDateTimePicker = function () {
-      $('#lasttable').DataTable({
-          "pageLength": 100,
-          "scrollX": true,
-          "paging": false,
-          "info":    false,
-          responsive: true,
-          dom: 'rtip',
-      });
-      "use strict";
+   "use strict";
       $('#datetimepicker_StartTime').datetimepicker({ format: 'HH:mm:ss' }).on('dp.change', function(e) {
           // Revalidate the date field
           var name=$(this).attr('name');
@@ -119,7 +125,13 @@ $(document).ready(function() {
           // Revalidate the date field
           var name=$(this).attr('name');
           $("#reportSample_Date").formValidation('revalidateField', name);
-      });  
+      }); 
+      
+      $('#datetimepicker_vet').datetimepicker({ format: 'MM/DD/YYYY' }).on('dp.change', function(e) {
+        // Revalidate the date field
+        var name=$(this).attr('name');
+        $("#vetReviewDate").formValidation('revalidateField', name);
+      });
 
       $("#first_date")
       .datetimepicker({ format: "MM/DD/YYYY" })
@@ -196,10 +208,58 @@ $(document).ready(function() {
   
 
   // tab functionality
-  let tab_url1 = $(location).attr('href');
+  // let tab_url1 = $(location).attr('href');
 
- let tab_url =  tab_url1.split('&').pop();
- const histoDirect = tab_url.substring(0, tab_url.indexOf('='));
+//  let tab_url =  tab_url1.split('&').pop();
+//  const histoDirect = tab_url.substring(0, tab_url.indexOf('='));
+
+const urlParams = new URLSearchParams(window.location.search);
+
+console.log('url param: ' + urlParams)
+
+let tab_url = "";
+if (urlParams.has("HIFormID")) {
+  tab_url = "HIFormID=" + urlParams.get("HIFormID");
+} else if (window.location.href.includes("HIForm")) {
+  tab_url = "HIForm";
+} else if (urlParams.has("LevelAID")) {
+  tab_url = "LevelAID=" + urlParams.get("LevelAID");
+} else if (window.location.href.includes("LevelAForm")) {
+  tab_url = "LevelAForm";
+} else if (urlParams.has("LCE_HID")) {
+  tab_url = "LCE_HID=" + urlParams.get("LCE_HID");
+} else if (window.location.href.includes("Histopathology")) {
+  tab_url = "Histopathology";
+} else if (urlParams.has("BVID")) {
+  tab_url = "BVID=" + urlParams.get("BVID");
+} else if (window.location.href.includes("BloodValue")) {
+  tab_url = "BloodValue";
+} else if (urlParams.has("ToxiID")) {
+  tab_url = "ToxiID=" + urlParams.get("ToxiID");
+} else if (window.location.href.includes("Toxicology")) {
+  tab_url = "Toxicology";
+} else if (urlParams.has("ADID")) {
+  tab_url = "ADID=" + urlParams.get("ADID");
+} else if (window.location.href.includes("AncillaryDiagnostics")) {
+  tab_url = "AncillaryDiagnostics";
+} else if (urlParams.has("MorphoID")) {
+  tab_url = "MorphoID=" + urlParams.get("MorphoID");
+} else if (window.location.href.includes("Morphometrics")) {
+  tab_url = "Morphometrics";
+} else if (urlParams.has("SAID")) {
+  tab_url = "SAID=" + urlParams.get("SAID");
+} else if (window.location.href.includes("SampleArchive")) {
+  tab_url = "SampleArchive";
+} else if (urlParams.has("NRID")) {
+  tab_url = "NRID=" + urlParams.get("NRID");
+} else if (window.location.href.includes("NecropsyReport")) {
+  tab_url = "NecropsyReport";
+}
+
+const histoDirect = tab_url.includes("=") ? tab_url.split("=")[0] : "";
+
+ console.log('tab_url: ' + tab_url)
+ console.log('histodirect: ' + histoDirect)
 
 // $("#necropsyDateID").attr("readonly", true); 
 
@@ -207,7 +267,9 @@ $(document).ready(function() {
   $("#HIstoFormSerch").hide();
   $("#CetaceanSearch").show();
   $("#PageText").text("Cetacean Exam");
+  $("#ListText").text("Cetacean Exam");
   $('.nav-tabs li:eq(0) a').tab('show');
+  
   // $('.nav-tabs a:last').tab('show');
 }
 
@@ -215,16 +277,22 @@ $(document).ready(function() {
       $("#HIformSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("HI Form");
- 
+      $("#ListText").text("HI Form");
+      $("#hearderSaveButton").attr("name", "SaveAndNewHI");
+
       // $('.nav-tabs a:last').tab('show')
       $("#autoSaveValue").val("HIForm");
       $('.nav-tabs li:eq(1) a').tab('show');
+      
   }
   
   if(tab_url == "LevelAForm"  || histoDirect == "LevelAID"){
       $("#LAFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Level A Form");
+      $("#ListText").text("Level A Form");
+      $("#hearderSaveButton").attr("name", "SaveAndNewLA");
+
       $("#autoSaveValue").val("LevelAForm");
       $('.nav-tabs li:eq(2) a').tab('show');
   }
@@ -232,6 +300,9 @@ $(document).ready(function() {
       $("#HIstoFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Histopathology");
+      $("#ListText").text("Histopathology");
+      $("#hearderSaveButton").attr("name", "HistoSaveAndNew");
+
       $("#autoSaveValue").val("Histopathology");
       $('.nav-tabs li:eq(3) a').tab('show');
   }
@@ -239,6 +310,9 @@ $(document).ready(function() {
       $("#BloodValueFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Blood value");
+      $("#ListText").text("Blood value");
+      $("#hearderSaveButton").attr("name", "SaveAndNewBloodvalue");
+
       $("#autoSaveValue").val("bloodValue");
       $('.nav-tabs li:eq(4) a').tab('show');
   }
@@ -246,6 +320,9 @@ $(document).ready(function() {
       $("#ToxicologyFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Toxicology");
+      $("#ListText").text("Toxicology");
+      $("#hearderSaveButton").attr("name", "SaveAndNewToxicology");
+
       $("#autoSaveValue").val("Toxicology");
       $('.nav-tabs li:eq(5) a').tab('show');
   }
@@ -253,6 +330,9 @@ $(document).ready(function() {
       $("#AncillaryDiagnosticsFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Ancillary Diagnostics");
+      $("#ListText").text("Ancillary Diagnostics");
+      $("#hearderSaveButton").attr("name", "SaveAndNewAncillaryDiagnostics");
+
       $("#autoSaveValue").val("AncillaryDiagnostics");
       $('.nav-tabs li:eq(6) a').tab('show');
       // $('.nav-tabs a:last').tab('show');
@@ -261,6 +341,9 @@ $(document).ready(function() {
       $("#MorphometricsFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Morphometrics");
+      $("#ListText").text("Morphometrics");
+      $("#hearderSaveButton").attr("name", "SaveAndNewMorphometrics");
+
       $("#autoSaveValue").val("Morphometrics");
       $('.nav-tabs li:eq(9) a').tab('show');
       // $('.nav-tabs a:last').tab('show');
@@ -269,6 +352,9 @@ $(document).ready(function() {
       $("#sampleAechiveFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Sample Archive");
+      $("#ListText").text("Sample Archive");
+      $("#hearderSaveButton").attr("name", "SaveAndNewSampleArchive");
+
       $("#autoSaveValue").val("SampleArchive");
       $('.nav-tabs li:eq(7) a').tab('show');
       // $('.nav-tabs a:last').tab('show');
@@ -278,6 +364,9 @@ $(document).ready(function() {
       $("#NecropstFormSerch").show();
       $("#CetaceanSearch").hide();
       $("#PageText").text("Necropsy Report");
+      $("#ListText").text("Necropsy Report");
+      $("#hearderSaveButton").attr("name", "save");
+      
       $("#autoSaveValue").val("NecropsyReport");
       $('.nav-tabs li:eq(8) a').tab('show');
       // $('.nav-tabs a:last').tab('show');
@@ -666,10 +755,35 @@ function AddNewLesion() {
 
   LesionPresent = $("#LesionPresent option:selected").text();
   LesionType = $("#LesionType option:selected").text();
-  Region = $("#Region option:selected").text();
-  Side = $("#Side option:selected").text();
-  Status = $("#Status option:selected").text();
+  // Region = $("#Region option:selected").text();
+  Side = $("#Side option:selected").val();
+  Status = $("#Status option:selected").val();
 
+
+  // for multi-select 
+      Region = $("#Region option:selected").map(function(){
+          return $(this).text();
+      }).get().join("  "); 
+
+    //   LesionType = $("#LesionType option:selected").map(function(){
+    //     return $(this).text();
+    // }).get().join(" - ");
+
+    if($("#LesionType").select2("val") != null){
+      if($("#LesionType").select2("val").length > 1){
+        LesionType1 = $("#LesionType").select2("val").toString();
+        LesionType = LesionType1.replaceAll(',', '- ');
+      }else{
+        LesionType = $("#LesionType").select2("val");
+        LesionType1= $("#LesionType").select2("val");
+      }
+    }else{
+      LesionType = $("#LesionType").select2("val");
+      LesionType1= '';
+    }
+
+
+      console.log('check value: ' + LesionType);
 
   if(buttonname == "Add New Lesion"){
       if($("#LesionPresent option:selected").text() == "NO")
@@ -677,6 +791,26 @@ function AddNewLesion() {
           LesionPresentArray.push(LesionPresent);
           LesionTypeArray.push(0);
           RegionArray.push(0);
+
+          // if(LesionTypeArray != null){
+          //   LesionTypeArray.push(LesionType);
+          // }else{
+          //   LesionTypeArray.push(0);
+          //   LesionTypeArray ='';
+          // }  
+
+          console.log('test1: ' + LesionTypeArray)
+
+          // for multi-select 
+          // if(RegionArray != null){
+          //   RegionArray.push(RegionArray);
+          // }else{
+          //   RegionArray.push(0);
+          //   RegionArray ='';
+          // }  
+
+          
+
           SideArray.push(0);
           StatusArray.push(0);
           $("#lpet").val(LesionPresentArray);
@@ -703,7 +837,9 @@ function AddNewLesion() {
               }else{
                   StatusArray.push(0);
               }                
-                  
+              console.log('LesionTypeArray: ' + LesionTypeArray)
+              console.log('test2: ' + Region)
+
               $("#lpet").val(LesionPresentArray);
               $("#ltype").val(LesionTypeArray);
               $("#lregion").val(RegionArray);
@@ -711,14 +847,16 @@ function AddNewLesion() {
               $("#lstatus").val(StatusArray);
   
               $("#LesionPresent").val("");
-              $("#LesionType").val("");
-              $("#Region").val("");
+              // $("#LesionType").val("");
+              $("#LesionType").val([]).trigger('change');
+              // $("#Region").val("");
+              $("#Region").val([]).trigger('change');
               $("#Side").val("");
               $("#Status").val("");
               
   
               $("#lesionHistory").show()   
-              $("#lesionHistory > tbody").append("<tr><td>" + LesionPresent + "</td><td>" + LesionType + "</td><td>" + Region + "</td><td>" + Side + "</td><td>" + Status + "</td></tr>");
+              $("#lesionHistory > tbody").append("<tr><td>" + LesionPresent + "</td><td>" + LesionType1 + "</td><td>" + Region + "</td><td>" + Side + "</td><td>" + Status + "</td></tr>");
               // set empty error msgs
               $("#Lesion_present").html('');
               $("#Lesion_type").html('');
@@ -795,14 +933,16 @@ function AddNewLesion() {
                   {
                       let id = $("#idForUpdate").val();
                       $("#L_present"+id).html(LesionPresent);
-                      $("#L_type"+id).html(LesionType);
+                      $("#L_type"+id).html(LesionType1);
                       $("#L_region"+id).html(Region);
                       $("#L_side"+id).html(Side);
                       $("#L_status"+id).html(Status);
                       
                       $("#LesionPresent").val(''); 
-                      $("#LesionType").val('');
-                      $("#Region").val('');
+                      // $("#LesionType").val('');
+                      $("#LesionType").val([]).trigger('change');
+                      // $("#Region").val('');
+                      $("#Region").val([]).trigger('change');
                       $("#Side").val('');
                       $("#Status").val('');
                   },
@@ -937,14 +1077,84 @@ function selected(elem) {
   $('#pdfname').html($(this).attr('title'));
   
 }
-function chkreq(e){
-  if($("#Fnumber").val().trim() == ""){
+function chkreq(e, name=''){
+  
+  validateFieldNumber(e, name)
+  
+  if($("#Fnumber").val() && $("#Fnumber").val().trim() == ""){
       $("#Fnumber").val('');
   }
-  if($("#Date").val().trim() == ""){
+  if($("#Date").val() && $("#Date").val().trim() == ""){
       $("#Date").val('');
   }
 }
+
+function validateFieldNumber(e, name){
+  try{
+        if(!name){
+	   return;
+	}
+	if (name == 'Toxicology_ID') {
+	   let check = validateTissueType(name);
+	   if (!check){
+		alert(`Please select tissue type`);
+		e.preventDefault()
+		return;
+	   }
+	}
+	//e.preventDefault()
+      //const selectElement = document.querySelector('.form-control.search-box');
+	const selectElement = document.querySelector(`[name="${name}"]`);
+       const options = Array.from(selectElement.options).map(elem => elem.text.trim())
+      .filter(text => text); 
+
+      const fieldNumber = document.querySelector('#Fnumber').value.trim();
+      const existingFieldNumber = document.querySelector('#f_number').value.trim();
+ 
+      if(existingFieldNumber) {
+	 if(options.includes(fieldNumber) && fieldNumber != existingFieldNumber) {
+		alert(`Field number ${fieldNumber} already exists`);
+		e.preventDefault()
+	 }
+         
+      } else {
+	if(options.includes(fieldNumber)) {
+	   alert(`Field number ${fieldNumber} already exists`);
+	   e.preventDefault()
+        }
+      }
+
+  } catch(e){
+    console.log('the validateFieldNumber error is ', e);
+    e.preventDefault()
+
+  }
+   
+}
+
+function validateTissueType(name) {
+   try {
+	console.log('in the validate tissue func');
+   	const tx_id = document.querySelector(`[name="TX_ID"]`);
+	console.log('the tx_id is ', tx_id);
+	if(tx_id) {
+	   const tissue_dropdown = document.querySelector(`[name="Tissue_type"]`);	
+	   const tissue_type = tissue_dropdown ? tissue_dropdown.value.trim() : null;
+		console.log('the tissue_type is ', tissue_type );
+	   const toxics = document.querySelectorAll('.dry-result-row .blood-column .blood-from-froup .input-group input');
+		console.log('the toxics are', toxics);
+	   const check = Array.from(toxics).some(input => input.value.trim());
+		console.log('the check is ', check);
+	   if(check && !tissue_type){
+		return false;	
+	   }	
+	}
+	return true;
+   } catch(e) {
+	console.log(e)	
+   }
+}
+
 function edit_row(id){
 
   $("#idForUpdate").val(id);
@@ -954,14 +1164,80 @@ function edit_row(id){
       let c=$("#L_present"+id).text();
       $("#LesionPresent option:contains("+c+")").attr('selected', 'selected');
   }
-  if($("#L_type"+id).text() != ''){
-      let type=$("#L_type"+id).text();
-      $("#LesionType option:contains("+type+")").attr('selected', 'selected');
+  // if($("#L_type"+id).text() != ''){
+  //     let type=$("#L_type"+id).text();
+  //     $("#LesionType option:contains("+type+")").attr('selected', 'selected');
+  // }
+
+
+  // let LesionText = $("#L_type" + id).html().trim(); // Get displayed text
+
+  //   // Replace `<br>` with a comma (as per your `replace` logic in CFML)
+  //   let lesionArray = LesionText.split(/,\s*/); // Split by comma + space
+
+  //   // Clear previous selections
+  //   $("#LesionType option").prop("selected", false);
+
+  //   // Loop through options and select matching ones
+  //   $("#LesionType option").each(function () {
+  //       let optionText = $(this).text().trim();
+  //       if (lesionArray.includes(optionText)) {
+  //           $(this).prop("selected", true);
+  //       }
+  //   });
+
+  //   // Trigger change event to update UI
+  //   $("#LesionType").trigger("change");
+
+  if($("#L_type" + id).text() != ''){
+    
+    let c = $("#L_type" + id).text().trim(); // Get text and trim spaces
+
+      c = c.replace(/- /g, ','); // Replace '-' with ',' if needed
+
+      let L_type = c.split(",").map(item => item.trim()); // Convert to array & trim each item
+
+      console.log('L_type:', L_type); // Debugging
+
+      // Set value in multi-select dropdown
+      $("#LesionType").val(L_type).trigger("change");
+
+
+    // $("#TypeofHI option:contains("+hitype+")").attr('selected', 'selected');
+  }else{
+    let c=$("#L_type"+id).text().trim();
+    console.log('text1: ' + c);
+    // str = c.replace('-', ',');    
+    L_Type = c.split(",")
+    $('#LesionType').val(L_Type).trigger('change');
   }
+
   if($("#L_region"+id).text() != ''){
       let region=$("#L_region"+id).text();
       $("#Region option:contains("+region+")").attr('selected', 'selected');
   }
+
+
+  if ($("#L_region" + id).text() != '') {
+    let regionText = $("#L_region" + id).html().trim(); // Get regions as displayed
+    let regionArray = regionText.split("<br>"); // Split by line break
+
+    // Loop through each region and mark it as selected
+    $("#Region option").each(function() {
+        let optionText = $(this).text().trim();
+        if (regionArray.includes(optionText)) {
+            $(this).prop('selected', true);
+        }
+    });
+
+    // Trigger change event to reflect selection
+    $("#Region").trigger("change");
+}
+
+
+
+
+
   if($("#L_side"+id).text() != ''){
       let side=$("#L_side"+id).text();
       // let sides = side.toString();
@@ -1034,7 +1310,7 @@ $( "#deleteAllRecord" ).click(function() {
 
 
 function removeRequired(){
-  // alert();
+  
   $(".showDiv").show();
   $('#Fnumber').attr('required', false); 
   $('#date').attr('required', false); 
@@ -1047,7 +1323,7 @@ function changeLEC(){
 }
 
 function showHISearchBar(){
-  // alert();
+  
   url = $('#Site_url').val();
   $('#myforma').attr('action', url + '&HIForm');
 
@@ -1062,11 +1338,13 @@ function showHISearchBar(){
   $("#BloodValueFormSerch").hide();
   $("#NecropstFormSerch").hide();
   $("#PageText").text("HI Form");
+  $("#ListText").text("HI Form");
 
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("HIForm");
   // $("#necropsyDateID").attr("readonly", true); 
+  $("#hearderSaveButton").attr("name", "SaveAndNewHI");
   headerDataSave();
 
 }
@@ -1086,11 +1364,13 @@ function showCetaceanSearchBar(){
   $("#NecropstFormSerch").hide();
   $("#BloodValueFormSerch").hide();
   $("#PageText").text("Cetacean Exam");
+  $("#ListText").text("Cetacean Exam");
 
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
 
   $("#autoSaveValue").val("CetaceanExam");
+  $("#hearderSaveButton").attr("name", "SaveAndNew");
   // $("#necropsyDateID").attr("readonly", true); 
   headerDataSave();
 }
@@ -1109,6 +1389,7 @@ function goToCetecanExamPage(){
   $("#NecropstFormSerch").hide();
   $("#CetaceanSearch").show();
   $("#PageText").text("Cetacean Exam");
+  $("#ListText").text("Cetacean Exam");
   $('.nav-tabs li:eq(8) a').tab('hide');
   $('.nav-tabs li:eq(0) a').tab('show');
 
@@ -1129,11 +1410,13 @@ function showLASearchBar(){
   $("#NecropstFormSerch").hide();
   $("#sampleAechiveFormSerch").hide();
   $("#PageText").text("Level A Form");
+  $("#ListText").text("Level A Form");
 
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("LevelAForm");
   // $("#necropsyDateID").attr("readonly", true); 
+  $("#hearderSaveButton").attr("name", "SaveAndNewLA");
   headerDataSave();
 }
 function HIstoFormSerch(){
@@ -1152,11 +1435,13 @@ function HIstoFormSerch(){
   $("#NecropstFormSerch").hide();
   $("#AncillaryDiagnosticsFormSerch").hide();
   $("#PageText").text("Histopathology");
+  $("#ListText").text("Histopathology");
 
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("Histopathology");
   // $("#necropsyDateID").attr("readonly", true); 
+  $("#hearderSaveButton").attr("name", "HistoSaveAndNew");
   headerDataSave();
 }
 function showBloodValueSerch(){
@@ -1175,11 +1460,13 @@ function showBloodValueSerch(){
   $("#CetaceanSearch").hide();
   $("#NecropstFormSerch").hide();
   $("#PageText").text("Blood Value");
+  $("#ListText").text("Blood Value");
 
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("bloodValue");
   // $("#necropsyDateID").attr("readonly", true); 
+  $("#hearderSaveButton").attr("name", "SaveAndNewBloodvalue");
   headerDataSave();
 }
 function showToxicologySerch(){
@@ -1197,11 +1484,13 @@ function showToxicologySerch(){
   $("#sampleAechiveFormSerch").hide();
   $("#NecropstFormSerch").hide();
   $("#PageText").text("Toxicology");
+  $("#ListText").text("Toxicology");
 
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("Toxicology");
   // $("#necropsyDateID").attr("readonly", true); 
+  $("#hearderSaveButton").attr("name", "SaveAndNewToxicology");
   headerDataSave();  
 }
 function showAncillaryDiagnosticsSerch(){
@@ -1219,11 +1508,13 @@ function showAncillaryDiagnosticsSerch(){
   $("#CetaceanSearch").hide();
   $("#NecropstFormSerch").hide();
   $("#PageText").text("Ancillary Diagnostics");
+  $("#ListText").text("Ancillary Diagnostics");
 
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("AncillaryDiagnostics");
   // $("#necropsyDateID").attr("readonly", true); 
+  $("#hearderSaveButton").attr("name", "SaveAndNewAncillaryDiagnostics");
   headerDataSave();  
 }
 function showSampleArchiveSerch(){
@@ -1241,11 +1532,13 @@ function showSampleArchiveSerch(){
   $("#CetaceanSearch").hide();
   $("#NecropstFormSerch").hide();
   $("#PageText").text("Sample Archive");
+  $("#ListText").text("Sample Archive");
 
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("SampleArchive");
   // $("#necropsyDateID").attr("readonly", true); 
+  $("#hearderSaveButton").attr("name", "SaveAndNewSampleArchive");
   headerDataSave();
 
 }
@@ -1264,11 +1557,13 @@ function showMorphometricsSerch(){
   $("#CetaceanSearch").hide();
   $("#NecropstFormSerch").hide();
   $("#PageText").text("Morphometrics");
+  $("#ListText").text("Morphometrics");
 
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("Morphometrics");
   // $("#necropsyDateID").attr("readonly", true); 
+  $("#hearderSaveButton").attr("name", "SaveAndNewMorphometrics");
   headerDataSave();
 }
 function showNecropsyReportSerch(){
@@ -1286,11 +1581,13 @@ function showNecropsyReportSerch(){
   $("#LAFormSerch").hide();
   $("#CetaceanSearch").hide();
   $("#PageText").text("Necropsy Report");
+  $("#ListText").text("Necropsy Report");
 
   $('#requiredFnumber').hide();
   $('#requiredDate').hide();
   $("#autoSaveValue").val("NecropsyReport");
   // $("#necropsyDateID").attr("readonly", false); 
+  $("#hearderSaveButton").attr("name", "save");
   headerDataSave();
 
 }
@@ -1308,18 +1605,41 @@ function cetaceanExamDateform(){
 }
 function cetaceanExamFieldNumberform(){
   url = $('#Site_url').val();
+
+  var selectedOption = $('#LCEID option:selected');
+    var fnumber = selectedOption.data('fnumber');
+
+    // Set the hidden Fnumber field
+    $('#FnumberHidden').val(fnumber);
+
+    // console.log('fnumber: ' + fnumber)
+
+
   $('#myCetaceanExamFieldNumberform').attr('action', url + '&CetaceanExam');
   $( "#myCetaceanExamFieldNumberform" ).submit();
+
 }
 function hIFormDate(){
   url = $('#Site_url').val();
+
+  console.log('test')
+
   $('#myHIFormDate').attr('action', url + '&HIForm');
   $( "#myHIFormDate" ).submit();
 }
 function hiFormFieldNumber(){
   url = $('#Site_url').val();
+
+  var selectedOption = $('#HI_ID option:selected');
+  var fnumber = selectedOption.data('fnumber');
+
+  // Set the hidden Fnumber field
+  $('#HiHiddenFnumber').val(fnumber);
+
+  console.log('fnumber: ' + fnumber)
+
   $('#myHiFormFieldNumber').attr('action', url + '&HIForm');
-  $( "#myHiFormFieldNumber" ).submit();
+  $('#myHiFormFieldNumber' ).submit();
 }
 function hIFormCode(){
   url = $('#Site_url').val();
@@ -1338,6 +1658,14 @@ function levelAFormDate(){
 }
 function levelAFormFieldNumber(){
   url = $('#Site_url').val();
+
+  var selectedOption = $('#LA_ID option:selected');
+  var fnumber = selectedOption.data('fnumber');
+
+  // Set the hidden Fnumber field
+  $('#LAHiddenFnumber').val(fnumber);
+  console.log('fnumberrrrrrrrrrrr: ' + fnumber)
+
   $('#myLevelAFormFieldNumber').attr('action', url + '&LevelAForm');
   $( "#myLevelAFormFieldNumber" ).submit();
 }
@@ -1353,6 +1681,14 @@ function formHistopathologyByDate(){
 }
 function formHistopathologyByFieldNumber(){
   url = $('#Site_url').val();
+
+  var selectedOption = $('#His_ID option:selected');
+  var fnumber = selectedOption.data('fnumber');
+
+  // Set the hidden Fnumber field
+  $('#HistoHiddenFnumber').val(fnumber);
+  console.log('fnumber: ' + fnumber)
+
   $('#myformHistopathologyByFieldNumber').attr('action', url + '&Histopathology');
   $( "#myformHistopathologyByFieldNumber" ).submit();
 }
@@ -1368,6 +1704,14 @@ function formBloodValueByDate(){
 }
 function formBloodValueByFieldNum(){
   url = $('#Site_url').val();
+
+  var selectedOption = $('#bloodValue_ID option:selected');
+  var fnumber = selectedOption.data('fnumber');
+
+  // Set the hidden Fnumber field
+  $('#BV_HiddenValue').val(fnumber);
+  console.log('fnumber: ' + fnumber)
+
   $('#myformBloodValueByFieldNum').attr('action', url + '&BloodValue');
   $( "#myformBloodValueByFieldNum" ).submit();
 }
@@ -1383,6 +1727,14 @@ function formToxicologybyDate(){
 }
 function formToxicologybyFieldNumber(){
   url = $('#Site_url').val();
+
+  var selectedOption = $('#Toxicology_ID option:selected');
+  var fnumber = selectedOption.data('fnumber');
+
+  // Set the hidden Fnumber field
+  $('#Toxi_hiddenFnumber').val(fnumber);
+  console.log('fnumber: ' + fnumber)
+
   $('#myformToxicologybyFieldNumber').attr('action', url + '&Toxicology');
   $( "#myformToxicologybyFieldNumber" ).submit();
 }
@@ -1398,6 +1750,14 @@ function formAncillaryDiagnosticsSerchByDate(){
 }
 function formAncillaryDiagnosticsSerchByFieldNumber(){
   url = $('#Site_url').val();
+
+  var selectedOption = $('#AD_ID option:selected');
+  var fnumber = selectedOption.data('fnumber');
+
+  // Set the hidden Fnumber field
+  $('#AD_HiddenFnumber').val(fnumber);
+  console.log('fnumber: ' + fnumber)
+
   $('#myformAncillaryDiagnosticsSerchByFieldNumber').attr('action', url + '&AncillaryDiagnostics');
   $( "#myformAncillaryDiagnosticsSerchByFieldNumber" ).submit();
 }
@@ -1408,6 +1768,14 @@ function formSampleSerchByFieldNumber(){
 }
 function formMorphometricsSerchByFieldNumber(){
   url = $('#Site_url').val();
+
+  var selectedOption = $('#Morphometrics_ID option:selected');
+  var fnumber = selectedOption.data('fnumber');
+
+  // Set the hidden Fnumber field
+  $('#Mor_hiddenFnumber').val(fnumber);
+  console.log('fnumber: ' + fnumber)
+
   $('#myformMorphometricsSerchByFieldNumber').attr('action', url + '&Morphometrics');
   $( "#myformMorphometricsSerchByFieldNumber" ).submit();
 }
@@ -1418,6 +1786,7 @@ function formMorphometricsSerchByDate(){
 }
 function formNecropsySerchByFieldNumber(){
   url = $('#Site_url').val();
+  console.log('test js fun');
   $('#myformNecropsySerchByFieldNumber').attr('action', url + '&NecropsyReport');
   $( "#myformNecropsySerchByFieldNumber" ).submit();
 }
@@ -1432,6 +1801,14 @@ function fieldnum(){
   // console.log(field);
   $("#fielnumb").val(field);
   url = $('#Site_url').val();
+
+  var selectedOption = $('#fieldList option:selected');
+  var fnumber = selectedOption.data('fnumber');
+
+  // Set the hidden Fnumber field
+  $('#SA_hiddenFnumber').val(fnumber);
+  console.log('fnumber: ' + fnumber)
+
   $('#fieldform').attr('action', url + '&SampleArchive');
   $("#fieldform").submit();
 }
@@ -1444,7 +1821,7 @@ function TissueTypeForm(){
 }
 function formNewSamples(){
  $('#SEIDValue').val($('#SampleArchiveSEID').val());
-  $( "#myforma" ).submit();
+    $( "#myforma" ).submit();
 }
 
 const TypeofHIArray = [];
@@ -1556,6 +1933,8 @@ function AddNewHiExam(){
       GearCollectedArray.push(GearCollected);
   //   console.log(TypeofHIArray);
 
+              console.log('LocationofHIArray: ' + LocationofHIArray);
+
       $("#HiType").val(TypeofHIArray);
       $("#HiLocation").val(LocationofHIArray);
       $("#typeOfGearCollected").val(TypeofGearCollectedArray);
@@ -1635,9 +2014,15 @@ const SampleDiagnosticLabArray = [];
 
 function AddDrug() {
 
-  SampleType = $("#SampleType option:selected").text().trim();
+  let selectedSamples = $("#SampleType").val(); // Get selected values as an array
+    let SampleType = selectedSamples ? selectedSamples.join(", ") : ""; // Convert array to comma-separated string
+   
+
+  // SampleType = $("#SampleType option:selected").text().trim();
   SampleTypeval = $("#SampleType option:selected").val().trim();
   DiagnosticLabVal = $("#diagnosticLabID").val();
+
+  console.log(SampleType);
   
   SampleNote = $("#SampleNote").val().trim();
   // console.log(DiagnosticLabVal);
@@ -1749,6 +2134,7 @@ function edit_row2(id){
       let c=$("#TYPEOFHI_"+id).text();
       // str = c.replace('-', ',');    
       hitype = c.split(",")
+      console.log('hitype: ' + hitype);
       $('#TypeofHI').val(hitype).trigger('change');
       // $("#TypeofHI option:contains("+hitype+")").attr('selected', 'selected');
   }else{
@@ -1862,7 +2248,7 @@ function newToxi(){
     Mercury = $("#Mercury").val();
     Thallium = $("#Thallium").val();
     Selenium = $("#Selenium").val();
-    Iron = $("#Iron").val();
+    Ironn = $("#Ironn").val();
     Copper = $("#Copper").val();
     Zinc = $("#Zinc").val();
     Molybdenum = $("#Molybdenum").val();
@@ -1878,7 +2264,7 @@ function newToxi(){
     ajaxData.append('Mercury', Mercury);
     ajaxData.append('Thallium', Thallium);
     ajaxData.append('Selenium', Selenium);
-    ajaxData.append('Iron', Iron);
+    ajaxData.append('Ironn', Ironn);
     ajaxData.append('Copper', Copper);
     ajaxData.append('Zinc', Zinc);
     ajaxData.append('Molybdenum', Molybdenum);
@@ -1906,7 +2292,7 @@ function newToxi(){
           $("#Mercury"+no).text(Mercury);
           $("#Thallium"+no).text(Thallium);
           $("#Selenium"+no).text(Selenium);
-          $("#Iron"+no).text(Iron);
+          $("#Ironn"+no).text(Ironn);
           $("#Copper"+no).text(Copper);
           $("#Zinc"+no).text(Zinc);
           $("#Molybdenum"+no).text(Molybdenum);
@@ -1920,7 +2306,7 @@ function newToxi(){
           $("#Mercury").val('');
           $("#Thallium").val('');
           $("#Selenium").val('');
-          $("#Iron").val('');
+          $("#Ironn").val('');
           $("#Copper").val('');
           $("#Zinc").val('');
           $("#Molybdenum").val('');
@@ -1958,17 +2344,40 @@ const AncillaryDiagnosticsSampleTypeArray = [];
 
 function AddNewTest() {
 
-  DiagnosticTest = $("#DiagnosticTest").val();
+  if($("#DiagnosticTest").select2("val") != null){
+    if($("#DiagnosticTest").select2("val").length > 1){
+      DiagnosticTest1 = $("#DiagnosticTest").select2("val").toString();
+      DiagnosticTest = DiagnosticTest1.replaceAll(',', '- ');
+    }else{
+      DiagnosticTest = $("#DiagnosticTest").select2("val");
+      DiagnosticTest1= $("#DiagnosticTest").select2("val");
+    }
+  }else{
+    DiagnosticTest = $("#DiagnosticTest").select2("val");
+    DiagnosticTest1= '';
+  }
+
+  // DiagnosticTest = $("#DiagnosticTest").val();
   TestResults = $("#TestResults").val();
   DiagnosticLab = $("#DiagnosticLab").val();
   TestingDate = $("#TestingDate").val();
   AncillaryDiagnosticsSampleType = $("#AncillaryDiagnosticsSampleType").val();
+
+  console.log(DiagnosticTest);
  
 if($('#TestNew').val() == "Add New"){
  
   if (DiagnosticTest != '' && TestResults !='') {      
     
       DiagnosticTestArray.push(DiagnosticTest);
+
+      // let DiagnosticTestStr = DiagnosticTest.join(","); // Convert array to comma-separated string
+
+      // // Replace comma with dash
+      // DiagnosticTestStr = DiagnosticTestStr.replace(/,/g, "-");
+
+      // DiagnosticTestArray.push(DiagnosticTestStr);
+
       TestResultsArray.push(TestResults);
 
       if(AncillaryDiagnosticsSampleType == ""){
@@ -1987,7 +2396,8 @@ if($('#TestNew').val() == "Add New"){
       }else{
           TestingDateArray.push(TestingDate);
       }
-  
+      
+      console.log('DiagnosticTestArray: ' + DiagnosticTestArray)
   
       $("#DT").val(DiagnosticTestArray);
       $("#ADST").val(AncillaryDiagnosticsSampleTypeArray);
@@ -1995,8 +2405,9 @@ if($('#TestNew').val() == "Add New"){
       $("#DLAB").val(DiagnosticLabArray);
       $("#TD").val(TestingDateArray);
       $("#AncillaryTable").show();
-      $("#AncillaryTable > tbody").append('<tr><td>' +  DiagnosticTest + '</td><td>' +  AncillaryDiagnosticsSampleType + '</td><td>' + TestResults +'</td><td>' + DiagnosticLab + '</td><td>' + TestingDate + '</td><td></td></tr>'); 
-      $("#DiagnosticTest").val('');
+      $("#AncillaryTable > tbody").append('<tr><td>' +  DiagnosticTest1 + '</td><td>' +  AncillaryDiagnosticsSampleType + '</td><td>' + TestResults +'</td><td>' + DiagnosticLab + '</td><td>' + TestingDate + '</td><td></td></tr>'); 
+      // $("#DiagnosticTest").val('');
+      $("#DiagnosticTest").val([]).trigger('change');
       $("#AncillaryDiagnosticsSampleType").select2("val", "");
       $("#TestResults").val('');
       $("#DiagnosticLab").val('');
@@ -2084,14 +2495,15 @@ if($('#TestNew').val() == "Add New"){
           let id = $("#idForUpdate").val();
        
 
-          $("#DiagnosticTest_"+id).html(DiagnosticTest);
+          $("#DiagnosticTest_"+id).html(DiagnosticTest1);
           $("#AncillaryDiagnosticsSampleType_"+id).html(AncillaryDiagnosticsSampleType);
           $("#TestResults_"+id).html(TestResults);
           $("#DiagnosticLab_"+id).html(DiagnosticLab);
           $("#AncillaryDate_"+id).html(TestingDate);
           // $("#GearCollected_"+id).html(GearCollected);
           
-          $("#DiagnosticTest").val('');
+          // $("#DiagnosticTest").val('');
+          $("#DiagnosticTest").val([]).trigger('change');
           $("#AncillaryDiagnosticsSampleType").select2("val", "");
           $("#TestResults").val('');
           $("#DiagnosticLab").val('');
@@ -2546,15 +2958,48 @@ $("input#nodelength:last").attr("name", "nodelength").val(" ");
 $("input#nodewidth:last").attr("name", "nodewidth").val(" ");
 $("#dynamic_Lymph").val(node);
 }
+
+
 var parasite = 0;
 function newparasite() {
 parasite = ++parasite;
+console.log('test parasite: ' + parasite);
 $(".parasitediv:last").clone().find("input").val("").end().insertAfter(".parasitediv:last");
 $("select#PARASITES:last").attr("name", "PARASITES").val(" ");
 $("select#ParasiteType:last").attr("name", "ParasiteType").val(" ");
 $("select#Parasitelocation:last").attr("name", "Parasitelocation").val(" ");
 $("#dynamic_parasite").val(parasite);
 }
+
+
+// var parasite = 0;
+// function newparasite() {
+//     parasite = ++parasite;
+//     console.log('test parasite: ' + parasite);
+
+//     // Clone only the last .parasitediv and insert after it
+//     var newRow = $(".parasitediv:last").clone().insertAfter(".parasitediv:last");
+
+//     // Remove duplicate fields if any
+//     newRow.find(".search-box").next(".select2").remove(); // Remove old select2 UI if exists
+
+//     // Clear input values
+//     // newRow.find("input").val("");
+
+//     // Update select elements with unique names
+//     newRow.find("select#PARASITES").attr("name", "PARASITES" ).val("");
+//     newRow.find("select#ParasiteType").attr("name", "ParasiteType" ).val("");
+//     newRow.find("select#Parasitelocation").attr("name", "Parasitelocation").val("");
+
+//     // Remove any previously initialized instance of select2
+//     // newRow.find(".search-box").removeClass("select2-hidden-accessible").removeAttr("data-select2-id").show();
+    
+//     // Reinitialize multiselect on the newly cloned field
+//     newRow.find(".search-box").select2(); // Agar aap Select2 use kar rahe hain
+
+//     // Update the hidden field
+//     $("#dynamic_parasite").val(parasite);
+// }
 
 function showPictures() {
   var files = $("#ExternalExamphoto").prop("files");
@@ -4802,10 +5247,45 @@ function edit_AncillaryRow(id){
   $("#TestNew").val("Update");
   
   // DiagnosticTest
+  // if ($("#DiagnosticTest_" + id).text() != '') {
+  //   let diagnosticTests = $("#DiagnosticTest_" + id).text().split(','); // Split by comma
+  //   $("#DiagnosticTest").val(diagnosticTests).trigger('change'); // Set values and trigger change event for Select2
+  // }
+
+
   if($("#DiagnosticTest_"+id).text() != ''){
+    // let c=$("#DiagnosticTest_"+id).text();
+    // // str = c.replace('-', ',');    
+    // diagnosticTests = c.split(",")
+
+    // let diagnosticTestsStr = diagnosticTests.join(",").trim().replace(/\s+/g, '');
+
+    // console.log('diagnosticTests: ' + diagnosticTestsStr);
+
+    // // $("#DiagnosticTest").val(diagnosticTestsStr).trigger('change');
+    // $("#DiagnosticTest").val(["test", "test1"]).trigger("change");
+
+
+      let c = $("#DiagnosticTest_" + id).text().trim(); // Get text and trim spaces
+
+      c = c.replace(/-/g, ','); // Replace '-' with ',' if needed
+
+      let diagnosticTests = c.split(",").map(item => item.trim()); // Convert to array & trim each item
+
+      console.log('diagnosticTests:', diagnosticTests); // Debugging
+
+      // Set value in multi-select dropdown
+      $("#DiagnosticTest").val(diagnosticTests).trigger("change");
+
+    
+}else{
     let c=$("#DiagnosticTest_"+id).text();
-    $("#DiagnosticTest option:contains("+c+")").attr('selected', 'selected');
-  }
+    // str = c.replace('-', ',');    
+    diagnosticTestsStr = c.split(",")
+    $("#DiagnosticTest").val(diagnosticTestsStr).trigger('change');
+}
+  
+
   if($("#AncillaryDiagnosticsSampleType_"+id).text() != ''){
       let AncillaryDiagnosticsSampleType=$("#AncillaryDiagnosticsSampleType_"+id).text();
       // $("#AncillaryDiagnosticsSampleType option:contains("+AncillaryDiagnosticsSampleType+")").attr('selected', 'selected');
@@ -5286,16 +5766,15 @@ function toxifileremove(el){
 }
 
 
-
-
-// 
-
 function gotoTopFunction() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
   e.preventDefault();
 }
 
+function gotobottomFunction() {
+  window.scrollTo(0,document.body.scrollHeight)  
+}
 
 //  auto save 
 function headerDataSave(){
@@ -5674,10 +6153,19 @@ function ResetAll(){
       $("#SamplereportID").val($("#SamplereportID"+no).text());
       $("#reportBinNumber").val($("#reportBinNumber"+no).text());
       
-      let d=$("#reportSampleType"+no).text();
-      console.log(d);
-      $("#reportSampleType").val(d);
+      // let d=$("#reportSampleType"+no).text();
+      // console.log(d);
+      // $("#reportSampleType").val(d);
       // $("#reportSampleType option:contains("+d+")").attr('selected', 'selected');
+
+      let sampleTypeText = $("#reportSampleType"+no).text().trim();
+       console.log(sampleTypeText);
+
+    // Convert the text into an array
+      let sampleTypeArray = sampleTypeText.split(',');
+
+      // Set multi-select values
+      $("#reportSampleType").val(sampleTypeArray).trigger('change');
       
       $("#reportPreservationMethod").val($("#reportPreservationMethod"+no).text());
       $("#reportAmountofSample").val($("#reportAmountofSample"+no).text());
@@ -5686,6 +6174,7 @@ function ResetAll(){
       $("#reportSampleComments").val($("#reportSampleComments"+no).text());
       $("#reportSample_Date").val($("#reportSample_Date"+no).text());
       $("#reportSample_Location").val($("#reportSample_Location"+no).text());
+      $("#reportsampleAvailability").val($("#reportsampleAvailability"+no).text());
       
      
     }
@@ -5702,6 +6191,7 @@ function updateReportData(){
   reportSample_Date = $("#reportSample_Date").val();
   reportSample_Location = $("#reportSample_Location").val();
   reportSampleType = $("#reportSampleType").val();
+  reportsampleAvailability = $("#reportsampleAvailability").val();
   ID = $("#idForUpdateSampleReport").val();
 
   // alert();
@@ -5717,6 +6207,7 @@ function updateReportData(){
   ajaxData.append('reportSample_Date', reportSample_Date);
   ajaxData.append('reportSample_Location', reportSample_Location);
   ajaxData.append('reportSampleType', reportSampleType);
+  ajaxData.append('reportsampleAvailability', reportsampleAvailability);
   $.ajax({
       url : application_root+"Stranding.cfc?method=updateSampleReportRecord",
       type: "POST",
@@ -5738,6 +6229,7 @@ function updateReportData(){
         $("#reportSample_Date"+ID).text(reportSample_Date);
         $("#reportSample_Location"+ID).text(reportSample_Location);
         $("#reportSampleType"+ID).text(reportSampleType);
+        $("#reportsampleAvailability"+ID).text(reportsampleAvailability);
 
         $('#SampleReportUpdate').modal('hide');
       },
@@ -5828,7 +6320,7 @@ function edit_taxicologyreport(no)
   $("#Mercury").val($("#Mercury"+no).text());
   $("#Thallium").val($("#Thallium"+no).text());
   $("#Selenium").val($("#Selenium"+no).text());
-  $("#Iron").val($("#Iron"+no).text());
+  $("#Ironn").val($("#Ironn"+no).text());
   $("#Copper").val($("#Copper"+no).text());
   $("#Zinc").val($("#Zinc"+no).text());
   $("#Molybdenum").val($("#Molybdenum"+no).text());
@@ -5873,12 +6365,21 @@ function edit_histoST(no)
 
   $("#idForUpdatetoxicology").val(no);
 
-  if($("#histoSTData"+no).text() != ''){
-    let c=$("#histoSTData"+no).text();
-    hilocation = c.split(",")
-    $('#SampleType').val(hilocation).trigger('change');
+  let sampleTypeText = $("#histoSTData" + no).text().trim(); 
+
+  if (sampleTypeText !== ''){
+   
+    // let c=$("#histoSTData"+no).text();
+    // hilocation = c.split(",")
+    // console.log('test1:' + c);
+    // $('#SampleType').val(hilocation).trigger('change');
+
+    let selectedValues = sampleTypeText.split(",").map(item => item.trim());
+    $('#SampleType').val(selectedValues).trigger('change');
+
 }else{
     let c=$("#histoSTData"+no).text();
+    console.log('test2');
     hilocation = c.split(",")
     $('#SampleType').val(hilocation).trigger('change');
 }
@@ -6641,3 +7142,19 @@ $(document).ready(function() {
 
 
 });
+
+function rolldown(){
+  var displayForm = $('#displayform');
+  displayForm.toggle();
+
+  // Get the current text of the button
+  var buttonText = $('.rollupbtn').text();
+
+  // Update the button text based on the current state
+  var newButtonText = displayForm.is(':visible') ? 'Roll Up' : 'Roll Down';
+  $('.rollupbtn').text(newButtonText);
+}
+
+
+
+

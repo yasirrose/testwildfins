@@ -1,11 +1,11 @@
 function deleteRecord(id) {
 	bootbox.confirm("Are you sure?", function(result) {
-	
+		const recordType = $(`#selectedLesionScar-${id}`).val();
 	if (result == true) {
 	$.ajax({
 		url:application_root+"StaticDataNew.cfc?method=DeleteLesionType",
 		type : "get",
-		data : {id : id},
+		data : {id : id, type: recordType},
 		success:function(data) {
 		$('html, body').animate({scrollTop : 0},800);
 			$(".message").show();
@@ -17,8 +17,21 @@ function deleteRecord(id) {
 	}); 
 }
 
+
 function updateRecord(id) {
 	$('#LesionTypeName').val($('#cam-'+id).text());
+	
+	$('#LesionScar').val($('#cam-'+id).val());
+	// let lesionScarValue = $('#selectedLesionScar-' + id).val();
+    // $('#LesionScar').val(lesionScarValue);
+
+	// $('#LesionScar').prop('disabled', true);
+
+	let lesionScarValue = $('#selectedLesionScar-' + id).val();
+    $('#LesionScar').val(lesionScarValue);
+    $('#LesionScarHidden').val(lesionScarValue); 
+    $('#LesionScar').prop('disabled', true); 
+	
 	$("#add").attr('name', 'editLesionType');
 	$("#add").text('Edit');
 	$("#LesionType_id").val(id);
@@ -39,7 +52,7 @@ $('form').formValidation({
 			LesionTypeName  : {
                 validators: {
                     notEmpty: {
-                        message: 'Please enter LesionTypeName'
+                        message: 'Please enter TypeName'
                     }
                 }
             }

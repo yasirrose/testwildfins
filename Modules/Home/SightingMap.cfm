@@ -15,7 +15,7 @@ body { margin: 0; padding: 0; }
         select ID,Code,Name from Cetaceans order by Code ASC
      </cfquery>
     <cfoutput>
-     <div id="content" class="content map_wrap">
+        <div id="content" class="content map_wrap">
     <div id="map"></div>
     <div id="menu" style="left: 270px;" class="vertical-content">
         <input id="satellite-v9" name="flexRadioDefault" type="radio"  onclick="saveMapStyle('satellite-v9')" value="mapbox://styles/mapbox/satellite-v9" >

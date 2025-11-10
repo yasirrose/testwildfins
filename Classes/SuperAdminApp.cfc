@@ -66,10 +66,9 @@
 </cffunction>
 
 <cffunction name="emailexist" returntype="any" output="false" access="public" >
-    <cfquery name="qUser" datasource="#variables.dsn#" result="emailcheck">
-            Select user_email from users where user_email=<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Email#">
-    </cfquery>
-    
+<cfquery name="qUser" datasource="#variables.dsn#" result="emailcheck">
+    	Select user_email from users where user_email=<cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Email#">
+  </cfquery>
      <cfreturn emailcheck>
 </cffunction>
 
