@@ -12,7 +12,7 @@
         <cfset blueBoxColumns = ""> 
 
         <!--- Check if the checkbox is selected and set extra columns --->
-        <cfif structKeyExists(form, "BLUEBOX") AND form.BLUEBOX eq "1">
+        <!--- <cfif structKeyExists(form, "BLUEBOX") AND form.BLUEBOX eq "1">
             <!--- Example: add columns "Column1, Column2, Column3" --->
             <cfset collation = "SQL_Latin1_General_CP1_CI_AS">
 
@@ -42,7 +42,159 @@
             , CAST(headerImages AS NVARCHAR(255)) COLLATE #collation# AS headerImages
             ">
             
+        </cfif> --->
+        <cfif structKeyExists(form, "BLUEBOX") AND form.BLUEBOX eq "1">
+            <cfset collation = "SQL_Latin1_General_CP1_CI_AS">
+        
+            <!--- Define the blue box column list as a comma-separated list --->
+            <cfset blueBoxColumnList = "Location,NAA,NMFS,NDB,species,affiliatedID,hera,sex,ageClass,actualClass,InitialCondition,FinalCondition,lat,lon,county,euthanizedCB,ResearchTeam,Veterinarian,BodyOfWater,StTpye,NOAAStock,BriefHistory,headerImages">
+        
+            <!--- Build the SQL SELECT part dynamically --->
+            <cfset blueBoxColumns = "">
+            <cfloop list="#blueBoxColumnList#" index="col">
+                <cfset blueBoxColumns &= ", CAST(" & col & " AS NVARCHAR(255)) COLLATE " & collation & " AS " & col>
+            </cfloop>
         </cfif>
+        <!--- <cfset qgetHeartData = Application.Stranding.getHeartData(LCEID="#form.LCEID#")>
+        <cfset qgetRespData = Application.Stranding.getRespData(LCEID="#form.LCEID#")>
+        --->
+        <cfset heartRespColumnList_CE = "">
+        <cfset heartRespColumnList_Other = "">
+        
+        <cfif structKeyExists(form, "hRatoRespBox") AND form.hRatoRespBox eq "1">
+            <!--- For Cetacean Exam: cast all four columns --->
+            <cfset heartRespColumnList_CE = "
+                , CAST(ST_HeartRate.heartRate AS NVARCHAR(255)) AS heartRate
+                , CAST(ST_HeartRate.heartRateTime AS NVARCHAR(255)) AS heartRateTime
+                , CAST(ST_RespRate.respRate AS NVARCHAR(255)) AS respRate
+                , CAST(ST_RespRate.respRateTime AS NVARCHAR(255)) AS respRateTime
+            ">
+            
+            <!--- For other tables in UNION ALL: use NULL placeholders --->
+            <cfset heartRespColumnList_Other = "
+                , NULL AS heartRate
+                , NULL AS heartRateTime
+                , NULL AS respRate
+                , NULL AS respRateTime
+            ">
+        </cfif>
+
+        <!--- 
+        <cfset qgetDrugData = Application.Stranding.getDrugData(LCEID="#form.LCEID#")>
+        <cfset qgetBiopsyData = Application.Stranding.getBiopsyData(LCEID="#form.LCEID#")>
+        <cfset qgetLesionData = Application.Stranding.getLesionData(LCEID="#form.LCEID#")>
+        <cfset qgetNewSectionData = Application.Stranding.getNewSectionData(LCEID="#form.LCEID#")>  --->
+
+        <!--- Initialize variables --->
+        <cfset drugColumnList_CE = "">
+        <cfset drugColumnList_Other = "">
+
+        <cfif structKeyExists(form, "DrigAdminBox") AND form.DrigAdminBox eq "1">
+            <!--- For Cetacean Exam table --->
+            <cfset drugColumnList_CE = "
+                , CAST(DrugType AS NVARCHAR(255)) AS DrugType
+                , CAST(DrugMethod AS NVARCHAR(255)) AS DrugMethod
+                , CAST(DrugTime AS NVARCHAR(255)) AS DrugTime
+                , CAST(DrugDosage AS NVARCHAR(255)) AS DrugDosage
+                , CAST(DrugVolume AS NVARCHAR(255)) AS DrugVolume
+            ">
+
+            <!--- For other UNION ALL tables --->
+            <cfset drugColumnList_Other = "
+                , NULL AS DrugType
+                , NULL AS DrugMethod
+                , NULL AS DrugTime
+                , NULL AS DrugDosage
+                , NULL AS DrugVolume
+            ">
+        </cfif>
+
+        <cfset biopsyColumnList_CE = "">
+        <cfset biopsyColumnList_Other = "">
+        
+        <cfif structKeyExists(form, "bopsyTyp") AND form.bopsyTyp eq "1">
+            <!--- For Cetacean Exam table --->
+            <cfset biopsyColumnList_CE = "
+                , CAST(BiopsyType AS NVARCHAR(255)) AS BiopsyType
+                , CAST(BiopsyLocation AS NVARCHAR(255)) AS BiopsyLocation
+                , CAST(BiopsySize AS NVARCHAR(255)) AS BiopsySize
+            ">
+        
+            <!--- For other UNION ALL tables --->
+            <cfset biopsyColumnList_Other = "
+                , NULL AS BiopsyType
+                , NULL AS BiopsyLocation
+                , NULL AS BiopsySize
+            ">
+        </cfif>
+
+        <cfset PhysicalColumnList_CE = "">
+        <cfset PhysicalColumnList_Other = "">
+        
+        <cfif structKeyExists(form, "PhysicalBox") AND form.PhysicalBox eq "1">
+            <!--- For Cetacean Exam table --->
+            <cfset PhysicalColumnList_CE = "
+                , CAST(General AS NVARCHAR(1024)) AS General
+                , CAST(SNM AS NVARCHAR(1024)) AS SNM
+                , CAST(Mentation AS NVARCHAR(512)) AS Mentation
+                , CAST(Palpation AS NVARCHAR(512)) AS Palpation
+                , CAST(Proprioception AS NVARCHAR(512)) AS Proprioception
+                , CAST(Reflexes AS NVARCHAR(512)) AS Reflexes
+            ">
+        
+            <!--- For other UNION ALL tables --->
+            <cfset PhysicalColumnList_Other = "
+                , NULL AS General
+                , NULL AS SNM
+                , NULL AS Mentation
+                , NULL AS Palpation
+                , NULL AS Proprioception
+                , NULL AS Reflexes
+            ">
+        </cfif>
+
+        <cfset entangledRelbateColumnList_CE = "">
+        <cfset entangledRelbateColumnList_Other = "">
+        
+        <cfif structKeyExists(form, "entangledRelbate") AND form.entangledRelbate eq "1">
+            <!--- For Cetacean Exam table --->
+            <cfset entangledRelbateColumnList_CE = "
+                , CAST(Entangled AS NVARCHAR(1024)) AS Entangled
+                , CAST(Released AS NVARCHAR(1024)) AS Released
+            ">
+        
+            <!--- For other UNION ALL tables --->
+            <cfset entangledRelbateColumnList_Other = "
+                , NULL AS Entangled
+                , NULL AS Released
+            ">
+        </cfif>
+        
+        <!--- For HiForm --->
+        <cfset hIFormColumnList_CE = "">
+        <cfset hIFormColumnList_Other = "">
+        
+        <cfif structKeyExists(form, "hIForm") AND form.hIForm eq "1">
+            <!--- For Cetacean Exam table --->
+            <cfset hIFormColumnList_CE = "
+                , CAST(ST_DynamicHI.TYPEOFHI AS NVARCHAR(1024)) AS TYPEOFHI
+                , CAST(ST_DynamicHI.LocationofHI AS NVARCHAR(1024)) AS LocationofHI
+                , CAST(ST_DynamicHI.GearCollected AS NVARCHAR(1024)) AS GearCollected
+                , CAST(ST_DynamicHI.TypeofGearCollected AS NVARCHAR(1024)) AS TypeofGearCollected
+                , CAST(ST_DynamicHI.GearDeposition AS NVARCHAR(1024)) AS GearDeposition
+            ">
+        
+            <!--- For other UNION ALL tables --->
+            <cfset hIFormColumnList_Other = "
+                , NULL AS TYPEOFHI
+                , NULL AS LocationofHI
+                , NULL AS GearCollected
+                , NULL AS TypeofGearCollected
+                , NULL AS GearDeposition
+            ">
+        </cfif>
+        
+
 
 
         <cftry>
@@ -107,12 +259,26 @@
        
         <!--- <cfdump var="#BodyOfWaterList#" abort="true"> --->
         <cfquery datasource="#variables.dsn#" name="allCountt" result="r">
-            SELECT 'Cetacean Exam' AS SourceTable, ST_LiveCetaceanExam.ID AS cetacenID, Fnumber, Date #blueBoxColumns#
+            SELECT 'Cetacean Exam' AS SourceTable, ST_LiveCetaceanExam.ID AS cetacenID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_CE# #drugColumnList_CE# #biopsyColumnList_CE# #PhysicalColumnList_CE# #entangledRelbateColumnList_CE# #hIFormColumnList_Other# 
             FROM ST_LiveCetaceanExam
             <!--- Conditionally join ST_Lesion if LesionTypeList is provided --->
             <cfif isdefined("LesionTypeList") AND LesionTypeList NEQ "">
                 LEFT JOIN ST_Lesion 
                     ON ST_LiveCetaceanExam.ID = ST_Lesion.LCE_ID
+            </cfif>
+            <cfif structKeyExists(form, "hRatoRespBox") AND form.hRatoRespBox eq "1">
+                LEFT JOIN ST_HeartRate 
+                    ON ST_LiveCetaceanExam.ID = ST_HeartRate.LCE_ID
+                LEFT JOIN ST_RespRate 
+                    ON ST_LiveCetaceanExam.ID = ST_RespRate.LCE_ID
+            </cfif>
+            <cfif isdefined("DrigAdminBox") AND DrigAdminBox NEQ "">
+                LEFT JOIN ST_DrugsAdministered 
+                    ON ST_LiveCetaceanExam.ID = ST_DrugsAdministered.LCE_ID
+            </cfif>
+            <cfif isdefined("bopsyTyp") AND bopsyTyp NEQ "">
+                LEFT JOIN ST_Biopsy 
+                    ON ST_LiveCetaceanExam.ID = ST_Biopsy.LCE_ID
             </cfif>
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
@@ -160,8 +326,12 @@
         
             UNION ALL
         
-            SELECT 'HI Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns#
+            SELECT 'HI Form' AS SourceTable, ST_HIForm.ID AS HI_ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_CE# 
             FROM ST_HIForm
+            <cfif structKeyExists(form, "hIForm") AND form.hIForm eq "1">
+                LEFT JOIN ST_DynamicHI 
+                    ON ST_HIForm.ID = ST_DynamicHI.HI_ID
+            </cfif>
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
                 AND CONVERT(char(10), Date, 126) BETWEEN 
@@ -198,7 +368,7 @@
         
             UNION ALL
         
-            SELECT 'Level A Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns#
+            SELECT 'Level A Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
             FROM ST_LevelAForm
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
@@ -236,7 +406,7 @@
         
             UNION ALL
         
-            SELECT 'Histo Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns#
+            SELECT 'Histo Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
             FROM ST_HistoForm
             <cfif isdefined("SampleTypeList") AND SampleTypeList NEQ "">
                 LEFT JOIN ST_HistoSampleData 
@@ -278,7 +448,7 @@
         
             UNION ALL
         
-            SELECT 'Blood Values' AS SourceTable, ID, Fnumber, Date #blueBoxColumns#
+            SELECT 'Blood Values' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
             FROM ST_Blood_Values
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
@@ -315,7 +485,7 @@
          
         
             UNION ALL
-            SELECT 'Toxicology' AS SourceTable, ST_Toxicology.ID AS toxicologyID, Fnumber, Date #blueBoxColumns#
+            SELECT 'Toxicology' AS SourceTable, ST_Toxicology.ID AS toxicologyID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
             FROM ST_Toxicology
             <cfif isdefined("DiagnosticTestList") AND DiagnosticTestList NEQ "">
                 LEFT JOIN ST_Ancillary_Report 
@@ -363,8 +533,8 @@
         
             UNION ALL
         
-            SELECT 'Ancillary Diagnostics' AS SourceTable, ID, Fnumber, Date #blueBoxColumns#
-            FROM ST_Ancillary_Diagnostics
+            SELECT 'Ancillary Diagnostics' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
+            FROM ST_Ancillary_Diagnostics 
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
                 AND CONVERT(char(10), Date, 126) BETWEEN 
@@ -401,7 +571,7 @@
         
             UNION ALL
          
-            SELECT 'Sample Archive' AS SourceTable, ID, Fnumber, Date #blueBoxColumns#
+            SELECT 'Sample Archive' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
             FROM ST_SampleArchive
             <cfif isdefined("SampleTypeList") AND SampleTypeList NEQ "">
                 LEFT JOIN ST_SampleType 
@@ -443,7 +613,7 @@
         
             UNION ALL
         
-            SELECT 'Morphometrics' AS SourceTable, ID, Fnumber, Date #blueBoxColumns#
+            SELECT 'Morphometrics' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
             FROM ST_Morphometrics
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
@@ -480,7 +650,7 @@
             
         
             UNION ALL
-            SELECT 'Cetacean Necropsy Report' AS SourceTable, ST_CetaceanNecropsyReport.ID AS nID, ST_CetaceanNecropsyReport.Fnumber as Nfnumber, Date #blueBoxColumns#
+            SELECT 'Cetacean Necropsy Report' AS SourceTable, ST_CetaceanNecropsyReport.ID AS nID, ST_CetaceanNecropsyReport.Fnumber as Nfnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
             FROM ST_CetaceanNecropsyReport
             <!--- Conditionally join ParasiteTypeList if LesionTypeList is provided --->
             <cfif isdefined("ParasiteTypeList") AND ParasiteTypeList NEQ "">
@@ -563,19 +733,19 @@
     <cfset getSurveyRouteData = Application.StaticDataNew.getSurveyRoute()>
     <cfset getLesionTypeData = Application.StaticDataNew.getLesionType()>
 
-    <cfset qGetAssocBioData=Application.SightingNew.qGetAssocBioData()>
+    <!--- <cfset qGetAssocBioData=Application.SightingNew.qGetAssocBioData()>
     <cfset getBehaviorsData = Application.StaticDataNew.getBehavior()>
 
     <cfset getPreySpeciesData = Application.StaticDataNew.getPreySpecies()>
-    <cfset StructureList = Application.SightingNew.getStructureList()>
+    <cfset StructureList = Application.SightingNew.getStructureList()> --->
 
-    <cfset qCetaceanResponseToFisher=Application.SightingNew.qCetaceanResponseToFisher()>
+    <!--- <cfset qCetaceanResponseToFisher=Application.SightingNew.qCetaceanResponseToFisher()>
     <cfset qFisherResponseToCetacean=Application.SightingNew.qFisherResponseToCetacean()>
     <cfset qCetaceanResponseToVessel=Application.SightingNew.qCetaceanResponseToVessel()>
-    <cfset qVesselResponseToCetacean=Application.SightingNew.qVesselResponseToCetacean()>
-
+    <cfset qVesselResponseToCetacean=Application.SightingNew.qVesselResponseToCetacean()> --->
+<!--- 
     <cfset getPlateForm=Application.StaticDataNew.getPlateForm()>
-    <cfset getStock = Application.StaticDataNew.getStock()>
+    <cfset getStock = Application.StaticDataNew.getStock()> --->
 
     <!---  Head Condition   --->
     <cfset getHeadNuchalCrest = Application.ConditionLesions.getHeadNuchalCrest()>
@@ -906,18 +1076,18 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Cetaceon Exam- Bopsy Typе</label>
+                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Cetaceon Exam- Bopsy Type </label>
                                     <div class="form-group">
                                         <div class="label-checkbox">
-                                            <input type="checkbox" class="checkbox-inline " name="bopsyTypе" id="bopsyTypе" value="1" style="width: 25px; height: 25px;" >
+                                            <input type="checkbox" class="checkbox-inline " name="bopsyTyp" id="bopsyTyp" value="1" style="width: 25px; height: 25px;" >
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Cetacean Exam- Physicae Exam Notes</label>
+                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Cetacean Exam- Physical Exam Notes</label>
                                     <div class="form-group">
                                         <div class="label-checkbox">
-                                            <input type="checkbox" class="checkbox-inline " name="physicaeExamNotes" id="physicaeExamNotes" value="1" style="width: 25px; height: 25px;" >
+                                            <input type="checkbox" class="checkbox-inline " name="PhysicalExamNotes" id="PhysicalExamNotes" value="1" style="width: 25px; height: 25px;" >
                                         </div>
                                     </div>
                                 </div>
@@ -1149,24 +1319,101 @@
                         </div>
                     </cfif> 
 
-                    <table id="allReport" class="table table-bordered table-hover">
+                    <table id="allReport" class="table table-bordered table-hover" style="margin-left: initial;">
                         <thead>
                             <tr class="inverse">
                                 <th>Fnumber</th> 
                                 <th>Date</th> 
+                                <th>Tab Name</th> 
                                 <cfif structKeyExists(form, "BLUEBOX") AND form.BLUEBOX eq "1">
-
+                                    <cfloop list="#blueBoxColumnList#" index="col">
+                                        <cfoutput><th>#ucase(left(col,1))##lcase(mid(col,2,len(col)))#</th></cfoutput>
+                                    </cfloop>
                                 </cfif>
+                                <!--- Heart/Resp Columns --->
+                                <cfif structKeyExists(form, "hRatoRespBox") AND form.hRatoRespBox eq "1">
+                                    <th>Heart Rate</th>
+                                    <th>Heart Rate Time</th>
+                                    <th>Resp Rate</th>
+                                    <th>Resp Rate Time</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "DrigAdminBox") AND form.DrigAdminBox eq "1">
+                                    <th>Drug Type</th>
+                                    <th>Drug Method</th>
+                                    <th>Drug Time</th>
+                                    <th>Drug Dosage</th>
+                                    <th>Drug Volume</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "bopsyTyp") AND form.bopsyTyp eq "1">
+                                    <th>Biopsy Type</th>
+                                    <th>Biopsy Location</th>
+                                    <th>Biopsy Size</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "entangledRelbate") AND form.entangledRelbate eq "1">
+                                    <th>Entangled</th>
+                                    <th>Released</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "hIForm") AND form.hIForm eq "1">
+                                    <th>Type of H.I.</th>
+                                    <th>Location of H.I.</th>
+                                    <th>Gear Collected</th>
+                                    <th>Type of Gear Collected</th>
+                                    <th>Gear Deposition</th>
+                                </cfif>
+                                
                             </tr>
                         </thead>
                         <tbody>
+                            <!--- <cfdump var="#allCountt#" abort="true"> --->
                             <cfoutput query="allCountt">
                                 <tr>                            
                                     <td>#Fnumber#</td> 
                                     <td>#Date#</td> 
+                                    <td>#SourceTable#</td> 
                                     <cfif structKeyExists(form, "BLUEBOX") AND form.BLUEBOX eq "1">
-                                    
+                                        <cfloop list="#blueBoxColumnList#" index="col">
+                                            <td>#Evaluate(col)#</td>
+                                        </cfloop>
                                     </cfif>
+                                    <!--- Heart/Resp Data --->
+                                    <cfif structKeyExists(form, "hRatoRespBox") AND form.hRatoRespBox eq "1">
+                                        <td>#heartRate#</td>
+                                        <td>#heartRateTime#</td>
+                                        <td>#respRate#</td>
+                                        <td>#respRateTime#</td>
+                                    </cfif>
+                                    <!--- Drug Admin Data --->
+                                    <cfif structKeyExists(form, "DrigAdminBox") AND form.DrigAdminBox eq "1">
+                                        <td id="DrugType">#DrugType#</td>
+                                        <td id="DrugMethod"><cfif DrugMethod NEQ 0>#DrugMethod#</cfif></td>
+                                        <td id="DrugTime"><cfif DrugTime NEQ 0>#DrugTime#</cfif></td>
+                                        <td id="DrugDosage"><cfif DrugDosage NEQ 0>#DrugDosage#</cfif></td>
+                                        <td id="DrugVolume"><cfif DrugVolume NEQ 0>#DrugVolume#</cfif></td>
+                                    </cfif>
+                                    <!--- Biopsy Data --->
+                                    <cfif structKeyExists(form, "bopsyTyp") AND form.bopsyTyp eq "1">
+                                        <td>#BiopsyType#</td>
+                                        <td>#BiopsyLocation#</td>
+                                        <td>#BiopsySize#</td>
+                                    </cfif>
+                                    <cfif structKeyExists(form, "entangledRelbate") AND form.entangledRelbate eq "1">
+                                        <td>#Entangled#</td>
+                                        <td>#Released#</td>
+                                    </cfif>
+                                    <cfif structKeyExists(form, "hIForm") AND form.hIForm eq "1">
+                                        <td >
+                                            <cfif TYPEOFHI eq 0>
+                                            <cfelse>
+                                                #replace(TYPEOFHI,"-",",","all")#
+                                            </cfif>
+                                        </td>
+                                        <td id="LocationofHI_">#replace(LocationofHI,"-",",","all")#</td>
+                                        <td id="GearCollected_">#GearCollected#</td>
+                                        <td id="TypeofGearCollected_">#replace(TypeofGearCollected,"-",",","all")#</td>
+                                        <td id="GearDeposition_">#GearDeposition#</td>
+                                    </cfif>
+                                    
+                                    
                                 </tr>
                             </cfoutput>
                         </tbody>
