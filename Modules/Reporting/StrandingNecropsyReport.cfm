@@ -193,6 +193,102 @@
                 , NULL AS GearDeposition
             ">
         </cfif>
+
+        <cfset histoRemarksColumnList_CE = "">
+        <cfset histoRemarksColumnList_Other = "">
+
+        <cfif structKeyExists(form, "htistologyRemarkes") AND form.htistologyRemarkes eq "1">
+            <cfset histoRemarksColumnList_CE = ", CAST(ST_HistoForm.SampleComments AS NVARCHAR(1024)) AS SampleComments">
+            <cfset histoRemarksColumnList_Other = ", NULL AS SampleComments">
+        </cfif>
+
+        <cfset levelAFormColumnList_CE = "">
+        <cfset levelAFormColumnList_Other = "">
+
+        <cfif structKeyExists(form, "levelAForm") AND form.levelAForm eq "1">
+            <cfset levelAFormColumnList_CE = "
+                , CAST(ID AS NVARCHAR(255)) AS LevelA_ID
+                , CAST(ILAD AS NVARCHAR(255)) AS ILAD
+                , CAST(ILADComment AS NVARCHAR(1024)) AS ILADComment
+                , CAST(CarcassStatus AS NVARCHAR(255)) AS CarcassStatus
+                , CAST(CarcassStatusLat AS NVARCHAR(255)) AS CarcassStatusLat
+                , CAST(CarcassStatusLon AS NVARCHAR(255)) AS CarcassStatusLon
+                , CAST(GroupEvent AS BIT) AS GroupEvent
+                , CAST(GroupEventType AS NVARCHAR(255)) AS GroupEventType
+                , CAST(noOfAnimals AS NVARCHAR(255)) AS noOfAnimals
+                , CAST(TagsWere AS NVARCHAR(255)) AS TagsWere
+                , CAST(Restrand AS BIT) AS Restrand
+            ">
+
+            <cfset levelAFormColumnList_Other = "
+                , NULL AS LevelA_ID
+                , NULL AS ILAD
+                , NULL AS ILADComment
+                , NULL AS CarcassStatus
+                , NULL AS CarcassStatusLat
+                , NULL AS CarcassStatusLon
+                , NULL AS GroupEvent
+                , NULL AS GroupEventType
+                , NULL AS noOfAnimals
+                , NULL AS TagsWere
+                , NULL AS Restrand
+            ">
+        </cfif>
+
+        <cfset morphometricsColumnList_CE = "">
+        <cfset morphometricsColumnList_Other = "">
+
+        <cfif structKeyExists(form, "morphometrics") AND form.morphometrics eq "1">
+            <!--- For Cetacean Exam table --->
+            <cfset morphometricsColumnList_CE = "
+                , CAST(EstimatedWeight AS NVARCHAR(255)) AS EstimatedWeight
+                , CAST(EstimatedWeightUnit AS NVARCHAR(50)) AS EstimatedWeightUnit
+                , CAST(weight_values AS NVARCHAR(50)) AS weight_values
+                , CAST(totalLength AS NVARCHAR(255)) AS totalLength
+                , CAST(lengthWeight_values AS NVARCHAR(50)) AS lengthWeight_values
+                , CAST(rostrum AS NVARCHAR(255)) AS rostrum
+                , CAST(blowhole AS NVARCHAR(255)) AS blowhole
+                , CAST(fluke AS NVARCHAR(255)) AS fluke
+                , CAST(girth AS NVARCHAR(255)) AS girth
+                , CAST(axillary AS NVARCHAR(255)) AS axillary
+                , CAST(maxium AS NVARCHAR(255)) AS maxium
+                , CAST(DorsalFinHeight AS NVARCHAR(255)) AS DorsalFinHeight
+                , CAST(RostrumtoBlowhole AS NVARCHAR(255)) AS RostrumtoBlowhole
+                , CAST(blubber AS NVARCHAR(255)) AS blubber
+                , CAST(midlateral AS NVARCHAR(255)) AS midlateral
+                , CAST(Lateralupperleft AS NVARCHAR(255)) AS Lateralupperleft
+                , CAST(Laterallowerleft AS NVARCHAR(255)) AS Laterallowerleft
+                , CAST(midVentral AS NVARCHAR(255)) AS midVentral
+                , CAST(Ventralupperleft AS NVARCHAR(255)) AS Ventralupperleft
+                , CAST(Ventrallowerright AS NVARCHAR(255)) AS Ventrallowerright
+            ">
+
+            <!--- For other UNION ALL tables --->
+            <cfset morphometricsColumnList_Other = "
+                , NULL AS EstimatedWeight
+                , NULL AS EstimatedWeightUnit
+                , NULL AS weight_values
+                , NULL AS totalLength
+                , NULL AS lengthWeight_values
+                , NULL AS rostrum
+                , NULL AS blowhole
+                , NULL AS fluke
+                , NULL AS girth
+                , NULL AS axillary
+                , NULL AS maxium
+                , NULL AS DorsalFinHeight
+                , NULL AS RostrumtoBlowhole
+                , NULL AS blubber
+                , NULL AS midlateral
+                , NULL AS Lateralupperleft
+                , NULL AS Laterallowerleft
+                , NULL AS midVentral
+                , NULL AS Ventralupperleft
+                , NULL AS Ventrallowerright
+            ">
+        </cfif>
+
+
         
 
 
@@ -259,7 +355,7 @@
        
         <!--- <cfdump var="#BodyOfWaterList#" abort="true"> --->
         <cfquery datasource="#variables.dsn#" name="allCountt" result="r">
-            SELECT 'Cetacean Exam' AS SourceTable, ST_LiveCetaceanExam.ID AS cetacenID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_CE# #drugColumnList_CE# #biopsyColumnList_CE# #PhysicalColumnList_CE# #entangledRelbateColumnList_CE# #hIFormColumnList_Other# 
+            SELECT 'Cetacean Exam' AS SourceTable, ST_LiveCetaceanExam.ID AS cetacenID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_CE# #drugColumnList_CE# #biopsyColumnList_CE# #PhysicalColumnList_CE# #entangledRelbateColumnList_CE# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other#
             FROM ST_LiveCetaceanExam
             <!--- Conditionally join ST_Lesion if LesionTypeList is provided --->
             <cfif isdefined("LesionTypeList") AND LesionTypeList NEQ "">
@@ -326,7 +422,7 @@
         
             UNION ALL
         
-            SELECT 'HI Form' AS SourceTable, ST_HIForm.ID AS HI_ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_CE# 
+            SELECT 'HI Form' AS SourceTable, ST_HIForm.ID AS HI_ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_CE# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other#
             FROM ST_HIForm
             <cfif structKeyExists(form, "hIForm") AND form.hIForm eq "1">
                 LEFT JOIN ST_DynamicHI 
@@ -368,7 +464,7 @@
         
             UNION ALL
         
-            SELECT 'Level A Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
+            SELECT 'Level A Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_CE# #morphometricsColumnList_Other#
             FROM ST_LevelAForm
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
@@ -406,7 +502,7 @@
         
             UNION ALL
         
-            SELECT 'Histo Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
+            SELECT 'Histo Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_CE# #levelAFormColumnList_Other# #morphometricsColumnList_Other#
             FROM ST_HistoForm
             <cfif isdefined("SampleTypeList") AND SampleTypeList NEQ "">
                 LEFT JOIN ST_HistoSampleData 
@@ -448,7 +544,7 @@
         
             UNION ALL
         
-            SELECT 'Blood Values' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
+            SELECT 'Blood Values' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other#
             FROM ST_Blood_Values
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
@@ -485,7 +581,7 @@
          
         
             UNION ALL
-            SELECT 'Toxicology' AS SourceTable, ST_Toxicology.ID AS toxicologyID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
+            SELECT 'Toxicology' AS SourceTable, ST_Toxicology.ID AS toxicologyID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other#
             FROM ST_Toxicology
             <cfif isdefined("DiagnosticTestList") AND DiagnosticTestList NEQ "">
                 LEFT JOIN ST_Ancillary_Report 
@@ -533,7 +629,7 @@
         
             UNION ALL
         
-            SELECT 'Ancillary Diagnostics' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
+            SELECT 'Ancillary Diagnostics' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other#
             FROM ST_Ancillary_Diagnostics 
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
@@ -571,7 +667,7 @@
         
             UNION ALL
          
-            SELECT 'Sample Archive' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
+            SELECT 'Sample Archive' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other#
             FROM ST_SampleArchive
             <cfif isdefined("SampleTypeList") AND SampleTypeList NEQ "">
                 LEFT JOIN ST_SampleType 
@@ -613,7 +709,7 @@
         
             UNION ALL
         
-            SELECT 'Morphometrics' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
+            SELECT 'Morphometrics' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_CE#
             FROM ST_Morphometrics
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
@@ -650,7 +746,7 @@
             
         
             UNION ALL
-            SELECT 'Cetacean Necropsy Report' AS SourceTable, ST_CetaceanNecropsyReport.ID AS nID, ST_CetaceanNecropsyReport.Fnumber as Nfnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other#
+            SELECT 'Cetacean Necropsy Report' AS SourceTable, ST_CetaceanNecropsyReport.ID AS nID, ST_CetaceanNecropsyReport.Fnumber as Nfnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other#
             FROM ST_CetaceanNecropsyReport
             <!--- Conditionally join ParasiteTypeList if LesionTypeList is provided --->
             <cfif isdefined("ParasiteTypeList") AND ParasiteTypeList NEQ "">
@@ -1360,6 +1456,28 @@
                                     <th>Type of Gear Collected</th>
                                     <th>Gear Deposition</th>
                                 </cfif>
+                                <cfif structKeyExists(form, "htistologyRemarkes") AND form.htistologyRemarkes eq "1">
+                                    <th>Sample Comments</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "levelAForm") AND form.levelAForm eq "1">
+                                    <th>Level A ID</th>
+                                    <th>ILAD</th>
+                                    <th>ILAD Comment</th>
+                                    <th>Carcass Status</th>
+                                    <th>Carcass Lat</th>
+                                    <th>Carcass Lon</th>
+                                    <th>Group Event</th>
+                                    <th>Group Event Type</th>
+                                    <th>No. of Animals</th>
+                                    <th>Tags Were</th>
+                                    <th>Restrand</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "morphometrics") AND form.morphometrics eq "1">
+                                    <cfset morphoColumns = "EstimatedWeight,EstimatedWeightUnit,weight_values,totalLength,lengthWeight_values,rostrum,blowhole,fluke,girth,axillary,maxium,DorsalFinHeight,RostrumtoBlowhole,blubber,midlateral,Lateralupperleft,Laterallowerleft,midVentral,Ventralupperleft,Ventrallowerright">
+                                    <cfloop list="#morphoColumns#" index="col">
+                                        <cfoutput><th>#ucase(left(col,1))##lcase(mid(col,2,len(col)))#</th></cfoutput>
+                                    </cfloop>
+                                </cfif>
                                 
                             </tr>
                         </thead>
@@ -1412,6 +1530,28 @@
                                         <td id="TypeofGearCollected_">#replace(TypeofGearCollected,"-",",","all")#</td>
                                         <td id="GearDeposition_">#GearDeposition#</td>
                                     </cfif>
+                                    <cfif structKeyExists(form, "htistologyRemarkes") AND form.htistologyRemarkes eq "1">
+                                        <td>#SampleComments#</td>
+                                    </cfif>
+                                    <cfif structKeyExists(form, "levelAForm") AND form.levelAForm eq "1">
+                                        <td>#LevelA_ID#</td>
+                                        <td>#ILAD#</td>
+                                        <td>#ILADComment#</td>
+                                        <td>#CarcassStatus#</td>
+                                        <td>#CarcassStatusLat#</td>
+                                        <td>#CarcassStatusLon#</td>
+                                        <td><cfif GroupEvent EQ 1>Checked</cfif></td>
+                                        <td>#GroupEventType#</td>
+                                        <td>#noOfAnimals#</td>
+                                        <td>#TagsWere#</td>
+                                        <td><cfif Restrand EQ 1>Checked</cfif></td>
+                                    </cfif>
+                                    <cfif structKeyExists(form, "morphometrics") AND form.morphometrics eq "1">
+                                        <cfloop list="#morphoColumns#" index="col">
+                                            <td>#Evaluate(col)#</td>
+                                        </cfloop>
+                                    </cfif>
+                                    
                                     
                                     
                                 </tr>

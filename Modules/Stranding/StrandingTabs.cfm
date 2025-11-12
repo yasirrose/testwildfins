@@ -9660,15 +9660,6 @@
                     <!--- start for histo --->
             <div role="tabpanel" class="tab-pane" id="HistoForm">
 
-                
-               <!--- <input type="hidden"  name="Histo_ID" id="Histo_ID" value="#qgetHIDataa.ID#">
-
-                <cfif structKeyExists(qgetToxicologyData, "recordcount") AND qgetToxicologyData.recordcount GT 0>
-                    <input type="hidden" name="Histo_ID" id="Histo_ID" value="#qgetToxicologyData.ID#">
-                <cfelse>
-                    <input type="hidden" name="Histo_ID" id="Histo_ID" value="">
-                </cfif> --->
-
                 <cfset Histo_ID = "">
                 <cfset histoDate = "">
                 <cfset PathologistAccession = "">
@@ -9679,7 +9670,9 @@
                     <cfif structKeyExists(qgetHIDataa, "ID")><cfset Histo_ID = qgetHIDataa.ID></cfif>
                     <cfif structKeyExists(qgetHIDataa, "histoDate")><cfset histoDate = qgetHIDataa.histoDate></cfif>
                     <cfif structKeyExists(qgetHIDataa, "PathologistAccession")><cfset PathologistAccession = qgetHIDataa.PathologistAccession></cfif>
-                    <cfif structKeyExists(qgetHIDataa, "SampleComments")><cfset SampleComments = qgetHIDataa.SampleComments></cfif>
+                    <cfif structKeyExists(qgetHIDataa, "SampleComments")>
+                        <cfset SampleComments = qgetHIDataa.SampleComments>
+                    </cfif>
                     
                 </cfif>
 
