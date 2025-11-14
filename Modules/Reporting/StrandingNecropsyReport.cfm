@@ -11,38 +11,6 @@
         
         <cfset blueBoxColumns = ""> 
 
-        <!--- Check if the checkbox is selected and set extra columns --->
-        <!--- <cfif structKeyExists(form, "BLUEBOX") AND form.BLUEBOX eq "1">
-            <!--- Example: add columns "Column1, Column2, Column3" --->
-            <cfset collation = "SQL_Latin1_General_CP1_CI_AS">
-
-            <cfset blueBoxColumns = "
-            , CAST(Location AS NVARCHAR(255)) COLLATE #collation# AS Location
-            , CAST(NAA AS NVARCHAR(255)) COLLATE #collation# AS NAA
-            , CAST(NMFS AS NVARCHAR(255)) COLLATE #collation# AS NMFS
-            , CAST(NDB AS NVARCHAR(255)) COLLATE #collation# AS NDB
-            , CAST(species AS NVARCHAR(255)) COLLATE #collation# AS species
-            , CAST(affiliatedID AS NVARCHAR(255)) COLLATE #collation# AS affiliatedID
-            , CAST(hera AS NVARCHAR(255)) COLLATE #collation# AS hera
-            , CAST(sex AS NVARCHAR(255)) COLLATE #collation# AS sex
-            , CAST(ageClass AS NVARCHAR(255)) COLLATE #collation# AS ageClass
-            , CAST(actualClass AS NVARCHAR(255)) COLLATE #collation# AS actualClass
-            , CAST(InitialCondition AS NVARCHAR(255)) COLLATE #collation# AS InitialCondition
-            , CAST(FinalCondition AS NVARCHAR(255)) COLLATE #collation# AS FinalCondition
-            , CAST(lat AS NVARCHAR(255)) COLLATE #collation# AS lat
-            , CAST(lon AS NVARCHAR(255)) COLLATE #collation# AS lon
-            , CAST(county AS NVARCHAR(255)) COLLATE #collation# AS county
-            , CAST(euthanizedCB AS NVARCHAR(255)) COLLATE #collation# AS euthanizedCB
-            , CAST(ResearchTeam AS NVARCHAR(255)) COLLATE #collation# AS ResearchTeam
-            , CAST(Veterinarian AS NVARCHAR(255)) COLLATE #collation# AS Veterinarian
-            , CAST(BodyOfWater AS NVARCHAR(255)) COLLATE #collation# AS BodyOfWater
-            , CAST(StTpye AS NVARCHAR(255)) COLLATE #collation# AS StTpye
-            , CAST(NOAAStock AS NVARCHAR(255)) COLLATE #collation# AS NOAAStock
-            , CAST(BriefHistory AS NVARCHAR(255)) COLLATE #collation# AS BriefHistory
-            , CAST(headerImages AS NVARCHAR(255)) COLLATE #collation# AS headerImages
-            ">
-            
-        </cfif> --->
         <cfif structKeyExists(form, "BLUEBOX") AND form.BLUEBOX eq "1">
             <cfset collation = "SQL_Latin1_General_CP1_CI_AS">
         
@@ -55,9 +23,8 @@
                 <cfset blueBoxColumns &= ", CAST(" & col & " AS NVARCHAR(255)) COLLATE " & collation & " AS " & col>
             </cfloop>
         </cfif>
-        <!--- <cfset qgetHeartData = Application.Stranding.getHeartData(LCEID="#form.LCEID#")>
-        <cfset qgetRespData = Application.Stranding.getRespData(LCEID="#form.LCEID#")>
-        --->
+ 
+        
         <cfset heartRespColumnList_CE = "">
         <cfset heartRespColumnList_Other = "">
         
@@ -78,12 +45,6 @@
                 , NULL AS respRateTime
             ">
         </cfif>
-
-        <!--- 
-        <cfset qgetDrugData = Application.Stranding.getDrugData(LCEID="#form.LCEID#")>
-        <cfset qgetBiopsyData = Application.Stranding.getBiopsyData(LCEID="#form.LCEID#")>
-        <cfset qgetLesionData = Application.Stranding.getLesionData(LCEID="#form.LCEID#")>
-        <cfset qgetNewSectionData = Application.Stranding.getNewSectionData(LCEID="#form.LCEID#")>  --->
 
         <!--- Initialize variables --->
         <cfset drugColumnList_CE = "">
@@ -132,7 +93,7 @@
         <cfset PhysicalColumnList_Other = "">
         
         <cfif structKeyExists(form, "PhysicalBox") AND form.PhysicalBox eq "1">
-            <!--- For Cetacean Exam table --->
+            
             <cfset PhysicalColumnList_CE = "
                 , CAST(General AS NVARCHAR(1024)) AS General
                 , CAST(SNM AS NVARCHAR(1024)) AS SNM
@@ -142,7 +103,6 @@
                 , CAST(Reflexes AS NVARCHAR(512)) AS Reflexes
             ">
         
-            <!--- For other UNION ALL tables --->
             <cfset PhysicalColumnList_Other = "
                 , NULL AS General
                 , NULL AS SNM
@@ -157,13 +117,12 @@
         <cfset entangledRelbateColumnList_Other = "">
         
         <cfif structKeyExists(form, "entangledRelbate") AND form.entangledRelbate eq "1">
-            <!--- For Cetacean Exam table --->
+            
             <cfset entangledRelbateColumnList_CE = "
                 , CAST(Entangled AS NVARCHAR(1024)) AS Entangled
                 , CAST(Released AS NVARCHAR(1024)) AS Released
             ">
-        
-            <!--- For other UNION ALL tables --->
+            
             <cfset entangledRelbateColumnList_Other = "
                 , NULL AS Entangled
                 , NULL AS Released
@@ -175,7 +134,6 @@
         <cfset hIFormColumnList_Other = "">
         
         <cfif structKeyExists(form, "hIForm") AND form.hIForm eq "1">
-            <!--- For Cetacean Exam table --->
             <cfset hIFormColumnList_CE = "
                 , CAST(ST_DynamicHI.TYPEOFHI AS NVARCHAR(1024)) AS TYPEOFHI
                 , CAST(ST_DynamicHI.LocationofHI AS NVARCHAR(1024)) AS LocationofHI
@@ -184,7 +142,6 @@
                 , CAST(ST_DynamicHI.GearDeposition AS NVARCHAR(1024)) AS GearDeposition
             ">
         
-            <!--- For other UNION ALL tables --->
             <cfset hIFormColumnList_Other = "
                 , NULL AS TYPEOFHI
                 , NULL AS LocationofHI
@@ -239,7 +196,7 @@
         <cfset morphometricsColumnList_Other = "">
 
         <cfif structKeyExists(form, "morphometrics") AND form.morphometrics eq "1">
-            <!--- For Cetacean Exam table --->
+
             <cfset morphometricsColumnList_CE = "
                 , CAST(EstimatedWeight AS NVARCHAR(255)) AS EstimatedWeight
                 , CAST(EstimatedWeightUnit AS NVARCHAR(50)) AS EstimatedWeightUnit
@@ -263,7 +220,6 @@
                 , CAST(Ventrallowerright AS NVARCHAR(255)) AS Ventrallowerright
             ">
 
-            <!--- For other UNION ALL tables --->
             <cfset morphometricsColumnList_Other = "
                 , NULL AS EstimatedWeight
                 , NULL AS EstimatedWeightUnit
@@ -829,21 +785,7 @@
     <cfset getSurveyRouteData = Application.StaticDataNew.getSurveyRoute()>
     <cfset getLesionTypeData = Application.StaticDataNew.getLesionType()>
 
-    <!--- <cfset qGetAssocBioData=Application.SightingNew.qGetAssocBioData()>
-    <cfset getBehaviorsData = Application.StaticDataNew.getBehavior()>
-
-    <cfset getPreySpeciesData = Application.StaticDataNew.getPreySpecies()>
-    <cfset StructureList = Application.SightingNew.getStructureList()> --->
-
-    <!--- <cfset qCetaceanResponseToFisher=Application.SightingNew.qCetaceanResponseToFisher()>
-    <cfset qFisherResponseToCetacean=Application.SightingNew.qFisherResponseToCetacean()>
-    <cfset qCetaceanResponseToVessel=Application.SightingNew.qCetaceanResponseToVessel()>
-    <cfset qVesselResponseToCetacean=Application.SightingNew.qVesselResponseToCetacean()> --->
-<!--- 
-    <cfset getPlateForm=Application.StaticDataNew.getPlateForm()>
-    <cfset getStock = Application.StaticDataNew.getStock()> --->
-
-    <!---  Head Condition   --->
+      <!---  Head Condition   --->
     <cfset getHeadNuchalCrest = Application.ConditionLesions.getHeadNuchalCrest()>
     <cfset getHeadLateralCervicalReg = Application.ConditionLesions.getHeadLateralCervicalReg()>
     <cfset getHeadFacialBones = Application.ConditionLesions.getHeadFacialBones()>

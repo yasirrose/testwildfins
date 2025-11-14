@@ -1286,6 +1286,7 @@ function getlesionsListHistoryWithSDRs() {
     // var cl_cs_code = cetaceanText.split("|")[1].trim();
 
     console.log('cl_cs_code:' + cl_cs_code);
+    console.log('hereeeeee');
     // return false;
 
     if (cl_cs_code != "") {
@@ -1294,8 +1295,8 @@ function getlesionsListHistoryWithSDRs() {
             data: { cl_cs_code: cl_cs_code, Sightningid: $("#getsight_ID").val() },
             url: application_root + "ConditionLesions.cfc?method=getlesionsListHistoryWithSDRs",
             success: function (res) {
+                console.log('getlesionsListHistoryWithSDRs:' + res);
                 $("#condition_lesions_form_1").html(res);
-                
                 $('#body_lesionssss').DataTable({
                         "pageLength": 10,
                         "paging": false,
@@ -1308,13 +1309,6 @@ function getlesionsListHistoryWithSDRs() {
                         }]
                     });
                     
-
-                // $('#condition_lesions_form').removeClass('is-lesion-form');
-                // if ($("#condition_lesions_form_1 h2").html() == "There is no Lesions added yet!") {
-                //     // $('#condition_lesions_form').removeClass('is-lesion-form');
-                // }
-                // $('.cetacean-name').html('Dolphin');
-                // $('.breakdown-image').attr('src', 'http://test.wildfins.org/resources/assets/img/' + 'dolphin-breakdown-diagram.png');
             },
             error: function (err) {
                 console.log("err:", err);
@@ -1330,15 +1324,18 @@ function getlesionsListHistoryWithSDRs() {
 function getlesionsListHistory() {
     var cl_cs_code = $( "#Cetacean_code option:selected" ).text().split("|")[1].trim();
 
-    // console.log('cl_cs_code:' + cl_cs_code);
+    console.log('cl_cs_code:' + cl_cs_code);
+    console.log('here');
+    console.log($("#project_idd").val());
     // return false;
 
     if (cl_cs_code != "") {
         $.ajax({
             type: "post",
-            data: { cl_cs_code: cl_cs_code, Sightningid: $("#getsight_ID").val() },
+            data: { cl_cs_code: cl_cs_code, Sightningid: $("#getsight_ID").val(), surveyNumber: $("#project_idd").val()},
             url: application_root + "ConditionLesions.cfc?method=getlesionsListHistory",
             success: function (res) {
+                console.log('getlesionsListHistory:' + res);
                 $("#condition_lesions_form_1").html(res);
                 
                 $('#body_lesionssss').DataTable({
@@ -1355,9 +1352,7 @@ function getlesionsListHistory() {
                     
 
                 $('#condition_lesions_form').removeClass('is-lesion-form');
-                // if ($("#condition_lesions_form_1 h2").html() == "There is no Lesions added yet!") {
-                //     // $('#condition_lesions_form').removeClass('is-lesion-form');
-                // }
+              
                 $('.cetacean-name').html('Dolphin');
                 $('.breakdown-image').attr('src', 'http://test.wildfins.org/resources/assets/img/' + 'dolphin-breakdown-diagram.png');
             },

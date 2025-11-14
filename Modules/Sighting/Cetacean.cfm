@@ -8,6 +8,7 @@
       </cfquery>
 
       <cfset sight_id = #form.sight_id#>
+      <cfset project_id = #form.project_id#>
       
        <cfquery name="getSightingById" datasource="#Application.dsn#">
          SELECT FE_Species, SightingNumber FROM Survey_Sightings WHERE ID = #sight_id#
@@ -783,6 +784,11 @@
                         </div>
                         <form role="form" id="add_lesions_form">
                            <input type="hidden" name="Sighting_ID" id="getsight_ID" value="#sight_id#">
+                           <cfoutput>
+                            <input type="hidden" name="project_idd" id="project_idd" 
+                                value="#iif(isDefined('project_id') AND len(trim(project_id)), project_id, '')#">
+                            </cfoutput>
+
                            <input type="hidden" name="Cetacean_NameORcode" id="Cetacean_NameORcode" value="">
                            <input type="hidden" name="cl_cs_Id" id="cl_cs_Id" value="0">
                            <input type="hidden" name="cl_cs_code" id="cl_cs_code" value="">

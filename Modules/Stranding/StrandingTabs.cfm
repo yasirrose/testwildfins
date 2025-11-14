@@ -13820,35 +13820,15 @@
             <!--- start for NecropsyReport --->
             <div role="tabpanel" class="tab-pane my-tab-pane" id="NecropsyReport">                
                 <input type='hidden' name='report' id="report" value='#form.report#'>
-                <!--- <input type='hidden' name='report_ID' id="repotrt_ID" value='#qgetCetaceanNecropsy.ID#'> --->
                 <input type='hidden' name='fieldno' id="fieldno" value='#form.fieldnumber#' >
-                <!--- <input type='hidden' name='fieldnoo' id="fieldnoo" value='#qgetCetaceanNecropsy.Fnumber#'> --->
-                <!--- <input type='hidden' name='form_id' id="form_id" value='#qgetCetaceanNecropsy.ID#'> --->
 
-                  <!--- <cfif  CGI.REMOTE_ADDR eq '202.141.226.196'>
-                        <cfdump var="#CGI.QUERY_STRING#" abort="true">
-                    </cfif> --->
-                   
-                <!--- <cfset queryString = CGI.QUERY_STRING>
-
-                <cfset isNecropsyReportPresent = reFind("(&|^)NecropsyReport(&|$)", queryString) GT 0>
-
-                <cfif NOT isNecropsyReportPresent>
-                    <cfset qgetCetaceanNecropsy = Application.Stranding.getCetaceanNecropsy_ten()>
-                </cfif> --->
-
-                <!--- <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy_ten()> --->
-                <!--- <cfset qgetNutritional=Application.Stranding.getNutritional_ten()>
-                <cfset qgetLymphoreticular=Application.Stranding.getLymphoreticular_ten()>
-                <cfset qgetParasites=Application.Stranding.getParasites_ten()> --->
 
                  <cfset repotrt_ID = "">
                  <cfset Veterinarians = "">
                  <cfset Prosectors = "">
                  <cfset Tentative = "">
                  <cfset deathcause = "">
-                 <cfset fieldnoo = "">
-                
+                 <cfset fieldnoo = "">                
 
                 <cfif structKeyExists(qgetCetaceanNecropsy, "recordcount") AND qgetCetaceanNecropsy.recordcount GT 0>
                     <cfif structKeyExists(qgetCetaceanNecropsy, "ID")><cfset repotrt_ID = qgetCetaceanNecropsy.ID></cfif>
