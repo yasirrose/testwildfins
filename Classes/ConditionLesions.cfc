@@ -431,33 +431,55 @@
     <cffunction name="getlesionsListHistory" access="remote" returnformat="plain" output="true">
         <cfargument name="cl_cs_Id" type="any" required="true" default=""> 
         <cfargument name="Sightningid" type="any" required="true" default=""> 
+        <cfargument name="surveyNumber" type="any" required="true" default=""> 
+        <cfargument name="SDR" type="any" required="true" default="0"> 
+
         <cfoutput> 
         <cfset  permissions ="#session['userdetails']['permissions']#">
 
         <cfset currentDateOnly = DateFormat(Now(), "yyyy-mm-dd")>
-                <!--- <cfdump var="#currentDateOnly#" abort="true"> --->
-                
-            <!--- <cfquery name="query" datasource="#variables.dsn#">
-                SELECT Survey_Sightings.ID,Survey_Sightings.SIGHTINGNUMBER
-                from Survey_Sightings where Project_ID = <cfqueryparam  cfsqltype="cf_sql_integer" value='#form.PROJECT_ID#'> 
-                    and Survey_Sightings.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
-                    and Survey_Sightings.SightingNumber != ''
-                    ORDER BY Survey_Sightings.ID
-            </cfquery> --->
-            <cfquery name="getConditionLesions" datasource="#variables.dsn#">
-                select  Condition_Lesions.*, 
-                    Survey_Sightings.SightingNumber as sighting_Number
-                FROM 
-                    Condition_Lesions
-                INNER JOIN 
-                    Survey_Sightings 
-                    ON Condition_Lesions.Sighting_ID = Survey_Sightings.id
-                where Condition_Lesions.Sighting_ID  = '#Sightningid#'
-                and 
-                Condition_Lesions.Cetaceans_ID = '#cl_cs_code#'
-               
+        <!--- <cfdump var="#cl_cs_Id#" abort="true"> --->
+        <cfif len(trim(surveyNumber)) and SDR eq '1'>
+            <cfquery name="query" datasource="#variables.dsn#">
+                SELECT ID
+                FROM Survey_Sightings
+                WHERE Project_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#surveyNumber#">
+                  AND IsDeleted != <cfqueryparam cfsqltype="cf_sql_bit" value="1">
+                  AND SightingNumber != ''
+                ORDER BY ID
             </cfquery>
+             
+            <cfif query.recordcount>
+                <cfset sightingIDs = ValueList(query.ID)>
+            <cfelse>
+                <cfset sightingIDs = Sightningid>
+            </cfif>
+        <cfelse>
+            <cfset sightingIDs = Sightningid>
+        </cfif>
+        
+        <cfquery name="getConditionLesions" datasource="#variables.dsn#">
+            SELECT Condition_Lesions.*, 
+                   Survey_Sightings.SightingNumber AS sighting_Number
+            FROM Condition_Lesions
+            INNER JOIN Survey_Sightings 
+                ON Condition_Lesions.Sighting_ID = Survey_Sightings.ID
+            WHERE Condition_Lesions.Sighting_ID IN (
+                <cfqueryparam value="#sightingIDs#" cfsqltype="cf_sql_integer" list="yes">
+            )
+              AND Condition_Lesions.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cl_cs_Id#">
+        </cfquery>
+         <!--- <cfdump var="#getConditionLesions#" abort="true">  --->
 
+        <!--- <cfquery name="getConditionLesions" datasource="#variables.dsn#">
+            SELECT Condition_Lesions.*, 
+                Survey_Sightings.SightingNumber AS sighting_Number
+            FROM Condition_Lesions
+            INNER JOIN Survey_Sightings 
+                ON Condition_Lesions.Sighting_ID = Survey_Sightings.ID
+            WHERE Condition_Lesions.Sighting_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#Sightningid#">
+            AND Condition_Lesions.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cl_cs_Id#">
+        </cfquery> --->
         <!--- <cfdump var="#getConditionLesions#" > --->
 
             <div class="">

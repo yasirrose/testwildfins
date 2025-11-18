@@ -3849,6 +3849,15 @@
     </cffunction> --->
 
     <cffunction name="getHistoData" returntype="any" output="false" access="public" >
+        <!--- <cfquery name="qHistoData" datasource="#Application.dsn#"  >
+            SELECT * from ST_HistoForm where ID = #His_ID# And deleted != '1'
+        </cfquery>
+        <cfreturn qHistoData> --->
+
+        <!--- <cfargument name="HI_ID" type="numeric" required="true">
+        <cfargument name="Fnumber" type="string" required="false"> --->
+
+        <!--- <cfdump var="#arguments#" abort="true"> --->
 
         <cfset var result = {}>
 

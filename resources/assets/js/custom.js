@@ -1270,12 +1270,13 @@ $("#Cetacean_code").change(function () {
     var cetaceanText = $("#Cetacean_code option:selected").text(); // Get selected Cetacean Name | Code text
     var sightingId = $("#getsight_ID").val(); // Get the Sighting ID
 
-    if (cetaceanCode != "") {
-        // Call the function with both values
-        getlesionsListHistoryWithSDRs(cetaceanCode, cetaceanText, sightingId);
-    } else {
-        $("#condition_lesions_form_1").html("<h2 style='text-align:center;color:red'>Please select a Cetacean Name/Code</h2>");
-    }
+    // if (cetaceanCode != "") {
+    //     // Call the function with both values
+    //     getlesionsListHistoryWithSDRs(cetaceanCode, cetaceanText, sightingId);
+    // } else {
+    //     $("#condition_lesions_form_1").html("<h2 style='text-align:center;color:red'>Please select a Cetacean Name/Code</h2>");
+    // }
+    $("#condition_lesions_form_1").html("<h2 style='text-align:center;color:red'>Please select a Cetacean Name/Code</h2>");
 });
 
 
@@ -1326,13 +1327,12 @@ function getlesionsListHistory() {
 
     console.log('cl_cs_code:' + cl_cs_code);
     console.log('here');
-    console.log($("#project_idd").val());
-    // return false;
+    var sdrChecked = $("#SDR").prop("checked") ? 1 : 0;
 
     if (cl_cs_code != "") {
         $.ajax({
             type: "post",
-            data: { cl_cs_code: cl_cs_code, Sightningid: $("#getsight_ID").val(), surveyNumber: $("#project_idd").val()},
+            data: { cl_cs_Id: cl_cs_code, Sightningid: $("#getsight_ID").val(), surveyNumber: $("#project_idd").val() ? $("#project_idd").val() : "", SDR: sdrChecked},
             url: application_root + "ConditionLesions.cfc?method=getlesionsListHistory",
             success: function (res) {
                 console.log('getlesionsListHistory:' + res);
