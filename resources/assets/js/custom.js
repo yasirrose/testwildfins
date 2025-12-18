@@ -164,18 +164,25 @@ $(document).ready(function () {
                     //     $('#lesion_table').append('<tr><td class="tddate">' +moment(obj.DATA[i][2]).format("MM/DD/YYYY")+'</td><td class="sno">' +obj.DATA[i][0]+'</td><td class="ltype">' +obj.DATA[i][3]+'</td><td class="lside">' +obj.DATA[i][5]+'</td><td class="lstatus">' +obj.DATA[i][6]+'</td><td class="lregion">' +obj.DATA[i][4]+'</td></tr>');
                     // }
                     
+<<<<<<< Updated upstream
                    
                     
+=======
+>>>>>>> Stashed changes
                     $('#LesionHistoryForm').DataTable().clear();
                     for (var i = 0; i < obj.DATA.length; ++i) {
                         // console.log('check table' + obj.DATA[i]);
                         $('#LesionHistoryForm').DataTable().row.add([
                             moment(obj.DATA[i][2]).format("MM/DD/YYYY"), // Date column
+<<<<<<< Updated upstream
 
                             // obj.DATA[i][0], // Sighting No column
 
                              (obj.DATA[i][11] && obj.DATA[i][11] !== null && obj.DATA[i][11] !== "") ? obj.DATA[i][11] : obj.DATA[i][0],
 
+=======
+                            obj.DATA[i][0], // Sighting No column
+>>>>>>> Stashed changes
                             obj.DATA[i][9], // Type Name column
                             obj.DATA[i][3], // Lesion Type column
                             obj.DATA[i][5], // Side column
@@ -730,6 +737,7 @@ $(document).ready(function () {
         // e.preventDefault();
         // alert() nouman
 
+<<<<<<< Updated upstream
         var lesionPresent = $('#LesionPresent').val();
         var typeName = $('#TypeName').val();
         var lesionType = $('#LesionType').val();
@@ -751,6 +759,8 @@ $(document).ready(function () {
       
         
 
+=======
+>>>>>>> Stashed changes
         var sight_idd = $('#sightid').val();
         var cetaceanCodeId = $('#Cetacean_code').val();
             
@@ -1170,6 +1180,7 @@ function getSingleLesion_Record(Lesion_ID) {
             Lesion_Type = 'Lesion_Type';
             Scar_Type = 'Scar_Type';
             permanentCheck = 'on';
+<<<<<<< Updated upstream
 
             var permanentScarDate = new Date(obj.permanentScar_date);
 
@@ -1199,12 +1210,15 @@ function getSingleLesion_Record(Lesion_ID) {
                 console.log('condition two: ' + check);
                 $("#update_lesions_form #permanentcheck").prop("checked", false);
             }
+=======
+>>>>>>> Stashed changes
             
             if(Lesion_Type == obj.TypeName){
                 console.log('1');
                 $('#update_lesions_form #LesionType option[value="' + (obj.LesionType).trim() + '"]').prop('selected', true);
                 $('#update_lesions_form #ScarType').val('');
                 $('#update_lesions_form #ScarTypeDisplay ').hide();
+<<<<<<< Updated upstream
                 // $('#update_lesions_form #SetPermanentScar').hide();
                 $('#update_lesions_form #LesioyTypeDisplay').show();
             }else if (Scar_Type == obj.TypeName){
@@ -1241,6 +1255,49 @@ function getSingleLesion_Record(Lesion_ID) {
                 $('#update_lesions_form #LesioyTypeDisplay ').hide();
                 $('#update_lesions_form #ScarTypeDisplay').show();
                 // $('#update_lesions_form #SetPermanentScar').show();
+=======
+                $('#update_lesions_form #SetPermanentScar').hide();
+                $('#update_lesions_form #LesioyTypeDisplay').show();
+            }else if (Scar_Type == obj.TypeName){
+                console.log('2');
+                // alert('test');
+                var permanentScarDate = new Date(obj.permanentScar_date);
+                
+                if (!isNaN(permanentScarDate.getTime())) {  // If valid date
+
+                    var year = permanentScarDate.getFullYear();
+                    var month = String(permanentScarDate.getMonth() + 1).padStart(2, '0'); // Month is 0-based
+                    var day = String(permanentScarDate.getDate()).padStart(2, '0');
+
+                    var dateFormatted = `${year}-${month}-${day}`;
+                    console.log('Testing scar date:', dateFormatted);
+
+                    
+                    $('#update_lesions_form #permanentScar_date').val(dateFormatted);
+                } else {
+                    $('#update_lesions_form #permanentScar_date').val('');  
+                }
+                var check = obj.permanentcheck;
+                console.log('check: ' + check);
+                console.log('permanentCheck: ' + permanentCheck);
+                if (permanentCheck == check ) {
+                    console.log('condition one: ' + check);
+                    $("#update_lesions_form #permanentcheck").prop("checked", true);
+                } else {
+                    console.log('condition two: ' + check);
+                    $("#update_lesions_form #permanentcheck").prop("checked", false);
+                }
+                
+                // $("#update_lesions_form #permanentcheck").prop("checked", false);
+                $('#update_lesions_form #ScarType option[value="' + (obj.LesionType).trim() + '"]').prop('selected', true);
+                // $('#update_lesions_form #permanentScar_date').val(dateFormatted);
+                // $("#update_lesions_form #permanentcheck").prop("checked", true);
+                // $('#update_lesions_form #permanentcheck').val(obj.permanentcheck);
+                $('#update_lesions_form #LesionType ').val('');
+                $('#update_lesions_form #LesioyTypeDisplay ').hide();
+                $('#update_lesions_form #ScarTypeDisplay').show();
+                $('#update_lesions_form #SetPermanentScar').show();
+>>>>>>> Stashed changes
             }
            
             if (obj.Region) {
@@ -1270,6 +1327,7 @@ $("#Cetacean_code").change(function () {
     var cetaceanText = $("#Cetacean_code option:selected").text(); // Get selected Cetacean Name | Code text
     var sightingId = $("#getsight_ID").val(); // Get the Sighting ID
 
+<<<<<<< Updated upstream
     // if (cetaceanCode != "") {
     //     // Call the function with both values
     //     getlesionsListHistoryWithSDRs(cetaceanCode, cetaceanText, sightingId);
@@ -1277,17 +1335,78 @@ $("#Cetacean_code").change(function () {
     //     $("#condition_lesions_form_1").html("<h2 style='text-align:center;color:red'>Please select a Cetacean Name/Code</h2>");
     // }
     $("#condition_lesions_form_1").html("<h2 style='text-align:center;color:red'>Please select a Cetacean Name/Code</h2>");
+=======
+    if (cetaceanCode != "") {
+        // Call the function with both values
+        getlesionsListHistoryWithSDRs(cetaceanCode, cetaceanText, sightingId);
+    } else {
+        $("#condition_lesions_form_1").html("<h2 style='text-align:center;color:red'>Please select a Cetacean Name/Code</h2>");
+    }
+>>>>>>> Stashed changes
 });
 
 
 
 function getlesionsListHistoryWithSDRs() {
+<<<<<<< Updated upstream
     var cl_cs_code = $( "#Cetacean_code option:selected" ).text().split("|")[1].trim();
 
     // var cl_cs_code = cetaceanText.split("|")[1].trim();
 
     console.log('cl_cs_code:' + cl_cs_code);
     console.log('hereeeeee');
+=======
+    var cl_cs_code = $( "#Cetacean_code option:selected" ).text().split("|")[1].trim();
+
+    // var cl_cs_code = cetaceanText.split("|")[1].trim();
+
+    console.log('cl_cs_code:' + cl_cs_code);
+    // return false;
+
+    if (cl_cs_code != "") {
+        $.ajax({
+            type: "post",
+            data: { cl_cs_code: cl_cs_code, Sightningid: $("#getsight_ID").val() },
+            url: application_root + "ConditionLesions.cfc?method=getlesionsListHistoryWithSDRs",
+            success: function (res) {
+                $("#condition_lesions_form_1").html(res);
+                
+                $('#body_lesionssss').DataTable({
+                        "pageLength": 10,
+                        "paging": false,
+                        "info": false,
+                        "searching": false,
+                        "order": [], 
+                        "columnDefs": [{
+                        "orderable": false,
+                        "targets": [6,7]  
+                        }]
+                    });
+                    
+
+                // $('#condition_lesions_form').removeClass('is-lesion-form');
+                // if ($("#condition_lesions_form_1 h2").html() == "There is no Lesions added yet!") {
+                //     // $('#condition_lesions_form').removeClass('is-lesion-form');
+                // }
+                // $('.cetacean-name').html('Dolphin');
+                // $('.breakdown-image').attr('src', 'http://test.wildfins.org/resources/assets/img/' + 'dolphin-breakdown-diagram.png');
+            },
+            error: function (err) {
+                console.log("err:", err);
+            }
+        });
+    } else {
+        alert("Please select Cetacean Name/Code");
+        return false;
+    }
+}
+
+
+function getlesionsListHistory() {
+    var cl_cs_code = $( "#Cetacean_code option:selected" ).text().split("|")[1].trim();
+
+    // console.log('cl_cs_code:' + cl_cs_code);
+>>>>>>> Stashed changes
     // return false;
 
     if (cl_cs_code != "") {
@@ -1374,6 +1493,7 @@ function empty_Lesions_history() {
     $(".customLesionRadio").attr("checked", false);
     $(".on_update_disabled").removeAttr("disabled");
     $('#cetacean').css('overflow', 'hidden');
+<<<<<<< Updated upstream
 
     $("#LesionType").removeAttr("disabled");
     $("#Region").removeAttr("disabled");
@@ -1383,6 +1503,8 @@ function empty_Lesions_history() {
     $('#update_cetaceansSighting_btn').css("display", "none");
     $('#add_cetaceansSighting_btn').css("display", "inline");
 
+=======
+>>>>>>> Stashed changes
 }
 
 function getSingleCS_Record(cs_ID) {

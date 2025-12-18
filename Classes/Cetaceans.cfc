@@ -804,8 +804,11 @@
                 ,Condition_Lesions.PhotoNumber 
                 ,Condition_Lesions.TypeName 
                 ,Condition_Lesions.EnterDate 
+<<<<<<< Updated upstream
                 ,Condition_Lesions.SightingText 
                 ,Condition_Lesions.PermanentScar_date 
+=======
+>>>>>>> Stashed changes
                 ,Surveys.id as surveyid
                 ,Condition_Lesions.Comments 
                 from Condition_Lesions
@@ -2184,11 +2187,17 @@
                 ,Condition_Lesions.Status
                 ,Condition_Lesions.id
                 ,Condition_Lesions.PhotoNumber 
+<<<<<<< Updated upstream
                 ,Condition_Lesions.SightingText 
                 ,Condition_Lesions.Region as CLRegion
                 ,Condition_Lesions.Comments 
                 ,Condition_Lesions.TypeName 
                 ,Condition_Lesions.permanentScar_date 
+=======
+                ,Condition_Lesions.Region as CLRegion
+                ,Condition_Lesions.Comments 
+                ,Condition_Lesions.TypeName 
+>>>>>>> Stashed changes
                 from Condition_Lesions
                 INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
                 INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
@@ -2209,6 +2218,7 @@
 
     <cffunction name="UpdateCetacean_LesionsByID" access="remote" returnformat="JSON" output="true">
         <!--- <cfdump var="#Cetacean_Survey#" abort='true'> --->
+<<<<<<< Updated upstream
 
         <cfif permanentScar_date neq '' >
             <cfset permanentScar_date = permanentScar_date>
@@ -2218,6 +2228,8 @@
 
         <!--- <cfdump var="#permanentScar_date#" abort="true"> --->
 
+=======
+>>>>>>> Stashed changes
         <cftry>
         <cfquery name="update_cetaceans"datasource="#variables.dsn#">
             UPDATE Condition_Lesions
@@ -2227,7 +2239,10 @@
             ,Region = '#region#'
             ,PhotoNumber = '#photoNumber#'
             ,Comments = '#comments#'
+<<<<<<< Updated upstream
             ,PermanentScar_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#permanentScar_date#" null="#IIF(len(trim(permanentScar_date)), false, true)#">
+=======
+>>>>>>> Stashed changes
             WHERE ID = #ID#
         </cfquery>
         <cfcatch>

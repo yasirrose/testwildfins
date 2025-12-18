@@ -58,28 +58,7 @@
         <cfif NOT isDefined('FORM.caseReportBox')>
             <cfset FORM.caseReportBox = "0">
         </cfif>
-       
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-            <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
-                SELECT CNRDATE as cnrdate, ID as cnID  from ST_CetaceanNecropsyReport 
-                where fnumber = '#form.FNUMBER#'            
-            </cfquery>
-            
-            <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
-                </cfquery>
-            </cfif>            
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
-
+        
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -289,29 +268,7 @@
         <cfif NOT isDefined('FORM.caseReportBox')>
             <cfset FORM.caseReportBox = "0">
         </cfif>
-
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-            <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
-                SELECT cn.CNRDATE as cnrdate, cn.ID as cnID  from ST_LiveCetaceanExam sa 
-                left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
-                where sa.ID = '#form.LCEID#'            
-            </cfquery>
-            <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
-                </cfquery>
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
-
-
+        
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -391,147 +348,6 @@
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.ID#'>
         </cfquery>
-
-         <!--- <cfset var tables = [
-            "ST_HIForm",
-            "ST_LevelAForm",
-            "ST_HistoForm",
-            "ST_Blood_Values",
-            "ST_Toxicology",
-            "ST_Ancillary_Diagnostics",
-            "ST_SampleArchive",
-            "ST_CetaceanNecropsyReport",
-            "ST_Morphometrics"
-        ]>
-
-
-
-
-        <cfloop array="#tables#" index="tbl">
-            <!--- Step 1: Check if record exists based on Fnumber --->
-            <cfquery name="qGetRecord" datasource="#variables.dsn#">
-                SELECT ID FROM #tbl#
-                WHERE Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#FORM.Fnumber#">
-                and 
-                <cfif tbl EQ 'ST_Morphometrics' OR tbl EQ 'ST_CetaceanNecropsyReport'>
-                    deleted IS NULL
-                <cfelse>
-                    deleted != '1'
-                </cfif>
-            </cfquery>
-
-            <cfif qGetRecord.recordCount>
-                <!--- Step 2: If record found, update --->
-                <cfquery datasource="#variables.dsn#">
-                    UPDATE #tbl# SET
-                        date = <cfqueryparam cfsqltype="CF_SQL_DATE" value='#FORM.date#'>,
-                        ResearchTeam = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ResearchTeam#'>,
-                        Veterinarian = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Veterinarian#'>,
-                        BodyOfWater = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BodyOfWater#'>,
-                        species = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.species#'>,
-                        StTpye = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.StTpye#'>,
-                        NOAAStock = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NOAAStock#'>,
-                        Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Fnumber#'>,
-                        NMFS = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NMFS#'>,
-                        NDB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NDB#'>,
-                        NAA = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NAA#'>,
-                        code = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.code#'>,
-                        hera = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.hera#'>,
-                        sex = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.sex#'>,
-                        ageClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ageClass#'>,
-                        Location = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Location#'>,
-                        lat = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.lat#'>,
-                        lon = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.lon#'>,
-                        county = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.county#'>,
-                        InitialCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.InitialCondition#'>,
-                        FinalCondition = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.FinalCondition#'>,
-                        BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>,
-                        <cfif tbl NEQ 'ST_CetaceanNecropsyReport'>
-                             CompletedBy = <cfqueryparam cfsqltype="cf_sql_varchar" value='#CompletedBy#'>,
-                        </cfif>
-                        affiliatedID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.affiliatedID#'>,
-                        actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>,
-                        headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
-                    WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetRecord.ID#">
-                </cfquery>
-            <cfelse>
-                <!--- Step 3: If no record, insert new --->
-                <cfquery datasource="#variables.dsn#">
-                    INSERT INTO #tbl# (
-                        date,
-                        ResearchTeam,
-                        Veterinarian,
-                        BodyOfWater,
-                        species,
-                        StTpye,
-                        NOAAStock,
-                        Fnumber,
-                        NMFS,
-                        NDB,
-                        NAA,
-                        code,
-                        hera,
-                        sex,
-                        ageClass,
-                        Location,
-                        lat,
-                        lon,
-                        county,
-                        InitialCondition,
-                        FinalCondition,
-                        BriefHistory,
-                        <cfif tbl NEQ 'ST_CetaceanNecropsyReport'>
-                             CompletedBy,
-                        </cfif>
-                        affiliatedID,
-                        actualClass,
-                        headerImages
-                    ) VALUES (
-                        <cfqueryparam cfsqltype="CF_SQL_DATE" value='#FORM.date#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ResearchTeam#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Veterinarian#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BodyOfWater#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.species#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.StTpye#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NOAAStock#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Fnumber#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NMFS#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NDB#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NAA#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.code#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.hera#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.sex#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ageClass#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Location#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.lat#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.lon#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.county#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.InitialCondition#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.FinalCondition#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>,
-                        <cfif tbl NEQ 'ST_CetaceanNecropsyReport'>
-                            <cfqueryparam cfsqltype="cf_sql_varchar" value='#CompletedBy#'>,
-                        </cfif>
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.affiliatedID#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.actualClass#'>,
-                        <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
-                    )
-                </cfquery>
-            </cfif>
-        </cfloop> --->
-
-
-
-
-
-
-
-
-
-
-
-
-
         <cfcatch type="any">
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
@@ -633,12 +449,6 @@
         <cfargument name="Side" type="string" required="false" default="">
         <cfargument name="Status" type="string" required="false" default="">
         <cfargument name="LCE_ID" type="numeric" required="false">
-
-            <!--- <cfdump var="#arguments.LesionType#" > <br>
-            <cfdump var="#arguments.Region#" abort="true"> --->
-
-            <!--- <cfset LesionType = Replace(arguments.LesionType, ",", "- ", "all")> --->
-
         <cfif len(trim(LesionPresent)) GT 0 >
 			<cfloop from="1" to="#ListLen(LesionPresent)#" index="i">
                 <cfquery name="qInsertLesionData" datasource="#variables.dsn#">
@@ -651,13 +461,11 @@
                         <cfelse>
                             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(LesionType,i)#'>
                         </cfif>    
-
                         <cfif ListGetAt(Region,i) eq 0>
                             ,<cfqueryparam cfsqltype="cf_sql_varchar" value=''>
                         <cfelse>
                             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(Region,i)#'>
                         </cfif>    
-
                         <cfif ListGetAt(Side,i) eq 0>
                             ,<cfqueryparam cfsqltype="cf_sql_varchar" value=''>
                         <cfelse>
@@ -748,89 +556,12 @@
     </cffunction>
 
     <cffunction name="deleteCE" returntype="any" output="false" access="public" >
-  
-        <cftry>
+	
         <cfquery name="qdeleteCE" datasource="#variables.dsn#"  >
-            Update ST_LiveCetaceanExam 
-            set pdfFiles = ''
-            ,pdfFilesname = ''
-            ,ECG = ''
-            ,ECGresults = ''
-            ,Ultrasound = ''
-            ,Ultrasoundresults = ''
-            ,mmc = ''
-            ,crt = ''
-            ,SputumSample = ''
-            ,SkinLesion = ''
-            ,BloodSamples = ''
-            ,SSCollectedFor = ''
-            ,SLCollectedFor = ''
-            ,BSCollectedFor = ''
-            ,BSBloodVolume = ''
-            ,BSNotes = ''
-            ,BodyCondition = ''
-            ,Head_NuchalCrest = ''
-            ,Head_LateralCervicalReg = ''
-            ,Head_FacialBones = ''
-            ,Head_EarOS = ''
-            ,Head_ChinSkinFolds = ''
-            ,Body_EpaxialMuscle = ''
-            ,Body_DorsalRidgeScapula = ''
-            ,Body_Ribs = ''
-            ,Tail_TransversePro = ''
-            ,General = ''
-            ,SNM = ''
-            ,Mentation = ''
-            ,Palpation = ''
-            ,Proprioception = ''
-            ,Reflexes = ''
-            ,Entangled = ''
-            ,Taged = ''
-            ,TagedType = ''
-            ,TagedLocation = ''
-            ,Released = ''
-            ,TagedLat = ''
-            ,TagedLon = ''
-            ,RLD = ''
-            ,Deleted = 1
-            where ID = #ID#
-        </cfquery> 
-        <cfquery name="qdeletePhysicalExamNotes" datasource="#Application.dsn#">
-            delete from ST_PhysicalExamNotes
-            where LCE_ID = '#ID#'
-        </cfquery>
-        <cfquery name="qdeleteHeartRate" datasource="#Application.dsn#">
-            delete from ST_HeartRate
-            where LCE_ID = '#ID#'
-        </cfquery>
-        <cfquery name="qdeleteRespRate" datasource="#Application.dsn#">
-            delete from ST_RespRate
-            where LCE_ID = '#ID#'
-        </cfquery>
-        <cfquery name="qdeleteDrugsAdministered" datasource="#Application.dsn#">
-            delete from ST_DrugsAdministered
-            where LCE_ID = '#ID#'
-        </cfquery>
-        <cfquery name="qdeleteBiopsy" datasource="#Application.dsn#">
-            delete from ST_Biopsy
-            where LCE_ID = '#ID#'
-        </cfquery>
-        <cfquery name="qdeleteLesion" datasource="#Application.dsn#">
-            delete from ST_Lesion
-            where LCE_ID = '#ID#'
-        </cfquery>
-    
-        <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-        </cfcatch>
-
-        </cftry>
-       
-        <!--- <cfquery name="qdeleteCE" datasource="#variables.dsn#"  >
             Update ST_LiveCetaceanExam 
             set deleted = '1'
             where ID = #ID#
-        </cfquery> --->
+        </cfquery>
         <cfreturn True>
     </cffunction>
     <!--- <cffunction name="deleteCE" returntype="any" output="false" access="public" >
@@ -872,298 +603,20 @@
         <cfreturn True>
     </cffunction>
 
-    <cffunction name="getLCEFBNumber" returntype="any" output="false" access="public">
-        <cfquery name="qgetLCEFBNumber" datasource="#variables.dsn#">
-            WITH all_fnumbers AS (
-                SELECT Fnumber, ID, 1 AS priority
-                FROM ST_LiveCetaceanExam
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 2
-                FROM ST_HIForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 3
-                FROM ST_LevelAForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 4
-                FROM ST_HistoForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 5
-                FROM ST_Blood_Values
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 6
-                FROM ST_Toxicology
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 7
-                FROM ST_Ancillary_Diagnostics
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 8
-                FROM ST_SampleArchive
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 9
-                FROM ST_CetaceanNecropsyReport
-                WHERE deleted IS NULL
-    
-                UNION ALL
-                SELECT Fnumber, ID, 10
-                FROM ST_Morphometrics
-                WHERE deleted IS NULL
-            )
-            SELECT Fnumber, ID
-            FROM (
-                SELECT 
-                    Fnumber,
-                    ID,
-                    ROW_NUMBER() OVER (
-                        PARTITION BY Fnumber 
-                        ORDER BY priority
-                    ) AS rn
-                FROM all_fnumbers
-            ) t
-            WHERE rn = 1
-            ORDER BY Fnumber ASC
+    <cffunction name="getLCEFBNumber" returntype="any" output="false" access="public" >
+		
+        <cfquery name="qgetLCEFBNumber" datasource="#variables.dsn#"  >
+            SELECT ID,Fnumber from ST_LiveCetaceanExam where deleted != '1' order by Fnumber ASC
         </cfquery>
-    
         <cfreturn qgetLCEFBNumber>
     </cffunction>
-    
-    
-    
-    <!--- <cffunction name="getLCEFBNumber" returntype="any" output="false" access="public" >
-
-        <!--- <cfquery name="qgetLCEFBNumber" datasource="#variables.dsn#"  >
-            SELECT ID,Fnumber from ST_LiveCetaceanExam where deleted != '1' order by Fnumber ASC
-        </cfquery> --->
-		
-        <cfquery name="qgetLCEFBNumber" datasource="#variables.dsn#">
-            SELECT Fnumber, ID FROM ST_LiveCetaceanExam WHERE deleted != '1'
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
-
-            )
-
-            ORDER BY Fnumber ASC
-        </cfquery>
-
-        <cfreturn qgetLCEFBNumber>
-    </cffunction> --->
 
     <cffunction name="getLiveCetaceanExamData" returntype="any" output="false" access="public" >
-<<<<<<< Updated upstream
-
-        <cfargument name="LCEID" type="numeric" required="true">
-        <cfargument name="Fnumber" type="string" required="false">
-
-        <!--- <cfdump var="#arguments.Fnumber#" abort="true"> --->
-
-		<!--- <cfabort showerror="getLiveCetaceanExamData() called!"> --->
-        <!--- <cfquery name="qgetLiveCetaceanExamData" datasource="#variables.dsn#"  >
-=======
-		<!--- <cfabort showerror="getLiveCetaceanExamData() called!"> --->
+		
         <cfquery name="qgetLiveCetaceanExamData" datasource="#variables.dsn#"  >
->>>>>>> Stashed changes
-            SELECT * from ST_LiveCetaceanExam where ID = #LCEID# And deleted != '1'
+            SELECT * from ST_LiveCetaceanExam where ID = #LCEID# 
         </cfquery>
-
-        <cfreturn qgetLiveCetaceanExamData> --->
-
-        <cfset var result = {}>
-
-        <!--- First table check --->
-        <cfset var tables = [
-            "ST_LiveCetaceanExam",
-            "ST_HIForm",
-            "ST_LevelAForm",
-            "ST_HistoForm",
-            "ST_Blood_Values",
-            "ST_Toxicology",
-            "ST_Ancillary_Diagnostics",
-            "ST_SampleArchive",
-            "ST_CetaceanNecropsyReport",
-            "ST_Morphometrics"
-        ]>
-
-        <cfset var found = false>
-
-        <cfloop array="#tables#" index="tableName">
-            <cfquery name="qTemp" datasource="#variables.dsn#">
-                SELECT *
-                FROM #tableName#
-                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#LCEID#">
-                and  fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
-                AND 
-                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
-                    deleted IS NULL
-                <cfelse>
-                    deleted != '1'
-                </cfif>
-            </cfquery>
-
-            <cfif qTemp.recordCount GT 0>
-                <cfset result.data = duplicate(qTemp)>
-                <cfset result.sourceTableName = tableName>
-                <cfset found = true>
-                <cfbreak>
-            </cfif>
-        </cfloop>
-
-        <cfif NOT found>
-            <cfset result.data = {}> 
-            <cfset result.sourceTableName = "NoneFound">
-        </cfif>
-
-        <cfreturn result>
-
+        <cfreturn qgetLiveCetaceanExamData>
     </cffunction>
 
     <cffunction name="getLCE_ten" returntype="any" output="false" access="public" >
@@ -1269,11 +722,13 @@
 
     <cffunction name="removepdf" returntype="string" output="false" access="remote" returnformat="plain">
         <cfquery name="removePdfFiles" datasource="#Application.dsn#" result = "results">
-            update ST_LiveCetaceanExam set
-            pdfFiles=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                where
-                ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>                    
-        </cfquery>
+                update ST_LiveCetaceanExam set
+                pdfFiles=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
+        
+                    where
+                    ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+                    
+                </cfquery>
                         <!--- <cfdump var=#results# abort="true"> --->
                
         <cfif len(trim(#pdf#))>
@@ -1320,25 +775,6 @@
         <cfreturn True>
     </cffunction>
 
-    <cffunction name="removepdfAD" returntype="string" output="false" access="remote" returnformat="plain">
-        <cfquery name="removePdfFiles" datasource="#Application.dsn#" result = "results">
-                update ST_Ancillary_Diagnostics set
-                pdfFiles=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-        
-                    where
-                    ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-                    
-                </cfquery>
-                        <!--- <cfdump var=#results# abort="true"> --->
-               
-        <cfif len(trim(#pdf#))>
-            <cfif FileExists("#Application.CloudDirectory&pdf#")>
-                <cffile action = "delete" file = "#Application.CloudDirectory&pdf#">
-            </cfif>
-        </cfif>
-        <cfreturn True>
-    </cffunction>
-
     <cffunction name="removeToxifiles" returntype="string" output="false" access="remote" returnformat="plain">
         <cfquery name="removePdfFiles" datasource="#Application.dsn#" result = "results">
                 update ST_Toxicology set
@@ -1363,14 +799,6 @@
         <cfquery name="qgetCetaceanSpecies" datasource="#variables.dsn#"  >
             SELECT * from TLU_CetaceanSpecies
         </cfquery>
-        <cfreturn qgetCetaceanSpecies>
-    </cffunction>
-    <cffunction name="getCetaceanSpeciesForPDF" returntype="any" output="false" access="public" >
-        
-        <cfquery name="qgetCetaceanSpecies" datasource="#variables.dsn#">
-            SELECT * FROM TLU_CetaceanSpecies WHERE id = <cfqueryparam cfsqltype="cf_sql_integer" value="#form.species#">
-        </cfquery>
-        
         <cfreturn qgetCetaceanSpecies>
     </cffunction>
 
@@ -1407,27 +835,6 @@
         <cfif NOT isDefined('FORM.caseReportHIBox')>
             <cfset FORM.caseReportHIBox = "0">
         </cfif> 
-
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-            <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
-                SELECT CNRDATE as cnrdate, ID as cnID  from ST_CetaceanNecropsyReport 
-                where fnumber = '#form.FNUMBER#'            
-            </cfquery>
-            <!--- <cfdump var="#qgetcetaceanNecropsyDate#" abort="true"> --->
-            <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
-                </cfquery>
-            </cfif>            
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
       
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -1539,7 +946,6 @@
         <cfif len(trim(HiType)) GT 0 >
             
 			<cfloop from="1" to="#ListLen(HiType)#" index="i">
-                
                 <cfquery name="qInsertHiExampData" datasource="#variables.dsn#">
                    Insert into ST_DynamicHI (TypeofHI,LocationofHI,GearCollected,TypeofGearCollected,GearDeposition,HI_ID)
                     values
@@ -1627,6 +1033,7 @@
         
         <cfset DiagnosticTest = '#form.DiagnosticTest#'>
         <cfset TestResults = '#form.TestResults#'>
+        <!--- <cfdump var="#form.name#" abort="true"> --->
         <cfif isDefined('form.pdf') and form.pdf neq 'undefined'>
             <cffile action = "upload"  
             fileField = "pdf"  
@@ -1988,29 +1395,6 @@
         <cfif NOT isDefined('FORM.caseReportHIBox')>
             <cfset FORM.caseReportHIBox = "0">
         </cfif>
-
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-                <cfquery name="qgetHIFormNecropsyDate" datasource="#Application.dsn#"  >
-                    SELECT cn.CNRDATE as cnrdate, cn.ID as cnID from ST_HIForm sa 
-                    left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
-                    where sa.ID = '#form.HIFORM_ID#'            
-                </cfquery>
-            <cfif isDefined('qgetHIFormNecropsyDate.cnID') AND qgetHIFormNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetHIFormNecropsyDate.cnID#'>
-                </cfquery>
-
-                <!--- <cfdump var="#return_data#" abort="true"> --->
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
        
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -2086,298 +1470,18 @@
         </cfquery>
         <cfreturn qgetHIDate>
     </cffunction>
-
-
-    <cffunction name="getHIFBNumber" returntype="any" output="false" access="public">
-        <cfquery name="qgetHIFBNumber" datasource="#Application.dsn#">
-            WITH all_fnumbers AS (
-                SELECT Fnumber, ID, 1 AS priority
-                FROM ST_HIForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 2
-                FROM ST_LiveCetaceanExam
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 3
-                FROM ST_LevelAForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 4
-                FROM ST_HistoForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 5
-                FROM ST_Blood_Values
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 6
-                FROM ST_Toxicology
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 7
-                FROM ST_Ancillary_Diagnostics
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 8
-                FROM ST_SampleArchive
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 9
-                FROM ST_CetaceanNecropsyReport
-                WHERE deleted IS NULL
-    
-                UNION ALL
-                SELECT Fnumber, ID, 10
-                FROM ST_Morphometrics
-                WHERE deleted IS NULL
-            )
-            SELECT Fnumber, ID
-            FROM (
-                SELECT 
-                    Fnumber,
-                    ID,
-                    ROW_NUMBER() OVER (
-                        PARTITION BY Fnumber
-                        ORDER BY priority
-                    ) AS rn
-                FROM all_fnumbers
-            ) t
-            WHERE rn = 1
-            ORDER BY Fnumber ASC
+    <cffunction name="getHIFBNumber" returntype="any" output="false" access="public" >
+        <cfquery name="qgetHIFBNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_HIForm where deleted != '1' order by Fnumber ASC
         </cfquery>
-    
         <cfreturn qgetHIFBNumber>
     </cffunction>
-    
-
-
-    <!--- <cffunction name="getHIFBNumber" returntype="any" output="false" access="public" >
-        
-        <!--- <cfquery name="qgetHIFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_HIForm where deleted != '1' order by Fnumber ASC
-        </cfquery> --->
-        
-        <cfquery name="qgetHIFBNumber" datasource="#Application.dsn#"  >
-            SELECT Fnumber, ID from ST_HIForm where deleted != '1'
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
-                SELECT Fnumber FROM ST_HIForm WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
-
-            )
-
-
-             order by Fnumber ASC
-        </cfquery> 
-
-        <cfreturn qgetHIFBNumber>
-    </cffunction> --->
-
     <cffunction name="getHIData" returntype="any" output="false" access="public" >
         <!--- <cfdump var="#HI_ID#" abort="true"> --->
-<<<<<<< Updated upstream
-        <!--- <cfquery name="qHIData" datasource="#Application.dsn#"  >
-=======
         <cfquery name="qHIData" datasource="#Application.dsn#"  >
->>>>>>> Stashed changes
-            SELECT * from ST_HIForm where ID = #HI_ID# And deleted != '1'
+            SELECT * from ST_HIForm where ID = #HI_ID#
         </cfquery>
-        <cfreturn qHIData> --->
-
-        <!--- <cfargument name="HI_ID" type="numeric" required="true">
-        <cfargument name="Fnumber" type="string" required="false"> --->
-
-        <!--- <cfdump var="#arguments#" abort="true"> --->
-
-        <cfset var result = {}>
-
-        <!--- First table check --->
-        <cfset var tables = [
-            "ST_HIForm",
-            "ST_LiveCetaceanExam",
-            "ST_LevelAForm",
-            "ST_HistoForm",
-            "ST_Blood_Values",
-            "ST_Toxicology",
-            "ST_Ancillary_Diagnostics",
-            "ST_SampleArchive",
-            "ST_CetaceanNecropsyReport",
-            "ST_Morphometrics"
-        ]>
-
-        <cfset var found = false>
-
-        <cfloop array="#tables#" index="tableName">
-            <cfquery name="qTemp" datasource="#variables.dsn#">
-                SELECT *
-                FROM #tableName#
-                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#form.HI_ID#">
-                and fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
-                AND 
-                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
-                    deleted IS NULL
-                <cfelse>
-                    deleted != '1'
-                </cfif>
-            </cfquery>
-
-            <cfif qTemp.recordCount GT 0>
-                <cfset result.data = duplicate(qTemp)>
-                <cfset result.sourceTableName = tableName>
-                <cfset found = true>
-                <cfbreak>
-            </cfif>
-        </cfloop>
-
-        <cfif NOT found>
-            <cfset result.data = {}> 
-            <cfset result.sourceTableName = "NoneFound">
-        </cfif>
-
-        <cfreturn result>
-
+        <cfreturn qHIData>
     </cffunction>
     <!--- <cffunction name="getHIData" returntype="any" output="false" access="public" >
         <cfquery name="qHIData" datasource="#Application.dsn#"  >
@@ -2399,46 +1503,24 @@
         <cfreturn qgetHIID>
     </cffunction>
 
-    <cffunction name="deleteHI" returntype="any" output="false" access="public" >	
-        
-        <cftry>
-            <cfquery name="qdeleteHI" datasource="#variables.dsn#"  >
-                Update ST_HIForm 
-                set pdfFiles = ''
-                ,Examtype = ''
-                ,Hifindings = ''
-                ,Deleted = 1
-                where ID = #HIForm_ID#
-            </cfquery>
-
-            <cfquery name="qdeleteCBC" datasource="#Application.dsn#">
-                delete from ST_DynamicHI
-                where HI_ID = '#HIForm_ID#'
-            </cfquery>
-
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch> 
-        </cftry>
-        <!--- <cfquery name="qdeleteHI" datasource="#variables.dsn#"  >
+    <cffunction name="deleteHI" returntype="any" output="false" access="public" >		
+        <cfquery name="qdeleteHI" datasource="#variables.dsn#"  >
             Update ST_HIForm 
             set deleted = '1'
             where ID = #HIForm_ID#
-        </cfquery> --->
+        </cfquery>
         <cfreturn True>
     </cffunction>
-
     <cffunction name="deleteHiFormAllRecord" returntype="any" output="false" access="public" >		
     
         <cfquery name="qdeleteHiFormAllRecord" datasource="#variables.dsn#"  >
-            TRUNCATE Table ST_HIForm             
+        TRUNCATE Table ST_HIForm             
         </cfquery>
         <cfquery name="qdeleteHiFormAllRecord1" datasource="#variables.dsn#"  >
-            TRUNCATE Table ST_DynamicHI             
+        TRUNCATE Table ST_DynamicHI             
         </cfquery>
         <cfreturn True>
     </cffunction>
-
     <cffunction name="getHIDataByLCE" returntype="any" output="false" access="public" >
         <cfquery name="qgetHIDataByLCE" datasource="#Application.dsn#"  >
             SELECT * from ST_HIForm where LCE_ID = #LCEID#
@@ -2483,27 +1565,6 @@
             <cfset FORM.caseReportLABox = "0">
         </cfif>
         
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-            <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
-                SELECT CNRDATE as cnrdate, ID as cnID  from ST_CetaceanNecropsyReport 
-                where fnumber = '#form.FNUMBER#'            
-            </cfquery>
-            <!--- <cfdump var="#qgetcetaceanNecropsyDate#" abort="true"> --->
-            <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
-                </cfquery>
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
-        <!--- <cfdump var="#form#" abort="true"> --->
 
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -2641,28 +1702,6 @@
         <cfif NOT isDefined('FORM.caseReportLABox')>
             <cfset FORM.caseReportLABox = "0">
         </cfif>
-
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-                <cfquery name="qgetLevelAFormNecropsyDate" datasource="#Application.dsn#"  >
-                    SELECT cn.CNRDATE as cnrdate, cn.ID as cnID  from ST_LevelAForm sa 
-                    left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
-                    where sa.ID = '#form.LA_ID#'            
-                </cfquery>
-                <cfif isDefined('qgetLevelAFormNecropsyDate.cnID') AND qgetLevelAFormNecropsyDate.cnID neq ''>
-                    <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                        UPDATE  ST_CetaceanNecropsyReport SET
-                        CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                        WHERE
-                            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetLevelAFormNecropsyDate.cnID#'>
-                    </cfquery>
-                    <!--- <cfdump var="#return_data#" abort="true"> Nouman--->
-                </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
         
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -2740,295 +1779,17 @@
         </cfquery>
         <cfreturn qgetLevelADate>
     </cffunction>
-
-    <cffunction name="getLevelAFBNumber" returntype="any" output="false" access="public">
-        <cfquery name="qgetLevelAFBNumber" datasource="#Application.dsn#">
-            WITH all_fnumbers AS (
-                SELECT Fnumber, ID, 1 AS priority
-                FROM ST_LevelAForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 2
-                FROM ST_LiveCetaceanExam
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 3
-                FROM ST_HIForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 4
-                FROM ST_HistoForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 5
-                FROM ST_Blood_Values
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 6
-                FROM ST_Toxicology
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 7
-                FROM ST_Ancillary_Diagnostics
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 8
-                FROM ST_SampleArchive
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 9
-                FROM ST_CetaceanNecropsyReport
-                WHERE deleted IS NULL
-    
-                UNION ALL
-                SELECT Fnumber, ID, 10
-                FROM ST_Morphometrics
-                WHERE deleted IS NULL
-            )
-            SELECT Fnumber, ID
-            FROM (
-                SELECT 
-                    Fnumber,
-                    ID,
-                    ROW_NUMBER() OVER (
-                        PARTITION BY Fnumber
-                        ORDER BY priority
-                    ) AS rn
-                FROM all_fnumbers
-            ) t
-            WHERE rn = 1
-            ORDER BY Fnumber ASC
+    <cffunction name="getLevelAFBNumber" returntype="any" output="false" access="public" >
+        <cfquery name="qgetLevelAFBNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_LevelAForm where deleted != '1' order by Fnumber ASC
         </cfquery>
-    
         <cfreturn qgetLevelAFBNumber>
     </cffunction>
-<<<<<<< Updated upstream
-    
-<!--- 
-    <cffunction name="getLevelAFBNumber" returntype="any" output="false" access="public" >
-        <!--- <cfquery name="qgetLevelAFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_LevelAForm where deleted != '1' order by Fnumber ASC
-        </cfquery> --->
-
-        <cfquery name="qgetLevelAFBNumber" datasource="#Application.dsn#"  >
-            SELECT Fnumber , ID from ST_LevelAForm where deleted != '1' 
-             UNION
-            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
-                SELECT Fnumber FROM ST_LevelAForm WHERE deleted != '1'
-            )
-            
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LevelAForm WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LiveCetaceanExam  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LevelAForm WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LiveCetaceanExam  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
-
-            )
-               
-            order by Fnumber ASC
-=======
     <cffunction name="getLevelAData" returntype="any" output="false" access="public" >
         <cfquery name="qgetLevelAData" datasource="#Application.dsn#"  >
-            SELECT * from ST_LevelAForm where ID = #LA_ID# And deleted != '1'
->>>>>>> Stashed changes
+            SELECT * from ST_LevelAForm where ID = #LA_ID#
         </cfquery>
-
-        <cfreturn qgetLevelAFBNumber>
-    </cffunction> --->
-
-    <cffunction name="getLevelAData" returntype="any" output="false" access="public" >
-        
-        <!--- <cfquery name="qgetLevelAData" datasource="#Application.dsn#"  >
-            SELECT * from ST_LevelAForm where ID = #LA_ID# And deleted != '1'
-        </cfquery>
-        <cfreturn qgetLevelAData> --->
-
-        <!--- <cfargument name="LA_ID" type="numeric" required="true">
-        <cfargument name="Fnumber" type="string" required="false"> --->
-
-        <!--- <cfdump var="#arguments#" abort="true"> --->
-
-        <cfset var result = {}>
-
-        <!--- First table check --->
-        <cfset var tables = [
-            "ST_LevelAForm",
-            "ST_LiveCetaceanExam",
-            "ST_HIForm",
-            "ST_HistoForm",
-            "ST_Blood_Values",
-            "ST_Toxicology",
-            "ST_Ancillary_Diagnostics",
-            "ST_SampleArchive",
-            "ST_CetaceanNecropsyReport",
-            "ST_Morphometrics"
-        ]>
-
-        <cfset var found = false>
-
-        <cfloop array="#tables#" index="tableName">
-            <cfquery name="qTemp" datasource="#variables.dsn#">
-                SELECT *
-                FROM #tableName#
-                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#LA_ID#">
-                and fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
-                AND 
-                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
-                    deleted IS NULL
-                <cfelse>
-                    deleted != '1'
-                </cfif>
-            </cfquery>
-
-            <cfif qTemp.recordCount GT 0>
-                <cfset result.data = duplicate(qTemp)>
-                <cfset result.sourceTableName = tableName>
-                <cfset found = true>
-                <cfbreak>
-            </cfif>
-        </cfloop>
-
-        <cfif NOT found>
-            <cfset result.data = {}> 
-            <cfset result.sourceTableName = "NoneFound">
-        </cfif>
-
-        <cfreturn result>
-
+        <cfreturn qgetLevelAData>
     </cffunction>
     <!--- <cffunction name="getLevelAData" returntype="any" output="false" access="public" >
         <cfquery name="qgetLevelAData" datasource="#Application.dsn#"  >
@@ -3038,7 +1799,7 @@
     </cffunction> --->
     <cffunction name="getLevelADataByLCE" returntype="any" output="false" access="public" >
         <cfquery name="qgetLevelADataByLCE" datasource="#Application.dsn#"  >
-            SELECT * from ST_LevelAForm where LCE_ID = #LCEID# And deleted != '1'
+            SELECT * from ST_LevelAForm where LCE_ID = #LCEID#
         </cfquery>
         <cfreturn qgetLevelADataByLCE>
     </cffunction>
@@ -3049,36 +1810,12 @@
         <cfreturn qgetLevelA_ten>
     </cffunction>
      <cffunction name="deleteLA" returntype="any" output="false" access="public" >
-        
-        <cftry>
-            <cfquery name="qdeleteHI" datasource="#variables.dsn#"  >
-                Update ST_LevelAForm 
-                set pdfFiles = ''
-                ,ILAD = ''
-                ,ILADComment = ''
-                ,CarcassStatus = ''
-                ,CarcassStatusLat = ''
-                ,CarcassStatusLon = ''
-                ,GroupEvent = ''
-                ,GroupEventType = ''
-                ,noOfAnimals = ''
-                ,TagsWere = ''
-                ,Restrand = ''
-                ,Deleted = 1
-                where ID = #level_A_ID#
-            </cfquery>
-
-      
-
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch> 
-        </cftry>
-        <!--- <cfquery name="qdeleteLA" datasource="#variables.dsn#"  >
+		
+        <cfquery name="qdeleteLA" datasource="#variables.dsn#"  >
             Update ST_LevelAForm 
             set deleted = '1'
             where ID = #level_A_ID#
-        </cfquery> --->
+        </cfquery>
         <cfreturn True>
     </cffunction>
      <cffunction name="deleteAllLevelAFormRecord" returntype="any" output="false" access="public" >		
@@ -3344,27 +2081,6 @@
         <cfif NOT isDefined('FORM.caseReportHistoBox')>
             <cfset FORM.caseReportHistoBox = "0">
         </cfif>
-
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-            <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
-                SELECT CNRDATE as cnrdate, ID as cnID  from ST_CetaceanNecropsyReport 
-                where fnumber = '#form.FNUMBER#'            
-            </cfquery>
-            <!--- <cfdump var="#qgetcetaceanNecropsyDate#" abort="true"> --->
-            <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
-                </cfquery>
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
         
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
@@ -3493,29 +2209,8 @@
         <cfif NOT isDefined('FORM.caseReportHistoBox')>
             <cfset FORM.caseReportHistoBox = "0">
         </cfif>
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-                <cfquery name="qgetHistopathologyNecropsyDate" datasource="#Application.dsn#"  >
-                    SELECT cn.CNRDATE as cnrdate, cn.ID as cnID  from ST_HistoForm sa 
-                    left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
-                    where sa.ID = '#form.His_ID#'            
-                </cfquery>
-            <cfif isDefined('qgetHistopathologyNecropsyDate.cnID') AND qgetHistopathologyNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetHistopathologyNecropsyDate.cnID#'>
-                </cfquery>
 
-                <!--- <cfdump var="#return_data#" abort="true"> --->
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
-
+         <!--- <cfdump var="#form#" abort="true"> --->
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -3621,7 +2316,7 @@
 		<!--- <cfreturn True> --->
     </cffunction>
 
-    <!--- get Histo Sample data --->
+    <!--- get Histo Sample data nouman--->
     <cffunction name="getHistoSampleData" returntype="any" output="false" access="public" >
         <cfquery name="qgetHistoSampleData" datasource="#variables.dsn#">
             SELECT *  FROM ST_HistoSampleData where HI_ID = #HI_ID#
@@ -3641,293 +2336,17 @@
         </cfquery>
         <cfreturn qgetHistoDate>
     </cffunction>
-
-    <cffunction name="getHistoFBNumber" returntype="any" output="false" access="public">
-        <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#">
-            WITH all_fnumbers AS (
-                SELECT Fnumber, ID, 1 AS priority
-                FROM ST_HistoForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 2
-                FROM ST_LiveCetaceanExam
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 3
-                FROM ST_HIForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 4
-                FROM ST_LevelAForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 5
-                FROM ST_Blood_Values
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 6
-                FROM ST_Toxicology
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 7
-                FROM ST_Ancillary_Diagnostics
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 8
-                FROM ST_SampleArchive
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 9
-                FROM ST_CetaceanNecropsyReport
-                WHERE deleted IS NULL
-    
-                UNION ALL
-                SELECT Fnumber, ID, 10
-                FROM ST_Morphometrics
-                WHERE deleted IS NULL
-            )
-            SELECT Fnumber, ID
-            FROM (
-                SELECT 
-                    Fnumber,
-                    ID,
-                    ROW_NUMBER() OVER (
-                        PARTITION BY Fnumber
-                        ORDER BY priority
-                    ) AS rn
-                FROM all_fnumbers
-            ) t
-            WHERE rn = 1
-            ORDER BY Fnumber ASC
-        </cfquery>
-    
-        <cfreturn qgetHistoFBNumber>
-<<<<<<< Updated upstream
-    </cffunction>   
-
-    <!--- <cffunction name="getHistoFBNumber" returntype="any" output="false" access="public" >
-        <!--- <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_HistoForm where deleted != '1' order by Fnumber ASC
-        </cfquery> --->
-
+    <cffunction name="getHistoFBNumber" returntype="any" output="false" access="public" >
         <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#"  >
-            SELECT Fnumber, ID from ST_HistoForm where deleted != '1' 
-            UNION
-            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
-                SELECT Fnumber FROM ST_HistoForm WHERE deleted != '1'
-            )
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_HistoForm WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LiveCetaceanExam  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_HistoForm WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LiveCetaceanExam  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_HistoForm WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LiveCetaceanExam  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
-
-            )
-
-            order by Fnumber ASC
-=======
+            SELECT ID,Fnumber from ST_HistoForm where deleted != '1' order by Fnumber ASC
+        </cfquery>
+        <cfreturn qgetHistoFBNumber>
     </cffunction>
     <cffunction name="getHistoData" returntype="any" output="false" access="public" >
         <cfquery name="qHistoData" datasource="#Application.dsn#"  >
-            SELECT * from ST_HistoForm where ID = #His_ID# And deleted != '1'
->>>>>>> Stashed changes
+            SELECT * from ST_HistoForm where ID = #His_ID#
         </cfquery>
-
-        <cfreturn qgetHistoFBNumber>
-    </cffunction> --->
-
-    <cffunction name="getHistoData" returntype="any" output="false" access="public" >
-        <!--- <cfquery name="qHistoData" datasource="#Application.dsn#"  >
-            SELECT * from ST_HistoForm where ID = #His_ID# And deleted != '1'
-        </cfquery>
-        <cfreturn qHistoData> --->
-
-        <!--- <cfargument name="HI_ID" type="numeric" required="true">
-        <cfargument name="Fnumber" type="string" required="false"> --->
-
-        <!--- <cfdump var="#arguments#" abort="true"> --->
-
-        <cfset var result = {}>
-
-        <!--- First table check --->
-        <cfset var tables = [
-            "ST_HistoForm",
-            "ST_LiveCetaceanExam",
-            "ST_HIForm",
-            "ST_LevelAForm",
-            "ST_Blood_Values",
-            "ST_Toxicology",
-            "ST_Ancillary_Diagnostics",
-            "ST_SampleArchive",
-            "ST_CetaceanNecropsyReport",
-            "ST_Morphometrics"
-        ]>
-
-        <cfset var found = false>
-
-        <cfloop array="#tables#" index="tableName">
-            <cfquery name="qTemp" datasource="#variables.dsn#">
-                SELECT *
-                FROM #tableName#
-                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#His_ID#">
-                and Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
-                AND 
-                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
-                    deleted IS NULL
-                <cfelse>
-                    deleted != '1'
-                </cfif>
-            </cfquery>
-
-            <cfif qTemp.recordCount GT 0>
-                <cfset result.data = duplicate(qTemp)>
-                <cfset result.sourceTableName = tableName>
-                <cfset found = true>
-                <cfbreak>
-            </cfif>
-        </cfloop>
-
-        <cfif NOT found>
-            <cfset result.data = {}> 
-            <cfset result.sourceTableName = "NoneFound">
-        </cfif>
-
-        <cfreturn result>
-
+        <cfreturn qHistoData>
     </cffunction>
     <!--- <cffunction name="getHistoData" returntype="any" output="false" access="public" >
         <cfquery name="qHistoData" datasource="#Application.dsn#"  >
@@ -3943,39 +2362,16 @@
     </cffunction>
     <cffunction name="getHistoDataByLCE" returntype="any" output="false" access="public" >
         <cfquery name="qgetHistoDataByLCE" datasource="#Application.dsn#"  >
-            SELECT * from ST_HistoForm where LCE_ID = #LCEID# And deleted != '1'
+            SELECT * from ST_HistoForm where LCE_ID = #LCEID#
         </cfquery>
         <cfreturn qgetHistoDataByLCE>
     </cffunction>
     <cffunction name="deleteHisto" returntype="any" output="false" access="public" >
-        
-        <cftry>
-            <cfquery name="qdeleteHI" datasource="#variables.dsn#"  >
-                Update ST_HistoForm 
-                set histoDate = NULL
-                ,PathologistAccession = ''
-                ,SampleComments = ''
-                ,pdfFiles = ''      
-                ,Deleted = 1     
-                where ID = #Histo_ID#
-            </cfquery>
-
-
-            <cfquery name="qdeleteCBC" datasource="#Application.dsn#">
-                delete from ST_HistoSampleData
-                where HI_ID = '#Histo_ID#'
-            </cfquery>
-      
-
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch> 
-        </cftry>
-        <!--- <cfquery name="qdeleteHisto" datasource="#variables.dsn#"  >
+        <cfquery name="qdeleteHisto" datasource="#variables.dsn#"  >
             Update ST_HistoForm 
             set deleted = '1'
             where ID = #Histo_ID#
-        </cfquery> --->
+        </cfquery>
         <cfreturn True>
     </cffunction>
     <cffunction name="deleteHIstoRecord" returntype="any" output="false" access="public" >
@@ -4019,26 +2415,6 @@
             <cfset FORM.caseReportBVBox = "">
         </cfif>
 
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-            <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
-                SELECT CNRDATE as cnrdate, ID as cnID  from ST_CetaceanNecropsyReport 
-                where fnumber = '#form.FNUMBER#'            
-            </cfquery>
-            <!--- <cfdump var="#qgetcetaceanNecropsyDate#" abort="true"> --->
-            <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
-                </cfquery>
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -4118,7 +2494,7 @@
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BVPdfFiles#'>
-                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.caseReportBVBox#'>
+                ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportBVBox#'>
                 )
             </cfquery>
         <cfcatch type="any">
@@ -4152,28 +2528,6 @@
         <cfif NOT isDefined('FORM.caseReportToxiBox')>
             <cfset FORM.caseReportToxiBox = "0">
         </cfif>
-
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-            <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
-                SELECT CNRDATE as cnrdate, ID as cnID  from ST_CetaceanNecropsyReport 
-                where fnumber = '#form.FNUMBER#'            
-            </cfquery>
-            
-            <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
-                </cfquery>
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
-
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -4287,30 +2641,6 @@
         <cfif NOT isDefined('FORM.caseReportToxiBox')>
             <cfset FORM.caseReportToxiBox = "0">
         </cfif>
-
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-                <cfquery name="qgetToxicologyNecropsyDate" datasource="#Application.dsn#"  >
-                    SELECT cn.CNRDATE as cnrdate, cn.ID as cnID  from ST_Toxicology sa 
-                    left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
-                    where sa.ID = '#form.Toxicology_ID#'            
-                </cfquery>
-            <cfif isDefined('qgetToxicologyNecropsyDate.cnID') AND qgetToxicologyNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetToxicologyNecropsyDate.cnID#'>
-                </cfquery>
-
-                <!--- <cfdump var="#return_data#" abort="true"> --->
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
-
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -4370,63 +2700,10 @@
     </cffunction>
     <!--- get toxiform --->
     <cffunction name="gettoxiform" returntype="any" output="false" access="public" >
-<<<<<<< Updated upstream
-        <!--- <cfquery name="qtoxiform" datasource="#Application.dsn#"  >
-=======
         <cfquery name="qtoxiform" datasource="#Application.dsn#"  >
->>>>>>> Stashed changes
-            SELECT * from ST_Toxicology where ID = #Toxicology_ID# And deleted != '1'
+            SELECT * from ST_Toxicology where ID = #Toxicology_ID#
         </cfquery>
-        <cfreturn qtoxiform> --->
-
-        <cfset var result = {}>
-
-        <!--- First table check --->
-        <cfset var tables = [
-            "ST_Toxicology",
-            "ST_LiveCetaceanExam",
-            "ST_HIForm",
-            "ST_LevelAForm",
-            "ST_HistoForm",
-            "ST_Blood_Values",
-            "ST_Ancillary_Diagnostics",
-            "ST_SampleArchive",
-            "ST_CetaceanNecropsyReport",
-            "ST_Morphometrics"
-        ]>
-
-        <cfset var found = false>
-
-        <cfloop array="#tables#" index="tableName">
-            <cfquery name="qTemp" datasource="#variables.dsn#">
-                SELECT *
-                FROM #tableName#
-                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#Toxicology_ID#">
-                and Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
-                AND 
-                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
-                    deleted IS NULL
-                <cfelse>
-                    deleted != '1'
-                </cfif>
-            </cfquery>
-
-            <cfif qTemp.recordCount GT 0>
-                <cfset result.data = duplicate(qTemp)>
-                <cfset result.sourceTableName = tableName>
-                <cfset found = true>
-                <cfbreak>
-            </cfif>
-        </cfloop>
-
-        <cfif NOT found>
-            <cfset result.data = {}> 
-            <cfset result.sourceTableName = "NoneFound">
-        </cfif>
-
-        <cfreturn result>
-
-
+        <cfreturn qtoxiform>
     </cffunction>
     
       <cffunction name="gettoxiform_ten" returntype="any" output="false" access="public" >
@@ -4450,222 +2727,12 @@
         <cfreturn qgettoxiformDate>
     </cffunction>
 
-    <cffunction name="gettoxifNumber" returntype="any" output="false" access="public">
-        <cfquery name="qgettoxifNumber" datasource="#Application.dsn#">
-            SELECT Fnumber, MIN(ID) AS ID
-            FROM (
-                SELECT Fnumber, ID
-                FROM ST_Toxicology
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_LiveCetaceanExam
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_HIForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_LevelAForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_HistoForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_Blood_Values
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_Ancillary_Diagnostics
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_SampleArchive
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_CetaceanNecropsyReport
-                WHERE deleted IS NULL
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_Morphometrics
-                WHERE deleted IS NULL
-            ) AS AllForms
-            GROUP BY Fnumber
-            ORDER BY Fnumber ASC
+    <cffunction name="gettoxifNumber" returntype="any" output="false" access="public" >
+        <cfquery name="qgettoxifNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_Toxicology where deleted != '1' order by Fnumber ASC
         </cfquery>
-    
         <cfreturn qgettoxifNumber>
     </cffunction>
-
-    <!--- <cffunction name="gettoxifNumber" returntype="any" output="false" access="public" >
-        <!--- <cfquery name="qgettoxifNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_Toxicology where deleted != '1' order by Fnumber ASC
-        </cfquery> --->
-
-        <cfquery name="qgettoxifNumber" datasource="#Application.dsn#"  >
-            SELECT Fnumber, ID from ST_Toxicology where deleted != '1' 
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
-                SELECT Fnumber FROM ST_Toxicology WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
-
-            )
-
-
-            order by Fnumber ASC
-        </cfquery>
-
-        <cfreturn qgettoxifNumber>
-    </cffunction> --->
-
-
-
     <!--- get toxi type --->
      <cffunction name="getToxitype" returntype="any" output="false" access="public" >
         <cfquery name="qgetToxitype" datasource="#Application.dsn#">
@@ -4727,7 +2794,7 @@
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Mercury#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Thallium#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Selenium#'>
-                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Ironn#'>
+                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Iron#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Copper#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Zinc#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Molybdenum#'>
@@ -4752,9 +2819,6 @@
             SELECT ID,Type from TLU_Sample_Type where ID = '#Tissue_type#'
         </cfquery>
             <!--- <cfdump var="#qgetType#" abort="true"> --->
-            
-            <!--- <cfoutput>iufiwfiwuhfeiw wefwef w w r wr wrwewereewrwr</cfoutput>
-            <cfdump  var="the value of iron is #FORM.Iron#"><cfabort> --->
         <cftry>
             <cfquery name="qToxiType_FormUpdate" datasource="#variables.dsn#"  result="return_data" >
                 UPDATE  ST_ToxiType SET
@@ -4766,7 +2830,7 @@
                 ,Mercury = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Mercury#'>
                 ,Thallium = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Thallium#'>
                 ,Selenium = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Selenium#'>
-                ,Iron = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Ironn#'>
+                ,Iron = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Iron#'>
                 ,Copper = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Copper#'>
                 ,Zinc = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Zinc#'>
                 ,Molybdenum = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Molybdenum#'>
@@ -4784,34 +2848,11 @@
     </cffunction>
     <!--- delete toxicology form --->
     <cffunction name="deletToxicology" returntype="any" output="false" access="public" >
-        
-        <cftry>
-
-            <cfquery name="qdeletToxicology" datasource="#variables.dsn#"  >
-                Update ST_Toxicology 
-                set pdfFiles = ''
-                ,deleted = '1'
-                where ID = #TX_ID#
-            </cfquery>
-            <cfquery name="qdeleteCBC" datasource="#Application.dsn#">
-                delete from ST_ToxiType
-                where Toxi_ID = '#TX_ID#'
-            </cfquery>
-            <cfquery name="qdeleteCBC" datasource="#Application.dsn#">
-                delete from ST_Dynamic_toxi
-                where Toxi_ID = '#TX_ID#'
-            </cfquery>
-
-            <cfcatch>
-                <cfdump  var="#cfcatch#"><cfabort>
-            </cfcatch>
-        </cftry>
-
-        <!--- <cfquery name="qdeletToxicology" datasource="#variables.dsn#"  >
+        <cfquery name="qdeletToxicology" datasource="#variables.dsn#"  >
             Update ST_Toxicology 
             set deleted = '1'
             where ID = #TX_ID#
-        </cfquery> --->
+        </cfquery>
         <cfreturn True>
     </cffunction>
     <cffunction name="deleteToxicologyAllRecord" returntype="any" output="false" access="public" >
@@ -4911,7 +2952,7 @@
     </cffunction>
     <!--- Insert CBC form  (Blood Values) --->
     <cffunction name="CBCInsert" returntype="any" output="false" access="public" >
-        
+        <!--- <cfdump var="#form#" abort="true"> --->
         <cftry>
             <cfquery name="qCBCInsert" datasource="#variables.dsn#"  result="return_data" >
             INSERT INTO ST_CBC
@@ -5189,7 +3230,7 @@
     </cffunction>
     <!--- update chimestry --->
     <cffunction name="ChemisteryUpdate" returntype="any" output="false" access="public" >
-        
+        <!--- <cfdump var="#form#" abort="true"> --->
         <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
             SELECT ID from ST_chemistry where BV_ID = #form.bloodValues_ID#
         </cfquery>
@@ -6182,30 +4223,6 @@
         <cfif NOT isDefined('FORM.caseReportBVBox')>
             <cfset FORM.caseReportBVBox = "">
         </cfif>
-
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-                <cfquery name="qgetBloodValueNecropsyDate" datasource="#Application.dsn#"  >
-                    SELECT cn.CNRDATE as cnrdate, cn.ID as cnID  from ST_Blood_Values sa 
-                    left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
-                    where sa.ID = '#form.bloodValue_ID#'            
-                </cfquery>
-            <cfif isDefined('qgetBloodValueNecropsyDate.cnID') AND qgetBloodValueNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetBloodValueNecropsyDate.cnID#'>
-                </cfquery>
-                <!--- <cfdump var="#return_data#" abort="true"> --->
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
-
-
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -6278,280 +4295,18 @@
         <cfreturn qgetBloodValuesDate>
     </cffunction>
 
-
-    <cffunction name="getBlood_VBNumber" returntype="any" output="false" access="public">
-        <cfquery name="qgetBloodValuesFBNumber" datasource="#Application.dsn#">
-            WITH AllForms AS (
-                SELECT Fnumber, ID, 'Blood_Values' AS SourceTable, 1 AS Priority
-                FROM ST_Blood_Values WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 'LiveCetaceanExam', 2
-                FROM ST_LiveCetaceanExam WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 'HIForm', 3
-                FROM ST_HIForm WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 'LevelAForm', 4
-                FROM ST_LevelAForm WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 'HistoForm', 5
-                FROM ST_HistoForm WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 'Toxicology', 6
-                FROM ST_Toxicology WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 'Ancillary_Diagnostics', 7
-                FROM ST_Ancillary_Diagnostics WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 'SampleArchive', 8
-                FROM ST_SampleArchive WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID, 'CetaceanNecropsyReport', 9
-                FROM ST_CetaceanNecropsyReport WHERE deleted IS NULL
-    
-                UNION ALL
-                SELECT Fnumber, ID, 'Morphometrics', 10
-                FROM ST_Morphometrics WHERE deleted IS NULL
-            )
-            SELECT Fnumber, ID
-            FROM (
-                SELECT 
-                    Fnumber, 
-                    ID,
-                    ROW_NUMBER() OVER (PARTITION BY Fnumber ORDER BY Priority) AS rn
-                FROM AllForms
-            ) x
-            WHERE rn = 1
-            ORDER BY Fnumber ASC
+    <cffunction name="getBlood_VBNumber" returntype="any" output="false" access="public" >
+        <cfquery name="qgetBloodValuesFBNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_Blood_Values where deleted != '1' order by Fnumber ASC
         </cfquery>
-    
         <cfreturn qgetBloodValuesFBNumber>
     </cffunction>
-    
-    <!--- <cffunction name="getBlood_VBNumber" returntype="any" output="false" access="public" >
-        <!--- <cfquery name="qgetBloodValuesFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_Blood_Values where deleted != '1' order by Fnumber ASC
-        </cfquery> --->
-
-        <cfquery name="qgetBloodValuesFBNumber" datasource="#Application.dsn#"  >
-            SELECT Fnumber, ID from ST_Blood_Values where deleted != '1'
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
-                SELECT Fnumber FROM ST_Blood_Values WHERE deleted != '1'
-            )
-
-            UNION
-            
-
-            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-
-            )
-            
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-               UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-                UNION
-                   UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-              SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
-
-            )
-            
-             order by Fnumber ASC
-        </cfquery>
-
-        <cfreturn qgetBloodValuesFBNumber>
-    </cffunction> --->
 
     <cffunction name="getBlood_VData" returntype="any" output="false" access="public" >
-<<<<<<< Updated upstream
-        <!--- <cfquery name="qBloodValuesData" datasource="#Application.dsn#"  >
-=======
         <cfquery name="qBloodValuesData" datasource="#Application.dsn#"  >
->>>>>>> Stashed changes
-            SELECT * from ST_Blood_Values where ID = #bloodValue_ID# And deleted != '1'
+            SELECT * from ST_Blood_Values where ID = #bloodValue_ID#
         </cfquery>
-        <cfreturn qBloodValuesData> --->
-
-        <!--- <cfargument name="HI_ID" type="numeric" required="true">
-        <cfargument name="Fnumber" type="string" required="false"> --->
-
-        <!--- <cfdump var="#arguments#" abort="true"> --->
-
-        <cfset var result = {}>
-
-        <!--- First table check --->
-        <cfset var tables = [
-            "ST_Blood_Values",
-            "ST_LiveCetaceanExam",
-            "ST_HIForm",
-            "ST_LevelAForm",
-            "ST_HistoForm",
-            "ST_Toxicology",
-            "ST_Ancillary_Diagnostics",
-            "ST_SampleArchive",
-            "ST_CetaceanNecropsyReport",
-            "ST_Morphometrics"
-        ]>
-
-        <cfset var found = false>
-
-        <cfloop array="#tables#" index="tableName">
-            <cfquery name="qTemp" datasource="#variables.dsn#">
-                SELECT *
-                FROM #tableName#
-                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#bloodValue_ID#">
-                and fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
-                And
-                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
-                    deleted IS NULL
-                <cfelse>
-                    deleted != '1'
-                </cfif>
-            </cfquery>
-
-            <cfif qTemp.recordCount GT 0>
-                <cfset result.data = duplicate(qTemp)>
-                <cfset result.sourceTableName = tableName>
-                <cfset found = true>
-                <cfbreak>
-            </cfif>
-        </cfloop>
-
-        <cfif NOT found>
-            <cfset result.data = {}> 
-            <cfset result.sourceTableName = "NoneFound">
-        </cfif>
-
-        <cfreturn result> 
-
+        <cfreturn qBloodValuesData>
     </cffunction>
     <!--- <cffunction name="getBlood_VData" returntype="any" output="false" access="public" >
         <cfquery name="qBloodValuesData" datasource="#Application.dsn#"  >
@@ -6568,7 +4323,7 @@
     </cffunction>
     <cffunction name="getBlood_ValuesDataByLCE" returntype="any" output="false" access="public" >
         <cfquery name="qgetBlood_ValuesDataByLCE" datasource="#Application.dsn#"  >
-            SELECT * from ST_Blood_Values where LCE_ID = #LCEID# And deleted != '1'
+            SELECT * from ST_Blood_Values where LCE_ID = #LCEID#
         </cfquery>
         <cfreturn qgetBlood_ValuesDataByLCE>
     </cffunction>
@@ -6578,76 +4333,14 @@
             </cfquery>
             <cfreturn qgettoxiByLCE>
     </cffunction>
-
-
-
     <cffunction name="deletBlood_V" returntype="any" output="false" access="public" >
-
-        <!--- <cfquery name="qdeleteBlood_V" datasource="#variables.dsn#"  >
+        <cfquery name="qdeleteBlood_V" datasource="#variables.dsn#"  >
             Update ST_Blood_Values 
             set deleted = '1'
             where ID = #bloodValues_ID#
-        </cfquery> --->
-
-        <cftry>
-            <cfquery name="qdeleteCBC" datasource="#Application.dsn#">
-                delete from ST_CBC
-                where BV_ID = '#bloodValues_ID#'
-            </cfquery>
-            <cfquery name="qdeleteFibrinogen" datasource="#Application.dsn#">
-                delete from ST_Fibrinogen
-                where BV_ID = '#bloodValues_ID#'
-            </cfquery>
-            <cfquery name="qdeleteChemistry" datasource="#Application.dsn#">
-                delete from ST_chemistry
-                where BV_ID = '#bloodValues_ID#'
-            </cfquery>
-            <cfquery name="qdeleteCapillary" datasource="#Application.dsn#">
-                delete from ST_Capillary
-                where BV_ID = '#bloodValues_ID#'
-            </cfquery>
-            <cfquery name="qdeleteDolphin" datasource="#Application.dsn#">
-                delete from ST_Dolphin
-                where BV_ID = '#bloodValues_ID#'
-            </cfquery>
-            <cfquery name="qdeleteiSTAT_Chem" datasource="#Application.dsn#">
-                delete from ST_iSTAT_Chem
-                where BV_ID = '#bloodValues_ID#'
-            </cfquery>
-            <cfquery name="qdeleteiSTAT_CG4" datasource="#Application.dsn#">
-                delete from ST_iSTAT_CG4
-                where BV_ID = '#bloodValues_ID#'
-            </cfquery>
-
-            <cfquery name="qdeleteCE" datasource="#variables.dsn#">
-                Update ST_Blood_Values
-                set
-                    Collection_Date = NULL,
-                    Analysis_date = NULL
-                    , Lab_Number = ''
-                    , Diagnostic_Lab = ''
-                    , pdfFiles = ''
-                    ,Deleted = 1
-                where ID = #bloodValues_ID#
-            </cfquery>
-
-
-
-
-
-            <cfcatch>
-                    <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-    
-        </cftry>
-
-
+        </cfquery>
         <cfreturn True>
     </cffunction>
-
-
-
-
     <cffunction name="deleteBloodValuesRecord" returntype="any" output="false" access="public" >
         <cfquery name="qdeleteBloodValuesRecord" datasource="#variables.dsn#"  >
          TRUNCATE Table ST_Blood_Values  
@@ -6703,31 +4396,6 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
-        <cfif NOT isDefined('FORM.caseReportADBox')>
-            <cfset FORM.caseReportADBox = "0">
-        </cfif>
-
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-            <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
-                SELECT CNRDATE as cnrdate, ID as cnID  from ST_CetaceanNecropsyReport 
-                where fnumber = '#form.FNUMBER#'            
-            </cfquery>
-            <!--- <cfdump var="#qgetcetaceanNecropsyDate#" abort="true"> Nouman--->
-            <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
-                </cfquery>
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
-        
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -6766,8 +4434,6 @@
                 ,BriefHistory
                 ,euthanizedCB
                 ,headerImages
-                ,pdfFiles
-                ,caseReportBox
                 ) 
                 VALUES
                 (
@@ -6798,8 +4464,6 @@
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
-                ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ADpdfFiles#'>
-                ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportADBox#'>
                
                 )
             </cfquery>
@@ -6830,31 +4494,6 @@
         </cfif>
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.caseReportADBox')>
-            <cfset FORM.caseReportADBox = "0">
-        </cfif>
-
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-                <cfquery name="qgetAncillaryDiagnosticsNecropsyDate" datasource="#Application.dsn#"  >
-                    SELECT cn.CNRDATE as cnrdate, cn.ID as cnID  from ST_Ancillary_Diagnostics sa 
-                    left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
-                    where sa.ID = '#form.AD_ID#'            
-                </cfquery>
-            <cfif isDefined('qgetAncillaryDiagnosticsNecropsyDate.cnID') AND qgetAncillaryDiagnosticsNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetAncillaryDiagnosticsNecropsyDate.cnID#'>
-                </cfquery>
-                <!--- <cfdump var="#return_data#" abort="true"> Nouman--->
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
         </cfif>
         
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
@@ -6895,8 +4534,6 @@
                 ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
-                ,pdfFiles = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.ADpdfFiles#'>
-                ,caseReportBox = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportADBox#'>
                 WHERE
                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.ADID#'>
             </cfquery>
@@ -6931,243 +4568,13 @@
         </cfquery>
         <cfreturn qgetNecropsyDate>
     </cffunction>
-<<<<<<< Updated upstream
-    
-=======
 
->>>>>>> Stashed changes
     <cffunction name="getMorphometricsBNumber" returntype="any" output="false" access="public" >
-        <cfquery name="MorphometricsoFBNumber" datasource="#Application.dsn#">
-            WITH AllFNumbers AS (
-                SELECT Fnumber, ID, 'ST_Morphometrics' AS SourceTable
-                FROM ST_Morphometrics
-                WHERE deleted IS NULL
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_LiveCetaceanExam'
-                FROM ST_LiveCetaceanExam
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_HIForm'
-                FROM ST_HIForm
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_LevelAForm'
-                FROM ST_LevelAForm
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_HistoForm'
-                FROM ST_HistoForm
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_Blood_Values'
-                FROM ST_Blood_Values
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_Toxicology'
-                FROM ST_Toxicology
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_Ancillary_Diagnostics'
-                FROM ST_Ancillary_Diagnostics
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_SampleArchive'
-                FROM ST_SampleArchive
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_CetaceanNecropsyReport'
-                FROM ST_CetaceanNecropsyReport
-                WHERE deleted IS NULL
-            ),
-            Deduped AS (
-                SELECT 
-                    Fnumber,
-                    ID,
-                    ROW_NUMBER() OVER (PARTITION BY Fnumber ORDER BY 
-                        CASE SourceTable
-                            WHEN 'ST_Morphometrics' THEN 1
-                            WHEN 'ST_LiveCetaceanExam' THEN 2
-                            WHEN 'ST_HIForm' THEN 3
-                            WHEN 'ST_LevelAForm' THEN 4
-                            WHEN 'ST_HistoForm' THEN 5
-                            WHEN 'ST_Blood_Values' THEN 6
-                            WHEN 'ST_Toxicology' THEN 7
-                            WHEN 'ST_Ancillary_Diagnostics' THEN 8
-                            WHEN 'ST_SampleArchive' THEN 9
-                            WHEN 'ST_CetaceanNecropsyReport' THEN 10
-                        END
-                    ) AS rn
-                FROM AllFNumbers
-            )
-            SELECT Fnumber, ID
-            FROM Deduped
-            WHERE rn = 1
-            ORDER BY Fnumber ASC
+        <cfquery name="MorphometricsoFBNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_Morphometrics order by Fnumber ASC
         </cfquery>
         <cfreturn MorphometricsoFBNumber>
     </cffunction>
-
-    <!--- <cffunction name="getMorphometricsBNumber" returntype="any" output="false" access="public" >
-        <!--- <cfquery name="MorphometricsoFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_Morphometrics order by Fnumber ASC
-        </cfquery> --->
-
-        <cfquery name="MorphometricsoFBNumber" datasource="#Application.dsn#"  >
-            SELECT Fnumber, ID from ST_Morphometrics where deleted is null
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
-                SELECT Fnumber FROM ST_Morphometrics WHERE deleted is null
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
-            )  
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
-
-            )  
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Morphometrics  WHERE deleted is null
-
-            )
-
-            order by Fnumber ASC
-        </cfquery>
-
-        <cfreturn MorphometricsoFBNumber>
-    </cffunction> --->
 
     <cffunction name="getMorphometricsDate" returntype="any" output="false" access="public" >
         <cfquery name="MorphometricsDate" datasource="#Application.dsn#"  >
@@ -7176,356 +4583,31 @@
         <cfreturn MorphometricsDate>
     </cffunction>
 
-
     <cffunction name="getMorphometricsAllData" returntype="any" output="false" access="public" >
-        <!--- <cfdump var="#Morphometrics_ID#" abort="true"> --->
-<<<<<<< Updated upstream
-        <!--- <cfquery name="qMorphometricsData" datasource="#Application.dsn#"  >
-            SELECT * from ST_Morphometrics where ID = #Morphometrics_ID# And deleted is null
-        </cfquery>
-        <cfreturn qMorphometricsData> --->
-
-         <cfset var result = {}>
-
-        <!--- First table check --->
-        <cfset var tables = [
-            "ST_Morphometrics",
-            "ST_LiveCetaceanExam",
-            "ST_HIForm",
-            "ST_LevelAForm",
-            "ST_HistoForm",
-            "ST_Blood_Values",
-            "ST_Toxicology",
-            "ST_Ancillary_Diagnostics",
-            "ST_SampleArchive",
-            "ST_CetaceanNecropsyReport"            
-        ]>
-
-        <cfset var found = false>
-
-        <cfloop array="#tables#" index="tableName">
-            <cfquery name="qTemp" datasource="#variables.dsn#">
-                SELECT *
-                FROM #tableName#
-                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#Morphometrics_ID#">
-                and Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
-                AND 
-                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
-                    deleted IS NULL
-                <cfelse>
-                    deleted != '1'
-                </cfif>
-            </cfquery>
-
-            <cfif qTemp.recordCount GT 0>
-                <cfset result.data = duplicate(qTemp)>
-                <cfset result.sourceTableName = tableName>
-                <cfset found = true>
-                <cfbreak>
-            </cfif>
-        </cfloop>
-        
-
-        <cfif NOT found>
-            <cfset result.data = {}> 
-            <cfset result.sourceTableName = "NoneFound">
-        </cfif>
-
-        <cfreturn result>
-
-    </cffunction>
-
-
-    <cffunction name="getMorphometricsAllFnumberData" returntype="any" output="false" access="public" >
-        <cfquery name="qMorphometricsData" datasource="#Application.dsn#" maxRows = "1" >
-            SELECT * from ST_Morphometrics where Fnumber = '#Morphometrics_ID#' and deleted is null
-=======
         <cfquery name="qMorphometricsData" datasource="#Application.dsn#"  >
-            SELECT * from ST_Morphometrics where ID = #Morphometrics_ID# And deleted is null
+            SELECT * from ST_Morphometrics where ID = #Morphometrics_ID#
         </cfquery>
         <cfreturn qMorphometricsData>
     </cffunction>
     <cffunction name="getMorphometricsAllFnumberData" returntype="any" output="false" access="public" >
         <cfquery name="qMorphometricsData" datasource="#Application.dsn#" maxRows = "1" >
-            SELECT * from ST_Morphometrics where Fnumber = '#Morphometrics_ID#' where deleted is null
->>>>>>> Stashed changes
+            SELECT * from ST_Morphometrics where Fnumber = '#Morphometrics_ID#'
         </cfquery>
         <cfreturn qMorphometricsData>
     </cffunction>
 
-    <cffunction name="getAncillaryBNumber" returntype="any" output="false" access="public">
-        <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#">
-            SELECT Fnumber, MIN(ID) AS ID
-            FROM (
-                SELECT Fnumber, ID
-                FROM ST_Ancillary_Diagnostics
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_LiveCetaceanExam
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_HIForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_LevelAForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_HistoForm
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_Blood_Values
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_Toxicology
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_SampleArchive
-                WHERE deleted != '1'
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_CetaceanNecropsyReport
-                WHERE deleted IS NULL
-    
-                UNION ALL
-                SELECT Fnumber, ID
-                FROM ST_Morphometrics
-                WHERE deleted IS NULL
-            ) AS AllForms
-            GROUP BY Fnumber
-            ORDER BY Fnumber ASC
+    <cffunction name="getAncillaryBNumber" returntype="any" output="false" access="public" >
+        <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#"  >
+            SELECT ID,Fnumber from ST_Ancillary_Diagnostics where deleted != '1' order by Fnumber ASC
         </cfquery>
-    
         <cfreturn qgetHistoFBNumber>
     </cffunction>
-    
-    <!--- <cffunction name="getAncillaryBNumber" returntype="any" output="false" access="public" >
-        <!--- <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_Ancillary_Diagnostics where deleted != '1' order by Fnumber ASC
-        </cfquery> --->
-
-         <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#"  >
-            SELECT Fnumber, ID from ST_Ancillary_Diagnostics where deleted != '1'
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-
-            ) 
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_SampleArchive  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
-
-            )
-
-            
-            
-            order by Fnumber ASC
-        </cfquery>
-
-        <cfreturn qgetHistoFBNumber>
-    </cffunction> --->
 
     <cffunction name="getAncillaryData" returntype="any" output="false" access="public" >
-<<<<<<< Updated upstream
-        <!--- <cfquery name="qHistoData" datasource="#Application.dsn#"  >
-=======
         <cfquery name="qHistoData" datasource="#Application.dsn#"  >
->>>>>>> Stashed changes
-            SELECT * from ST_Ancillary_Diagnostics where ID = #AD_ID# And deleted != '1'
+            SELECT * from ST_Ancillary_Diagnostics where ID = #AD_ID#
         </cfquery>
-        <cfreturn qHistoData> --->
-
-        <cfset var result = {}>
-
-        <!--- First table check --->
-        <cfset var tables = [
-            "ST_Ancillary_Diagnostics",
-            "ST_LiveCetaceanExam",
-            "ST_HIForm",
-            "ST_LevelAForm",
-            "ST_HistoForm",
-            "ST_Blood_Values",
-            "ST_Toxicology",
-            "ST_SampleArchive",
-            "ST_CetaceanNecropsyReport",
-            "ST_Morphometrics"
-        ]>
-
-        <cfset var found = false>
-
-        <cfloop array="#tables#" index="tableName">
-            <cfquery name="qTemp" datasource="#variables.dsn#">
-                SELECT *
-                FROM #tableName#
-                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#AD_ID#">
-                and Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
-                AND 
-                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
-                    deleted IS NULL
-                <cfelse>
-                    deleted != '1'
-                </cfif>
-            </cfquery>
-
-            <cfif qTemp.recordCount GT 0>
-                <cfset result.data = duplicate(qTemp)>
-                <cfset result.sourceTableName = tableName>
-                <cfset found = true>
-                <cfbreak>
-            </cfif>
-        </cfloop>
-
-        <cfif NOT found>
-            <cfset result.data = {}> 
-            <cfset result.sourceTableName = "NoneFound">
-        </cfif>
-
-        <cfreturn result>
-
-
+        <cfreturn qHistoData>
     </cffunction>
     
     <cffunction name="getAncillary_ten" returntype="any" output="false" access="public" >
@@ -7536,34 +4618,16 @@
     </cffunction>
     <cffunction name="getAncillaryDataByLCE" returntype="any" output="false" access="public" >
         <cfquery name="qgetAncillaryDataByLCE" datasource="#Application.dsn#"  >
-            SELECT * from ST_Ancillary_Diagnostics where LCE_ID = #LCEID# And deleted != '1'
+            SELECT * from ST_Ancillary_Diagnostics where LCE_ID = #LCEID#
         </cfquery>
         <cfreturn qgetAncillaryDataByLCE>
     </cffunction>
     <cffunction name="deleteAncillary" returntype="any" output="false" access="public" >
-                
-        <cftry>
-
-            <cfquery name="qdeletToxicology" datasource="#variables.dsn#"  >
-                Update ST_Ancillary_Diagnostics 
-                set pdfFiles = ''
-                ,Deleted = 1
-                where ID = #ADID#
-            </cfquery>
-            <cfquery name="qdeleteCBC" datasource="#Application.dsn#">
-                delete from ST_Ancillary_Report
-                where AD_ID = '#ADID#'
-            </cfquery>
-        
-            <cfcatch>
-                <cfdump  var="#cfcatch#"><cfabort>
-            </cfcatch>
-        </cftry>
-        <!--- <cfquery name="qdeleteAncillary" datasource="#variables.dsn#"  >
+        <cfquery name="qdeleteAncillary" datasource="#variables.dsn#"  >
             Update ST_Ancillary_Diagnostics 
             set deleted = '1'
             where ID = #ADID#
-        </cfquery> --->
+        </cfquery>
         <cfreturn True>
     </cffunction>
     <cffunction name="deleteAncillaryAllRecord" returntype="any" output="false" access="public" >
@@ -7585,9 +4649,9 @@
         <cfargument name="DiagnosticLab" type="string" required="false">
         <cfargument name="pdfFilesAncillary" type="string" required="false">
         <cfargument name="ADID" type="string" required="false">
-        <!--- <cfset pd = listToArray(pdfFilesAncillary)> --->
+        <cfset pd = listToArray(pdfFilesAncillary)>
         <!--- <cfdump var="#pdfFilesAncillary#" abort="true"> --->
-        <!--- <CFTRY>
+        <CFTRY>
             <cffile action = "uploadAll"  
             fileField = "pdf" 
             destination = "#Application.CloudDirectory#"  
@@ -7603,18 +4667,12 @@
             <CFCATCH type="any">
                 <cfdump  var="#cfcatch#"><cfabort>
             </CFCATCH>
-        </CFTRY> --->
-        
-        <!---pdfFiles ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(fil,i)#'> --->
-        <!--- <cfset fil = arrayToList(pd)> --->
-
-        <!--- <cfdump var="#DiagnosticTest#" abort="true"> --->
-
-         <cfif len(trim(DiagnosticTest)) GT 0 >
-            <!--- <cfdump var="#DiagnosticTest#" abort="true"> --->
+        </CFTRY>
+        <cfset fil = arrayToList(pd)>
+        <cfif len(trim(DiagnosticTest)) GT 0 >
 			<cfloop from="1" to="#ListLen(DiagnosticTest)#" index="i">
                 <cfquery name="qAncillaryReportInsert" datasource="#variables.dsn#">
-                   Insert into ST_Ancillary_Report  (TestingDate,ADSampleType,DiagnosticTest,TestResults,DiagnosticLab,AD_ID)
+                   Insert into ST_Ancillary_Report  (TestingDate,ADSampleType,DiagnosticTest,TestResults,DiagnosticLab,pdfFiles,AD_ID)
                     values
                     (
                         <cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(TestingDate,i)#'>
@@ -7622,15 +4680,14 @@
                         ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(DiagnosticTest,i)#'>
                         ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(TestResults,i)#'>
                         ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(DiagnosticLab,i)#'>
+                        ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ListGetAt(fil,i)#'>
                         ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#ADID#'>
                     )
                 </cfquery>
             </cfloop>
 		</cfif>
-
 		<cfreturn True>
 	</cffunction>
-
     <cffunction name="AncillaryReportGet"  returntype="any" output="false" access="remote" >
        <cfquery name="qAncillaryReportGet" datasource="#variables.dsn#">
             Select * from  ST_Ancillary_Report  
@@ -7659,39 +4716,6 @@
             <cfset FORM.euthanizedCB = "">
         </cfif>
        
-
-        
-
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-            <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
-                SELECT CNRDATE as cnrdate, ID as cnID  from ST_CetaceanNecropsyReport 
-                where fnumber = '#form.FNUMBER#'            
-            </cfquery>
-
-
-
-            
-
-
-
-
-
-            <!--- <cfdump var="#qgetcetaceanNecropsyDate#" abort="true"> Nouman--->
-            <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
-                </cfquery>
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
-
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -7778,9 +4802,6 @@
         <cfreturn LCE_ID>
     </cffunction>
     <cffunction name="SampleTypeInsert" returntype="any" output="false" access="public" >
-
-        
-
         <cftry>
             <cfquery name="qSampleTypeInsert" datasource="#variables.dsn#"  result="return_data" >
             INSERT INTO ST_SampleType
@@ -7797,7 +4818,6 @@
             ,SampleComments
             ,LCE_ID
             ,SA_ID
-            ,sampleAvailability
             ) 
             VALUES
             (
@@ -7813,7 +4833,6 @@
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.SampleComments#'>
             ,<cfqueryparam  value='#FORM.LCE_ID#'>
             ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.SA_ID#'>
-            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.sampleAvailability#'>
             )
         </cfquery>
         <cfcatch type="any">
@@ -7869,7 +4888,6 @@
             ,StorageType = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.StorageType#'>
             ,SampleComments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.SampleComments#'>
             ,LCE_ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.LCE_ID#'>
-            ,sampleAvailability = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.sampleAvailability#'>
             Where 
             ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.ST_ID#'>
         </cfquery>
@@ -7886,30 +4904,12 @@
         </cfquery>
         <cfreturn qgetSampleType_ten>
     </cffunction>
-
-
-
-
-
     <cffunction name="getSampleTypeIByID" returntype="any" output="false" access="public" >
         <cfquery name="qgetSampleTypeIByID" datasource="#Application.dsn#">
-            SELECT *  FROM ST_SampleType  WHERE SA_ID = #SEID# ORDER BY SampleID
+            SELECT *  FROM ST_SampleType where SA_ID = #SEID# order by ID Desc
         </cfquery>
         <cfreturn qgetSampleTypeIByID>
     </cffunction>
-
-
-
-    <!--- <cffunction name="getSampleTypeIByIDfordatatable" returntype="any" output="false" access="remote" returnformat="json" >
-        <cfquery name="qgetSampleTypeIByID" datasource="#Application.dsn#">
-            SELECT *  FROM ST_SampleType  WHERE SA_ID = #SEID# ORDER BY SampleID
-        </cfquery>
-        <cfreturn qgetSampleTypeIByID>
-    </cffunction> --->
-
-
-
-
     <cffunction name="getSampleTypeDataSingle" returntype="any" output="false" access="public" >
         <cfquery name="qgetSampleTypeDataSingle" datasource="#Application.dsn#">
             SELECT *  FROM ST_SampleType where ID = #STID# order by ID Desc
@@ -7924,298 +4924,20 @@
     </cffunction>
 
     <cffunction name="getSampleArchiveData" returntype="any" output="false" access="public" >
-<<<<<<< Updated upstream
-        <!--- <cfquery name="qgetSampleArchiveData" datasource="#Application.dsn#"  >
-=======
         <cfquery name="qgetSampleArchiveData" datasource="#Application.dsn#"  >
->>>>>>> Stashed changes
-            SELECT * from ST_SampleArchive where ID = #SEID# And deleted != '1'
+            SELECT * from ST_SampleArchive where ID = #SEID#
         </cfquery>
-        <cfreturn qgetSampleArchiveData> --->
-
-        <cfset var result = {}>
-
-        <!--- First table check --->
-        <cfset var tables = [
-            "ST_SampleArchive",
-            "ST_LiveCetaceanExam",
-            "ST_HIForm",
-            "ST_LevelAForm",
-            "ST_HistoForm",
-            "ST_Blood_Values",
-            "ST_Toxicology",
-            "ST_Ancillary_Diagnostics",
-            "ST_CetaceanNecropsyReport",
-            "ST_Morphometrics"
-        ]>
-
-        <cfset var found = false>
-
-        <cfloop array="#tables#" index="tableName">
-            <cfquery name="qTemp" datasource="#variables.dsn#">
-                SELECT *
-                FROM #tableName#
-                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#SEID#">
-                and Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.Fnumber#">
-                AND 
-                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
-                    deleted IS NULL
-                <cfelse>
-                    deleted != '1'
-                </cfif>
-            </cfquery>
-
-            <cfif qTemp.recordCount GT 0>
-                <cfset result.data = duplicate(qTemp)>
-                <cfset result.sourceTableName = tableName>
-                <cfset found = true>
-                <cfbreak>
-            </cfif>
-        </cfloop>
-
-        <cfif NOT found>
-            <cfset result.data = {}> 
-            <cfset result.sourceTableName = "NoneFound">
-        </cfif>
-
-        <cfreturn result>
-
+        <cfreturn qgetSampleArchiveData>
     </cffunction>
+
     <cffunction name="getSampleArchiveFBNumber" returntype="any" output="false" access="remote" returnformat="json" >
-        <cfquery name="qgetSampleArchiveFBNumber" datasource="#Application.dsn#">
-            WITH AllFNumbers AS (
-                SELECT Fnumber, ID, 'ST_SampleArchive' AS SourceTable
-                FROM ST_SampleArchive
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_LiveCetaceanExam'
-                FROM ST_LiveCetaceanExam
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_HIForm'
-                FROM ST_HIForm
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_LevelAForm'
-                FROM ST_LevelAForm
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_HistoForm'
-                FROM ST_HistoForm
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_Blood_Values'
-                FROM ST_Blood_Values
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_Toxicology'
-                FROM ST_Toxicology
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_Ancillary_Diagnostics'
-                FROM ST_Ancillary_Diagnostics
-                WHERE deleted != '1'
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_CetaceanNecropsyReport'
-                FROM ST_CetaceanNecropsyReport
-                WHERE deleted IS NULL
-        
-                UNION ALL
-                SELECT Fnumber, ID, 'ST_Morphometrics'
-                FROM ST_Morphometrics
-                WHERE deleted IS NULL
-            ),
-            Deduped AS (
-                SELECT 
-                    Fnumber,
-                    ID,
-                    ROW_NUMBER() OVER (PARTITION BY Fnumber ORDER BY 
-                        CASE SourceTable
-                            WHEN 'ST_SampleArchive' THEN 1
-                            WHEN 'ST_LiveCetaceanExam' THEN 2
-                            WHEN 'ST_HIForm' THEN 3
-                            WHEN 'ST_LevelAForm' THEN 4
-                            WHEN 'ST_HistoForm' THEN 5
-                            WHEN 'ST_Blood_Values' THEN 6
-                            WHEN 'ST_Toxicology' THEN 7
-                            WHEN 'ST_Ancillary_Diagnostics' THEN 8
-                            WHEN 'ST_CetaceanNecropsyReport' THEN 9
-                            WHEN 'ST_Morphometrics' THEN 10
-                        END
-                    ) AS rn
-                FROM AllFNumbers
-            )
-            SELECT Fnumber, ID
-            FROM Deduped
-            WHERE rn = 1
-            ORDER BY Fnumber ASC
-        </cfquery>
-        <cfreturn qgetSampleArchiveFBNumber>
-    </cffunction>
-
-    <!--- <cffunction name="getSampleArchiveFBNumber" returntype="any" output="false" access="remote" returnformat="json" >
         <cfargument name="a"  required="false" default= 1>
         <cfargument name="b"  required="false" default= 100>
-        <!--- <cfquery name="qgetSampleArchiveFBNumber" datasource="#Application.dsn#"  >
-            SELECT ID,Fnumber from ST_SampleArchive where deleted != '1' order by Fnumber ASC 
-        </cfquery> --->
-
         <cfquery name="qgetSampleArchiveFBNumber" datasource="#Application.dsn#"  >
-            SELECT Fnumber, ID from ST_SampleArchive where deleted != '1'
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LiveCetaceanExam  WHERE deleted != '1' AND Fnumber NOT IN (
-                SELECT Fnumber FROM ST_SampleArchive WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HIForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_LevelAForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_HistoForm  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Blood_Values  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Toxicology  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Ancillary_Diagnostics  WHERE deleted != '1' AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_CetaceanNecropsyReport  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-
-            )
-
-            UNION
-
-            SELECT Fnumber, ID FROM ST_Morphometrics  WHERE deleted is null AND Fnumber NOT IN (
-
-                SELECT Fnumber FROM ST_LiveCetaceanExam WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HIForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_LevelAForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_HistoForm  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Blood_Values  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Toxicology  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_Ancillary_Diagnostics  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_SampleArchive  WHERE deleted != '1'
-                UNION
-                SELECT Fnumber FROM ST_CetaceanNecropsyReport  WHERE deleted is null
-
-            )
-            
-             order by Fnumber ASC 
+            SELECT ID,Fnumber from ST_SampleArchive where deleted != '1' order by Fnumber ASC 
         </cfquery>
-
         <cfreturn qgetSampleArchiveFBNumber>
-    </cffunction> --->
-
+    </cffunction>
     <cffunction name="getSampleFBNumberList" returntype="any" output="false" access="remote" returnformat="json">
         <cfquery name="qgetSampleFBNumberList" datasource="#Application.dsn#"  >
             SELECT ID,Fnumber from ST_SampleArchive where deleted != '1'  order by Fnumber ASC
@@ -8364,18 +5086,6 @@
         <cfquery name="qgetSampleData" datasource="#variables.dsn#">
             SELECT *  FROM ST_SampleDetail where ST_ID = #STID#
         </cfquery>
-        
-        <cfreturn qgetSampleData>
-    </cffunction>
-    <cffunction name="getSampleDetailByID" returntype="any" output="false" access="public" >
-        <cftry>
-        <cfquery name="qgetSampleData" datasource="#variables.dsn#">
-            SELECT *  FROM ST_SampleDetail where ST_ID = #SamplID#
-        </cfquery>
-        <cfcatch>
-            <cfdump var="#cfcatch#" abort="true">
-        </cfcatch>
-        </cftry>
         <cfreturn qgetSampleData>
     </cffunction>
     
@@ -8395,32 +5105,6 @@
         </cfif>
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
-        </cfif>
-        
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-            <cfquery name="qgetSampleArchiveNecropsyDate" datasource="#Application.dsn#"  >
-                SELECT cn.CNRDATE as cnrdate, cn.ID as cnID  from ST_SampleArchive sa 
-                left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
-                where sa.ID = '#form.SAMPLEARCHIVESEID#'            
-            </cfquery>
-
-                
-
-            <cfif isDefined('qgetSampleArchiveNecropsyDate.cnID') AND qgetSampleArchiveNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetSampleArchiveNecropsyDate.cnID#'>
-                </cfquery>
-
-                <!--- <cfdump var="#return_data#" abort="true"> Nouman--->
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
         </cfif>
 
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
@@ -8461,7 +5145,6 @@
                 ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.BriefHistory#'>
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
-                
                 WHERE
                 ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.SEID#'>
             </cfquery>
@@ -8477,26 +5160,10 @@
         <cfreturn True>
     </cffunction>
     <cffunction name="DeleteSampleType" returntype="any" output="false" access="public" >
-             
-        <cftry>
-
-            <cfquery name="qdeleteCBC" datasource="#Application.dsn#">
-                delete from ST_SampleType
-                where SA_ID = '#SampleArchiveSEID#'
-            </cfquery>
-            <cfquery name="qdeleteCBC" datasource="#Application.dsn#">
-                delete from ST_SampleDetail
-                where ST_ID = '#SampleArchiveSEID#'
-            </cfquery>
-
-            <cfcatch>
-                <cfdump  var="#cfcatch#"><cfabort>
-            </cfcatch>
-        </cftry>
-        <!--- <cfquery name="qDeleteSampleType" datasource="#variables.dsn#">
+        <cfquery name="qDeleteSampleType" datasource="#variables.dsn#">
             Delete from ST_SampleArchive 
             where ID = #SampleArchiveSEID#
-        </cfquery> --->
+        </cfquery>
         <cfreturn True>
     </cffunction>
     <cffunction name="deleteallSampleArchiveRecord" returntype="any" output="false" access="public" >
@@ -8517,41 +5184,11 @@
         </cfquery>      
         <cfreturn True>
     </cffunction>
-    <cffunction name="deleteMorphometrics" returntype="any" output="false" access="public" >   
-                        
-                <cftry>
-
-                    <cfquery name="qdeletToxicology" datasource="#variables.dsn#"  >
-                        Update ST_Morphometrics 
-                        set EstimatedWeight = ''
-                        ,weight_values = ''
-                        ,totalLength = ''
-                        ,lengthWeight_values = ''
-                        ,rostrum = ''
-                        ,blowhole = ''
-                        ,fluke = ''
-                        ,girth = ''
-                        ,axillary = ''
-                        ,maxium = ''
-                        ,blubber = ''
-                        ,midlateral = ''
-                        ,midVentral = ''
-                        ,Lateralupperleft = ''
-                        ,Ventralupperleft = ''
-                        ,Laterallowerleft = ''
-                        ,Ventrallowerright = ''
-                        ,Deleted = 1
-                        where ID = #form.Morphometricss_ID#
-                    </cfquery>
-        
-                    <cfcatch>
-                        <cfdump  var="#cfcatch#"><cfabort>
-                    </cfcatch>
-                </cftry>     
-          <!--- <cfquery name="qdeleteMorphometrics" datasource="#variables.dsn#">
+    <cffunction name="deleteMorphometrics" returntype="any" output="false" access="public" >        
+          <cfquery name="qdeleteMorphometrics" datasource="#variables.dsn#">
             delete from ST_Morphometrics
             where ID = '#form.Morphometricss_ID#'       
-        </cfquery>       --->
+        </cfquery>      
         <cfreturn True>
     </cffunction>
     <!--- getcetaceanexamDate --->
@@ -8767,38 +5404,9 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
-        <cfif NOT isDefined('FORM.vetReview')>
-            <cfset FORM.vetReview = "">
-        </cfif>
         <cfif NOT isDefined('FORM.caseReportNBox')>
             <cfset FORM.caseReportNBox = "0">
         </cfif>
-        <cfif NOT isDefined('FORM.Esophagus')>
-            <cfset FORM.Esophagus = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.Forestomach')>
-            <cfset FORM.Forestomach = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.glandularStomach')>
-            <cfset FORM.glandularStomach = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.Pylorus')>
-            <cfset FORM.Pylorus = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.smallIntestine')>
-            <cfset FORM.smallIntestine = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.Colon')>
-            <cfset FORM.Colon = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.PancreasFindings')>
-            <cfset FORM.PancreasFindings = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.HistopathologyReport')>
-            <cfset FORM.HistopathologyReport = "">
-        </cfif>
-      
-       
 
         <cfquery name="qcheckfieldnumber" datasource="#Application.dsn#">
             SELECT fnumber FROM ST_CetaceanNecropsyReport
@@ -8806,8 +5414,7 @@
         </cfquery>
         
             <cftry>
-                <!--- <cfdump var="#form.HistopathologyReport#" abort="true"> --->
-                    
+                <!--- <cfdump var="awan" abort="true"> --->
                 <cfquery name="qinsertCetaceanNecropsy" datasource="#variables.dsn#"  result="return_data">
                     INSERT INTO ST_CetaceanNecropsyReport
                     (
@@ -9068,19 +5675,6 @@
                     ,CNRDATE
                     ,headerImages
                     ,caseReportBox
-                    ,NRDiagnosisCategory
-                    ,NRHistopathologyDiagnosis
-                    ,Esophagus
-                    ,Forestomach
-                    ,glandularStomach
-                    ,Pylorus
-                    ,Colon
-                    ,smallIntestine
-                    ,AlimentarySystemComments
-                    ,vetReview
-                    ,vetInitials
-                    ,vetReviewDate
-                    ,HistopathologyReport
                     ) 
                     VALUES
                     (
@@ -9340,19 +5934,6 @@
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
                     ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
                     ,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportNBox#'>
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NRDiagnosisCategory#'>
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NRHistopathologyDiagnosis#'>
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Esophagus#'>
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Forestomach#'>
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.glandularStomach#'>
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Pylorus#'>
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Colon#'>
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.smallIntestine#'>
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.AlimentarySystemComments#'>
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.vetReview#'>    
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.vetInitials#'>    
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.vetReviewDate#'>    
-                    ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.HistopathologyReport#'>    
                     )
                 </cfquery>
                 <cfcatch type="any">
@@ -9480,40 +6061,10 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
-        <cfif NOT isDefined('FORM.vetReview')>
-            <cfset FORM.vetReview = "">
-        </cfif>
         <cfif NOT isDefined('FORM.caseReportNBox')>
             <cfset FORM.caseReportNBox = "0">
         </cfif>
-        <cfif NOT isDefined('FORM.Esophagus')>
-            <cfset FORM.Esophagus = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.Forestomach')>
-            <cfset FORM.Forestomach = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.glandularStomach')>
-            <cfset FORM.glandularStomach = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.Pylorus')>
-            <cfset FORM.Pylorus = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.smallIntestine')>
-            <cfset FORM.smallIntestine = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.Colon')>
-            <cfset FORM.Colon = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.PancreasFindings')>
-            <cfset FORM.PancreasFindings = "">
-        </cfif>
-        <cfif NOT isDefined('FORM.HistopathologyReport')>
-            <cfset FORM.HistopathologyReport = "">
-        </cfif>
         <cftry>
-
-            <!--- <cfdump var="#form.HistopathologyReport#" abort="true"> --->
-
             <cfquery name="qupdateCetaceanNecropsy" datasource="#variables.dsn#"  result="return_data" >
                 UPDATE  ST_CetaceanNecropsyReport SET 
                
@@ -9768,20 +6319,7 @@
                 ,euthanizedCB = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.euthanizedCB#'>
                 ,CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
                 ,headerImages = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.headerImagesFile#'>
-                ,NRDiagnosisCategory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NRDiagnosisCategory#'>
-                ,NRHistopathologyDiagnosis = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.NRHistopathologyDiagnosis#'>
                 ,caseReportBox = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.caseReportNBox#'>
-                ,Esophagus = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Esophagus#'>
-                ,Forestomach = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Forestomach#'>
-                ,glandularStomach = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.glandularStomach#'>
-                ,Pylorus = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Pylorus#'>
-                ,smallIntestine = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.smallIntestine#'>
-                ,Colon = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Colon#'>
-                ,AlimentarySystemComments = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.AlimentarySystemComments#'>
-                ,vetReview = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.vetReview#'>    
-                ,vetInitials = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.vetInitials#'>    
-                ,vetReviewDate = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.vetReviewDate#'>    
-                ,HistopathologyReport = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.HistopathologyReport#'>    
                 WHERE
                 fnumber =<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Fnumber#'>
             </cfquery>
@@ -9891,71 +6429,17 @@
     </cffunction>
     <!--- getCetaceanNecropsy  --->
     <cffunction name="getCetaceanNecropsy" returntype="any" output="false" access="public" >
-<<<<<<< Updated upstream
-        <!--- <cfdump var="#form#" abort="true"> --->
-        <!--- <cftry>
-=======
 
         <cftry>
->>>>>>> Stashed changes
             <cfquery name="qgetCetaceanNecropsy" datasource="#Application.dsn#" maxRows = "1">
-                SELECT * from ST_CetaceanNecropsyReport where fnumber = '#Nfieldnumber#' and deleted is null
+                SELECT * from ST_CetaceanNecropsyReport where fnumber = '#Nfieldnumber#'
             </cfquery>
            
             <cfcatch type="any">
                 <cfdump  var="#cfcatch#"><cfabort>
             </cfcatch>
         </cftry>
-        <cfreturn qgetCetaceanNecropsy> --->
-
-         <cfset var result = {}>
-
-        <!--- First table check --->
-        <cfset var tables = [
-            "ST_CetaceanNecropsyReport",
-            "ST_LiveCetaceanExam",
-            "ST_HIForm",
-            "ST_LevelAForm",
-            "ST_HistoForm",
-            "ST_Blood_Values",
-            "ST_Toxicology",
-            "ST_Ancillary_Diagnostics",
-            "ST_SampleArchive",
-            "ST_Morphometrics"
-        ]>
-
-        <cfset var found = false>
-
-        <cfloop array="#tables#" index="tableName">
-            <cfquery name="qTemp" datasource="#variables.dsn#">
-                SELECT *
-                FROM #tableName#
-                WHERE Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Nfieldnumber#">
-                AND 
-                <cfif tableName EQ 'ST_Morphometrics' OR tableName EQ 'ST_CetaceanNecropsyReport'>
-                    deleted IS NULL
-                <cfelse>
-                    deleted != '1'
-                </cfif>
-            </cfquery>
-
-            <cfif qTemp.recordCount GT 0>
-                <cfset result.data = duplicate(qTemp)>
-                <cfset result.sourceTableName = tableName>
-                <cfset found = true>
-                <cfbreak>
-            </cfif>
-        </cfloop>
-        
-        <cfif NOT found>
-            <cfset result.data = {}> 
-            <cfset result.sourceTableName = "NoneFound">
-        </cfif>
-
-
-
-        <cfreturn result>
-
+        <cfreturn qgetCetaceanNecropsy>
     </cffunction>
     <cffunction name="getAllData" returntype="any" output="false" access="public" >
 
@@ -10085,7 +6569,7 @@
             UNION
             SELECT Fnumber FROM ST_SampleArchive where deleted != '1'
             UNION
-            SELECT Fnumber FROM ST_CetaceanNecropsyReport where deleted is null
+            SELECT Fnumber FROM ST_CetaceanNecropsyReport
             ORDER BY Fnumber;
         </cfquery>
         <cfreturn qgetallfieldnumber>
@@ -10165,14 +6649,13 @@
     </cffunction>
     <!--- updateDynamicParasites  --->
     <cffunction name="updateDynamicParasites" returntype="any" output="false" access="public">
-       
+        
         <cftry>
             <cfquery name="qLympho" datasource="#variables.dsn#">
                 select * from ST_DynamicParasites 
                 where fnumber = '#Fnumber#'
              </cfquery>
             
-             
              <cfloop query="qLympho">
                 <cfset lp = 'PARASITES'&#qLympho.ID#>
                 <cfdump var ="#evaluate(lp)#">
@@ -10181,8 +6664,6 @@
                 <cfset ln = 'Parasitelocation'&#qLympho.ID#>
                 <cfdump var ="#evaluate(ln)#">
                 
-                
-
                 <cfquery name="qupdateDynamicParasites" datasource="#variables.dsn#"  result="return_data" >
                     UPDATE  ST_DynamicParasites SET
 
@@ -10203,189 +6684,12 @@
     </cffunction>
      <!--- delete Cetacean Necropsy --->
      <cffunction name="deletcetaceannecropsy" returntype="any" output="false" access="public" >
-     
-        <cftry>
-
-            <cfquery name="qdeletToxicology" datasource="#variables.dsn#"  >
-                Update ST_CetaceanNecropsyReport 
-                set attendingVeterinarian = ''
-                ,Prosectors = ''
-                ,Tentative = ''
-                ,deathcause = ''
-                ,NRDiagnosisCategory = ''
-                ,historemark = ''
-                ,NRHistopathologyDiagnosis = ''
-                ,Necropsycondition = ''
-                ,Euthanized = ''
-                ,Bodycondition = ''
-                ,LevelADate = Null
-                ,AnimalRenderings = ''
-                ,NxLocation = ''
-                ,Lesionform = ''
-                ,HIForm = ''
-                ,cutterwounds = ''
-                ,cutterscars = ''
-                ,eyeleft = ''
-                ,eyeright = ''
-                ,lessioncomments = ''
-                ,Fat_Blubber = ''
-                ,heart = ''
-                ,mesentery = ''
-                ,kidney = ''
-                ,internal_comments = ''
-                ,MUSCULOSKELETAL = ''
-                ,Joint_Fluid = ''
-                ,Skeletal_Findings = ''
-                ,Muscle_Status = ''
-                ,Musculature_Findings = ''
-                ,muscular_comments = ''
-                ,THORACIC = ''
-                ,fluidVolume = ''
-                ,ml = ''
-                ,THORACIC_Fluid = ''
-                ,THORACIC_Lining = ''
-                ,thoratic_comments = ''
-                ,ABDOMINAL = ''
-                ,abdominal_fluidVolume = ''
-                ,ABDOMINAL_ml = ''
-                ,ABDOMINAL_Fluid = ''
-                ,ABDOMINAL_Lining = ''
-                ,abdominal_comments = ''
-                ,HEPATOBILIARY = ''
-                ,Liver_Findings = ''
-                ,Biliary_Findings = ''
-                ,hepatobiliary_comments = ''
-                ,CARDIOVASCULAR = ''
-                ,Chambers = ''
-                ,cardio_describe = ''
-                ,Pericardial_Fluid = ''
-                ,Overall_Findings = ''
-                ,cardio_comments = ''
-                ,PULMONARY = ''
-                ,Froth_in_Airway = ''
-                ,If_Present = ''
-                ,Foam_Amount = ''
-                ,Color_of_Foam = ''
-                ,Sand_Sediment = ''
-                ,Trachea_Bronchi = ''
-                ,Lungs_Findings = ''
-                ,Lungs_Float = ''
-                ,pulmonary_comments = ''
-                ,pulmonary_textarea = ''
-                ,LYMPHORETICULAR = ''
-                ,Spleen_Findings = ''
-                ,lympho_other = ''
-                ,Spleen = ''
-                ,lympho_comments = ''
-                ,ENDOCRINE = ''
-                ,Adrenal_Glands = ''
-                ,adrenal_leftLength = ''
-                ,adrenal_leftwidth = ''
-                ,adrenal_rightLength = ''
-                ,adrenal_rightwidth = ''
-                ,Thyroid = ''
-                ,thyroid_length = ''
-                ,thyroid_width = ''
-                ,Pituitary_Gland = ''
-                ,Pituitary_length = ''
-                ,Pituitary_width = ''
-                ,Kidney_left = ''
-                ,Kidney_right = ''
-                ,Urinary_Bladder = ''
-                ,urin_volume = ''
-                ,UROGENITAL_color = ''
-                ,Consistancy = ''
-                ,Abnormalities = ''
-                ,Abnormalities_describe = ''
-                ,Reproductive_Organs = ''
-                ,Identified_As = ''
-                ,Lesions = ''
-                ,Gonads_Identified = ''
-                ,Testes_Length_LEFT = ''
-                ,Testes_Length_width = ''
-                ,Glands_LEFT = ''
-                ,Testes_Length_right = ''
-                ,Testes_width_right = ''
-                ,Glands_RIGHT = ''
-                ,Ovary_Length_LEFT = ''
-                ,Ovary_Width_LEFT = ''
-                ,Follicles_Present_Left = ''
-                ,Ovary_Length_right = ''
-                ,Ovary_width_right = ''
-                ,Follicles_Present_right = ''
-                ,UROGENITAL_Comments = ''
-                ,CENTRALbrain = ''
-                ,CENTRALBrainFindings = ''
-                ,brainother = ''
-                ,CENTRALSpinalCord = ''
-                ,CENTRALSpinalCordfinding = ''
-                ,spinalother = ''
-                ,nervoussystemcomments = ''
-                ,Parasitecomments = ''
-                ,endocrine_comments = ''
-                ,AlimentarySystemComments = ''
-                ,PANCREAS = ''
-                ,PancreasFindings = ''
-                ,PANCREASOthers = ''
-                ,GIFOREIGNMATERIAL = ''
-                ,InjuryLesionAssociated = ''
-                ,InjuryLesionAssociatedContents = ''
-                ,GIForeignMaterialType = ''
-                ,MaterialLesionLocation = ''
-                ,MaterialCollected = ''
-                ,DispositionofMaterialCollected = ''
-                ,Esophagus = ''
-                ,Forestomach = ''
-                ,glandularStomach = ''
-                ,Pylorus = ''
-                ,smallIntestine = ''
-                ,Colon = ''
-                ,HistoImages = ''
-                ,images = ''
-                ,integumentImages = ''
-                ,IntenalExamImages = ''
-                ,thoracictImages = ''
-                ,abdominalImages = ''
-                ,hepatobiliaryImages = ''
-                ,cardiovascularImages = ''
-                ,pulmonaryImages = ''
-                ,lymphoreticularImages = ''
-                ,endocrineImages = ''
-                ,urogenitalImages = ''
-                ,alimentaryImages = ''
-                ,centralNervousImages = ''
-                ,musculoskeletalImages = ''
-                ,Deleted = 1
-                
-
-                where ID = #report_ID#
-            </cfquery>
-
-            <cfquery name="qdeleteMorphometrics" datasource="#variables.dsn#">
-                delete from ST_DynamicNutrition
-                where fnumber = '#fnumber#'   
-            </cfquery>
-            <cfquery name="qdeleteMorphometrics" datasource="#variables.dsn#">
-                delete from ST_DynamicLymphoreticular
-                where fnumber = '#fnumber#'   
-            </cfquery>
-            <cfquery name="qdeleteMorphometrics" datasource="#variables.dsn#">
-                delete from ST_DynamicParasites
-                where fnumber = '#fnumber#'   
-            </cfquery>
-            <cfcatch>
-                <cfdump  var="#cfcatch#"><cfabort>
-            </cfcatch>
-        </cftry>     
-
-
-        <!--- <cfquery name="qdeletcetaceannecropsy" datasource="#variables.dsn#"  > 
+        <cfquery name="qdeletcetaceannecropsy" datasource="#variables.dsn#"  >
             delete from ST_CetaceanNecropsyReport
             where ID = '#report_ID#'
-        </cfquery> --->
+        </cfquery>
         <cfreturn True>
     </cffunction>
-
      <cffunction name="deletCetaceanNecropsyAllRecord" returntype="any" output="false" access="public" >
         <cfquery name="qdeletCetaceanNecropsyAllRecord" datasource="#variables.dsn#"  >
            TRUNCATE Table ST_CetaceanNecropsyReport  
@@ -10431,27 +6735,6 @@
         <!--- <cfif NOT isDefined('FORM.ECG')>
             <cfset FORM.ECG = "">
         </cfif> --->
-
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-            <cfquery name="qgetcetaceanNecropsyDate" datasource="#Application.dsn#"  >
-                SELECT CNRDATE as cnrdate, ID as cnID  from ST_CetaceanNecropsyReport 
-                where fnumber = '#form.FNUMBER#'            
-            </cfquery>
-            <!--- <cfdump var="#qgetcetaceanNecropsyDate#" abort="true"> Nouman--->
-            <cfif isDefined('qgetcetaceanNecropsyDate.cnID') AND qgetcetaceanNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetcetaceanNecropsyDate.cnID#'>
-                </cfquery>
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
  
         <!--- <cfdump var="#form#" abort="true"> --->
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
@@ -10596,28 +6879,7 @@
         <cfif NOT isDefined('FORM.euthanizedCB')>
             <cfset FORM.euthanizedCB = "">
         </cfif>
-        <cfif isDefined('FORM.necropsyDateID') and FORM.necropsyDateID neq ''>
-            <cftry>
-                <cfquery name="qgetMorphometricsNecropsyDate" datasource="#Application.dsn#"  >
-                    SELECT cn.CNRDATE as cnrdate, cn.ID as cnID  from ST_Morphometrics sa 
-                    left JOIN ST_CetaceanNecropsyReport cn on cn.Fnumber = sa.Fnumber
-                    where sa.ID = '#form.MORPHOMETRICSS_ID#'            
-                </cfquery>
-            <cfif isDefined('qgetMorphometricsNecropsyDate.cnID') AND qgetMorphometricsNecropsyDate.cnID neq ''>
-                <cfquery name="qCetaceanExamUpdate" datasource="#variables.dsn#"  result="return_data" >
-                    UPDATE  ST_CetaceanNecropsyReport SET
-                    CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.necropsyDateID#'>
-                    WHERE
-                        ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#qgetMorphometricsNecropsyDate.cnID#'>
-                </cfquery>
-                <!--- <cfdump var="#return_data#" abort="true"> Nouman--->
-            </cfif>
-            <cfcatch>
-                <cfdump var="#cfcatch#" abort="true">
-            </cfcatch>
-            </cftry>
-        </cfif>
-
+        
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -11261,6 +7523,7 @@
 
 
     <cffunction name="AjaxbloodValueInsert" returntype="any" output="false" access="remote" returnformat="plain">
+        <!--- <cfdump var="#Fnumber#" abort="true"> --->
         <cfquery name="qgetLCEID" datasource="#Application.dsn#"  result="return_data" >
             SELECT ID from ST_Blood_Values where deleted != '1' and Fnumber = '#Fnumber#' 
         </cfquery>
@@ -12203,7 +8466,6 @@
             ,SampleComments=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportSampleComments#'>
             ,Sample_Date=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportSample_Date#'>
             ,Sample_Location=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportSample_Location#'>
-            ,sampleAvailability=<cfqueryparam cfsqltype="cf_sql_varchar" value='#reportsampleAvailability#'>
             
             where
             ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
@@ -12266,7 +8528,7 @@
             ,Mercury=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Mercury#'>
             ,Thallium=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Thallium#'>          
             ,Selenium=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Selenium#' >
-            ,Iron=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Ironn#'>
+            ,Iron=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Iron#'>
             ,Copper=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Copper#'>
             ,Zinc=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Zinc#'>
             ,Molybdenum=<cfqueryparam cfsqltype="cf_sql_varchar" value='#Molybdenum#'>          
@@ -12361,97 +8623,28 @@
             UNION
             SELECT pdfFiles,id from ST_HistoForm where Fnumber = '#Fnumber#' and caseReportBox = '1'
             UNION
-            SELECT pdfFiles,id from ST_Ancillary_Diagnostics where Fnumber = '#Fnumber#' and caseReportBox = '1'
-            UNION
             SELECT HistoImages,id from ST_CetaceanNecropsyReport where Fnumber = '#Fnumber#' and caseReportBox = '1'
 
         </cfquery>
-
-        
-
         <cfreturn qgetPdfFiles>
     </cffunction>
 
     <cffunction name="removeHeaderImage" returntype="string" output="false" access="remote" returnformat="plain">
         <!--- <cfdump var=#ID# abort="true"> --->
-        <cfif tabName eq 'CetaceanExam'>
-            <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
-                update ST_LiveCetaceanExam set
-                headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                    where
-                    ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-            </cfquery> 
-            <cfelseif tabName eq 'HIForm'>  
-                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
-                    update ST_HIForm set
-                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                        where
-                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-                </cfquery>      
-            <cfelseif tabName eq 'LevelAForm'>  
-                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
-                    update ST_LevelAForm set
-                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                        where
-                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-                </cfquery>      
-            <cfelseif tabName eq 'Histopathology'>  
-                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
-                    update ST_HistoForm set
-                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                        where
-                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-                </cfquery>      
-            <cfelseif tabName eq 'bloodValue'>  
-                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
-                    update ST_Blood_Values set
-                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                        where
-                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-                </cfquery>      
-            <cfelseif tabName eq 'Toxicology'>  
-                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
-                    update ST_Toxicology set
-                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                        where
-                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-                </cfquery>      
-            <cfelseif tabName eq 'AncillaryDiagnostics'>  
-                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
-                    update ST_Ancillary_Diagnostics set
-                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                        where
-                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-                </cfquery>      
-            <cfelseif tabName eq 'SampleArchive'>  
-                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
-                    update ST_SampleArchive set
-                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                        where
-                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-                </cfquery>      
-            <cfelseif tabName eq 'NecropsyReport'>  
-                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
-                    update ST_CetaceanNecropsyReport set
-                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                        where
-                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-                </cfquery>      
-            <cfelseif tabName eq 'Morphometrics'>  
-                <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
-                    update ST_Morphometrics set
-                    headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
-                        where
-                        ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
-                </cfquery>      
-        </cfif>
+        <cfquery name="updateImagesValue1" datasource="#Application.dsn#" result = "results">
+        update ST_LiveCetaceanExam set
+        headerImages=<cfqueryparam cfsqltype="cf_sql_varchar" value='#imgValue#' >
 
+            where
+            ID=<cfqueryparam cfsqltype="cf_sql_integer" value='#ID#'>
+
+ </cfquery>
          <!--- <cfdump var=#results# abort="true"> --->
-        <!--- <cfif len(trim(#image#))>
+        <cfif len(trim(#image#))>
             <cfif FileExists("#Application.CloudDirectory&image#")>
                 <cffile action = "delete" file = "#Application.CloudDirectory&image#">
             </cfif>
-        </cfif> --->
+        </cfif>
         <cfreturn True>
     </cffunction>
 
@@ -12520,1892 +8713,26 @@
             </cfif>
             <cfreturn True>
         </cffunction>
-        
-        <cffunction name="getNecropsyImages" returntype="any" output="false" access="public" >
-            <cfquery name="qgetNecropsyImages" datasource="#variables.dsn#">
-                SELECT ID,images,integumentImages,IntenalExamImages,musculoskeletalImages,thoracictImages,abdominalImages,hepatobiliaryImages,cardiovascularImages,pulmonaryImages,lymphoreticularImages,endocrineImages,urogenitalImages,alimentaryImages,centralNervousImages FROM ST_CetaceanNecropsyReport WHERE Fnumber = '#Fnumber#'
-            </cfquery>
-            <cfreturn qgetNecropsyImages>
-        </cffunction>
+
 
         <cffunction name="getSearchedData" returntype="any" output="false" access="public" >
-
-            <cfquery name="qGetSearchedData" datasource="#variables.dsn#">
-             SELECT MIN(ID) AS ID, fnumber, SourceTable, MIN(Date) AS Date
-                FROM qry_StrandingTabs
-                WHERE (
-                    Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
-                    OR BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR BSNotes LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR General LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR SNM LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Mentation LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Palpation LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Proprioception LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Reflexes LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR RLD LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR ECGresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Ultrasoundresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR ILADComment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR SampleNote LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR SampleComments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR wbc_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR RBC_count_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Hemoglobin_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Hematocrit_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR MCV_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR MCH_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR MCHC_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Segmented_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Band_Neutrophils_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Lymphocytes_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Monocytes_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Eosinophils_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Basophils_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR NRBC_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR RBC_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Platelet_Count_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Platelet_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR WBCMorphology_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Fibrinogen_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR protein_refractometer_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Hemolysis_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Alkaline_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR ALT_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Amylase_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR AST_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Calcium_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Phosphorus_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Ca_Phos_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Cholesterol_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR CPK_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR CREA_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR GGT_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Potassium_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR LDH_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Lipase_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Magnesium_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Bilirubin_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Protein2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Albumin_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Globulin_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR A_G_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Triglycerides_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Sodium_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Chloride_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR CO_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Glucose_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR BUNf_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Anion_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Osmolality_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Iron_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Lipemia_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR BUN_CREA_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Uric_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR D_Bilirubin_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Total_Protein_cap_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR A_G_ration_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Pre_Albumin_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Albumin2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Alpha_1_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR vAlpha_2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Beta_1_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Beta_2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Beta_Total_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Gamma_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Dolphin_SAA_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Na_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR K_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Cl_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR iCa_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR TCO2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Glu_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR BUN_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Crea2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Hct_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Hb_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR AnGap_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Temperature_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR pH_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR PCO2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR PO2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR BEecf_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR HCO3_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR TCO2cg_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR sO2_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Lac_comment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR SComment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR SNote LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR deathcause LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR historemark LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Bodycondition LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR lessioncomments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR internal_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR muscular_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR thoratic_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR abdominal_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR hepatobiliary_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR cardio_describe LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR cardio_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR pulmonary_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR pulmonary_textarea LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Tentative LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR lympho_other LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR lympho_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR endocrine_comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR UROGENITAL_Comments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR InjuryLesionAssociatedContents LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Parasitecomments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR nervoussystemcomments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Arsenic LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Cadmium LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Lead LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Mercury LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Thallium LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Selenium LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Iron LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Copper LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Zinc LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Molybdenum LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Manganese LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Cobalt LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR NAA LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR NMFS LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR NDB LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR affiliatedID LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR hera LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR ageClass LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR actualClass LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR InitialCondition LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR FinalCondition LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR lat LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR lon LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR county LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-<<<<<<< Updated upstream
-                    OR fnumber LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    
-
-                ) and (deleted !='1' OR deleted is null)
-=======
-
-                )
->>>>>>> Stashed changes
-                GROUP BY fnumber, SourceTable
-  
-            </cfquery>        
-            <cfreturn qGetSearchedData>
-
-             <cfdump var="#qGetSearchedData#" abort="true">
-
-            <cfquery name="qGetSearchedData" datasource="#variables.dsn#">
-                SELECT 'Cetacean Exam' AS SourceTable, ID, Fnumber, Date, Location, BriefHistory, BSNotes, General, SNM, Mentation, Palpation, Proprioception, Reflexes, RLD, ECGresults, Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments,
-                NULL AS wbc_comment,NULL AS RBC_count_comment,NULL AS Hemoglobin_comment,NULL AS Hematocrit_comment,NULL AS MCV_comment,NULL AS MCH_comment,NULL AS MCHC_comment,NULL AS Segmented_comment,NULL AS Band_Neutrophils_comment,NULL AS Lymphocytes_comment,NULL AS Monocytes_comment,NULL AS Eosinophils_comment,NULL AS Basophils_comment,NULL AS NRBC_comment,NULL AS RBC_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_comment,NULL AS WBCMorphology_comment,
-                NULL AS Fibrinogen_comment,
-                NULL AS protein_refractometer_comment,NULL AS Hemolysis_comment,NULL AS Alkaline_comment,NULL AS ALT_comment,NULL AS Amylase_comment,NULL AS AST_comment,NULL AS Calcium_comment,NULL AS Phosphorus_comment,NULL AS Ca_Phos_comment,NULL AS Cholesterol_comment,NULL AS CPK_comment,NULL AS CREA_comment,NULL AS GGT_comment,NULL AS Potassium_comment,NULL AS LDH_comment,NULL AS Lipase_comment,NULL AS Magnesium_comment,NULL AS Bilirubin_comment,NULL AS Protein2_comment,NULL AS Albumin_comment,NULL AS Globulin_comment,NULL AS A_G_comment,NULL AS Triglycerides_comment,NULL AS Sodium_comment,NULL AS Chloride_comment,NULL AS CO_comment,NULL AS Glucose_comment,NULL AS BUNf_comment,NULL AS Anion_comment,NULL AS Osmolality_comment,NULL AS Iron_comment,NULL AS Lipemia_comment,NULL AS BUN_CREA_comment,NULL AS Uric_comment,NULL AS D_Bilirubin_comment,
-                NULL AS Total_Protein_cap_comment,NULL AS A_G_ration_comment,NULL AS Pre_Albumin_comment,NULL AS Albumin2_comment,NULL AS Alpha_1_comment,NULL AS vAlpha_2_comment,NULL AS Beta_1_comment,NULL AS Beta_2_comment,NULL AS Beta_Total_comment,NULL AS Gamma_comment,
-                NULL AS Dolphin_SAA_comment,
-                NULL AS Na_comment,NULL AS K_comment,NULL AS Cl_comment,NULL AS iCa_comment,NULL AS TCO2_comment,NULL AS Glu_comment,NULL AS BUN_comment,NULL AS Crea2_comment,NULL AS Hct_comment,NULL AS Hb_comment,NULL AS AnGap_comment,NULL AS Temperature_comment,NULL AS pH_comment,NULL AS PCO2_comment,NULL AS PO2_comment,NULL AS BEecf_comment,NULL AS HCO3_comment,NULL AS TCO2cg_comment,NULL AS sO2_comment,NULL AS Lac_comment
-                FROM ST_LiveCetaceanExam
-
-                UNION
-                SELECT 'HI Form' AS SourceTable, ID, Fnumber, Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments,
-                NULL AS wbc_comment,NULL AS RBC_count_comment,NULL AS Hemoglobin_comment,NULL AS Hematocrit_comment,NULL AS MCV_comment,NULL AS MCH_comment,NULL AS MCHC_comment,NULL AS Segmented_comment,NULL AS Band_Neutrophils_comment,NULL AS Lymphocytes_comment,NULL AS Monocytes_comment,NULL AS Eosinophils_comment,NULL AS Basophils_comment,NULL AS NRBC_comment,NULL AS RBC_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_comment,NULL AS WBCMorphology_comment,
-                NULL AS Fibrinogen_comment,
-                NULL AS protein_refractometer_comment,NULL AS Hemolysis_comment,NULL AS Alkaline_comment,NULL AS ALT_comment,NULL AS Amylase_comment,NULL AS AST_comment,NULL AS Calcium_comment,NULL AS Phosphorus_comment,NULL AS Ca_Phos_comment,NULL AS Cholesterol_comment,NULL AS CPK_comment,NULL AS CREA_comment,NULL AS GGT_comment,NULL AS Potassium_comment,NULL AS LDH_comment,NULL AS Lipase_comment,NULL AS Magnesium_comment,NULL AS Bilirubin_comment,NULL AS Protein2_comment,NULL AS Albumin_comment,NULL AS Globulin_comment,NULL AS A_G_comment,NULL AS Triglycerides_comment,NULL AS Sodium_comment,NULL AS Chloride_comment,NULL AS CO_comment,NULL AS Glucose_comment,NULL AS BUNf_comment,NULL AS Anion_comment,NULL AS Osmolality_comment,NULL AS Iron_comment,NULL AS Lipemia_comment,NULL AS BUN_CREA_comment,NULL AS Uric_comment,NULL AS D_Bilirubin_comment,
-                NULL AS Total_Protein_cap_comment,NULL AS A_G_ration_comment,NULL AS Pre_Albumin_comment,NULL AS Albumin2_comment,NULL AS Alpha_1_comment,NULL AS vAlpha_2_comment,NULL AS Beta_1_comment,NULL AS Beta_2_comment,NULL AS Beta_Total_comment,NULL AS Gamma_comment,
-                NULL AS Dolphin_SAA_comment,
-                NULL AS Na_comment,NULL AS K_comment,NULL AS Cl_comment,NULL AS iCa_comment,NULL AS TCO2_comment,NULL AS Glu_comment,NULL AS BUN_comment,NULL AS Crea2_comment,NULL AS Hct_comment,NULL AS Hb_comment,NULL AS AnGap_comment,NULL AS Temperature_comment,NULL AS pH_comment,NULL AS PCO2_comment,NULL AS PO2_comment,NULL AS BEecf_comment,NULL AS HCO3_comment,NULL AS TCO2cg_comment,NULL AS sO2_comment,NULL AS Lac_comment 
-                FROM ST_HIForm
-
-                UNION
-                SELECT 'Level A Form' AS SourceTable, ID, Fnumber, Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments,
-                NULL AS wbc_comment,NULL AS RBC_count_comment,NULL AS Hemoglobin_comment,NULL AS Hematocrit_comment,NULL AS MCV_comment,NULL AS MCH_comment,NULL AS MCHC_comment,NULL AS Segmented_comment,NULL AS Band_Neutrophils_comment,NULL AS Lymphocytes_comment,NULL AS Monocytes_comment,NULL AS Eosinophils_comment,NULL AS Basophils_comment,NULL AS NRBC_comment,NULL AS RBC_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_comment,NULL AS WBCMorphology_comment,
-                NULL AS Fibrinogen_comment,
-                NULL AS protein_refractometer_comment,NULL AS Hemolysis_comment,NULL AS Alkaline_comment,NULL AS ALT_comment,NULL AS Amylase_comment,NULL AS AST_comment,NULL AS Calcium_comment,NULL AS Phosphorus_comment,NULL AS Ca_Phos_comment,NULL AS Cholesterol_comment,NULL AS CPK_comment,NULL AS CREA_comment,NULL AS GGT_comment,NULL AS Potassium_comment,NULL AS LDH_comment,NULL AS Lipase_comment,NULL AS Magnesium_comment,NULL AS Bilirubin_comment,NULL AS Protein2_comment,NULL AS Albumin_comment,NULL AS Globulin_comment,NULL AS A_G_comment,NULL AS Triglycerides_comment,NULL AS Sodium_comment,NULL AS Chloride_comment,NULL AS CO_comment,NULL AS Glucose_comment,NULL AS BUNf_comment,NULL AS Anion_comment,NULL AS Osmolality_comment,NULL AS Iron_comment,NULL AS Lipemia_comment,NULL AS BUN_CREA_comment,NULL AS Uric_comment,NULL AS D_Bilirubin_comment,
-                NULL AS Total_Protein_cap_comment,NULL AS A_G_ration_comment,NULL AS Pre_Albumin_comment,NULL AS Albumin2_comment,NULL AS Alpha_1_comment,NULL AS vAlpha_2_comment,NULL AS Beta_1_comment,NULL AS Beta_2_comment,NULL AS Beta_Total_comment,NULL AS Gamma_comment,
-                NULL AS Dolphin_SAA_comment,
-                NULL AS Na_comment,NULL AS K_comment,NULL AS Cl_comment,NULL AS iCa_comment,NULL AS TCO2_comment,NULL AS Glu_comment,NULL AS BUN_comment,NULL AS Crea2_comment,NULL AS Hct_comment,NULL AS Hb_comment,NULL AS AnGap_comment,NULL AS Temperature_comment,NULL AS pH_comment,NULL AS PCO2_comment,NULL AS PO2_comment,NULL AS BEecf_comment,NULL AS HCO3_comment,NULL AS TCO2cg_comment,NULL AS sO2_comment,NULL AS Lac_comment
-                FROM ST_LevelAForm
-
-                UNION
-                SELECT 'Histopathology' AS SourceTable, HF.ID, HF.Fnumber, HF.Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, SD.SampleNote , HF.SampleComments,    NULL AS wbc_comment,NULL AS RBC_count_comment,NULL AS Hemoglobin_comment,NULL AS Hematocrit_comment,NULL AS MCV_comment,NULL AS MCH_comment,NULL AS MCHC_comment,NULL AS Segmented_comment,NULL AS Band_Neutrophils_comment,NULL AS Lymphocytes_comment,NULL AS Monocytes_comment,NULL AS Eosinophils_comment,NULL AS Basophils_comment,NULL AS NRBC_comment,NULL AS RBC_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_Count_comment,NULL AS Platelet_comment,NULL AS WBCMorphology_comment,
-                NULL AS Fibrinogen_comment,
-                NULL AS protein_refractometer_comment,NULL AS Hemolysis_comment,NULL AS Alkaline_comment,NULL AS ALT_comment,NULL AS Amylase_comment,NULL AS AST_comment,NULL AS Calcium_comment,NULL AS Phosphorus_comment,NULL AS Ca_Phos_comment,NULL AS Cholesterol_comment,NULL AS CPK_comment,NULL AS CREA_comment,NULL AS GGT_comment,NULL AS Potassium_comment,NULL AS LDH_comment,NULL AS Lipase_comment,NULL AS Magnesium_comment,NULL AS Bilirubin_comment,NULL AS Protein2_comment,NULL AS Albumin_comment,NULL AS Globulin_comment,NULL AS A_G_comment,NULL AS Triglycerides_comment,NULL AS Sodium_comment,NULL AS Chloride_comment,NULL AS CO_comment,NULL AS Glucose_comment,NULL AS BUNf_comment,NULL AS Anion_comment,NULL AS Osmolality_comment,NULL AS Iron_comment,NULL AS Lipemia_comment,NULL AS BUN_CREA_comment,NULL AS Uric_comment,NULL AS D_Bilirubin_comment,
-                NULL AS Total_Protein_cap_comment,NULL AS A_G_ration_comment,NULL AS Pre_Albumin_comment,NULL AS Albumin2_comment,NULL AS Alpha_1_comment,NULL AS vAlpha_2_comment,NULL AS Beta_1_comment,NULL AS Beta_2_comment,NULL AS Beta_Total_comment,NULL AS Gamma_comment,
-                NULL AS Dolphin_SAA_comment,
-                NULL AS Na_comment,NULL AS K_comment,NULL AS Cl_comment,NULL AS iCa_comment,NULL AS TCO2_comment,NULL AS Glu_comment,NULL AS BUN_comment,NULL AS Crea2_comment,NULL AS Hct_comment,NULL AS Hb_comment,NULL AS AnGap_comment,NULL AS Temperature_comment,NULL AS pH_comment,NULL AS PCO2_comment,NULL AS PO2_comment,NULL AS BEecf_comment,NULL AS HCO3_comment,NULL AS TCO2cg_comment,NULL AS sO2_comment,NULL AS Lac_comment
-                FROM ST_HistoForm AS HF
-                LEFT JOIN ST_HistoSampleData AS SD ON HF.ID = SD.HI_ID
-
-                UNION
-                SELECT 'Blood Value' AS SourceTable, BV.ID, BV.Fnumber, BV.Date, BV.Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments,  CBC.wbc_comment,CBC.RBC_count_comment,CBC.Hemoglobin_comment,CBC.Hematocrit_comment,CBC.MCV_comment,CBC.MCH_comment,CBC.MCHC_comment,CBC.Segmented_comment,CBC.Band_Neutrophils_comment,CBC.Lymphocytes_comment,CBC.Monocytes_comment,CBC.Eosinophils_comment,CBC.Basophils_comment,CBC.NRBC_comment,CBC.RBC_comment,CBC.Platelet_Count_comment,CBC.Platelet_Count_comment,CBC.Platelet_comment,CBC.WBCMorphology_comment,
-                Fibrinogen.Fibrinogen_comment,
-                Ch.protein_refractometer_comment,Ch.Hemolysis_comment,Ch.Alkaline_comment,Ch.ALT_comment,Ch.Amylase_comment,Ch.AST_comment,Ch.Calcium_comment,Ch.Phosphorus_comment,Ch.Ca_Phos_comment,Ch.Cholesterol_comment,Ch.CPK_comment,Ch.CREA_comment,Ch.GGT_comment,Ch.Potassium_comment,Ch.LDH_comment,Ch.Lipase_comment,Ch.Magnesium_comment,Ch.Bilirubin_comment,Ch.Protein2_comment,Ch.Albumin_comment,Ch.Globulin_comment,Ch.A_G_comment,Ch.Triglycerides_comment,Ch.Sodium_comment,Ch.Chloride_comment,Ch.CO_comment,CH.Glucose_comment,Ch.BUNf_comment,Ch.Anion_comment,Ch.Osmolality_comment,Ch.Iron_comment,Ch.Lipemia_comment,Ch.BUN_CREA_comment,Ch.Uric_comment,Ch.D_Bilirubin_comment,
-                Cze.Total_Protein_cap_comment,Cze.A_G_ration_comment,Cze.Pre_Albumin_comment,Cze.Albumin2_comment,Cze.Alpha_1_comment,Cze.vAlpha_2_comment,Cze.Beta_1_comment,Cze.Beta_2_comment,Cze.Beta_Total_comment,Cze.Gamma_comment,
-                Dolphin.Dolphin_SAA_comment,
-                Chem.Na_comment,Chem.K_comment,Chem.Cl_comment,Chem.iCa_comment,Chem.TCO2_comment,Chem.Glu_comment,Chem.BUN_comment,Chem.Crea2_comment,Chem.Hct_comment,Chem.Hb_comment,Chem.AnGap_comment,                
-                iSTAT.Temperature_comment,iSTAT.pH_comment,iSTAT.PCO2_comment,iSTAT.PO2_comment,iSTAT.BEecf_comment,iSTAT.HCO3_comment,iSTAT.TCO2cg_comment,iSTAT.sO2_comment,iSTAT.Lac_comment
-
-                FROM ST_Blood_Values AS BV
-                LEFT JOIN ST_CBC AS CBC ON BV.ID = CBC.BV_ID
-                LEFT JOIN ST_Fibrinogen AS Fibrinogen ON BV.ID = Fibrinogen.BV_ID
-                LEFT JOIN ST_Chemistry AS Ch ON BV.ID = Ch.BV_ID
-                LEFT JOIN ST_Capillary AS Cze ON BV.ID = Cze.BV_ID
-                LEFT JOIN ST_Dolphin AS Dolphin ON BV.ID = Dolphin.BV_ID
-                LEFT JOIN ST_iSTAT_Chem AS Chem ON BV.ID = Chem.BV_ID
-                LEFT JOIN ST_iSTAT_CG4 AS iSTAT ON BV.ID = iSTAT.BV_ID
-
-            </cfquery>
-
-
-
-   
+            <!---             <cfdump var="test" abort="true"> --->
                 
             <cfquery name="qGetSearchedData" datasource="#variables.dsn#">
-                  SELECT 'Cetacean Exam' AS SourceTable, ID, Fnumber, Date, Location, BriefHistory, BSNotes, General, SNM, Mentation, Palpation, Proprioception, Reflexes, RLD, ECGresults, Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments
-                FROM ST_LiveCetaceanExam
-                WHERE (
-                    Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
-                    OR BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR BSNotes LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR General LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR SNM LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Mentation LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Palpation LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Proprioception LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Reflexes LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR RLD LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR ECGresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR Ultrasoundresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    
-<<<<<<< Updated upstream
-                    
-=======
->>>>>>> Stashed changes
-                )
-                UNION
-                SELECT 'HI Form' AS SourceTable, ID, Fnumber, Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments 
-                FROM ST_HIForm
-                WHERE (
-                    Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
-                    OR BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                )
-                UNION
-                SELECT 'Level A Form' AS SourceTable, ID, Fnumber, Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments
-                FROM ST_LevelAForm
-                WHERE (
-                    Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
-                    OR BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR ILADComment LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                )
-                UNION
-                SELECT 'Histopathology' AS SourceTable, HF.ID, HF.Fnumber, HF.Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, SD.SampleNote , HF.SampleComments
+                SELECT 'Histopathology' AS SourceTable, HF.ID, HF.Fnumber, HF.Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, SD.SampleNote
                 FROM ST_HistoForm AS HF
                 LEFT JOIN ST_HistoSampleData AS SD ON HF.ID = SD.HI_ID
                 WHERE (
                     HF.Location LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar"> 
                     OR HF.BriefHistory LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-                    OR HF.SampleComments LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     OR SD.SampleNote LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                 )
             </cfquery>
-<!---              <cfdump  var="#qGetSearchedData#" abort="true">  --->
+             <cfdump  var="#qGetSearchedData#" abort="true"> 
                 <cfreturn qGetSearchedData>
         </cffunction>
 
+<!--- nouman --->
 
-        <cffunction name="updateFibrinogen" returntype="string" output="false" access="remote" returnformat="plain">
-            <cfargument name="formData" type="string" required="true">
-            <cfargument name="bloodValues_ID" type="numeric" required="true">
-  
-
-
-            <cfset formDataStruct = {}>
-            <cfset formFields = listToArray(arguments.formData, "&")>
-            <cfloop array="#formFields#" index="field">
-                <cfset fieldParts = listToArray(field, "=")>
-                <cfif arrayLen(fieldParts) EQ 2>
-                    <cfset fieldName = urlDecode(fieldParts[1])>
-                    <cfset fieldValue = urlDecode(fieldParts[2])>
-                    <cfset formDataStruct[fieldName] = fieldValue>
-                </cfif>
-            </cfloop>
-
-            <cfif isDefined('formDataStruct.Fibrinogen')>
-                <cfset fibrinogenValue = formDataStruct.Fibrinogen>
-            <cfelse>
-                <cfset fibrinogenValue =''>
-            </cfif>
-            <cfset fibrinogenReportValue = formDataStruct.Fibrinogen_report>
-            <cfif isDefined('formDataStruct.Fibrinogen_comment')>
-                <cfset fibrinogenCommentValue = formDataStruct.Fibrinogen_comment>
-            <cfelse>
-                <cfset fibrinogenValue =''>
-            </cfif>
-           
-
-            <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
-                SELECT ID from ST_Fibrinogen where BV_ID = #form.bloodValues_ID#
-            </cfquery>
-    
-            <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
-                <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                    INSERT INTO ST_Fibrinogen
-                    (
-                        BV_ID                                 
-                    ) 
-                    VALUES
-                    (
-                    <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
-                    )
-                </cfquery>
-            </cfif>
-            <cftry>
-            <cfquery name="qFibrinogenUpdate" datasource="#Application.dsn#"  result="return_data" >
-                UPDATE  ST_Fibrinogen SET
-                Fibrinogen=<cfqueryparam cfsqltype="cf_sql_varchar" value='#fibrinogenValue#'>
-                ,Fibrinogen_report=<cfqueryparam cfsqltype="cf_sql_varchar" value='#fibrinogenReportValue#'>
-                ,Fibrinogen_comment=<cfqueryparam cfsqltype="cf_sql_varchar" value='#fibrinogenCommentValue#'>
-               WHERE
-               BV_ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.bloodValues_ID#'>
-            </cfquery>
-            <cfcatch>
-                <cfdump  var="#cfcatch#"><cfabort>
-            </cfcatch>
-            </cftry>
-          <cfreturn True>
-        </cffunction>
-
-
-        <cffunction name="updateCBC" returntype="string" output="false" access="remote" returnformat="plain">
-            <cfargument name="formData" type="string" required="true">
-            <cfargument name="bloodValues_ID" type="numeric" required="true">
-            
-            <cfset formDataStruct = {}>
-            <cfset formFields = listToArray(arguments.formData, "&")>
-            <cfloop array="#formFields#" index="field">
-                <cfset fieldParts = listToArray(field, "=")>
-                <cfif arrayLen(fieldParts) EQ 2>
-                    <cfset fieldName = urlDecode(fieldParts[1])>
-                    <cfset fieldValue = urlDecode(fieldParts[2])>
-                    <cfset formDataStruct[fieldName] = fieldValue>
-                </cfif>
-            </cfloop>
-
-            <cfif isDefined('formDataStruct.wbc_count')>
-                <cfset wbc_count = formDataStruct.wbc_count>
-            <cfelse>
-                <cfset wbc_count =''>
-            </cfif>
-            <cfset wbc_report = formDataStruct.wbc_report>
-            <cfif isDefined('formDataStruct.wbc_comment')>
-                <cfset wbc_comment = formDataStruct.wbc_comment>
-            <cfelse>
-                <cfset wbc_comment =''>
-            </cfif>
-            
-            
-            <cfif isDefined('formDataStruct.RBC_count')>
-                <cfset RBC_count = formDataStruct.RBC_count>
-            <cfelse>
-                <cfset RBC_count =''>
-            </cfif>
-            <cfset RBC_count_report = formDataStruct.RBC_count_report>
-            <cfif isDefined('formDataStruct.RBC_count_comment')>
-                <cfset RBC_count_comment = formDataStruct.RBC_count_comment>
-            <cfelse>
-                <cfset RBC_count_comment =''>
-            </cfif>
-            
-            <cfif isDefined('formDataStruct.Hemoglobin')>
-                <cfset Hemoglobin = formDataStruct.Hemoglobin>
-            <cfelse>
-                <cfset Hemoglobin =''>
-            </cfif>
-            <cfset Hemoglobin_report = formDataStruct.Hemoglobin_report>
-            <cfif isDefined('formDataStruct.Hemoglobin_comment')>
-                <cfset Hemoglobin_comment = formDataStruct.Hemoglobin_comment>
-            <cfelse>
-                <cfset Hemoglobin_comment =''>
-            </cfif>
-            
-            <cfif isDefined('formDataStruct.Hematocrit')>
-                <cfset Hematocrit = formDataStruct.Hematocrit>
-            <cfelse>
-                <cfset Hematocrit =''>
-            </cfif>
-            <cfset Hematocrit_report = formDataStruct.Hematocrit_report>
-            <cfif isDefined('formDataStruct.Hematocrit_comment')>
-                <cfset Hematocrit_comment = formDataStruct.Hematocrit_comment>
-            <cfelse>
-                <cfset Hematocrit_comment =''>
-            </cfif>
-            
-            <cfif isDefined('formDataStruct.MCV')>
-                <cfset MCV = formDataStruct.MCV>
-            <cfelse>
-                <cfset MCV =''>
-            </cfif>
-            <cfset MCV_report = formDataStruct.MCV_report>
-            <cfif isDefined('formDataStruct.MCV_comment')>
-                <cfset MCV_comment = formDataStruct.MCV_comment>
-            <cfelse>
-                <cfset MCV_comment =''>
-            </cfif>
-            
-            <cfif isDefined('formDataStruct.MCH')>
-                <cfset MCH = formDataStruct.MCH>
-            <cfelse>
-                <cfset MCH =''>
-            </cfif>
-            <cfset MCH_report = formDataStruct.MCH_report>
-            <cfif isDefined('formDataStruct.MCH_comment')>
-                <cfset MCH_comment = formDataStruct.MCH_comment>
-            <cfelse>
-                <cfset MCH_comment =''>
-            </cfif>
-            
-            <cfif isDefined('formDataStruct.MCHC')>
-                <cfset MCHC = formDataStruct.MCHC>
-            <cfelse>
-                <cfset MCHC =''>
-            </cfif>
-            <cfset MCHC_report = formDataStruct.MCHC_report>
-            <cfif isDefined('formDataStruct.MCHC_comment')>
-                <cfset MCHC_comment = formDataStruct.MCHC_comment>
-            <cfelse>
-                <cfset MCHC_comment =''>
-            </cfif>
-            
-            <cfif isDefined('formDataStruct.Segmented_Neutrophils_Abs')>
-                <cfset Segmented_Neutrophils_Abs = formDataStruct.Segmented_Neutrophils_Abs>
-            <cfelse>
-                <cfset Segmented_Neutrophils_Abs =''>
-            </cfif>
-            <cfset Segmented_report = formDataStruct.Segmented_report>
-            <cfif isDefined('formDataStruct.Segmented_comment')>
-                <cfset Segmented_comment = formDataStruct.Segmented_comment>
-            <cfelse>
-                <cfset Segmented_comment =''>
-            </cfif>
-            
-            <cfif isDefined('formDataStruct.Band_Neutrophils_Abs')>
-                <cfset Band_Neutrophils_Abs = formDataStruct.Band_Neutrophils_Abs>
-            <cfelse>
-                <cfset Band_Neutrophils_Abs =''>
-            </cfif>
-            <cfset Band_Neutrophils_report = formDataStruct.Band_Neutrophils_report>
-            <cfif isDefined('formDataStruct.Band_Neutrophils_comment')>
-                <cfset Band_Neutrophils_comment = formDataStruct.Band_Neutrophils_comment>
-            <cfelse>
-                <cfset Band_Neutrophils_comment =''>
-            </cfif>
-            
-            <cfif isDefined('formDataStruct.Lymphocytes_Abs')>
-                <cfset Lymphocytes_Abs = formDataStruct.Lymphocytes_Abs>
-            <cfelse>
-                <cfset Lymphocytes_Abs =''>
-            </cfif>
-            <cfset Lymphocytes_report = formDataStruct.Lymphocytes_report>
-            <cfif isDefined('formDataStruct.Lymphocytes_comment')>
-                <cfset Lymphocytes_comment = formDataStruct.Lymphocytes_comment>
-            <cfelse>
-                <cfset Lymphocytes_comment =''>
-            </cfif>
-            
-            <cfif isDefined('formDataStruct.Monocytes_Abs')>
-                <cfset Monocytes_Abs = formDataStruct.Monocytes_Abs>
-            <cfelse>
-                <cfset Monocytes_Abs =''>
-            </cfif>
-            <cfset Monocytes_report = formDataStruct.Monocytes_report>
-            <cfif isDefined('formDataStruct.Monocytes_comment')>
-                <cfset Monocytes_comment = formDataStruct.Monocytes_comment>
-            <cfelse>
-                <cfset Monocytes_comment =''>
-            </cfif>
-            
-            <cfif isDefined('formDataStruct.Eosinophils_Abs')>
-                <cfset Eosinophils_Abs = formDataStruct.Eosinophils_Abs>
-            <cfelse>
-                <cfset Eosinophils_Abs =''>
-            </cfif>
-            <cfset Eosinophils_report = formDataStruct.Eosinophils_report>
-            <cfif isDefined('formDataStruct.Eosinophils_comment')>
-                <cfset Eosinophils_comment = formDataStruct.Eosinophils_comment>
-            <cfelse>
-                <cfset Eosinophils_comment =''>
-            </cfif>
-            
-            <cfif isDefined('formDataStruct.Basophils_Abs')>
-                <cfset Basophils_Abs = formDataStruct.Basophils_Abs>
-            <cfelse>
-                <cfset Basophils_Abs =''>
-            </cfif>
-            <cfset Basophils_report = formDataStruct.Basophils_report>
-            <cfif isDefined('formDataStruct.Basophils_comment')>
-                <cfset Basophils_comment = formDataStruct.Basophils_comment>
-            <cfelse>
-                <cfset Basophils_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.NRBC')>
-                <cfset NRBC = formDataStruct.NRBC>
-            <cfelse>
-                <cfset NRBC =''>
-            </cfif>
-            <cfset NRBC_report = formDataStruct.NRBC_report>
-            <cfif isDefined('formDataStruct.NRBC_comment')>
-                <cfset NRBC_comment = formDataStruct.NRBC_comment>
-            <cfelse>
-                <cfset NRBC_comment =''>
-            </cfif>
-
-      
-            <cfset RBC_report = formDataStruct.RBC_report>
-
-            <cfif isDefined('formDataStruct.RBC_Morphology')>
-                <cfset RBC_Morphology = formDataStruct.RBC_Morphology >
-            <cfelse>
-                <cfset RBC_Morphology =''>
-            </cfif>
-            <cfif isDefined('formDataStruct.RBC_comment')>
-                <cfset RBC_comment = formDataStruct.RBC_comment>
-            <cfelse>
-                <cfset RBC_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Platelet_Count')>
-                <cfset Platelet_Count = formDataStruct.Platelet_Count>
-            <cfelse>
-                <cfset Platelet_Count =''>
-            </cfif>
-            <cfset Platelet_Count_report = formDataStruct.Platelet_Count_report>
-            <cfif isDefined('formDataStruct.Platelet_Count_comment')>
-                <cfset Platelet_Count_comment = formDataStruct.Platelet_Count_comment>
-            <cfelse>
-                <cfset Platelet_Count_comment =''>
-            </cfif>
-            
-            
-            <cfset Platelet_report = formDataStruct.Platelet_report>
-            <cfif isDefined('formDataStruct.Platelet_Morphology')>
-                <cfset Platelet_Morphology = formDataStruct.Platelet_Morphology>
-            <cfelse>
-                <cfset Platelet_Morphology =''>
-            </cfif>
-            <cfif isDefined('formDataStruct.Platelet_comment')>
-                <cfset Platelet_comment = formDataStruct.Platelet_comment>
-            <cfelse>
-                <cfset Platelet_comment =''>
-            </cfif>
-            
-            <!--- <cfset WBC_Morphology = formDataStruct.WBC_Morphology> --->
-            <cfif isDefined('formDataStruct.WBC_Morphology')>
-                <cfset WBC_Morphology = formDataStruct.WBC_Morphology>
-            <cfelse>
-                <cfset WBC_Morphology =''>
-            </cfif>
-            <cfset WBCMorphology_report = formDataStruct.WBCMorphology_report>
-            <cfif isDefined('formDataStruct.WBCMorphology_comment')>
-                <cfset WBCMorphology_comment = formDataStruct.WBCMorphology_comment>
-            <cfelse>
-                <cfset WBCMorphology_comment =''>
-            </cfif>
-                     
-        <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
-            SELECT ID from ST_CBC where BV_ID = #form.bloodValues_ID#
-        </cfquery>
-
-        <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
-            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                INSERT INTO ST_CBC
-                (
-                    BV_ID                                 
-                ) 
-                VALUES
-                (
-                <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
-                )
-            </cfquery>
-        </cfif>
-
-        <cftry>
-            <cfquery name="qCBCUpdate" datasource="#Application.dsn#"  result="return_data" >
-                UPDATE  ST_CBC SET
-                wbc_count = <cfqueryparam cfsqltype="cf_sql_varchar" value='#wbc_count#'>
-                ,RBC_count = <cfqueryparam cfsqltype="cf_sql_varchar" value='#RBC_count#'>
-                ,Hemoglobin = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hemoglobin#'>
-                ,Hematocrit =<cfqueryparam cfsqltype="cf_sql_varchar" value='#Hematocrit#'>
-                ,MCV =<cfqueryparam cfsqltype="cf_sql_varchar" value='#MCV#'>
-                ,MCH =<cfqueryparam cfsqltype="cf_sql_varchar" value='#MCH#'>
-                ,MCHC =<cfqueryparam cfsqltype="cf_sql_varchar" value='#MCHC#'>
-                ,Segmented_Neutrophils_Abs =<cfqueryparam cfsqltype="cf_sql_varchar" value='#Segmented_Neutrophils_Abs#'>
-                ,Band_Neutrophils_Abs =<cfqueryparam cfsqltype="cf_sql_varchar" value='#Band_Neutrophils_Abs#'>
-                ,Lymphocytes_Abs =<cfqueryparam cfsqltype="cf_sql_varchar" value='#Lymphocytes_Abs#'>
-                ,Monocytes_Abs =<cfqueryparam cfsqltype="cf_sql_varchar" value='#Monocytes_Abs#'>
-                ,Eosinophils_Abs =<cfqueryparam cfsqltype="cf_sql_varchar" value='#Eosinophils_Abs#'>
-                ,Basophils_Abs =<cfqueryparam cfsqltype="cf_sql_varchar" value='#Basophils_Abs#'>
-                ,NRBC =<cfqueryparam cfsqltype="cf_sql_varchar" value='#NRBC#'>
-                ,Platelet_Count =<cfqueryparam cfsqltype="cf_sql_varchar" value='#Platelet_Count#'>
-                ,Platelet_Morphology =<cfqueryparam cfsqltype="cf_sql_varchar" value='#Platelet_Morphology#'>
-                ,wbc_report =<cfqueryparam cfsqltype="cf_sql_varchar" value='#wbc_report#'>
-                ,wbc_comment =<cfqueryparam cfsqltype="cf_sql_varchar" value='#wbc_comment#'>
-                ,RBC_report   =<cfqueryparam cfsqltype="cf_sql_varchar" value='#RBC_report#'>
-                ,RBC_comment =<cfqueryparam cfsqltype="cf_sql_varchar" value='#RBC_comment#'>
-                ,Hemoglobin_report =<cfqueryparam cfsqltype="cf_sql_varchar" value='#Hemoglobin_report#'>
-                ,Hemoglobin_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hemoglobin_comment#'>
-                ,Hematocrit_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hematocrit_report#'>
-                ,Hematocrit_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hematocrit_comment#'>
-                ,MCV_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#MCV_report#'>
-                ,MCV_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#MCV_comment#'>
-                ,MCH_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#MCH_report#'>
-                ,MCH_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#MCH_comment#'>
-                ,MCHC_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#MCHC_report#'>
-                ,MCHC_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#MCHC_comment#'>
-                ,Segmented_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Segmented_report#'>
-                ,Segmented_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Segmented_comment#'>
-                ,Band_Neutrophils_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Band_Neutrophils_report#'>
-                ,Band_Neutrophils_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Band_Neutrophils_comment#'>
-                ,Lymphocytes_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Lymphocytes_report#'>
-                ,Lymphocytes_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Lymphocytes_comment#'>
-                ,Monocytes_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Monocytes_report#'>
-                ,Monocytes_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Monocytes_comment#'>
-                ,Eosinophils_report	 = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Eosinophils_report#'>
-                ,Eosinophils_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Eosinophils_comment#'>
-                ,Basophils_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Basophils_report#'>
-                ,Basophils_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Basophils_comment#'>
-                ,NRBC_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#NRBC_report#'>
-                ,NRBC_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#NRBC_comment#'>
-                ,RBC_count_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#RBC_count_report#'>
-                ,RBC_count_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#RBC_count_comment#'>
-                ,Platelet_Count_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Platelet_Count_report#'>
-                ,Platelet_Count_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Platelet_Count_comment#'>
-                ,Platelet_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Platelet_report#'>
-                ,Platelet_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Platelet_comment#'>
-                ,WBCMorphology_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#WBCMorphology_report#'>
-                ,WBCMorphology_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#WBCMorphology_comment#'>
-                ,RBC_Morphology =<cfqueryparam cfsqltype="cf_sql_varchar" value='#RBC_Morphology#'>            
-                ,WBC_Morphology =<cfqueryparam cfsqltype="cf_sql_varchar" value='#WBC_Morphology#'>
-            WHERE
-            BV_ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.bloodValues_ID#'>
-            </cfquery>
-            <cfcatch>
-                <cfdump  var="#cfcatch#"><cfabort>
-            </cfcatch>
-            </cftry>
-          <cfreturn True>
-        </cffunction>
-
-        
-        <cffunction name="updateCZE" returntype="string" output="false" access="remote" returnformat="plain">
-            <cfargument name="formData" type="string" required="true">
-            <cfargument name="bloodValues_ID" type="numeric" required="true">
-  
-
-
-            <cfset formDataStruct = {}>
-            <cfset formFields = listToArray(arguments.formData, "&")>
-            <cfloop array="#formFields#" index="field">
-                <cfset fieldParts = listToArray(field, "=")>
-                <cfif arrayLen(fieldParts) EQ 2>
-                    <cfset fieldName = urlDecode(fieldParts[1])>
-                    <cfset fieldValue = urlDecode(fieldParts[2])>
-                    <cfset formDataStruct[fieldName] = fieldValue>
-                </cfif>
-            </cfloop>
-            <!--- <cfdump var="#formDataStruct#" abort="true"> --->
-
-
-            <cfif isDefined('formDataStruct.Total_Protein_cap')>
-                <cfset Total_Protein_cap = formDataStruct.Total_Protein_cap>
-            <cfelse>
-                <cfset Total_Protein_cap =''>
-            </cfif>
-            <cfset Total_Protein_cap_report = formDataStruct.Total_Protein_cap_report>
-            <cfif isDefined('formDataStruct.Total_Protein_cap_comment')>
-                <cfset Total_Protein_cap_comment = formDataStruct.Total_Protein_cap_comment>
-            <cfelse>
-                <cfset Total_Protein_cap_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.A_G_ration')>
-                <cfset A_G_ration = formDataStruct.A_G_ration>
-            <cfelse>
-                <cfset A_G_ration =''>
-            </cfif>
-            <cfset A_G_ration_report = formDataStruct.A_G_ration_report>
-            <cfif isDefined('formDataStruct.A_G_ration_comment')>
-                <cfset A_G_ration_comment = formDataStruct.A_G_ration_comment>
-            <cfelse>
-                <cfset A_G_ration_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Pre_Albumin')>
-                <cfset Pre_Albumin = formDataStruct.Pre_Albumin>
-            <cfelse>
-                <cfset Pre_Albumin =''>
-            </cfif>
-            <cfset Pre_Albumin_report = formDataStruct.Pre_Albumin_report>
-            <cfif isDefined('formDataStruct.Pre_Albumin_comment')>
-                <cfset Pre_Albumin_comment = formDataStruct.Pre_Albumin_comment>
-            <cfelse>
-                <cfset Pre_Albumin_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Albumin2')>
-                <cfset Albumin2 = formDataStruct.Albumin2>
-            <cfelse>
-                <cfset Albumin2 =''>
-            </cfif>
-            <cfset Albumin2_report = formDataStruct.Albumin2_report>
-            <cfif isDefined('formDataStruct.Albumin2_comment')>
-                <cfset Albumin2_comment = formDataStruct.Albumin2_comment>
-            <cfelse>
-                <cfset Albumin2_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Alpha_1')>
-                <cfset Alpha_1 = formDataStruct.Alpha_1>
-            <cfelse>
-                <cfset Alpha_1 =''>
-            </cfif>
-            <cfset Alpha_1_report = formDataStruct.Alpha_1_report>
-            <cfif isDefined('formDataStruct.Alpha_1_comment')>
-                <cfset Alpha_1_comment = formDataStruct.Alpha_1_comment>
-            <cfelse>
-                <cfset Alpha_1_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Alpha_2')>
-                <cfset Alpha_2 = formDataStruct.Alpha_2>
-            <cfelse>
-                <cfset Alpha_2 =''>
-            </cfif>
-            <cfset Alpha_2_report = formDataStruct.Alpha_2_report>
-            <cfif isDefined('formDataStruct.Alpha_2_comment')>
-                <cfset Alpha_2_comment = formDataStruct.Alpha_2_comment>
-            <cfelse>
-                <cfset Alpha_2_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Beta_1')>
-                <cfset Beta_1 = formDataStruct.Beta_1>
-            <cfelse>
-                <cfset Beta_1 =''>
-            </cfif>
-            <cfset Beta_1_report = formDataStruct.Beta_1_report>
-            <cfif isDefined('formDataStruct.Beta_1_comment')>
-                <cfset Beta_1_comment = formDataStruct.Beta_1_comment>
-            <cfelse>
-                <cfset Beta_1_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Beta_2')>
-                <cfset Beta_2 = formDataStruct.Beta_2>
-            <cfelse>
-                <cfset Beta_2 =''>
-            </cfif>
-            <cfset Beta_2_report = formDataStruct.Beta_2_report>
-            <cfif isDefined('formDataStruct.Beta_2_comment')>
-                <cfset Beta_2_comment = formDataStruct.Beta_2_comment>
-            <cfelse>
-                <cfset Beta_2_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Beta_Total')>
-                <cfset Beta_Total = formDataStruct.Beta_Total>
-            <cfelse>
-                <cfset Beta_Total =''>
-            </cfif>
-            <cfset Beta_Total_report = formDataStruct.Beta_Total_report>
-            <cfif isDefined('formDataStruct.Beta_Total_comment')>
-                <cfset Beta_Total_comment = formDataStruct.Beta_Total_comment>
-            <cfelse>
-                <cfset Beta_Total_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Gamma')>
-                <cfset Gamma = formDataStruct.Gamma>
-            <cfelse>
-                <cfset Gamma =''>
-            </cfif>
-            <cfset Gamma_report = formDataStruct.Gamma_report>
-            <cfif isDefined('formDataStruct.Gamma_comment')>
-                <cfset Gamma_comment = formDataStruct.Gamma_comment>
-            <cfelse>
-                <cfset Gamma_comment =''>
-            </cfif>
-
-
-
-           
-        <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
-            SELECT ID from ST_Capillary where BV_ID = #form.bloodValues_ID#
-        </cfquery>
-
-        <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
-            <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                INSERT INTO ST_Capillary
-                (
-                    BV_ID                                 
-                ) 
-                VALUES
-                (
-                <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
-                )
-            </cfquery>
-        </cfif>
-        <cftry>
-            <cfquery name="qCapillaryUpdate" datasource="#Application.dsn#"  result="return_data" >
-                UPDATE  ST_Capillary SET
-                Total_Protein_cap = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Total_Protein_cap#'> 
-                ,Total_Protein_cap_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Total_Protein_cap_report#'> 
-                ,Total_Protein_cap_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Total_Protein_cap_comment#'> 
-                ,A_G_ration = <cfqueryparam cfsqltype="cf_sql_varchar" value='#A_G_ration#'> 
-                ,A_G_ration_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#A_G_ration_report#'> 
-                ,A_G_ration_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#A_G_ration_comment#'> 
-                ,Pre_Albumin = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Pre_Albumin#'> 
-                ,Pre_Albumin_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Pre_Albumin_report#'> 
-                ,Pre_Albumin_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Pre_Albumin_comment#'> 
-                ,Albumin2 = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Albumin2#'> 
-                ,Albumin2_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Albumin2_report#'> 
-                ,Albumin2_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Albumin2_comment#'> 
-                ,Alpha_1 = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Alpha_1#'> 
-                ,Alpha_1_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Alpha_1_report#'> 
-                ,Alpha_1_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Alpha_1_comment#'> 
-                ,Alpha_2 = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Alpha_2#'> 
-                ,Alpha_2_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Alpha_2_report#'> 
-                ,vAlpha_2_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Alpha_2_comment#'> 
-                ,Beta_1 = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Beta_1#'> 
-                ,Beta_1_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Beta_1_report#'> 
-                ,Beta_1_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Beta_1_comment#'> 
-                ,Beta_2 = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Beta_2#'> 
-                ,Beta_2_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Beta_2_report#'> 
-                ,Beta_2_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Beta_2_comment#'> 
-                ,Beta_Total = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Beta_Total#'> 
-                ,Beta_Total_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Beta_Total_report#'> 
-                ,Beta_Total_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Beta_Total_comment#'> 
-                ,Gamma = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Gamma#'> 
-                ,Gamma_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Gamma_report#'> 
-                ,Gamma_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Gamma_comment#'>
-                WHERE
-                BV_ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.bloodValues_ID#'>
-            </cfquery>
-            <cfcatch>
-                <cfdump  var="#cfcatch#"><cfabort>
-            </cfcatch>
-        </cftry>
-      <cfreturn True> 
-        </cffunction>
-
-
-        <cffunction name="updateSAA" returntype="string" output="false" access="remote" returnformat="plain">
-            <cfargument name="formData" type="string" required="true">
-            <cfargument name="bloodValues_ID" type="numeric" required="true">
-  
-
-
-            <cfset formDataStruct = {}>
-            <cfset formFields = listToArray(arguments.formData, "&")>
-            <cfloop array="#formFields#" index="field">
-                <cfset fieldParts = listToArray(field, "=")>
-                <cfif arrayLen(fieldParts) EQ 2>
-                    <cfset fieldName = urlDecode(fieldParts[1])>
-                    <cfset fieldValue = urlDecode(fieldParts[2])>
-                    <cfset formDataStruct[fieldName] = fieldValue>
-                </cfif>
-            </cfloop>
-           
-
-            <cfif isDefined('formDataStruct.Dolphin_SAA')>
-                <cfset Dolphin_SAA = formDataStruct.Dolphin_SAA>
-            <cfelse>
-                <cfset Dolphin_SAA =''>
-            </cfif>
-            <cfset Dolphin_SAA_report = formDataStruct.Dolphin_SAA_report>
-            <cfif isDefined('formDataStruct.Dolphin_SAA_comment')>
-                <cfset Dolphin_SAA_comment = formDataStruct.Dolphin_SAA_comment>
-            <cfelse>
-                <cfset Dolphin_SAA_comment =''>
-            </cfif>
-           
-
-            <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
-                SELECT ID from ST_Dolphin where BV_ID = #form.bloodValues_ID#
-            </cfquery>
-    
-            <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
-                <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                    INSERT INTO ST_Dolphin
-                    (
-                        BV_ID                                 
-                    ) 
-                    VALUES
-                    (
-                    <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
-                    )
-                </cfquery>
-            </cfif>
-            <cftry>
-                <cfquery name="qDolphinUpdate" datasource="#Application.dsn#"  result="return_data" >
-                    UPDATE  ST_Dolphin SET
-                        Dolphin_SAA = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Dolphin_SAA#'>
-                        ,Dolphin_SAA_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Dolphin_SAA_report#'>
-                        ,Dolphin_SAA_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Dolphin_SAA_comment#'>
-                    WHERE
-                    BV_ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.bloodValues_ID#'>
-                </cfquery>
-                <cfcatch>
-                    <cfdump  var="#cfcatch#"><cfabort>
-                </cfcatch>
-            </cftry>
-          <cfreturn True> 
-        </cffunction>
-
-
-        <cffunction name="updateChemistryVal" returntype="string" output="false" access="remote" returnformat="plain">
-            <cfargument name="formData" type="string" required="true">
-            <cfargument name="bloodValues_ID" type="numeric" required="true">
-  
-
-
-            <cfset formDataStruct = {}>
-            <cfset formFields = listToArray(arguments.formData, "&")>
-            <cfloop array="#formFields#" index="field">
-                <cfset fieldParts = listToArray(field, "=")>
-                <cfif arrayLen(fieldParts) EQ 2>
-                    <cfset fieldName = urlDecode(fieldParts[1])>
-                    <cfset fieldValue = urlDecode(fieldParts[2])>
-                    <cfset formDataStruct[fieldName] = fieldValue>
-                </cfif>
-            </cfloop>
-           
-            <!--- <cfdump var="#formDataStruct.Total_protein_refractometer#" abort="true"> --->
-            <cfif isDefined('formDataStruct.Total_protein_refractometer')>
-                <cfset Total_protein_refractometer = formDataStruct.Total_protein_refractometer>
-            <cfelse>
-                <cfset Total_protein_refractometer =''>
-            </cfif>
-            <cfset protein_refractometer_report = formDataStruct.protein_refractometer_report>
-            <cfif isDefined('formDataStruct.protein_refractometer_comment')>
-                <cfset protein_refractometer_comment = formDataStruct.protein_refractometer_comment>
-            <cfelse>
-                <cfset protein_refractometer_comment =''>
-            </cfif>
-            
-           
-        
-            <cfif isDefined('formDataStruct.Hemolysis_Index')>
-                <cfset Hemolysis_Index = formDataStruct.Hemolysis_Index>
-            <cfelse>
-                <cfset Hemolysis_Index =''>
-            </cfif>
-            <cfset Hemolysis_report = formDataStruct.Hemolysis_report>
-            <cfif isDefined('formDataStruct.Hemolysis_comment')>
-                <cfset Hemolysis_comment = formDataStruct.Hemolysis_comment>
-            <cfelse>
-                <cfset Hemolysis_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Alkaline_Phosphatase')>
-                <cfset Alkaline_Phosphatase = formDataStruct.Alkaline_Phosphatase>
-            <cfelse>
-                <cfset Alkaline_Phosphatase =''>
-            </cfif>
-            <cfset Alkaline_report = formDataStruct.Alkaline_report>
-            <cfif isDefined('formDataStruct.Alkaline_comment')>
-                <cfset Alkaline_comment = formDataStruct.Alkaline_comment>
-            <cfelse>
-                <cfset Alkaline_comment =''>
-            </cfif>
-            <cfif isDefined('formDataStruct.ALT')>
-                <cfset ALT = formDataStruct.ALT>
-            <cfelse>
-                <cfset ALT =''>
-            </cfif>
-            <cfset ALT_report = formDataStruct.ALT_report>
-            <cfif isDefined('formDataStruct.ALT_comment')>
-                <cfset ALT_comment = formDataStruct.ALT_comment>
-            <cfelse>
-                <cfset ALT_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Amylase')>
-                <cfset Amylase = formDataStruct.Amylase>
-            <cfelse>
-                <cfset Amylase =''>
-            </cfif>
-            <cfset Amylase_report = formDataStruct.Amylase_report>
-            <cfif isDefined('formDataStruct.Amylase_comment')>
-                <cfset Amylase_comment = formDataStruct.Amylase_comment>
-            <cfelse>
-                <cfset Amylase_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.AST')>
-                <cfset AST = formDataStruct.AST>
-            <cfelse>
-                <cfset AST =''>
-            </cfif>
-            <cfset AST_report = formDataStruct.AST_report>
-            <cfif isDefined('formDataStruct.AST_comment')>
-                <cfset AST_comment = formDataStruct.AST_comment>
-            <cfelse>
-                <cfset AST_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Calcium')>
-                <cfset Calcium = formDataStruct.Calcium>
-            <cfelse>
-                <cfset Calcium =''>
-            </cfif>
-            <cfset Calcium_report = formDataStruct.Calcium_report>
-            <cfif isDefined('formDataStruct.Calcium_comment')>
-                <cfset Calcium_comment = formDataStruct.Calcium_comment>
-            <cfelse>
-                <cfset Calcium_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Phosphorus')>
-                <cfset Phosphorus = formDataStruct.Phosphorus>
-            <cfelse>
-                <cfset Phosphorus =''>
-            </cfif>
-            <cfset Phosphurs_report = formDataStruct.Phosphurs_report>
-            <cfif isDefined('formDataStruct.Phosphorus_comment')>
-                <cfset Phosphorus_comment = formDataStruct.Phosphorus_comment>
-            <cfelse>
-                <cfset Phosphorus_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Ca_Phos')>
-                <cfset Ca_Phos = formDataStruct.Ca_Phos>
-            <cfelse>
-                <cfset Ca_Phos =''>
-            </cfif>
-            <cfset Ca_Phos_report = formDataStruct.Ca_Phos_report>
-            <cfif isDefined('formDataStruct.Ca_Phos_comment')>
-                <cfset Ca_Phos_comment = formDataStruct.Ca_Phos_comment>
-            <cfelse>
-                <cfset Ca_Phos_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Cholesterol')>
-                <cfset Cholesterol = formDataStruct.Cholesterol>
-            <cfelse>
-                <cfset Cholesterol =''>
-            </cfif>
-            <cfset Cholesterol_report = formDataStruct.Cholesterol_report>
-            <cfif isDefined('formDataStruct.Cholesterol_comment')>
-                <cfset Cholesterol_comment = formDataStruct.Cholesterol_comment>
-            <cfelse>
-                <cfset Cholesterol_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.CPK')>
-                <cfset CPK = formDataStruct.CPK>
-            <cfelse>
-                <cfset CPK =''>
-            </cfif>
-            <cfset CPK_report = formDataStruct.CPK_report>
-            <cfif isDefined('formDataStruct.CPK_comment')>
-                <cfset CPK_comment = formDataStruct.CPK_comment>
-            <cfelse>
-                <cfset CPK_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.CREA')>
-                <cfset CREA = formDataStruct.CREA>
-            <cfelse>
-                <cfset CREA =''>
-            </cfif>
-            <cfset CREA_report = formDataStruct.CREA_report>
-            <cfif isDefined('formDataStruct.CREA_comment')>
-                <cfset CREA_comment = formDataStruct.CREA_comment>
-            <cfelse>
-                <cfset CREA_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.GGT')>
-                <cfset GGT = formDataStruct.GGT>
-            <cfelse>
-                <cfset GGT =''>
-            </cfif>
-            <cfset GGT_report = formDataStruct.GGT_report>
-            <cfif isDefined('formDataStruct.GGT_comment')>
-                <cfset GGT_comment = formDataStruct.GGT_comment>
-            <cfelse>
-                <cfset GGT_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Potassium')>
-                <cfset Potassium = formDataStruct.Potassium>
-            <cfelse>
-                <cfset Potassium =''>
-            </cfif>
-            <cfset Potassium_report = formDataStruct.Potassium_report>
-            <cfif isDefined('formDataStruct.Potassium_comment')>
-                <cfset Potassium_comment = formDataStruct.Potassium_comment>
-            <cfelse>
-                <cfset Potassium_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.LDH')>
-                <cfset LDH = formDataStruct.LDH>
-            <cfelse>
-                <cfset LDH =''>
-            </cfif>
-            <cfset LDH_report = formDataStruct.LDH_report>
-            <cfif isDefined('formDataStruct.LDH_comment')>
-                <cfset LDH_comment = formDataStruct.LDH_comment>
-            <cfelse>
-                <cfset LDH_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Lipase')>
-                <cfset Lipase = formDataStruct.Lipase>
-            <cfelse>
-                <cfset Lipase =''>
-            </cfif>
-            <cfset Lipase_report = formDataStruct.Lipase_report>
-            <cfif isDefined('formDataStruct.Lipase_comment')>
-                <cfset Lipase_comment = formDataStruct.Lipase_comment>
-            <cfelse>
-                <cfset Lipase_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Magnesium')>
-                <cfset Magnesium = formDataStruct.Magnesium>
-            <cfelse>
-                <cfset Magnesium =''>
-            </cfif>
-            <cfset Magnesium_report = formDataStruct.Magnesium_report>
-            <cfif isDefined('formDataStruct.Magnesium_comment')>
-                <cfset Magnesium_comment = formDataStruct.Magnesium_comment>
-            <cfelse>
-                <cfset Magnesium_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Total_Bilirubin')>
-                <cfset Total_Bilirubin = formDataStruct.Total_Bilirubin>
-            <cfelse>
-                <cfset Total_Bilirubin =''>
-            </cfif>
-            <cfset Bilirubin_report = formDataStruct.Bilirubin_report>
-            <cfif isDefined('formDataStruct.Bilirubin_comment')>
-                <cfset Bilirubin_comment = formDataStruct.Bilirubin_comment>
-            <cfelse>
-                <cfset Bilirubin_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Total_Protein')>
-                <cfset Total_Protein = formDataStruct.Total_Protein>
-            <cfelse>
-                <cfset Total_Protein =''>
-            </cfif>
-            <cfset Protein2_report = formDataStruct.Protein2_report>
-            <cfif isDefined('formDataStruct.Protein2_comment')>
-                <cfset Protein2_comment = formDataStruct.Protein2_comment>
-            <cfelse>
-                <cfset Protein2_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Albumin')>
-                <cfset Albumin = formDataStruct.Albumin>
-            <cfelse>
-                <cfset Albumin =''>
-            </cfif>
-            <cfset Albumin_report = formDataStruct.Albumin_report>
-            <cfif isDefined('formDataStruct.Albumin_comment')>
-                <cfset Albumin_comment = formDataStruct.Albumin_comment>
-            <cfelse>
-                <cfset Albumin_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Globulin')>
-                <cfset Globulin = formDataStruct.Globulin>
-            <cfelse>
-                <cfset Globulin =''>
-            </cfif>
-            <cfset Globulin_report = formDataStruct.Globulin_report>
-            <cfif isDefined('formDataStruct.Globulin_comment')>
-                <cfset Globulin_comment = formDataStruct.Globulin_comment>
-            <cfelse>
-                <cfset Globulin_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.A_G')>
-                <cfset A_G = formDataStruct.A_G>
-            <cfelse>
-                <cfset A_G =''>
-            </cfif>
-            <cfset A_G_report = formDataStruct.A_G_report>
-            <cfif isDefined('formDataStruct.A_G_comment')>
-                <cfset A_G_comment = formDataStruct.A_G_comment>
-            <cfelse>
-                <cfset A_G_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Triglycerides')>
-                <cfset Triglycerides = formDataStruct.Triglycerides>
-            <cfelse>
-                <cfset Triglycerides =''>
-            </cfif>
-            <cfset Triglycerides_report = formDataStruct.Triglycerides_report>
-            <cfif isDefined('formDataStruct.Triglycerides_comment')>
-                <cfset Triglycerides_comment = formDataStruct.Triglycerides_comment>
-            <cfelse>
-                <cfset Triglycerides_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Sodium')>
-                <cfset Sodium = formDataStruct.Sodium>
-            <cfelse>
-                <cfset Sodium =''>
-            </cfif>
-            <cfset Sodium_report = formDataStruct.Sodium_report>
-            <cfif isDefined('formDataStruct.Sodium_comment')>
-                <cfset Sodium_comment = formDataStruct.Sodium_comment>
-            <cfelse>
-                <cfset Sodium_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Chloride')>
-                <cfset Chloride = formDataStruct.Chloride>
-            <cfelse>
-                <cfset Chloride =''>
-            </cfif>
-            <cfset Chloride_report = formDataStruct.Chloride_report>
-            <cfif isDefined('formDataStruct.Chloride_comment')>
-                <cfset Chloride_comment = formDataStruct.Chloride_comment>
-            <cfelse>
-                <cfset Chloride_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.CO')>
-                <cfset CO = formDataStruct.CO>
-            <cfelse>
-                <cfset CO =''>
-            </cfif>
-            <cfset CO_report = formDataStruct.CO_report>
-            <cfif isDefined('formDataStruct.CO_comment')>
-                <cfset CO_comment = formDataStruct.CO_comment>
-            <cfelse>
-                <cfset CO_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Glucose')>
-                <cfset Glucose = formDataStruct.Glucose>
-            <cfelse>
-                <cfset Glucose =''>
-            </cfif>
-            <cfset Glucose_report = formDataStruct.Glucose_report>
-            <cfif isDefined('formDataStruct.Glucose_comment')>
-                <cfset Glucose_comment = formDataStruct.Glucose_comment>
-            <cfelse>
-                <cfset Glucose_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.BUNf')>
-                <cfset BUNf = formDataStruct.BUNf>
-            <cfelse>
-                <cfset BUNf =''>
-            </cfif>
-            <cfset BUNf_report = formDataStruct.BUNf_report>
-            <cfif isDefined('formDataStruct.BUNf_comment')>
-                <cfset BUNf_comment = formDataStruct.BUNf_comment>
-            <cfelse>
-                <cfset BUNf_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Anion')>
-                <cfset Anion = formDataStruct.Anion>
-            <cfelse>
-                <cfset Anion =''>
-            </cfif>
-            <cfset Anion_report = formDataStruct.Anion_report>
-            <cfif isDefined('formDataStruct.Anion_comment')>
-                <cfset Anion_comment = formDataStruct.Anion_comment>
-            <cfelse>
-                <cfset Anion_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Osmolality')>
-                <cfset Osmolality = formDataStruct.Osmolality>
-            <cfelse>
-                <cfset Osmolality =''>
-            </cfif>
-            <cfset Osmolality_report = formDataStruct.Osmolality_report>
-            <cfif isDefined('formDataStruct.Osmolality_comment')>
-                <cfset Osmolality_comment = formDataStruct.Osmolality_comment>
-            <cfelse>
-                <cfset Osmolality_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Iron')>
-                <cfset Iron = formDataStruct.Iron>
-            <cfelse>
-                <cfset Iron =''>
-            </cfif>
-            <cfset Iron_report = formDataStruct.Iron_report>
-            <cfif isDefined('formDataStruct.Iron_comment')>
-                <cfset Iron_comment = formDataStruct.Iron_comment>
-            <cfelse>
-                <cfset Iron_comment =''>
-            </cfif>
-
-
-            <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
-                SELECT ID from ST_chemistry where BV_ID = #form.bloodValues_ID#
-            </cfquery>
-    
-            <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
-                <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                    INSERT INTO ST_chemistry
-                    (
-                        BV_ID                                 
-                    ) 
-                    VALUES
-                    (
-                    <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
-                    )
-                </cfquery>
-            </cfif>
-            <cftry>
-                <cfquery name="qChemisteryUpdate" datasource="#Application.dsn#"  result="return_data" >
-                    UPDATE  ST_chemistry SET
-                    Total_protein_refractometer = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Total_protein_refractometer #'>
-                    ,protein_refractometer_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#protein_refractometer_report#'>
-                    ,protein_refractometer_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#protein_refractometer_comment#'>
-                    ,Hemolysis_Index = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hemolysis_Index#'>
-                    ,Hemolysis_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hemolysis_report#'>
-                    ,Hemolysis_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hemolysis_comment#'>
-                    ,Glucose = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Glucose#'>
-                    ,Glucose_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Glucose_report#'>
-                    ,Glucose_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Glucose_comment#'>
-                    ,BUNf = <cfqueryparam cfsqltype="cf_sql_varchar" value='#BUNf#'>
-                    ,Bunf_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Bunf_report#'>
-                    ,BUNf_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#BUNf_comment#'>
-                    ,CREA = <cfqueryparam cfsqltype="cf_sql_varchar" value='#CREA#'>
-                    ,CREA_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#CREA_report#'>
-                    ,CREA_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#CREA_comment#'>
-                    ,Sodium = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Sodium#'>
-                    ,Sodium_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Sodium_report#'>
-                    ,Sodium_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Sodium_comment#'>
-                    ,Potassium = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Potassium#'>
-                    ,Potassium_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Potassium_report#'>
-                    ,Potassium_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Potassium_comment#'>
-                    ,Chloride = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Chloride#'>
-                    ,Chloride_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Chloride_report#'>
-                    ,Chloride_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Chloride_comment#'>
-                    ,Magnesium = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Magnesium#'>
-                    ,Magnesium_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Magnesium_report#'>
-                    ,Magnesium_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Magnesium_comment#'>
-                    ,Calcium = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Calcium#'>
-                    ,Calcium_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Calcium_report#'>
-                    ,Calcium_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Calcium_comment#'>
-                    ,Phosphorus = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Phosphorus#'>
-                    ,Phosphurs_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Phosphurs_report#'>
-                    ,Phosphorus_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Phosphorus_comment#'>
-                    ,Ca_Phos = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Ca_Phos#'>
-                    ,Ca_Phos_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Ca_Phos_report#'>
-                    ,Ca_Phos_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Ca_Phos_comment#'>
-                    ,CO = <cfqueryparam cfsqltype="cf_sql_varchar" value='#CO#'>
-                    ,Co_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Co_report#'>
-                    ,CO_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#CO_comment#'>
-                    ,Amylase = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Amylase#'>
-                    ,Amylase_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Amylase_report#'>
-                    ,Amylase_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Amylase_comment#'>
-                    ,Lipase = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Lipase#'>
-                    ,Lipase_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Lipase_report#'>
-                    ,Lipase_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Lipase_comment#'>
-                    ,Cholesterol = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Cholesterol#'>
-                    ,Cholesterol_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Cholesterol_report#'>
-                    ,Cholesterol_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Cholesterol_comment#'>
-                    ,Total_Protein = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Total_Protein#'>
-                    ,Protein2_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Protein2_report#'>
-                    ,Protein2_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Protein2_comment#'>
-                    ,Albumin = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Albumin#'>
-                    ,Albumin_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Albumin_report#'>
-                    ,Albumin_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Albumin_comment#'>
-                    ,A_G = <cfqueryparam cfsqltype="cf_sql_varchar" value='#A_G#'>
-                    ,A_G_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#A_G_report#'>
-                    ,A_G_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#A_G_comment#'>
-                    ,AST = <cfqueryparam cfsqltype="cf_sql_varchar" value='#AST#'>
-                    ,AST_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#AST_report#'>
-                    ,AST_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#AST_comment#'>
-                    ,ALT = <cfqueryparam cfsqltype="cf_sql_varchar" value='#ALT#'>
-                    ,ALT_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#ALT_report#'>
-                    ,ALT_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#ALT_comment#'>
-                    ,LDH = <cfqueryparam cfsqltype="cf_sql_varchar" value='#LDH#'>
-                    ,LDH_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#LDH_report#'>
-                    ,LDH_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#LDH_comment#'>
-                    ,CPK = <cfqueryparam cfsqltype="cf_sql_varchar" value='#CPK#'>
-                    ,CPK_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#CPK_report#'>
-                    ,CPK_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#CPK_comment#'>
-                    ,Alkaline_Phosphatase = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Alkaline_Phosphatase#'>
-                    ,Alkaline_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Alkaline_report#'>
-                    ,Alkaline_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Alkaline_comment#'>
-                    ,GGT = <cfqueryparam cfsqltype="cf_sql_varchar" value='#GGT#'>
-                    ,GGT_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#GGT_report#'>
-                    ,GGT_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#GGT_comment#'>
-                    ,Total_Bilirubin = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Total_Bilirubin#'>
-                    ,Bilirubin_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Bilirubin_report#'>
-                    ,Bilirubin_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Bilirubin_comment#'>
-                    ,Globulin = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Globulin#'>
-                    ,Globulin_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Globulin_report#'>
-                    ,Globulin_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Globulin_comment#'>
-                    ,Triglycerides = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Triglycerides#'>
-                    ,Triglycerides_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Triglycerides_report#'>
-                    ,Triglycerides_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Triglycerides_comment#'>
-                    ,Anion = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Anion#'>
-                    ,Anion_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Anion_report#'>
-                    ,Anion_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Anion_comment#'>
-                    ,Osmolality = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Osmolality#'>
-                    ,Osmolality_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Osmolality_report#'>
-                    ,Osmolality_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Osmolality_comment#'>
-                    ,Iron = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Iron#'>
-                    ,Iron_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Iron_report#'>
-                    ,Iron_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Iron_comment#'>
-                    WHERE
-                    BV_ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.bloodValues_ID#'>
-                </cfquery>
-                <cfcatch>
-                    <cfdump  var="#cfcatch#"><cfabort>
-                </cfcatch>
-            </cftry>
-          <cfreturn True>
-          <cfreturn True> 
-        </cffunction>
-
-        
-        <cffunction name="updateChemVal" returntype="string" output="false" access="remote" returnformat="plain">
-            <cfargument name="formData" type="string" required="true">
-            <cfargument name="bloodValues_ID" type="numeric" required="true">
-  
-
-
-            <cfset formDataStruct = {}>
-            <cfset formFields = listToArray(arguments.formData, "&")>
-            <cfloop array="#formFields#" index="field">
-                <cfset fieldParts = listToArray(field, "=")>
-                <cfif arrayLen(fieldParts) EQ 2>
-                    <cfset fieldName = urlDecode(fieldParts[1])>
-                    <cfset fieldValue = urlDecode(fieldParts[2])>
-                    <cfset formDataStruct[fieldName] = fieldValue>
-                </cfif>
-            </cfloop>
-            <!--- <cfdump var="test" abort="true"> --->
-
-            <cfif isDefined('formDataStruct.Chem_date')>
-                <cfset Chem_date = formDataStruct.Chem_date>
-            <cfelse>
-                <cfset Chem_date =''>
-            </cfif>
-            <cfif isDefined('formDataStruct.Chem_dateTime')>
-                <cfset Chem_dateTime = formDataStruct.Chem_dateTime>
-            <cfelse>
-                <cfset Chem_dateTime =''>
-            </cfif>
-            <cfset Operator_chem = formDataStruct.Operator_chem>
-           
-
-            <cfif isDefined('formDataStruct.Na')>
-                <cfset Na = formDataStruct.Na>
-            <cfelse>
-                <cfset Na =''>
-            </cfif>
-            <cfset Na_report = formDataStruct.Na_report>
-            <cfif isDefined('formDataStruct.Na_comment')>
-                <cfset Na_comment = formDataStruct.Na_comment>
-            <cfelse>
-                <cfset Na_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.K')>
-                <cfset K = formDataStruct.K>
-            <cfelse>
-                <cfset K =''>
-            </cfif>
-            <cfset K_report = formDataStruct.K_report>
-            <cfif isDefined('formDataStruct.K_comment')>
-                <cfset K_comment = formDataStruct.K_comment>
-            <cfelse>
-                <cfset K_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Cl')>
-                <cfset Cl = formDataStruct.Cl>
-            <cfelse>
-                <cfset Cl =''>
-            </cfif>
-            <cfset Cl_report = formDataStruct.Cl_report>
-            <cfif isDefined('formDataStruct.Cl_comment')>
-                <cfset Cl_comment = formDataStruct.Cl_comment>
-            <cfelse>
-                <cfset Cl_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.iCa')>
-                <cfset iCa = formDataStruct.iCa>
-            <cfelse>
-                <cfset iCa =''>
-            </cfif>
-            <cfset iCa_report = formDataStruct.iCa_report>
-            <cfif isDefined('formDataStruct.iCa_comment')>
-                <cfset iCa_comment = formDataStruct.iCa_comment>
-            <cfelse>
-                <cfset iCa_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.TCO2')>
-                <cfset TCO2 = formDataStruct.TCO2>
-            <cfelse>
-                <cfset TCO2 =''>
-            </cfif>
-            <cfset TCO2_report = formDataStruct.TCO2_report>
-            <cfif isDefined('formDataStruct.TCO2_comment')>
-                <cfset TCO2_comment = formDataStruct.TCO2_comment>
-            <cfelse>
-                <cfset TCO2_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Glu')>
-                <cfset Glu = formDataStruct.Glu>
-            <cfelse>
-                <cfset Glu =''>
-            </cfif>
-            <cfset Glu_report = formDataStruct.Glu_report>
-            <cfif isDefined('formDataStruct.Glu_comment')>
-                <cfset Glu_comment = formDataStruct.Glu_comment>
-            <cfelse>
-                <cfset Glu_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.BUN')>
-                <cfset BUN = formDataStruct.BUN>
-            <cfelse>
-                <cfset BUN =''>
-            </cfif>
-            <cfset BUN_report = formDataStruct.BUN_report>
-            <cfif isDefined('formDataStruct.BUN_comment')>
-                <cfset BUN_comment = formDataStruct.BUN_comment>
-            <cfelse>
-                <cfset BUN_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Crea2')>
-                <cfset Crea2 = formDataStruct.Crea2>
-            <cfelse>
-                <cfset Crea2 =''>
-            </cfif>
-            <cfset Crea2_report = formDataStruct.Crea2_report>
-            <cfif isDefined('formDataStruct.Crea2_comment')>
-                <cfset Crea2_comment = formDataStruct.Crea2_comment>
-            <cfelse>
-                <cfset Crea2_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Hct')>
-                <cfset Hct = formDataStruct.Hct>
-            <cfelse>
-                <cfset Hct =''>
-            </cfif>
-            <cfset Hct_report = formDataStruct.Hct_report>
-            <cfif isDefined('formDataStruct.Hct_comment')>
-                <cfset Hct_comment = formDataStruct.Hct_comment>
-            <cfelse>
-                <cfset Hct_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Hb')>
-                <cfset Hb = formDataStruct.Hb>
-            <cfelse>
-                <cfset Hb =''>
-            </cfif>
-            <cfset Hb_report = formDataStruct.Hb_report>
-            <cfif isDefined('formDataStruct.Hb_comment')>
-                <cfset Hb_comment = formDataStruct.Hb_comment>
-            <cfelse>
-                <cfset Hb_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.AnGap')>
-                <cfset AnGap = formDataStruct.AnGap>
-            <cfelse>
-                <cfset AnGap =''>
-            </cfif>
-            <cfset AnGap_report = formDataStruct.AnGap_report>
-            <cfif isDefined('formDataStruct.AnGap_comment')>
-                <cfset AnGap_comment = formDataStruct.AnGap_comment>
-            <cfelse>
-                <cfset AnGap_comment =''>
-            </cfif>
-           
-
-  
-            <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
-                SELECT ID from ST_iSTAT_Chem where BV_ID = #form.bloodValues_ID#
-            </cfquery>
-    
-            <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
-                <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                    INSERT INTO ST_iSTAT_Chem
-                    (
-                        BV_ID                                 
-                    ) 
-                    VALUES
-                    (
-                    <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
-                    )
-                </cfquery>
-            </cfif>
-            <cftry>
-            <cfquery name="qiSTAT_ChemUpdate" datasource="#Application.dsn#"  result="return_data" >
-                UPDATE  ST_iSTAT_Chem SET
-                Chem_date = <cfqueryparam cfsqltype="CF_SQL_DATE" value='#Chem_date#' null="#IIF(Chem_date EQ "", true, false)#">
-                ,Chem_dateTime = <cfqueryparam cfsqltype="CF_SQL_TIME" value='#Chem_dateTime#' null="#IIF(Chem_dateTime EQ "", true, false)#">
-                ,Operator_che = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Operator_chem#'>
-                ,Na = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Na#'>
-                ,Na_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Na_report#'>
-                ,Na_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Na_comment#'>
-                ,K = <cfqueryparam cfsqltype="cf_sql_varchar" value='#K#'>
-                ,K_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#K_report#'>
-                ,K_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#K_comment#'>
-                ,Cl = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Cl#'>
-                ,Cl_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Cl_report#'>
-                ,Cl_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Cl_comment#'>
-                ,iCa = <cfqueryparam cfsqltype="cf_sql_varchar" value='#iCa#'>
-                ,iCa_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#iCa_report#'>
-                ,iCa_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#iCa_comment#'>
-                ,TCO2 = <cfqueryparam cfsqltype="cf_sql_varchar" value='#TCO2#'>
-                ,TCO2_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#TCO2_report#'>
-                ,TCO2_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#TCO2_comment#'>
-                ,Glu = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Glu#'>
-                ,Glu_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Glu_report#'>
-                ,Glu_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Glu_comment#'>
-                ,BUN = <cfqueryparam cfsqltype="cf_sql_varchar" value='#BUN#'>
-                ,BUN_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#BUN_report#'>
-                ,BUN_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#BUN_comment#'>
-                ,Crea2 = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Crea2#'>
-                ,Crea2_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Crea2_report#'>
-                ,Crea2_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Crea2_comment#'>
-                ,Hct = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hct#'>
-                ,Hct_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hct_report#'>
-                ,Hct_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hct_comment#'>
-                ,Hb = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hb#'>
-                ,Hb_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hb_report#'>
-                ,Hb_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Hb_comment#'>
-                ,AnGap = <cfqueryparam cfsqltype="cf_sql_varchar" value='#AnGap#'>
-                ,AnGap_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#AnGap_report#'>
-                ,AnGap_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#AnGap_comment#'>
-               WHERE
-               BV_ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.bloodValues_ID#'>
-            </cfquery>
-            <cfcatch>
-                <cfdump  var="#cfcatch#"><cfabort>
-            </cfcatch>
-            </cftry>
-          <cfreturn True> 
-        </cffunction>
-
-        
-        <cffunction name="updateISTATVal" returntype="string" output="false" access="remote" returnformat="plain">
-            <cfargument name="formData" type="string" required="true">
-            <cfargument name="bloodValues_ID" type="numeric" required="true">
-  
-
-
-            <cfset formDataStruct = {}>
-            <cfset formFields = listToArray(arguments.formData, "&")>
-            <cfloop array="#formFields#" index="field">
-                <cfset fieldParts = listToArray(field, "=")>
-                <cfif arrayLen(fieldParts) EQ 2>
-                    <cfset fieldName = urlDecode(fieldParts[1])>
-                    <cfset fieldValue = urlDecode(fieldParts[2])>
-                    <cfset formDataStruct[fieldName] = fieldValue>
-                </cfif>
-            </cfloop>
-
-            <cfif isDefined('formDataStruct.ISTAT_CG4_date')>
-                <cfset ISTAT_CG4_date = formDataStruct.ISTAT_CG4_date>
-            <cfelse>
-                <cfset ISTAT_CG4_date =''>
-            </cfif>
-            <cfif isDefined('formDataStruct.tTime')>
-                <cfset tTime = formDataStruct.tTime>
-            <cfelse>
-                <cfset tTime =''>
-            </cfif>
-            <cfset Operator = formDataStruct.Operator>
-
-            <cfif isDefined('formDataStruct.Temperature')>
-                <cfset Temperature = formDataStruct.Temperature>
-            <cfelse>
-                <cfset Temperature =''>
-            </cfif>
-            <cfset Temperature_report = formDataStruct.Temperature_report>
-            <cfif isDefined('formDataStruct.Temperature_comment')>
-                <cfset Temperature_comment = formDataStruct.Temperature_comment>
-            <cfelse>
-                <cfset Temperature_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.pH')>
-                <cfset pH = formDataStruct.pH>
-            <cfelse>
-                <cfset pH =''>
-            </cfif>
-            <cfset pH_report = formDataStruct.pH_report>
-            <cfif isDefined('formDataStruct.pH_comment')>
-                <cfset pH_comment = formDataStruct.pH_comment>
-            <cfelse>
-                <cfset pH_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.PCO2')>
-                <cfset PCO2 = formDataStruct.PCO2>
-            <cfelse>
-                <cfset PCO2 =''>
-            </cfif>
-            <cfset PCO2_report = formDataStruct.PCO2_report>
-            <cfif isDefined('formDataStruct.PCO2_comment')>
-                <cfset PCO2_comment = formDataStruct.PCO2_comment>
-            <cfelse>
-                <cfset PCO2_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.PO2')>
-                <cfset PO2 = formDataStruct.PO2>
-            <cfelse>
-                <cfset PO2 =''>
-            </cfif>
-            <cfset PO2_report = formDataStruct.PO2_report>
-            <cfif isDefined('formDataStruct.PO2_comment')>
-                <cfset PO2_comment = formDataStruct.PO2_comment>
-            <cfelse>
-                <cfset PO2_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.BEecf')>
-                <cfset BEecf = formDataStruct.BEecf>
-            <cfelse>
-                <cfset BEecf =''>
-            </cfif>
-            <cfset BEecf_report = formDataStruct.BEecf_report>
-            <cfif isDefined('formDataStruct.BEecf_comment')>
-                <cfset BEecf_comment = formDataStruct.BEecf_comment>
-            <cfelse>
-                <cfset BEecf_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.HCO3')>
-                <cfset HCO3 = formDataStruct.HCO3>
-            <cfelse>
-                <cfset HCO3 =''>
-            </cfif>
-            <cfset HCO3_report = formDataStruct.HCO3_report>
-            <cfif isDefined('formDataStruct.HCO3_comment')>
-                <cfset HCO3_comment = formDataStruct.HCO3_comment>
-            <cfelse>
-                <cfset HCO3_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.TCO2cg')>
-                <cfset TCO2cg = formDataStruct.TCO2cg>
-            <cfelse>
-                <cfset TCO2cg =''>
-            </cfif>
-            <cfset TCO2cg_report = formDataStruct.TCO2cg_report>
-            <cfif isDefined('formDataStruct.TCO2cg_comment')>
-                <cfset TCO2cg_comment = formDataStruct.TCO2cg_comment>
-            <cfelse>
-                <cfset TCO2cg_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.sO2')>
-                <cfset sO2 = formDataStruct.sO2>
-            <cfelse>
-                <cfset sO2 =''>
-            </cfif>
-            <cfset sO2_report = formDataStruct.sO2_report>
-            <cfif isDefined('formDataStruct.sO2_comment')>
-                <cfset sO2_comment = formDataStruct.sO2_comment>
-            <cfelse>
-                <cfset sO2_comment =''>
-            </cfif>
-
-            <cfif isDefined('formDataStruct.Lac')>
-                <cfset Lac = formDataStruct.Lac>
-            <cfelse>
-                <cfset Lac =''>
-            </cfif>
-            <cfset Lac_report = formDataStruct.Lac_report>
-            <cfif isDefined('formDataStruct.Lac_comment')>
-                <cfset Lac_comment = formDataStruct.Lac_comment>
-            <cfelse>
-                <cfset Lac_comment =''>
-            </cfif>
-           
-
-            <cfquery name="qgetBloodValueinsert" datasource="#Application.dsn#">
-                SELECT ID from ST_iSTAT_CG4 where BV_ID = #form.bloodValues_ID#
-            </cfquery>
-    
-            <cfif isDefined('qgetBloodValueinsert.ID') and qgetBloodValueinsert.ID eq "">
-                <cfquery name="qinsertFile" datasource="#Application.dsn#" result="return_data">
-                    INSERT INTO ST_iSTAT_CG4
-                    (
-                        BV_ID                                 
-                    ) 
-                    VALUES
-                    (
-                    <cfqueryparam cfsqltype="cf_sql_varchar" value='#form.bloodValues_ID#'>
-                    )
-                </cfquery>
-            </cfif>
-            <cftry>
-                <cfquery name="qCG4Update" datasource="#Application.dsn#"  result="return_data" >
-                    UPDATE  ST_iSTAT_CG4 SET
-                    ISTAT_CG4_date = <cfqueryparam cfsqltype="CF_SQL_DATE" value='#ISTAT_CG4_date#' null="#IIF(ISTAT_CG4_date EQ "", true, false)#">
-                    ,tTime = <cfqueryparam cfsqltype="CF_SQL_TIME" value='#tTime#' null="#IIF(tTime EQ "", true, false)#">
-                    ,Operator = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Operator#'>
-                    ,Temperature = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Temperature#'>
-                    ,Temperature_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Temperature_report#'>
-                    ,Temperature_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Temperature_comment#'>
-                    ,pH = <cfqueryparam cfsqltype="cf_sql_varchar" value='#pH#'>
-                    ,pH_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#pH_report#'>
-                    ,pH_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#pH_comment#'>
-                    ,PCO2 = <cfqueryparam cfsqltype="cf_sql_varchar" value='#PCO2#'>
-                    ,PCO2_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#PCO2_report#'>
-                    ,PCO2_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#PCO2_comment#'>
-                    ,PO2 = <cfqueryparam cfsqltype="cf_sql_varchar" value='#PO2#'>
-                    ,PO2_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#PO2_report#'>
-                    ,PO2_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#PO2_comment#'>
-                    ,BEecf = <cfqueryparam cfsqltype="cf_sql_varchar" value='#BEecf#'>
-                    ,BEecf_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#BEecf_report#'>
-                    ,BEecf_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#BEecf_comment#'>
-                    ,HCO3 = <cfqueryparam cfsqltype="cf_sql_varchar" value='#HCO3#'>
-                    ,HCO3_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#HCO3_report#'>
-                    ,HCO3_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#HCO3_comment#'>
-                    ,TCO2cg = <cfqueryparam cfsqltype="cf_sql_varchar" value='#TCO2cg#'>
-                    ,TCO2cg_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#TCO2cg_report#'>
-                    ,TCO2cg_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#TCO2cg_comment#'>
-                    ,sO2 = <cfqueryparam cfsqltype="cf_sql_varchar" value='#sO2#'>
-                    ,sO2_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#sO2_report#'>
-                    ,sO2_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#sO2_comment#'>
-                    ,Lac = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Lac#'>
-                    ,Lac_report = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Lac_report#'>
-                    ,Lac_comment = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Lac_comment#'>
-                    WHERE
-                    BV_ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.bloodValues_ID#'>
-                </cfquery>
-                <cfcatch>
-                    <cfdump  var="#cfcatch#"><cfabort>
-                </cfcatch>
-            </cftry>
-          <cfreturn True> 
-        </cffunction>
 
 </cfcomponent>    

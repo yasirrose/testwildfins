@@ -496,7 +496,11 @@
                                 <th>Photo Number</th>
                                 <th>Comments</th>
                                 <th>Type Name</th>
+<<<<<<< Updated upstream
                                 <th>Permanent Date</th>
+=======
+                                <th>Enter Date</th>
+>>>>>>> Stashed changes
                                 <th>Lesion/Scar Type</th>
                                 <th>Side</th>
                                 <th>Status</th>
@@ -514,6 +518,7 @@
                                   <td class="sorting_1">#DateFormat(qgetCetacean_Lesions.DATESEEN,'mm/dd/yyyy')#</td>
                                   <td class="sorting_1">#qgetCetacean_Lesions.surveyid#</td>
                                   <td class="sorting_1">#qgetCetacean_Lesions.sightid#</td>
+<<<<<<< Updated upstream
                                   <td class="sorting_1" >
                                     <cfif qgetCetacean_Lesions.SightingText NEQ ''>
                                        #qgetCetacean_Lesions.SightingText#
@@ -527,6 +532,14 @@
                                   <td class="sorting_1" id="TypeName_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.TypeName#</td>
                                   <td class="sorting_1" id="PermanentScar_date_#qgetCetacean_Lesions.id#">
                                     #DateFormat(qgetCetacean_Lesions.PermanentScar_date,'mm/dd/yyyy')#
+=======
+                                  <td class="sorting_1" >#qgetCetacean_Lesions.SightingNumber#</td>
+                                  <td class="sorting_1" id="PhotoNumber_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.PhotoNumber#</td>
+                                  <td class="sorting_1" id="Comments_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.Comments#</td>
+                                  <td class="sorting_1" id="TypeName_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.TypeName#</td>
+                                  <td class="sorting_1" id="EnterDate_#qgetCetacean_Lesions.id#">
+                                    #DateFormat(qgetCetacean_Lesions.EnterDate,'mm/dd/yyyy')#
+>>>>>>> Stashed changes
                                   </td>
                                   <td class="sorting_1" id="LesionType_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.LesionType#</td>
                                   <td class="sorting_1" id="Side_L_R_#qgetCetacean_Lesions.id#">#qgetCetacean_Lesions.Side_L_R#</td>
@@ -668,11 +681,14 @@
           </select>
         </div>
 
+<<<<<<< Updated upstream
          <div class="form-group">
           <label for="permanentScar_date">Permanent Date:</label>
           <input type="date" class="form-control" id="permanentScar_date">
         </div>
 
+=======
+>>>>>>> Stashed changes
         
 
         <div class="form-group">
@@ -708,7 +724,11 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+<<<<<<< Updated upstream
         <button type="button" onclick="updateFunction()" class="btn btn-success" >Update</button>
+=======
+        <button type="button" onclick="updateFunction()" class="btn btn-default" >Update</button>
+>>>>>>> Stashed changes
       </div>
     </div>
   </div>
@@ -791,7 +811,10 @@
     status = $('#status').val();
     region = $('#region').val();
     comments = $('#comments').val();
+<<<<<<< Updated upstream
     permanentScar_date = $('#permanentScar_date').val();
+=======
+>>>>>>> Stashed changes
     var resultString = region.join(',');
     // console.log(region);
     var region = $('#region').val();
@@ -831,7 +854,10 @@
               status: status,
               comments: comments,
               region: resultString,
+<<<<<<< Updated upstream
               permanentScar_date: permanentScar_date,
+=======
+>>>>>>> Stashed changes
           },
           success: function(response) {
             var response = JSON.parse(response);
@@ -843,6 +869,7 @@
             $('#Region_' + id).text(seletedOption);
             $('#Comments_' + id).text(comments);
 
+<<<<<<< Updated upstream
             if (permanentScar_date && permanentScar_date !== "" && permanentScar_date !== "null") {
                 var p_date = new Date(permanentScar_date);
                 var p_year = p_date.getFullYear();
@@ -856,6 +883,8 @@
 
             // $('#PermanentScar_date_' + id).text(permanentScar_date);
 
+=======
+>>>>>>> Stashed changes
             $('#myModal').modal('hide');
           },
           error: function(error) {
@@ -895,6 +924,7 @@
             var day = date.getDate().toString().padStart(2, '0');
             var formattedDate = `${month}/${day}/${year}`;
 
+<<<<<<< Updated upstream
             // var p_date = new Date(data[13]);
             // var p_year = p_date.getFullYear();
             // var p_month = (p_date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-indexed, so add 1
@@ -922,12 +952,21 @@
            // $('#sightingNo').val(data[0]);
             $('#sightingNo').val(data[10] ? data[10] : data[0]);
 
+=======
+
+            $('#dateSen').val(formattedDate);
+            $('#surveyID').val(data[1]);
+            $('#sightingNo').val(data[0]);
+>>>>>>> Stashed changes
             $('#photoNumber').val(data[9]);
             // $('#lesionType').val(data[4]);
             $('#comments').val(data[11]);
             $('#TypeName').val(data[12]);
             $('#HiddenTypeName').val(data[12]);
+<<<<<<< Updated upstream
             // $('#permanentScar_date').val(p_formattedDate);
+=======
+>>>>>>> Stashed changes
             var regionVal = data[10];
             hilocation = regionVal.split(",")
             $('#region').val(hilocation).trigger('change');
