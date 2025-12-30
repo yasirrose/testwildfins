@@ -1099,7 +1099,6 @@
     </cffunction> --->
 
     <cffunction name="getLiveCetaceanExamData" returntype="any" output="false" access="public" >
-<<<<<<< Updated upstream
 
         <cfargument name="LCEID" type="numeric" required="true">
         <cfargument name="Fnumber" type="string" required="false">
@@ -1108,10 +1107,6 @@
 
 		<!--- <cfabort showerror="getLiveCetaceanExamData() called!"> --->
         <!--- <cfquery name="qgetLiveCetaceanExamData" datasource="#variables.dsn#"  >
-=======
-		<!--- <cfabort showerror="getLiveCetaceanExamData() called!"> --->
-        <cfquery name="qgetLiveCetaceanExamData" datasource="#variables.dsn#"  >
->>>>>>> Stashed changes
             SELECT * from ST_LiveCetaceanExam where ID = #LCEID# And deleted != '1'
         </cfquery>
 
@@ -2317,11 +2312,7 @@
 
     <cffunction name="getHIData" returntype="any" output="false" access="public" >
         <!--- <cfdump var="#HI_ID#" abort="true"> --->
-<<<<<<< Updated upstream
         <!--- <cfquery name="qHIData" datasource="#Application.dsn#"  >
-=======
-        <cfquery name="qHIData" datasource="#Application.dsn#"  >
->>>>>>> Stashed changes
             SELECT * from ST_HIForm where ID = #HI_ID# And deleted != '1'
         </cfquery>
         <cfreturn qHIData> --->
@@ -2810,7 +2801,6 @@
     
         <cfreturn qgetLevelAFBNumber>
     </cffunction>
-<<<<<<< Updated upstream
     
 <!--- 
     <cffunction name="getLevelAFBNumber" returntype="any" output="false" access="public" >
@@ -2960,11 +2950,6 @@
             )
                
             order by Fnumber ASC
-=======
-    <cffunction name="getLevelAData" returntype="any" output="false" access="public" >
-        <cfquery name="qgetLevelAData" datasource="#Application.dsn#"  >
-            SELECT * from ST_LevelAForm where ID = #LA_ID# And deleted != '1'
->>>>>>> Stashed changes
         </cfquery>
 
         <cfreturn qgetLevelAFBNumber>
@@ -3710,7 +3695,6 @@
         </cfquery>
     
         <cfreturn qgetHistoFBNumber>
-<<<<<<< Updated upstream
     </cffunction>   
 
     <!--- <cffunction name="getHistoFBNumber" returntype="any" output="false" access="public" >
@@ -3859,12 +3843,6 @@
             )
 
             order by Fnumber ASC
-=======
-    </cffunction>
-    <cffunction name="getHistoData" returntype="any" output="false" access="public" >
-        <cfquery name="qHistoData" datasource="#Application.dsn#"  >
-            SELECT * from ST_HistoForm where ID = #His_ID# And deleted != '1'
->>>>>>> Stashed changes
         </cfquery>
 
         <cfreturn qgetHistoFBNumber>
@@ -4370,11 +4348,7 @@
     </cffunction>
     <!--- get toxiform --->
     <cffunction name="gettoxiform" returntype="any" output="false" access="public" >
-<<<<<<< Updated upstream
         <!--- <cfquery name="qtoxiform" datasource="#Application.dsn#"  >
-=======
-        <cfquery name="qtoxiform" datasource="#Application.dsn#"  >
->>>>>>> Stashed changes
             SELECT * from ST_Toxicology where ID = #Toxicology_ID# And deleted != '1'
         </cfquery>
         <cfreturn qtoxiform> --->
@@ -6491,11 +6465,7 @@
     </cffunction> --->
 
     <cffunction name="getBlood_VData" returntype="any" output="false" access="public" >
-<<<<<<< Updated upstream
         <!--- <cfquery name="qBloodValuesData" datasource="#Application.dsn#"  >
-=======
-        <cfquery name="qBloodValuesData" datasource="#Application.dsn#"  >
->>>>>>> Stashed changes
             SELECT * from ST_Blood_Values where ID = #bloodValue_ID# And deleted != '1'
         </cfquery>
         <cfreturn qBloodValuesData> --->
@@ -6931,11 +6901,7 @@
         </cfquery>
         <cfreturn qgetNecropsyDate>
     </cffunction>
-<<<<<<< Updated upstream
     
-=======
-
->>>>>>> Stashed changes
     <cffunction name="getMorphometricsBNumber" returntype="any" output="false" access="public" >
         <cfquery name="MorphometricsoFBNumber" datasource="#Application.dsn#">
             WITH AllFNumbers AS (
@@ -7179,7 +7145,6 @@
 
     <cffunction name="getMorphometricsAllData" returntype="any" output="false" access="public" >
         <!--- <cfdump var="#Morphometrics_ID#" abort="true"> --->
-<<<<<<< Updated upstream
         <!--- <cfquery name="qMorphometricsData" datasource="#Application.dsn#"  >
             SELECT * from ST_Morphometrics where ID = #Morphometrics_ID# And deleted is null
         </cfquery>
@@ -7239,16 +7204,6 @@
     <cffunction name="getMorphometricsAllFnumberData" returntype="any" output="false" access="public" >
         <cfquery name="qMorphometricsData" datasource="#Application.dsn#" maxRows = "1" >
             SELECT * from ST_Morphometrics where Fnumber = '#Morphometrics_ID#' and deleted is null
-=======
-        <cfquery name="qMorphometricsData" datasource="#Application.dsn#"  >
-            SELECT * from ST_Morphometrics where ID = #Morphometrics_ID# And deleted is null
-        </cfquery>
-        <cfreturn qMorphometricsData>
-    </cffunction>
-    <cffunction name="getMorphometricsAllFnumberData" returntype="any" output="false" access="public" >
-        <cfquery name="qMorphometricsData" datasource="#Application.dsn#" maxRows = "1" >
-            SELECT * from ST_Morphometrics where Fnumber = '#Morphometrics_ID#' where deleted is null
->>>>>>> Stashed changes
         </cfquery>
         <cfreturn qMorphometricsData>
     </cffunction>
@@ -7469,11 +7424,7 @@
     </cffunction> --->
 
     <cffunction name="getAncillaryData" returntype="any" output="false" access="public" >
-<<<<<<< Updated upstream
         <!--- <cfquery name="qHistoData" datasource="#Application.dsn#"  >
-=======
-        <cfquery name="qHistoData" datasource="#Application.dsn#"  >
->>>>>>> Stashed changes
             SELECT * from ST_Ancillary_Diagnostics where ID = #AD_ID# And deleted != '1'
         </cfquery>
         <cfreturn qHistoData> --->
@@ -7924,11 +7875,7 @@
     </cffunction>
 
     <cffunction name="getSampleArchiveData" returntype="any" output="false" access="public" >
-<<<<<<< Updated upstream
         <!--- <cfquery name="qgetSampleArchiveData" datasource="#Application.dsn#"  >
-=======
-        <cfquery name="qgetSampleArchiveData" datasource="#Application.dsn#"  >
->>>>>>> Stashed changes
             SELECT * from ST_SampleArchive where ID = #SEID# And deleted != '1'
         </cfquery>
         <cfreturn qgetSampleArchiveData> --->
@@ -9891,13 +9838,8 @@
     </cffunction>
     <!--- getCetaceanNecropsy  --->
     <cffunction name="getCetaceanNecropsy" returntype="any" output="false" access="public" >
-<<<<<<< Updated upstream
         <!--- <cfdump var="#form#" abort="true"> --->
         <!--- <cftry>
-=======
-
-        <cftry>
->>>>>>> Stashed changes
             <cfquery name="qgetCetaceanNecropsy" datasource="#Application.dsn#" maxRows = "1">
                 SELECT * from ST_CetaceanNecropsyReport where fnumber = '#Nfieldnumber#' and deleted is null
             </cfquery>
@@ -12681,15 +12623,10 @@
                     OR lat LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     OR lon LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     OR county LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
-<<<<<<< Updated upstream
                     OR fnumber LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     
 
                 ) and (deleted !='1' OR deleted is null)
-=======
-
-                )
->>>>>>> Stashed changes
                 GROUP BY fnumber, SourceTable
   
             </cfquery>        
@@ -12778,10 +12715,7 @@
                     OR ECGresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     OR Ultrasoundresults LIKE <cfqueryparam value="%#form.searchword#%" cfsqltype="cf_sql_varchar">
                     
-<<<<<<< Updated upstream
                     
-=======
->>>>>>> Stashed changes
                 )
                 UNION
                 SELECT 'HI Form' AS SourceTable, ID, Fnumber, Date, NULL AS Location, NULL AS BriefHistory, NULL AS BSNotes, NULL AS General, NULL AS SNM, NULL AS Mentation, NULL AS Palpation, NULL AS Proprioception, NULL AS Reflexes, NULL AS RLD, NULL AS ECGresults, NULL AS Ultrasoundresults, NULL AS SampleNote, NULL AS SampleComments 

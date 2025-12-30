@@ -790,9 +790,14 @@
 
 
     <cffunction name="getCetacean_Lesions" access="remote" returnformat="JSON" output="true">
+
+            <!--- <cfdump var="#form#" abort="true"> --->
        
+            <cfquery name="qgetCetacena_intID" datasource="#variables.dsn#">
+                select * from cetaceans where code = '#cetacean_Code#'
+            </cfquery>
    
-            <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
+            <!--- <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
                 select Survey_Sightings.SightingNumber                
                 ,Survey_Sightings.id as sightid
                 ,Surveys.date as DateSeen
@@ -804,11 +809,8 @@
                 ,Condition_Lesions.PhotoNumber 
                 ,Condition_Lesions.TypeName 
                 ,Condition_Lesions.EnterDate 
-<<<<<<< Updated upstream
                 ,Condition_Lesions.SightingText 
                 ,Condition_Lesions.PermanentScar_date 
-=======
->>>>>>> Stashed changes
                 ,Surveys.id as surveyid
                 ,Condition_Lesions.Comments 
                 from Condition_Lesions
@@ -818,8 +820,49 @@
                 AND Surveys.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
                 AND Survey_Sightings.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
                 order by DateSeen desc
-            </cfquery>
+            </cfquery> --->
             
+            <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
+                SELECT  
+                    SS2.SightingNumber,
+                    SS2.ID AS sightid,
+                    S.date AS DateSeen,
+                    CL.LesionType,
+                    CL.Region,
+                    CL.Side_L_R,
+                    CL.Status,
+                    CL.ID AS id,  <!--- add alias id for CF compatibility --->
+                    CL.ID AS lesion_id,
+                    CL.PhotoNumber,
+                    CL.TypeName,
+                    CL.EnterDate,
+                    CL.SightingText,
+                    CL.PermanentScar_date,
+                    S.ID AS surveyid,
+                    CL.Comments
+                FROM Cetacean_Sightings CS1
+                INNER JOIN Cetacean_Sightings CS2
+                    ON CS1.Cetaceans_ID = CS2.Cetaceans_ID
+                INNER JOIN Survey_Sightings SS1
+                    ON SS1.ID = CS1.Sighting_ID
+                INNER JOIN Survey_Sightings SS2
+                    ON SS2.ID = CS2.Sighting_ID
+                    AND SS1.Project_ID = SS2.Project_ID   <!--- ensure same survey --->
+                INNER JOIN Condition_Lesions CL
+                    ON CL.Sighting_ID = CS1.Sighting_ID
+                INNER JOIN Surveys S
+                    ON S.ID = SS2.Project_ID
+                WHERE CS1.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qgetCetacena_intID.id#">
+                AND CL.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cetacean_Code#">
+                AND S.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#selected_survery_id#">
+                AND CS2.Sighting_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#Sighting_ID#">
+                AND S.IsDeleted != 1
+                AND SS1.IsDeleted != 1
+                AND SS2.IsDeleted != 1
+                ORDER BY S.date, SS2.id DESC;
+            </cfquery>
+
+
         
         <cfloop query="qgetCetacean_Lesions">
             <cfif #qgetCetacean_Lesions.Region# NEQ "">
@@ -2187,17 +2230,11 @@
                 ,Condition_Lesions.Status
                 ,Condition_Lesions.id
                 ,Condition_Lesions.PhotoNumber 
-<<<<<<< Updated upstream
                 ,Condition_Lesions.SightingText 
                 ,Condition_Lesions.Region as CLRegion
                 ,Condition_Lesions.Comments 
                 ,Condition_Lesions.TypeName 
                 ,Condition_Lesions.permanentScar_date 
-=======
-                ,Condition_Lesions.Region as CLRegion
-                ,Condition_Lesions.Comments 
-                ,Condition_Lesions.TypeName 
->>>>>>> Stashed changes
                 from Condition_Lesions
                 INNER JOIN Survey_Sightings on Condition_Lesions.Sighting_ID = Survey_Sightings.ID
                 INNER JOIN Surveys on Surveys.id  = Survey_Sightings.Project_ID 
@@ -2218,7 +2255,6 @@
 
     <cffunction name="UpdateCetacean_LesionsByID" access="remote" returnformat="JSON" output="true">
         <!--- <cfdump var="#Cetacean_Survey#" abort='true'> --->
-<<<<<<< Updated upstream
 
         <cfif permanentScar_date neq '' >
             <cfset permanentScar_date = permanentScar_date>
@@ -2228,8 +2264,6 @@
 
         <!--- <cfdump var="#permanentScar_date#" abort="true"> --->
 
-=======
->>>>>>> Stashed changes
         <cftry>
         <cfquery name="update_cetaceans"datasource="#variables.dsn#">
             UPDATE Condition_Lesions
@@ -2239,10 +2273,7 @@
             ,Region = '#region#'
             ,PhotoNumber = '#photoNumber#'
             ,Comments = '#comments#'
-<<<<<<< Updated upstream
             ,PermanentScar_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#permanentScar_date#" null="#IIF(len(trim(permanentScar_date)), false, true)#">
-=======
->>>>>>> Stashed changes
             WHERE ID = #ID#
         </cfquery>
         <cfcatch>
