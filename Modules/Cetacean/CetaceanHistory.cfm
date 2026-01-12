@@ -120,9 +120,8 @@
   
   </cfif>
 
-  <cfif isdefined('FORM.Sighting_ID') and FORM.Sighting_ID neq ''>
-    <cfset qgetCetacean_Lesions = Application.Cetaceans.getCetacean_Lesions( argumentCollection="#Form#" )>
-
+  <cfif structKeyExists(FORM, "Sighting_ID") AND len(trim(FORM.Sighting_ID))>
+    <cfset qgetCetacean_Lesions = Application.Cetaceans.getCetacean_Lesions( argumentCollection = FORM )>
   </cfif>
 
   <!--- Cetacean Species ---> 
@@ -352,7 +351,7 @@
                     <div class="dataTables_scroll" style="overflow:auto; max-height: 200px;">
                       <div class="dataTables_scrollHead ">
                         <div class="dataTables_scrollHeadInner" >
-                          <table class="table table-striped table-bordered dataTable no-footer" id="survey_table" role="grid">
+                          <table class="table table-striped table-bordered dataTable no-footer sticky-table" id="survey_table" role="grid">
                             <thead>
                               <tr role="row">
                                 <th  rowspan="1" colspan="1" >Survey ID</th>
@@ -421,7 +420,7 @@
                                         </cfif>
                                            <input type="hidden" name="selected_survery_id" value="<cfif isdefined('qGetCetacean.Survey_ID') >#qGetCetacean.Survey_ID#</cfif>">
                                         <!--- Add Sighting ID dropdown --->
-                                        <label>Select Sighting</label>
+                                        <!-- <label>Select Sighting</label> -->
                                         <cfset currentRowSurveyID = qGetCetacean.Survey_ID>
                                         <select name="Sighting_ID" onchange="updateSightingNo(this)">
                                            <option value="">Select Sighting</option>
@@ -447,9 +446,9 @@
 
                                      <span class="sightingNo">
                                           <cfif isdefined('FORM.Sighting_ID')>
-                                              <!--- Pre-select the Sighting No based on selected Sighting ID --->
+                                              <!--- Pre-select the Sighting No based on selected Sighting ID and current Survey ID --->
                                               <cfloop query="qGetCetacean">
-                                                  <cfif FORM.Sighting_ID eq qGetCetacean.Sighting_ID>
+                                                  <cfif FORM.Sighting_ID eq qGetCetacean.Sighting_ID AND qGetCetacean.Survey_ID eq currentRowSurveyID>
                                                       #qGetCetacean.SightingNo#
                                                   </cfif>
                                               </cfloop>
@@ -597,7 +596,7 @@ function updateSightingNo(selectObj) {
                             </tr>
                         </thead>
                       	<tbody>
-                          <cfif isdefined('FORM.Sighting_ID')>	
+                          <cfif structKeyExists(FORM, "Sighting_ID") AND len(trim(FORM.Sighting_ID)) AND isDefined("qgetCetacean_Lesions") AND qgetCetacean_Lesions.recordCount GT 0>	
                               <!--- <cfdump var="#qgetCetacean_Lesions#" abort="true">--->
                               
                               <cfloop query='qgetCetacean_Lesions'>
@@ -1165,5 +1164,26 @@ table thead tr th {
 }
 .overflow-clearfix table tr td {
   min-width: 90px !important;
+}
+table.sticky-table {
+  table-layout: auto !important;
+  width: 100%;
+}
+table.sticky-table thead {
+  position: sticky;
+  top: 0;
+}
+table.sticky-table thead th {
+  min-width: 100px;
+  width: 100px;
+}
+table.sticky-table tbody td {
+  vertical-align: middle;
+}
+table.sticky-table tbody td select {
+  min-width: 200px;
+  width: 200px;
+  padding: 6px;
+  font-size: 14px;
 }
 </style> 
