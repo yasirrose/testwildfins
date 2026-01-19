@@ -9660,6 +9660,15 @@
                     <!--- start for histo --->
             <div role="tabpanel" class="tab-pane" id="HistoForm">
 
+                
+               <!--- <input type="hidden"  name="Histo_ID" id="Histo_ID" value="#qgetHIDataa.ID#">
+
+                <cfif structKeyExists(qgetToxicologyData, "recordcount") AND qgetToxicologyData.recordcount GT 0>
+                    <input type="hidden" name="Histo_ID" id="Histo_ID" value="#qgetToxicologyData.ID#">
+                <cfelse>
+                    <input type="hidden" name="Histo_ID" id="Histo_ID" value="">
+                </cfif> --->
+
                 <cfset Histo_ID = "">
                 <cfset histoDate = "">
                 <cfset PathologistAccession = "">
@@ -9670,9 +9679,7 @@
                     <cfif structKeyExists(qgetHIDataa, "ID")><cfset Histo_ID = qgetHIDataa.ID></cfif>
                     <cfif structKeyExists(qgetHIDataa, "histoDate")><cfset histoDate = qgetHIDataa.histoDate></cfif>
                     <cfif structKeyExists(qgetHIDataa, "PathologistAccession")><cfset PathologistAccession = qgetHIDataa.PathologistAccession></cfif>
-                    <cfif structKeyExists(qgetHIDataa, "SampleComments")>
-                        <cfset SampleComments = qgetHIDataa.SampleComments>
-                    </cfif>
+                    <cfif structKeyExists(qgetHIDataa, "SampleComments")><cfset SampleComments = qgetHIDataa.SampleComments></cfif>
                     
                 </cfif>
 
@@ -13820,15 +13827,35 @@
             <!--- start for NecropsyReport --->
             <div role="tabpanel" class="tab-pane my-tab-pane" id="NecropsyReport">                
                 <input type='hidden' name='report' id="report" value='#form.report#'>
+                <!--- <input type='hidden' name='report_ID' id="repotrt_ID" value='#qgetCetaceanNecropsy.ID#'> --->
                 <input type='hidden' name='fieldno' id="fieldno" value='#form.fieldnumber#' >
+                <!--- <input type='hidden' name='fieldnoo' id="fieldnoo" value='#qgetCetaceanNecropsy.Fnumber#'> --->
+                <!--- <input type='hidden' name='form_id' id="form_id" value='#qgetCetaceanNecropsy.ID#'> --->
 
+                  <!--- <cfif  CGI.REMOTE_ADDR eq '202.141.226.196'>
+                        <cfdump var="#CGI.QUERY_STRING#" abort="true">
+                    </cfif> --->
+                   
+                <!--- <cfset queryString = CGI.QUERY_STRING>
+
+                <cfset isNecropsyReportPresent = reFind("(&|^)NecropsyReport(&|$)", queryString) GT 0>
+
+                <cfif NOT isNecropsyReportPresent>
+                    <cfset qgetCetaceanNecropsy = Application.Stranding.getCetaceanNecropsy_ten()>
+                </cfif> --->
+
+                <!--- <cfset qgetCetaceanNecropsy=Application.Stranding.getCetaceanNecropsy_ten()> --->
+                <!--- <cfset qgetNutritional=Application.Stranding.getNutritional_ten()>
+                <cfset qgetLymphoreticular=Application.Stranding.getLymphoreticular_ten()>
+                <cfset qgetParasites=Application.Stranding.getParasites_ten()> --->
 
                  <cfset repotrt_ID = "">
                  <cfset Veterinarians = "">
                  <cfset Prosectors = "">
                  <cfset Tentative = "">
                  <cfset deathcause = "">
-                 <cfset fieldnoo = "">                
+                 <cfset fieldnoo = "">
+                
 
                 <cfif structKeyExists(qgetCetaceanNecropsy, "recordcount") AND qgetCetaceanNecropsy.recordcount GT 0>
                     <cfif structKeyExists(qgetCetaceanNecropsy, "ID")><cfset repotrt_ID = qgetCetaceanNecropsy.ID></cfif>
