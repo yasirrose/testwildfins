@@ -40,6 +40,17 @@ $(document).ready(function () {
         endDate: moment(),
         minDate: "01/01/1990"
     });
+	// Restore any saved form state (checkboxes / selects / date)
+	if (typeof restoreFormState === 'function') {
+		restoreFormState();
+	}
+
+	// Save form state on submit so selections persist after search
+	$('#searchAllReports').on('submit', function () {
+		if (typeof saveFormState === 'function') {
+			saveFormState();
+		}
+	});
 });
 function showdate(){
 
@@ -112,6 +123,11 @@ window.onbeforeunload = function()
 	localStorage.setItem("NOAAStock", $('select[name="NOAAStock"]').val());
 	localStorage.setItem("surveyEffort", $('select[name="surveyEffort"]').val());
 	localStorage.setItem("date", $('#date').val());
+
+	// Generic save for all checkboxes and selects in the search form
+	if ($('#searchAllReports').length) {
+		saveFormState();
+	}
 }
 window.onload = function() 
 {
@@ -199,4 +215,97 @@ function getcode(){
 			
 		}
 	});
+}
+
+// Save all checkbox/select values from the report form to localStorage
+function saveFormState(){
+	var $form = $('#searchAllReports');
+	if (!$form.length) return;
+	$form.find('input[type="checkbox"]').each(function(){
+		var key = 'report_cb_' + ( $(this).attr('name') || $(this).attr('id') || $(this).attr('value') );
+		try{ localStorage.setItem(key, $(this).is(':checked')); }catch(e){}
+	});
+	// selects (handle multi-selects by JSON-stringifying value)
+	$form.find('select').each(function(){
+		var key = 'report_sel_' + ( $(this).attr('name') || $(this).attr('id') );
+		try{
+			var v = $(this).val();
+			localStorage.setItem(key, JSON.stringify(v));
+		}catch(e){}
+	});
+	// inputs (text, number, hidden, textarea)
+	$form.find('input[type="text"], input[type="number"], input[type="hidden"], textarea').each(function(){
+		var key = 'report_in_' + ( $(this).attr('name') || $(this).attr('id') );
+		try{ localStorage.setItem(key, $(this).val()); }catch(e){}
+	});
+	// radios
+	$form.find('input[type="radio"]').each(function(){
+		var name = $(this).attr('name');
+		if (!name) return;
+		var key = 'report_radio_' + name;
+		// store checked value for a group once
+		if (localStorage.getItem(key) === null){
+			var checked = $form.find('input[type="radio"][name="'+name+'"]:checked').val();
+			try{ localStorage.setItem(key, checked===undefined?null:checked); }catch(e){}
+		}
+	});
+	// date
+	try{ localStorage.setItem('report_date', $('#date').val()); }catch(e){}
+}
+
+// Restore saved checkbox/select values into the report form
+function restoreFormState(){
+	var $form = $('#searchAllReports');
+	if (!$form.length) return;
+	$form.find('input[type="checkbox"]').each(function(){
+		var key = 'report_cb_' + ( $(this).attr('name') || $(this).attr('id') || $(this).attr('value') );
+		var v = localStorage.getItem(key);
+		if (v === 'true'){
+			$(this).prop('checked', true);
+			// Unhide any matching named sections if they use the name as a class
+			var n = $(this).attr('name'); if (n) $('.'+n).removeClass('hidden');
+		} else if (v === 'false'){
+			$(this).prop('checked', false);
+		}
+	});
+	// restore selects
+	$form.find('select').each(function(){
+		var key = 'report_sel_' + ( $(this).attr('name') || $(this).attr('id') );
+		var v = localStorage.getItem(key);
+		if (v !== null){
+			try{
+				var parsed = JSON.parse(v);
+				$(this).val(parsed);
+			}catch(e){
+				$(this).val(v);
+			}
+			// Update Select2 UI if present and trigger change so any listeners react
+			try{
+				$(this).trigger('change');
+				if ($(this).data('select2')) $(this).trigger('change.select2');
+			}catch(e){}
+		}
+	});
+	// restore inputs
+	$form.find('input[type="text"], input[type="number"], input[type="hidden"], textarea').each(function(){
+		var key = 'report_in_' + ( $(this).attr('name') || $(this).attr('id') );
+		var v = localStorage.getItem(key);
+		if (v !== null) $(this).val(v);
+	});
+	// restore radios
+	var radioGroups = {};
+	$form.find('input[type="radio"]').each(function(){
+		var name = $(this).attr('name');
+		if (!name) return;
+		if (radioGroups[name]) return;
+		radioGroups[name] = true;
+		var key = 'report_radio_' + name;
+		var v = localStorage.getItem(key);
+		if (v !== null){
+			$form.find('input[type="radio"][name="'+name+'"]').prop('checked', false);
+			var $to = $form.find('input[type="radio"][name="'+name+'"][value="'+v+'"]');
+			if ($to.length) $to.prop('checked', true);
+		}
+	});
+	var d = localStorage.getItem('report_date'); if (d) $('#date').val(d);
 }

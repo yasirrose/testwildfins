@@ -57,7 +57,7 @@
     
     <cfset qGetCetacean = Application.Cetaceans.getCetacean(argumentCollection="#Form#")>
     
-    <!--- <cfset qgetCetacean_Lesions = Application.Cetaceans.getCetacean_Lesions(argumentCollection="#Form#")> --->
+    <cfset qgetCetacean_Lesions = Application.Cetaceans.getCetacean_Lesions(argumentCollection="#Form#")>
     <!--- <cfdump var="#qgetlesionCode.Code#" abort="true"> --->
     <cfif qGetCetacean.RECORDCOUNT EQ 0> 
       <cfset isDataAvaiable = "Record not found on selected CODE">       
@@ -120,9 +120,9 @@
   
   </cfif>
 
-  <cfif structKeyExists(FORM, "Sighting_ID") AND len(trim(FORM.Sighting_ID))>
+  <!--- <cfif structKeyExists(FORM, "Sighting_ID") AND len(trim(FORM.Sighting_ID))>
     <cfset qgetCetacean_Lesions = Application.Cetaceans.getCetacean_Lesions( argumentCollection = FORM )>
-  </cfif>
+  </cfif> --->
 
   <!--- Cetacean Species ---> 
   <cfset qgetCetaceanSpecies = Application.StaticDataNew.getCetaceanSpecies()>
@@ -368,7 +368,7 @@
                             </thead>
                           <tbody id="DateSeen">
                           <cfif isdefined('FORM.CetaceanId')>	
-                            <cfset lastSurveyID = "">
+                            <!--- <cfset lastSurveyID = ""> --->
                             <cfloop query='qGetCetacean'>
 
                               <cfquery name="qgetsurveyRoutename" datasource="#Application.dsn#">
@@ -383,12 +383,12 @@
                                 <cfset routeNames = ValueList(qgetsurveyRoutename.RouteName)>
 
 
-                                <cfif lastSurveyID NEQ qGetCetacean.Survey_ID>
+                                <!--- <cfif lastSurveyID NEQ qGetCetacean.Survey_ID> --->
                                     <tr role="row" class="odd">
                                   <td class="sorting_1">#qGetCetacean.Survey_ID#</td>
                                   <td class="sorting_1">#DateFormat(qGetCetacean.DATESEEN,'mm/dd/yyyy')#</td>
                                   <td class="sorting_1">
-                                    <!--- #qGetCetacean.Sighting_ID# --->
+                                    #qGetCetacean.Sighting_ID#
                                     
                                     <!--- <select class="form-control sightingSelect" onchange="setSightingNo(this)">
                                         <option value="">Select Sighting</option>
@@ -407,7 +407,7 @@
                                         </cfloop>
                                     </select> --->
 
-
+<!--- 
                                     <form id="lesionForm" method="post" action="#Application.siteroot#?Module=Cetacean&Page=CetaceanHistory">
                                         <cfif isdefined('FORM.Cetacean_Species')>
                                             <input type="hidden" name="Cetacean_Species" value="#FORM.Cetacean_Species#">
@@ -436,15 +436,15 @@
                                               </cfloop>
                                         </select>
 
-                                    </form>
+                                    </form> --->
 
 
                                   </td>
                                   <td class="sorting_1">#routeNames#</td>
                                   <td class="sorting_1">
-                                    <!--- #qGetCetacean.SightingNo# --->
+                                    #qGetCetacean.SightingNo#
 
-                                     <span class="sightingNo">
+                                     <!--- <span class="sightingNo">
                                           <cfif isdefined('FORM.Sighting_ID')>
                                               <!--- Pre-select the Sighting No based on selected Sighting ID and current Survey ID --->
                                               <cfloop query="qGetCetacean">
@@ -453,7 +453,7 @@
                                                   </cfif>
                                               </cfloop>
                                           </cfif>
-                                      </span>
+                                      </span> --->
 
                                   </td>
                                   <td class="sorting_1">#qGetCetacean.SurveyType#</td>
@@ -505,16 +505,16 @@
                                   </td>
                                   
                                 </tr>
-                                </cfif>
+                                <!--- </cfif>
                               
 
-                                <cfset lastSurveyID = qGetCetacean.Survey_ID>
+                                <cfset lastSurveyID = qGetCetacean.Survey_ID> --->
                             </cfloop>	
                           </cfif>		
                           </tbody>
                         </table>
 
-                       <script>
+                       <!--- <script>
 function updateSightingNo(selectObj) {
     var selectedOption = selectObj.options[selectObj.selectedIndex];
     var sightingNo = selectedOption.getAttribute("data-sightingno");
@@ -526,7 +526,7 @@ function updateSightingNo(selectObj) {
     // Optionally, submit the form if you want the page to reload
     selectObj.form.submit();
 }
-</script>
+</script> --->
 
                       </div>
                     </div>
@@ -596,7 +596,8 @@ function updateSightingNo(selectObj) {
                             </tr>
                         </thead>
                       	<tbody>
-                          <cfif structKeyExists(FORM, "Sighting_ID") AND len(trim(FORM.Sighting_ID)) AND isDefined("qgetCetacean_Lesions") AND qgetCetacean_Lesions.recordCount GT 0>	
+                          <!--- <cfif structKeyExists(FORM, "Sighting_ID") AND len(trim(FORM.Sighting_ID)) AND isDefined("qgetCetacean_Lesions") AND qgetCetacean_Lesions.recordCount GT 0>	 --->
+                            <cfif isdefined('FORM.CetaceanId')>	
                               <!--- <cfdump var="#qgetCetacean_Lesions#" abort="true">--->
                               
                               <cfloop query='qgetCetacean_Lesions'>
