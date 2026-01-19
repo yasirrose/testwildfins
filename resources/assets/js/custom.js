@@ -118,6 +118,7 @@ $(document).ready(function () {
     });
 
     $("#Cetacean_code").change(function () {
+
         var cetacean_ID = $(this).val();
         var cetacean_Code = $( "#Cetacean_code option:selected" ).text().split("|")[1].trim();
         if (cetacean_ID != '') {
@@ -728,7 +729,7 @@ $(document).ready(function () {
 
     $("#add_lesions_form").submit(function (e) {
         // e.preventDefault();
-        // alert() nouman
+        // alert() Working
 
         var lesionPresent = $('#LesionPresent').val();
         var typeName = $('#TypeName').val();
@@ -994,7 +995,7 @@ $(document).ready(function () {
     });
 });
 function save_exis_lesion() {
-    // nouman
+    // Working
     $('#Cetacean_code').removeAttr('onchange');
     var isSetaceanSelected = $("#Cetacean_code option:selected").val();
     if (isSetaceanSelected != "") {
@@ -1266,6 +1267,7 @@ function getSingleLesion_Record(Lesion_ID) {
 
 
 $("#Cetacean_code").change(function () {
+    console.log('testingwe');
     var cetaceanCode = $(this).val(); // Get selected Cetacean Code
     var cetaceanText = $("#Cetacean_code option:selected").text(); // Get selected Cetacean Name | Code text
     var sightingId = $("#getsight_ID").val(); // Get the Sighting ID
@@ -1277,6 +1279,7 @@ $("#Cetacean_code").change(function () {
     //     $("#condition_lesions_form_1").html("<h2 style='text-align:center;color:red'>Please select a Cetacean Name/Code</h2>");
     // }
     $("#condition_lesions_form_1").html("<h2 style='text-align:center;color:red'>Please select a Cetacean Name/Code</h2>");
+    getlesionsListHistory();
 });
 
 
@@ -1332,7 +1335,7 @@ function getlesionsListHistory() {
     if (cl_cs_code != "") {
         $.ajax({
             type: "post",
-            data: { cl_cs_Id: cl_cs_code, Sightningid: $("#getsight_ID").val(), surveyNumber: $("#project_idd").val() ? $("#project_idd").val() : "", SDR: sdrChecked},
+            data: { cl_cs_Id: cl_cs_code, cl_cs_code: cl_cs_code, Sightningid: $("#getsight_ID").val(), surveyNumber: $("#project_idd").val() ? $("#project_idd").val() : "", SDR: '1'},
             url: application_root + "ConditionLesions.cfc?method=getlesionsListHistory",
             success: function (res) {
                 console.log('getlesionsListHistory:' + res);
