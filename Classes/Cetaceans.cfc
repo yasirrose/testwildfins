@@ -793,9 +793,9 @@
 
             <!--- <cfdump var="#form#" abort="true"> --->
        
-            <cfquery name="qgetCetacena_intID" datasource="#variables.dsn#">
+            <!--- <cfquery name="qgetCetacena_intID" datasource="#variables.dsn#">
                 select * from cetaceans where code = '#cetacean_Code#'
-            </cfquery>
+            </cfquery> --->
    
             <!--- <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
                 select Survey_Sightings.SightingNumber                
@@ -823,7 +823,37 @@
             </cfquery> --->
             
             <cfquery name="qgetCetacean_Lesions" datasource="#variables.dsn#">
-                SELECT  
+
+                <!--- OLD RECORDS (Before 2026) – NO DUPLICATION --->
+                SELECT
+                    SS.SightingNumber,
+                    SS.ID AS sightid,
+                    S.date AS DateSeen,
+                    CL.LesionType,
+                    CL.Region,
+                    CL.Side_L_R,
+                    CL.Status,
+                    CL.ID AS id,
+                    CL.ID AS lesion_id,
+                    CL.PhotoNumber,
+                    CL.TypeName,
+                    CL.EnterDate,
+                    CL.SightingText,
+                    CL.PermanentScar_date,
+                    S.ID AS surveyid,
+                    CL.Comments
+                FROM Condition_Lesions CL
+                INNER JOIN Survey_Sightings SS ON SS.ID = CL.Sighting_ID
+                INNER JOIN Surveys S ON S.ID = SS.Project_ID
+                WHERE CL.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cetacean_Code#">
+                AND CL.EnterDate < <cfqueryparam cfsqltype="cf_sql_date" value="2025-01-01">
+                AND S.IsDeleted != 1
+                AND SS.IsDeleted != 1
+
+                UNION ALL
+
+                <!--- NEW RECORDS (2026 and after) – DUPLICATION APPLIES --->
+                SELECT
                     SS2.SightingNumber,
                     SS2.ID AS sightid,
                     S.date AS DateSeen,
@@ -831,7 +861,7 @@
                     CL.Region,
                     CL.Side_L_R,
                     CL.Status,
-                    CL.ID AS id,  <!--- add alias id for CF compatibility --->
+                    CL.ID AS id,
                     CL.ID AS lesion_id,
                     CL.PhotoNumber,
                     CL.TypeName,
@@ -847,20 +877,22 @@
                     ON SS1.ID = CS1.Sighting_ID
                 INNER JOIN Survey_Sightings SS2
                     ON SS2.ID = CS2.Sighting_ID
-                    AND SS1.Project_ID = SS2.Project_ID   <!--- ensure same survey --->
+                    AND SS1.Project_ID = SS2.Project_ID
                 INNER JOIN Condition_Lesions CL
                     ON CL.Sighting_ID = CS1.Sighting_ID
                 INNER JOIN Surveys S
                     ON S.ID = SS2.Project_ID
-                WHERE CS1.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qgetCetacena_intID.id#">
+                WHERE CS1.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#CETACEANID#">
                 AND CL.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cetacean_Code#">
-                AND S.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#selected_survery_id#">
-                AND CS2.Sighting_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#Sighting_ID#">
+                AND CL.EnterDate >= <cfqueryparam cfsqltype="cf_sql_date" value="2025-01-01">
                 AND S.IsDeleted != 1
                 AND SS1.IsDeleted != 1
                 AND SS2.IsDeleted != 1
-                ORDER BY S.date, SS2.id DESC;
+
+                ORDER BY DateSeen DESC
+
             </cfquery>
+
 
 
         
