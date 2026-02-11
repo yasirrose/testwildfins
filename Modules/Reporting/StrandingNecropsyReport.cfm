@@ -464,7 +464,285 @@
             ">
         
         </cfif>
+
+        <cfset necropsyCordiovasculorColumnList = "">
+        <cfset necropsyCordiovasculorColumnList_Other = "">
+
+        <cfif structKeyExists(form, "necropsyCordiovasculor") AND form.necropsyCordiovasculor eq "1">
+
+            <cfset necropsyCordiovasculorColumnList = "
+                , CAST(CARDIOVASCULAR AS NVARCHAR(1024)) AS CARDIOVASCULAR
+                , CAST(Chambers AS NVARCHAR(1024)) AS Chambers
+                , CAST(cardio_describe AS NVARCHAR(1024)) AS cardio_describe
+                , CAST(Pericardial_Fluid AS NVARCHAR(1024)) AS Pericardial_Fluid                               
+                , CAST(Overall_Findings AS NVARCHAR(1024)) AS Overall_Findings                               
+                , CAST(cardio_comments AS NVARCHAR(1024)) AS cardio_comments                               
+                
+            ">
         
+            <cfset necropsyCordiovasculorColumnList_Other = "
+                , NULL AS CARDIOVASCULAR
+                , NULL AS Chambers
+                , NULL AS cardio_describe
+                , NULL AS Pericardial_Fluid
+                , NULL AS Overall_Findings
+                , NULL AS cardio_comments
+                
+            ">
+        
+        </cfif>
+
+        <cfset necnopsyPulmonaryColumnList = "">
+        <cfset necnopsyPulmonaryColumnList_Other = "">
+
+        <cfif structKeyExists(form, "necnopsyPulmonary") AND form.necnopsyPulmonary eq "1">
+
+            <cfset necnopsyPulmonaryColumnList = "
+                , CAST(PULMONARY AS NVARCHAR(1024)) AS PULMONARY
+                , CAST(Froth_in_Airway AS NVARCHAR(1024)) AS Froth_in_Airway
+                , CAST(If_Present AS NVARCHAR(1024)) AS If_Present
+                , CAST(Foam_Amount AS NVARCHAR(1024)) AS Foam_Amount                               
+                , CAST(Color_of_Foam AS NVARCHAR(1024)) AS Color_of_Foam                               
+                , CAST(Sand_Sediment AS NVARCHAR(1024)) AS Sand_Sediment
+                , CAST(Trachea_Bronchi AS NVARCHAR(1024)) AS Trachea_Bronchi                               
+                , CAST(Lungs_Findings AS NVARCHAR(1024)) AS Lungs_Findings                               
+                , CAST(Lungs_Float AS NVARCHAR(1024)) AS Lungs_Float                               
+                , CAST(pulmonary_comments AS NVARCHAR(1024)) AS pulmonary_comments                               
+                
+            ">
+        
+            <cfset necnopsyPulmonaryColumnList_Other = "
+                , NULL AS PULMONARY
+                , NULL AS Froth_in_Airway
+                , NULL AS If_Present
+                , NULL AS Foam_Amount
+                , NULL AS Color_of_Foam
+                , NULL AS Sand_Sediment
+                , NULL AS Trachea_Bronchi
+                , NULL AS Lungs_Findings
+                , NULL AS Lungs_Float
+                , NULL AS pulmonary_comments
+                
+            ">
+        
+        </cfif>
+        
+
+        <cfset neenpsylymphoreticulorColumnList = "">
+        <cfset neenpsylymphoreticulorColumnList_Other = "">
+
+        <cfif structKeyExists(form, "neenpsylymphoreticulor") AND form.neenpsylymphoreticulor eq "1">
+
+            <cfset neenpsylymphoreticulorColumnList = "
+                , CAST(ST_CetaceanNecropsyReport.LYMPHORETICULAR AS NVARCHAR(1024)) AS LYMPHORETICULAR
+                , CAST(ST_CetaceanNecropsyReport.Spleen AS NVARCHAR(1024)) AS Spleen
+                , CAST(ST_CetaceanNecropsyReport.Spleen_Findings AS NVARCHAR(1024)) AS Spleen_Findings
+                , CAST(ST_CetaceanNecropsyReport.lympho_other AS NVARCHAR(1024)) AS lympho_other                               
+                , CAST(ST_DynamicLymphoreticular.lymphnode AS NVARCHAR(1024)) AS lymphnode                               
+                , CAST(ST_DynamicLymphoreticular.nodelength AS NVARCHAR(1024)) AS nodelength
+                , CAST(ST_DynamicLymphoreticular.nodewidth AS NVARCHAR(1024)) AS nodewidth                               
+                , CAST(ST_CetaceanNecropsyReport.lympho_comments AS NVARCHAR(1024)) AS lympho_comments                
+            ">
+        
+            <cfset neenpsylymphoreticulorColumnList_Other = "
+                , NULL AS LYMPHORETICULAR
+                , NULL AS Spleen
+                , NULL AS Spleen_Findings
+                , NULL AS lympho_other
+                , NULL AS lymphnode
+                , NULL AS nodelength
+                , NULL AS nodewidth
+                , NULL AS lympho_comments
+                
+            ">
+        
+        </cfif>
+
+        <cfset necropsyEndocnineColumnList = "">
+        <cfset necropsyEndocnineColumnList_Other = "">
+
+        <cfif structKeyExists(form, "necropsyEndocrine") AND form.necropsyEndocrine eq "1">
+
+            <cfset necropsyEndocnineColumnList = "
+                , CAST(ENDOCRINE AS NVARCHAR(1024)) AS ENDOCRINE
+                , CAST(Adrenal_Glands AS NVARCHAR(1024)) AS Adrenal_Glands
+                , CAST(adrenal_leftLength AS NVARCHAR(1024)) AS adrenal_leftLength
+                , CAST(adrenal_rightLength AS NVARCHAR(1024)) AS adrenal_rightLength                               
+                , CAST(adrenal_leftwidth AS NVARCHAR(1024)) AS adrenal_leftwidth                               
+                , CAST(adrenal_rightwidth AS NVARCHAR(1024)) AS adrenal_rightwidth
+                , CAST(Thyroid AS NVARCHAR(1024)) AS Thyroid                               
+                , CAST(thyroid_length AS NVARCHAR(1024)) AS thyroid_length                               
+                , CAST(thyroid_width AS NVARCHAR(1024)) AS thyroid_width                               
+                , CAST(Pituitary_Gland AS NVARCHAR(1024)) AS Pituitary_Gland                               
+                , CAST(Pituitary_length AS NVARCHAR(1024)) AS Pituitary_length                               
+                , CAST(Pituitary_width AS NVARCHAR(1024)) AS Pituitary_width                               
+                , CAST(endocrine_comments AS NVARCHAR(1024)) AS endocrine_comments                               
+                
+            ">
+        
+            <cfset necropsyEndocnineColumnList_Other = "
+                , NULL AS ENDOCRINE
+                , NULL AS Adrenal_Glands
+                , NULL AS adrenal_leftLength
+                , NULL AS adrenal_rightLength
+                , NULL AS adrenal_leftwidth
+                , NULL AS adrenal_rightwidth
+                , NULL AS Thyroid
+                , NULL AS thyroid_length
+                , NULL AS thyroid_width
+                , NULL AS Pituitary_Gland
+                , NULL AS Pituitary_length
+                , NULL AS Pituitary_width
+                , NULL AS endocrine_comments
+                
+            ">
+        
+        </cfif>
+
+        <cfset neonpsyCentraeNenvusSysemColumnList = "">
+        <cfset neonpsyCentraeNenvusSysemColumnList_Other = "">
+
+        <cfif structKeyExists(form, "neonpsyCentraeNenvusSysem") AND form.neonpsyCentraeNenvusSysem eq "1">
+
+            <cfset neonpsyCentraeNenvusSysemColumnList = "
+                , CAST(CENTRALbrain AS NVARCHAR(1024)) AS CENTRALbrain
+                , CAST(CENTRALBrainFindings AS NVARCHAR(1024)) AS CENTRALBrainFindings
+                , CAST(brainother AS NVARCHAR(1024)) AS brainother
+                , CAST(CENTRALSpinalCord AS NVARCHAR(1024)) AS CENTRALSpinalCord                               
+                , CAST(CENTRALSpinalCordfinding AS NVARCHAR(1024)) AS CENTRALSpinalCordfinding                               
+                , CAST(spinalother AS NVARCHAR(1024)) AS spinalother
+                , CAST(nervoussystemcomments  AS NVARCHAR(1024)) AS nervoussystemcomments                
+            ">
+        
+            <cfset neonpsyCentraeNenvusSysemColumnList_Other = "
+                , NULL AS CENTRALbrain
+                , NULL AS CENTRALBrainFindings
+                , NULL AS brainother
+                , NULL AS CENTRALSpinalCord
+                , NULL AS CENTRALSpinalCordfinding
+                , NULL AS spinalother
+                , NULL AS nervoussystemcomments
+                
+            ">
+        
+        </cfif>
+
+        <cfset necropsyUrogenitalColumnList = "">
+        <cfset necropsyUrogenitalColumnList_Other = "">
+        <cfif structKeyExists(form, "necropsyUrogenital") AND form.necropsyUrogenital eq "1">
+
+            <cfset necropsyUrogenitalColumnList = "
+                , CAST(UROGENITAL AS NVARCHAR(1024)) AS UROGENITAL
+                , CAST(Kidney_left AS NVARCHAR(1024)) AS Kidney_left
+                , CAST(Kidney_right AS NVARCHAR(1024)) AS Kidney_right
+                , CAST(Urinary_Bladder AS NVARCHAR(1024)) AS Urinary_Bladder                               
+                , CAST(urin_volume AS NVARCHAR(1024)) AS urin_volume                               
+                , CAST(UROGENITAL_color AS NVARCHAR(1024)) AS UROGENITAL_color
+                , CAST(Consistancy  AS NVARCHAR(1024)) AS Consistancy                
+                , CAST(Abnormalities  AS NVARCHAR(1024)) AS Abnormalities                
+                , CAST(Abnormalities_describe  AS NVARCHAR(1024)) AS Abnormalities_describe                
+                , CAST(Reproductive_Organs  AS NVARCHAR(1024)) AS Reproductive_Organs                
+                , CAST(Identified_As  AS NVARCHAR(1024)) AS Identified_As                
+                , CAST(Lesions  AS NVARCHAR(1024)) AS Lesions                
+                , CAST(Gonads_Identified  AS NVARCHAR(1024)) AS Gonads_Identified                
+                , CAST(Testes_Length_LEFT  AS NVARCHAR(1024)) AS Testes_Length_LEFT                
+                , CAST(Testes_Length_width  AS NVARCHAR(1024)) AS Testes_Length_width                
+                , CAST(Glands_LEFT  AS NVARCHAR(1024)) AS Glands_LEFT                
+                , CAST(Testes_Length_right  AS NVARCHAR(1024)) AS Testes_Length_right                
+                , CAST(Testes_width_right  AS NVARCHAR(1024)) AS Testes_width_right                
+                , CAST(Glands_RIGHT  AS NVARCHAR(1024)) AS Glands_RIGHT                
+                , CAST(Ovary_Length_LEFT  AS NVARCHAR(1024)) AS Ovary_Length_LEFT                
+                , CAST(Ovary_Width_LEFT  AS NVARCHAR(1024)) AS Ovary_Width_LEFT                
+                , CAST(Follicles_Present_Left  AS NVARCHAR(1024)) AS Follicles_Present_Left                
+                , CAST(Ovary_Length_right  AS NVARCHAR(1024)) AS Ovary_Length_right                
+                , CAST(Ovary_width_right  AS NVARCHAR(1024)) AS Ovary_width_right                
+                , CAST(Follicles_Present_right  AS NVARCHAR(1024)) AS Follicles_Present_right                
+                , CAST(UROGENITAL_Comments  AS NVARCHAR(1024)) AS UROGENITAL_Comments    
+            ">
+        
+            <cfset necropsyUrogenitalColumnList_Other = "
+                , NULL AS UROGENITAL
+                , NULL AS Kidney_left
+                , NULL AS Kidney_right
+                , NULL AS Urinary_Bladder
+                , NULL AS urin_volume
+                , NULL AS UROGENITAL_color
+                , NULL AS Consistancy
+                , NULL AS Abnormalities
+                , NULL AS Abnormalities_describe
+                , NULL AS Reproductive_Organs
+                , NULL AS Identified_As
+                , NULL AS Lesions
+                , NULL AS Gonads_Identified
+                , NULL AS Testes_Length_LEFT
+                , NULL AS Testes_Length_width
+                , NULL AS Glands_LEFT
+                , NULL AS Testes_Length_right
+                , NULL AS Testes_width_right
+                , NULL AS Glands_RIGHT
+                , NULL AS Ovary_Length_LEFT
+                , NULL AS Ovary_Width_LEFT
+                , NULL AS Follicles_Present_Left
+                , NULL AS Ovary_Length_right
+                , NULL AS Ovary_width_right
+                , NULL AS Follicles_Present_right
+                , NULL AS UROGENITAL_Comments
+            ">
+        
+        </cfif>
+        
+        <cfset necropsyAlimentaryColumnList = "">
+        <cfset necropsyAlimentaryColumnList_Other = "">
+        <cfif structKeyExists(form, "necropsyAlimentary") AND form.necropsyAlimentary eq "1">
+
+            <cfset necropsyAlimentaryColumnList = "
+                , CAST(ALIMENTARYSYSTEM AS NVARCHAR(1024)) AS ALIMENTARYSYSTEM
+                , CAST(Esophagus AS NVARCHAR(1024)) AS Esophagus
+                , CAST(Forestomach AS NVARCHAR(1024)) AS Forestomach                               
+                , CAST(glandularStomach AS NVARCHAR(1024)) AS glandularStomach                               
+                , CAST(Pylorus AS NVARCHAR(1024)) AS Pylorus                               
+                , CAST(smallIntestine AS NVARCHAR(1024)) AS smallIntestine                               
+                , CAST(Colon AS NVARCHAR(1024)) AS Colon                                   
+                , CAST(AlimentarySystemComments AS NVARCHAR(1024)) AS AlimentarySystemComments                               
+                
+            ">
+        
+            <cfset necropsyAlimentaryColumnList_Other = "
+                , NULL AS ALIMENTARYSYSTEM
+                , NULL AS Esophagus
+                , NULL AS Forestomach
+                , NULL AS glandularStomach
+                , NULL AS Pylorus
+                , NULL AS smallIntestine
+                , NULL AS Colon
+                , NULL AS AlimentarySystemComments
+                
+            ">
+        </cfif>
+
+        <cfset G1ForeignMaterialColumnList = "">
+        <cfset G1ForeignMaterialColumnList_Other = "">
+        <cfif structKeyExists(form, "G1ForeignMaterial") AND form.G1ForeignMaterial eq "1">
+
+            <cfset G1ForeignMaterialColumnList = "
+                , CAST(GIForeignMaterialType AS NVARCHAR(1024)) AS GIForeignMaterialType
+                , CAST(MaterialLesionLocation AS NVARCHAR(1024)) AS MaterialLesionLocation
+                , CAST(MaterialCollected AS NVARCHAR(1024)) AS MaterialCollected                               
+                , CAST(DispositionofMaterialCollected AS NVARCHAR(1024)) AS DispositionofMaterialCollected                               
+                , CAST(Parasitecomments AS NVARCHAR(1024)) AS Parasitecomments                               
+                                         
+                
+            ">
+        
+            <cfset G1ForeignMaterialColumnList_Other = "
+                , NULL AS GIForeignMaterialType
+                , NULL AS MaterialLesionLocation
+                , NULL AS MaterialCollected
+                , NULL AS DispositionofMaterialCollected
+                , NULL AS Parasitecomments
+                
+            ">
+        </cfif>
 
 
         <cftry>
@@ -529,7 +807,7 @@
        
         <!--- <cfdump var="#BodyOfWaterList#" abort="true"> --->
         <cfquery datasource="#variables.dsn#" name="allCountt" result="r">
-            SELECT 'Cetacean Exam' AS SourceTable, ST_LiveCetaceanExam.ID AS cetacenID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_CE# #drugColumnList_CE# #biopsyColumnList_CE# #PhysicalColumnList_CE# #entangledRelbateColumnList_CE# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other#
+            SELECT 'Cetacean Exam' AS SourceTable, ST_LiveCetaceanExam.ID AS cetacenID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_CE# #drugColumnList_CE# #biopsyColumnList_CE# #PhysicalColumnList_CE# #entangledRelbateColumnList_CE# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other# #necropsyCordiovasculorColumnList_Other# #necnopsyPulmonaryColumnList_Other# #necropsyEndocnineColumnList_Other# #neonpsyCentraeNenvusSysemColumnList_Other# #neenpsylymphoreticulorColumnList_Other# #necropsyUrogenitalColumnList_Other# #necropsyAlimentaryColumnList_Other# #G1ForeignMaterialColumnList_Other#
             FROM ST_LiveCetaceanExam
             <!--- Conditionally join ST_Lesion if LesionTypeList is provided --->
             <cfif isdefined("LesionTypeList") AND LesionTypeList NEQ "">
@@ -596,7 +874,7 @@
         
             UNION ALL
         
-            SELECT 'HI Form' AS SourceTable, ST_HIForm.ID AS HI_ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_CE# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other#
+            SELECT 'HI Form' AS SourceTable, ST_HIForm.ID AS HI_ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_CE# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other# #necropsyCordiovasculorColumnList_Other# #necnopsyPulmonaryColumnList_Other# #necropsyEndocnineColumnList_Other# #neonpsyCentraeNenvusSysemColumnList_Other# #neenpsylymphoreticulorColumnList_Other# #necropsyUrogenitalColumnList_Other# #necropsyAlimentaryColumnList_Other# #G1ForeignMaterialColumnList_Other#
             FROM ST_HIForm
             <cfif structKeyExists(form, "hIForm") AND form.hIForm eq "1">
                 LEFT JOIN ST_DynamicHI 
@@ -638,7 +916,7 @@
         
             UNION ALL
         
-            SELECT 'Level A Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_CE# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other#
+            SELECT 'Level A Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_CE# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other# #necropsyCordiovasculorColumnList_Other# #necnopsyPulmonaryColumnList_Other# #necropsyEndocnineColumnList_Other# #neonpsyCentraeNenvusSysemColumnList_Other# #neenpsylymphoreticulorColumnList_Other# #necropsyUrogenitalColumnList_Other# #necropsyAlimentaryColumnList_Other# #G1ForeignMaterialColumnList_Other#
             FROM ST_LevelAForm
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
@@ -676,7 +954,7 @@
         
             UNION ALL
         
-            SELECT 'Histo Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_CE# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other#
+            SELECT 'Histo Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_CE# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other# #necropsyCordiovasculorColumnList_Other# #necnopsyPulmonaryColumnList_Other# #necropsyEndocnineColumnList_Other# #neonpsyCentraeNenvusSysemColumnList_Other# #neenpsylymphoreticulorColumnList_Other# #necropsyUrogenitalColumnList_Other# #necropsyAlimentaryColumnList_Other# #G1ForeignMaterialColumnList_Other#
             FROM ST_HistoForm
             <cfif isdefined("SampleTypeList") AND SampleTypeList NEQ "">
                 LEFT JOIN ST_HistoSampleData 
@@ -718,7 +996,7 @@
         
             UNION ALL
         
-            SELECT 'Blood Values' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other#
+            SELECT 'Blood Values' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other# #necropsyCordiovasculorColumnList_Other# #necnopsyPulmonaryColumnList_Other# #necropsyEndocnineColumnList_Other# #neonpsyCentraeNenvusSysemColumnList_Other# #neenpsylymphoreticulorColumnList_Other# #necropsyUrogenitalColumnList_Other# #necropsyAlimentaryColumnList_Other# #G1ForeignMaterialColumnList_Other#
             FROM ST_Blood_Values
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
@@ -755,7 +1033,7 @@
          
         
             UNION ALL
-            SELECT 'Toxicology' AS SourceTable, ST_Toxicology.ID AS toxicologyID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other#
+            SELECT 'Toxicology' AS SourceTable, ST_Toxicology.ID AS toxicologyID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other# #necropsyCordiovasculorColumnList_Other# #necnopsyPulmonaryColumnList_Other# #necropsyEndocnineColumnList_Other# #neonpsyCentraeNenvusSysemColumnList_Other# #neenpsylymphoreticulorColumnList_Other# #necropsyUrogenitalColumnList_Other# #necropsyAlimentaryColumnList_Other# #G1ForeignMaterialColumnList_Other#
             FROM ST_Toxicology
             <cfif isdefined("DiagnosticTestList") AND DiagnosticTestList NEQ "">
                 LEFT JOIN ST_Ancillary_Report 
@@ -803,7 +1081,7 @@
         
             UNION ALL
         
-            SELECT 'Ancillary Diagnostics' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other#
+            SELECT 'Ancillary Diagnostics' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other# #necropsyCordiovasculorColumnList_Other# #necnopsyPulmonaryColumnList_Other# #necropsyEndocnineColumnList_Other# #neonpsyCentraeNenvusSysemColumnList_Other# #neenpsylymphoreticulorColumnList_Other# #necropsyUrogenitalColumnList_Other# #necropsyAlimentaryColumnList_Other# #G1ForeignMaterialColumnList_Other#
             FROM ST_Ancillary_Diagnostics 
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
@@ -841,7 +1119,7 @@
         
             UNION ALL
          
-            SELECT 'Sample Archive' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other#
+            SELECT 'Sample Archive' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other# #necropsyCordiovasculorColumnList_Other# #necnopsyPulmonaryColumnList_Other# #necropsyEndocnineColumnList_Other# #neonpsyCentraeNenvusSysemColumnList_Other# #neenpsylymphoreticulorColumnList_Other# #necropsyUrogenitalColumnList_Other# #necropsyAlimentaryColumnList_Other# #G1ForeignMaterialColumnList_Other#
             FROM ST_SampleArchive
             <cfif isdefined("SampleTypeList") AND SampleTypeList NEQ "">
                 LEFT JOIN ST_SampleType 
@@ -883,7 +1161,7 @@
         
             UNION ALL
         
-            SELECT 'Morphometrics' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_CE# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other#
+            SELECT 'Morphometrics' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_CE# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other# #necropsyCordiovasculorColumnList_Other# #necnopsyPulmonaryColumnList_Other# #necropsyEndocnineColumnList_Other# #neonpsyCentraeNenvusSysemColumnList_Other# #neenpsylymphoreticulorColumnList_Other# #necropsyUrogenitalColumnList_Other# #necropsyAlimentaryColumnList_Other# #G1ForeignMaterialColumnList_Other#
             FROM ST_Morphometrics
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
@@ -920,12 +1198,16 @@
             
         
             UNION ALL
-            SELECT 'Cetacean Necropsy Report' AS SourceTable, ST_CetaceanNecropsyReport.ID AS nID, ST_CetaceanNecropsyReport.Fnumber as Nfnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_CE# #histopathologySectionColumnList# #externalExamSectionColumnList# #necnpsyIntegumentColumnList# #necropsyMusculoskeletalColumnList# #necmopsyThoracicCavityColumnList# #nutntionalConditonExternasColumnList# #neenpsyAbdaminalCavityColumnList# #necropsyHepatobilianyColumnList#
+            SELECT 'Cetacean Necropsy Report' AS SourceTable, ST_CetaceanNecropsyReport.ID AS nID, ST_CetaceanNecropsyReport.Fnumber as Nfnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_CE# #histopathologySectionColumnList# #externalExamSectionColumnList# #necnpsyIntegumentColumnList# #necropsyMusculoskeletalColumnList# #necmopsyThoracicCavityColumnList# #nutntionalConditonExternasColumnList# #neenpsyAbdaminalCavityColumnList# #necropsyHepatobilianyColumnList# #necropsyCordiovasculorColumnList# #necnopsyPulmonaryColumnList# #necropsyEndocnineColumnList# #neonpsyCentraeNenvusSysemColumnList# #neenpsylymphoreticulorColumnList# #necropsyUrogenitalColumnList# #necropsyAlimentaryColumnList# #G1ForeignMaterialColumnList#
             FROM ST_CetaceanNecropsyReport
             <!--- Conditionally join ParasiteTypeList if LesionTypeList is provided --->
             <cfif isdefined("ParasiteTypeList") AND ParasiteTypeList NEQ "">
                 LEFT JOIN ST_DynamicParasites 
                 ON ST_CetaceanNecropsyReport.fnumber = ST_DynamicParasites.fnumber
+            </cfif>
+            <cfif isdefined("neenpsylymphoreticulor") AND neenpsylymphoreticulor NEQ "">
+                LEFT JOIN ST_DynamicLymphoreticular 
+                ON ST_CetaceanNecropsyReport.fnumber = ST_DynamicLymphoreticular.fnumber
             </cfif>
 
             WHERE 1=1
@@ -1061,6 +1343,9 @@
     <cfset qgetIR_CountyLocation=Application.StaticDataNew.getIR_CountyLocation()>
     <cfset getLesionTypeData = Application.StaticDataNew.getLesionType()>
     <cfset bodyConditions = ['Emaciated','Underweight/Thin','Ideal','Overweight','Obese']>
+
+    <cfset Kidneys_Findings= ['No Findings','Trauma','Enlarged','Masses','Parasites','Other']>
+    <cfset Alimentary_SystemArray=['Ulcers/exudate','Trauma','Masses','Impaction','Obstruction','lntussusception','Parasites']>
     <!---end today working --->
 
     <div id="content" class="content">
@@ -1134,7 +1419,7 @@
                                     <label class="col-lg-4 col-md-4 col-sm-12 control-label">Diagnostic Test</label>
                                     <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                         <select class="form-control search-box" multiple="multiple" id="DiagnosticTest" name="DiagnosticTest">
-                                            <option value="">Select Diagnostic Test</option>
+                                            <!--- <option value="">Select Diagnostic Test</option> --->
                                             <cfloop query="qgetDiagnosticTest">
                                                 <option value="#qgetDiagnosticTest.Diagnostic#">#qgetDiagnosticTest.Diagnostic#</option>
                                             </cfloop>
@@ -1148,7 +1433,7 @@
                                         <label class="col-lg-4 col-md-4 col-sm-12 control-label"> Initial Condition</label>
                                         <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                             <select class="form-control search-box"  multiple="multiple" name="InitialCondition" id="InitialCondition" onChange="headerDataSave()">
-                                                <option value="">Select Initial Condition</option>
+                                                <!--- <option value="">Select Initial Condition</option> --->
                                                 <cfloop array="#Conditions#" index="j" item="item">
                                                     <cfset optionValue = ConditionsValue[j] & '-' & item>
                                                     <option value="#item#">
@@ -1164,7 +1449,7 @@
                                         <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                             <select class="form-control search-box" multiple="multiple" name="ParasiteType" id="ParasiteType" >
                                                 <cfloop query="qgetParasiteType">
-                                                    <option value="">Select IParasite Type</option>
+                                                    <!--- <option value="">Select IParasite Type</option> --->
                                                     <cfif status eq 1>
                                                         <option value="#qgetParasiteType.type#">#qgetParasiteType.type#</option>
                                                     </cfif>
@@ -1179,7 +1464,7 @@
                                         <label class="col-lg-4 col-md-4 col-sm-12 control-label"> Final Condition</label>
                                         <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                             <select class="form-control search-box"  multiple="multiple" name="finalCondition" id="finalCondition" onChange="headerDataSave()">
-                                                <option value="">Select Final Condition</option>
+                                                <!--- <option value="">Select Final Condition</option> --->
                                                 <cfloop array="#Conditions#" index="j" item="item">
                                                     <cfset optionValue = ConditionsValue[j] & '-' & item>
                                                     <option value="#item#">
@@ -1194,7 +1479,7 @@
                                         <label class="col-lg-4 col-md-4 col-sm-12 control-label">Sample Type (Sample Archive)</label>
                                         <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                             <select class="form-control search-box" multiple name="" id="SampleType" name="SampleType">
-                                                <option value="">Select Sample</option>
+                                                <!--- <option value="">Select Sample</option> --->
                                                 <cfloop query="qgetSampleType">
                                                     <cfif status  neq 0>
                                                         <option value="#qgetSampleType.Type#">#qgetSampleType.Type#</option>
@@ -1209,7 +1494,7 @@
                                         <label class="col-lg-4 col-md-4 col-sm-12 control-label">County</label>
                                         <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                             <select class="form-control search-box"  multiple="multiple" name="county" id="county" >
-                                                <option value="">Select County</option>
+                                                <!--- <option value="">Select County</option> --->
                                                 <cfloop query="qgetIR_CountyLocation">
                                                     <cfif active  neq 0>
                                                         <option value="#qgetIR_CountyLocation.IR_CountyLocation#">#qgetIR_CountyLocation.IR_CountyLocation#</option>
@@ -1223,7 +1508,7 @@
                                         <label class="col-lg-4 col-md-4 col-sm-12 control-label">Sample Type (Histopathology)</label>
                                         <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                             <select class="form-control search-box" multiple name="hisSampleType" id="hisSampleType">
-                                                <option value="">Select Sample</option>
+                                                <!--- <option value="">Select Sample</option> --->
                                                 <cfloop query="qgetSampleType">
                                                     <cfif status  neq 0>
                                                         <option value="#qgetSampleType.Type#">#qgetSampleType.Type#</option>
@@ -1238,7 +1523,7 @@
                                         <label class="col-lg-4 col-md-4 col-sm-12 control-label">Body Conditions</label>
                                         <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                             <select class="form-control customLesionSelect search-box" multiple id="BodyCondition" name="BodyCondition">
-                                                <option value="">Select Body Condition</option>
+                                                <!--- <option value="">Select Body Condition</option> --->
                                                 <cfloop from="1" to="#ArrayLen(bodyConditions)#" index="j">
                                                     <option value="#j#">#j&' - '&bodyConditions[j]#</option>
                                                 </cfloop>
@@ -1263,7 +1548,7 @@
                                         <label class="col-lg-4 col-md-4 col-sm-12 control-label">Lesion Type</label>
                                         <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                             <select class="form-control customLesionSelect search-box" multiple id="LesionType" name="LesionType" >
-                                                <option value="">Select Lesion Type</option>
+                                                <!--- <option value="">Select Lesion Type</option> --->
                                                 <cfloop query="getLesionTypeData">
                                                     <cfif Active eq 1>
                                                     <option value="#getLesionTypeData.LesionTypeName#">#getLesionTypeData.LesionTypeName#</option>
@@ -1421,7 +1706,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Necnpsy (Integument)</label>
+                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Necropsy (Integument)</label>
                                     <div class="form-group">
                                         <div class="label-checkbox">
                                             <input type="checkbox" class="checkbox-inline " name="necnpsyIntegument" id="necnpsyIntegument" value="1" style="width: 25px; height: 25px;">
@@ -1481,17 +1766,17 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label"> Necnopsy (Pulmonary)</label>
+                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label"> Necropsy (Pulmonary)</label>
                                     <div class="form-group">
                                         <div class="label-checkbox">
-                                            <input type="checkbox" class="checkbox-inline " name="necnopsyPulmonary" id="necnopsyPulmonary" value="1" style="width: 25px; height: 25px;">
+                                            <input type="checkbox" class="checkbox-inline " name="necnopsyPulmonary" id="necnopsyPulmonary" <cfif isDefined('form.necnopsyPulmonary') and form.necnopsyPulmonary eq "1">checked="checked"</cfif> value="1" style="width: 25px; height: 25px;">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Neenpsy (lymphoreticulor)*</label>
+                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Necropsy (lymphoreticular)*</label>
                                     <div class="form-group">
                                         <div class="label-checkbox">
                                             <input type="checkbox" class="checkbox-inline " name="neenpsylymphoreticulor" id="neenpsylymphoreticulor" value="1" style="width: 25px; height: 25px;" >
@@ -1499,45 +1784,44 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Necropsy (Endocnine)</label>
+                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Necropsy (Endocrine)</label>
                                     <div class="form-group">
                                         <div class="label-checkbox">
-                                            <input type="checkbox" class="checkbox-inline " name="necropsyEndocnine" id="necropsyEndocnine" value="1" style="width: 25px; height: 25px;">
+                                            <input type="checkbox" class="checkbox-inline " name="necropsyEndocrine" id="necropsyEndocrine" <cfif isDefined('form.necropsyEndocrine') and form.necropsyEndocrine eq "1">checked="checked"</cfif> value="1" style="width: 25px; height: 25px;">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label"> Neeropsy (Urog nital)</label>
+                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label"> Necropsy (Urogenital)</label> 
                                     <div class="form-group">
                                         <div class="label-checkbox">
-                                            <input type="checkbox" class="checkbox-inline " name="neeropsyUrognital" id="neeropsyUrognital" value="1" style="width: 25px; height: 25px;">
+                                            <input type="checkbox" class="checkbox-inline " name="necropsyUrogenital" id="necropsyUrogenital" value="1" style="width: 25px; height: 25px;">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Neempsy (Aumentany)</label>
+                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Necropsy (Alimentary)</label>
                                     <div class="form-group">
                                         <div class="label-checkbox">
-                                            <input type="checkbox" class="checkbox-inline " name="neempsyAumentany" id="neempsyAumentany" value="1" style="width: 25px; height: 25px;" >
+                                            <input type="checkbox" class="checkbox-inline " name="necropsyAlimentary" id="necropsyAlimentary" value="1" style="width: 25px; height: 25px;" >
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Neempsy (G1 Furcign Matina)</label>
+                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Necropsy (GI Foreign Material)</label>
                                     <div class="form-group">
                                         <div class="label-checkbox">
-                                            <input type="checkbox" class="checkbox-inline " name="neempsyG1FurcignMatina" id="neempsyG1FurcignMatina" value="1" style="width: 25px; height: 25px;">
+                                            <input type="checkbox" class="checkbox-inline " name="G1ForeignMaterial" id="G1ForeignMaterial" value="1" style="width: 25px; height: 25px;">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
-                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Neonpsy (Centrae Nenvus
-                                        Sysem)</label>
+                                    <label class="col-lg-6 col-md-8 col-sm-8 col-xs-8 control-label">Necropsy (CENTRAL NERVOUS SYSTEM)</label>
                                     <div class="form-group">
                                         <div class="label-checkbox">
-                                            <input type="checkbox" class="checkbox-inline " name="neonpsyCentraeNenvusSysem" id="neonpsyCentraeNenvusSysem" value="1" style="width: 25px; height: 25px;">
+                                            <input type="checkbox" class="checkbox-inline " name="neonpsyCentraeNenvusSysem" id="neonpsyCentraeNenvusSysem" <cfif isDefined('form.neonpsyCentraeNenvusSysem') and form.neonpsyCentraeNenvusSysem eq "1">checked="checked"</cfif> value="1" style="width: 25px; height: 25px;">
                                         </div>
                                     </div>
                                 </div>
@@ -1705,7 +1989,107 @@
                                     <th>Biliary Findings</th>
                                     <th>Comments</th>
                                 </cfif>
-                                
+                                 <cfif structKeyExists(form, "necropsyCordiovasculor") AND form.necropsyCordiovasculor eq "1">
+                                    <th>CARDIOVASCULAR SYSTEM</th>
+                                    <th>Blood in Heart Chambers</th>
+                                    <th>Describe</th>
+                                    <th>Pericardial Fluid</th>
+                                    <th>Overall Findings</th>
+                                    <th>Comments</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "necnopsyPulmonary") AND form.necnopsyPulmonary eq "1">
+                                    <th>PULMONARY SYSTEM</th>
+                                    <th>Foam - Froth in Airway</th>
+                                    <th>If Present</th>
+                                    <th>Foam Amount</th>
+                                    <th>Color of Foam</th>
+                                    <th>Sand/Sediment in Airway</th>
+                                    <th>Trachea/Bronchi</th>
+                                    <th>Lungs Findings</th>
+                                    <th>Lungs Float in Formalin</th>
+                                    <th>Comments</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "neenpsylymphoreticulor") AND form.neenpsylymphoreticulor eq "1">
+                                    <th>LYMPHORETICULAR SYSTEM</th>
+                                    <th>Spleen</th>
+                                    <th>Spleen Finding</th>
+                                    <th>Other</th>
+                                    <th>Lymph Node Present</th>
+                                    <th>Size Length</th>
+                                    <th>Width</th>
+                                    <th>Comments</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "necropsyEndocrine") AND form.necropsyEndocrine eq "1">
+                                    <th>ENDOCRINE SYSTEM</th>
+                                    <th>Adrenal Glands</th>
+                                    <th>Left Length</th>
+                                    <th>Width</th>
+                                    <th>Right Length</th>
+                                    <th>Width</th>
+                                    <th>Thyroid</th>
+                                    <th>Length</th>
+                                    <th>Width</th>
+                                    <th>Pituitary Gland</th>
+                                    <th>Length</th>
+                                    <th>Width</th>
+                                    <th>Comments</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "neonpsyCentraeNenvusSysem") AND form.neonpsyCentraeNenvusSysem eq "1">
+                                    <th>Brain</th>
+                                    <th>Brain Findings</th>                                    
+                                    <th>Other</th>
+                                    <th>Spinal Cord</th>
+                                    <th>Spinal Cord Findings</th>
+                                    <th>Other</th>
+                                    <th>Comments</th>
+                                </cfif>
+
+                                <cfif structKeyExists(form, "necropsyUrogenital") AND form.necropsyUrogenital eq "1">
+                                    <th>Urogenital</th>
+                                    <th>Kidney Left</th>
+                                    <th>Kidney Right</th>
+                                    <th>Urinary Bladder</th>
+                                    <th>Urine Volume</th>
+                                    <th>Urogenital Color</th>
+                                    <th>Consistency</th>
+                                    <th>Abnormalities</th>
+                                    <th>Abnormalities Describe</th>
+                                    <th>Reproductive Organs</th>
+                                    <th>Identified As</th>
+                                    <th>Lesions</th>
+                                    <th>Gonads Identified</th>
+                                    <th>Testes Length LEFT</th>
+                                    <th>Testes Length Width</th>
+                                    <th>Glands LEFT</th>
+                                    <th>Testes Length Right</th>
+                                    <th>Testes Width Right</th>
+                                    <th>Glands RIGHT</th>
+                                    <th>Ovary Length LEFT</th>
+                                    <th>Ovary Width LEFT</th>
+                                    <th>Follicles Present Left</th>
+                                    <th>Ovary Length Right</th>
+                                    <th>Ovary Width Right</th>
+                                    <th>Follicles Present Right</th>
+                                    <th>Urogenital Comments</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "necropsyAlimentary") AND form.necropsyAlimentary eq "1">
+                                    <th>Alimentary System</th>
+                                    <th>Esophagus</th>
+                                    <th>Forestomach</th>
+                                    <th>Glandular Stomach</th>
+                                    <th>Pylorus</th>
+                                    <th>Small Intestine</th>
+                                    <th>Colon</th>
+                                    <th>Alimentary Comments</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "G1ForeignMaterial") AND form.G1ForeignMaterial eq "1">
+                                    <th>GI Foreign Material Type</th>
+                                    <th>Material Lesion Location</th>
+                                    <th>Material Collected</th>
+                                    <th>Disposition of Material Collected</th>
+                                    <th>ParasiteComments</th>
+                                </cfif>
+                                                
                                 
                             </tr>
                         </thead>
@@ -1866,7 +2250,206 @@
                                         <td>#Biliary_Findings#</td>                                        
                                         <td>#hepatobiliary_comments#</td>
                                     </cfif>
-                                    
+                                     <cfif structKeyExists(form, "necropsyCordiovasculor") AND form.necropsyCordiovasculor eq "1">
+                                        <td>#CARDIOVASCULAR#</td>
+                                        <td>#Chambers#</td>
+                                        <td>#cardio_describe#</td>
+                                        <td>#Pericardial_Fluid#</td>
+                                        <td>#Overall_Findings#</td>                                        
+                                        <td>#cardio_comments#</td>
+                                    </cfif>
+                                    <cfif structKeyExists(form, "necnopsyPulmonary") AND form.necnopsyPulmonary eq "1">
+                                        <td>#PULMONARY#</td>
+                                        <td>#Froth_in_Airway#</td>
+                                        <td>#If_Present#</td>
+                                        <td>#Foam_Amount#</td>
+                                        <td>#Color_of_Foam#</td>                                        
+                                        <td>#Sand_Sediment#</td>
+                                        <td>#Trachea_Bronchi#</td>
+                                        <td>
+                                            <cfquery name="getLungsName" datasource="#variables.dsn#">
+                                                SELECT * FROM TLU_LungFinding
+                                                WHERE id IN (
+                                                    <cfqueryparam value="#Lungs_Findings#" list="true" cfsqltype="cf_sql_integer">
+                                                )
+                                            </cfquery>
+                                            <cfloop query="getLungsName">
+                                                #finding#<cfif getLungsName.currentRow neq getLungsName.recordCount>, </cfif>
+                                            </cfloop>
+                                            <!--- #Lungs_Findings# --->
+                                        </td>
+                                        <td>#Lungs_Float#</td>
+                                        <td>#pulmonary_comments#</td>
+                                    </cfif>
+                                    <cfif structKeyExists(form, "neenpsylymphoreticulor") AND form.neenpsylymphoreticulor eq "1">
+                                        <td>#LYMPHORETICULAR#</td>
+                                        <td>#Spleen#</td>
+                                        <td>#Spleen_Findings#</td>
+                                        <td>#lympho_other#</td>
+                                        <td>#lymphnode#</td>                                        
+                                        <td>#nodelength#</td>
+                                        <td>#nodewidth#</td>
+                                        <td>#lympho_comments#</td>
+                                    </cfif>
+
+                                    <cfif structKeyExists(form, "necropsyEndocrine") AND form.necropsyEndocrine eq "1">
+                                        <td>#ENDOCRINE#</td>
+                                        <td>#Adrenal_Glands#</td>
+                                        <td>#adrenal_leftLength#</td>
+                                        <td>#adrenal_leftwidth#</td>
+                                        <td>#adrenal_rightLength#</td>                                        
+                                        <td>#adrenal_rightwidth#</td>
+                                        <td>#Thyroid#</td>
+                                        <td>#thyroid_length#</td>
+                                        <td>#thyroid_width#</td>
+                                        <td>#Pituitary_Gland#</td>
+                                        <td>#Pituitary_length#</td>
+                                        <td>#Pituitary_width#</td>
+                                        <td>#endocrine_comments#</td>
+                                    </cfif>
+                                    <cfif structKeyExists(form, "neonpsyCentraeNenvusSysem") AND form.neonpsyCentraeNenvusSysem eq "1">
+                                        <td>#CENTRALbrain#</td>
+                                        <td>#CENTRALBrainFindings#</td>
+                                        <td>#brainother#</td>
+                                        <td>#CENTRALSpinalCord#</td>
+                                        <td>#CENTRALSpinalCordfinding#</td>                                        
+                                        <td>#spinalother#</td>
+                                        <td>#nervoussystemcomments#</td>
+                                    </cfif>
+
+                                      <cfif structKeyExists(form, "necropsyUrogenital") AND form.necropsyUrogenital eq "1">
+                                        <td>#UROGENITAL#</td>
+                                        <td>
+                                            <cfif Len(Trim(Kidney_left)) AND ListFind(ArrayToList(Kidneys_Findings,','), Kidney_left) GT 0>
+                                                #HTMLEditFormat(Kidney_left)#
+                                            <cfelse>
+                                                &nbsp;
+                                            </cfif>
+                                        </td>
+                                        <!--- <td>#Kidney_left#</td> --->
+                                        <td>
+                                            <cfif Len(Trim(Kidney_right)) AND ListFind(ArrayToList(Kidneys_Findings,','), Kidney_right) GT 0>
+                                                #HTMLEditFormat(Kidney_right)#
+                                            <cfelse>
+                                                &nbsp;
+                                            </cfif>
+                                        </td>
+                                        <!--- <td>#Kidney_right#</td> --->
+                                        <td>#Urinary_Bladder#</td>
+                                        <td>#urin_volume#</td>
+                                        <td>#UROGENITAL_color#</td>
+                                        <td>#Consistancy#</td>
+                                        <td>#Abnormalities#</td>
+                                        <td>#Abnormalities_describe#</td>
+                                        <td>#Reproductive_Organs#</td>
+                                        <td>#Identified_As#</td>
+                                        <td>#Lesions#</td>
+                                        <td>#Gonads_Identified#</td>
+                                        <td>#Testes_Length_LEFT#</td>
+                                        <td>#Testes_Length_width#</td>
+                                        <td>#Glands_LEFT#</td>
+                                        <td>#Testes_Length_right#</td>
+                                        <td>#Testes_width_right#</td>
+                                        <td>#Glands_RIGHT#</td>
+                                        <td>#Ovary_Length_LEFT#</td>
+                                        <td>#Ovary_Width_LEFT#</td>
+                                        <td>#Follicles_Present_Left#</td>
+                                        <td>#Ovary_Length_right#</td>
+                                        <td>#Ovary_width_right#</td>
+                                        <td>#Follicles_Present_right#</td>
+                                        <td>#UROGENITAL_Comments#</td>
+                                  </cfif>
+                                        <cfif structKeyExists(form, "necropsyAlimentary") AND form.necropsyAlimentary eq "1">
+                                            <td>#ALIMENTARYSYSTEM#</td>
+                                            <!--- <td>#Esophagus#</td> --->
+                                            <td>
+                                                <cfset matchedEsophagus = "">
+                                                <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
+                                                    <cfif Len(Trim(Esophagus)) AND ListFind(Esophagus, Alimentary_SystemArray[j])>
+                                                        <cfif Len(Trim(matchedEsophagus))>
+                                                            <cfset matchedEsophagus = matchedEsophagus & ", " & Alimentary_SystemArray[j]>
+                                                        <cfelse>
+                                                            <cfset matchedEsophagus = Alimentary_SystemArray[j]>
+                                                        </cfif>
+                                                    </cfif>
+                                                </cfloop>
+                                                <cfif Len(Trim(matchedEsophagus))>#HTMLEditFormat(matchedEsophagus)#<cfelse>&nbsp;</cfif>
+                                            </td>
+                                            <td>
+                                                <cfset matchedForestomach = "">
+                                                <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
+                                                    <cfif Len(Trim(Forestomach)) AND ListFind(Forestomach, Alimentary_SystemArray[j])>
+                                                        <cfif Len(Trim(matchedForestomach))>
+                                                            <cfset matchedForestomach = matchedForestomach & ", " & Alimentary_SystemArray[j]>
+                                                        <cfelse>
+                                                            <cfset matchedForestomach = Alimentary_SystemArray[j]>
+                                                        </cfif>
+                                                    </cfif>
+                                                </cfloop>
+                                                <cfif Len(Trim(matchedForestomach))>#HTMLEditFormat(matchedForestomach)#<cfelse>&nbsp;</cfif>
+                                            </td>
+                                            <td>
+                                                <cfset matchedGlandular = "">
+                                                <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
+                                                    <cfif Len(Trim(glandularStomach)) AND ListFind(glandularStomach, Alimentary_SystemArray[j])>
+                                                        <cfif Len(Trim(matchedGlandular))>
+                                                            <cfset matchedGlandular = matchedGlandular & ", " & Alimentary_SystemArray[j]>
+                                                        <cfelse>
+                                                            <cfset matchedGlandular = Alimentary_SystemArray[j]>
+                                                        </cfif>
+                                                    </cfif>
+                                                </cfloop>
+                                                <cfif Len(Trim(matchedGlandular))>#HTMLEditFormat(matchedGlandular)#<cfelse>&nbsp;</cfif>
+                                            </td>
+                                            <td>
+                                                <cfset matchedPylorus = "">
+                                                <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
+                                                    <cfif Len(Trim(Pylorus)) AND ListFind(Pylorus, Alimentary_SystemArray[j])>
+                                                        <cfif Len(Trim(matchedPylorus))>
+                                                            <cfset matchedPylorus = matchedPylorus & ", " & Alimentary_SystemArray[j]>
+                                                        <cfelse>
+                                                            <cfset matchedPylorus = Alimentary_SystemArray[j]>
+                                                        </cfif>
+                                                    </cfif>
+                                                </cfloop>
+                                                <cfif Len(Trim(matchedPylorus))>#HTMLEditFormat(matchedPylorus)#<cfelse>&nbsp;</cfif>
+                                            </td>
+                                            <td>
+                                                <cfset matchedSmallIntestine = "">
+                                                <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
+                                                    <cfif Len(Trim(smallIntestine)) AND ListFind(smallIntestine, Alimentary_SystemArray[j])>
+                                                        <cfif Len(Trim(matchedSmallIntestine))>
+                                                            <cfset matchedSmallIntestine = matchedSmallIntestine & ", " & Alimentary_SystemArray[j]>
+                                                        <cfelse>
+                                                            <cfset matchedSmallIntestine = Alimentary_SystemArray[j]>
+                                                        </cfif>
+                                                    </cfif>
+                                                </cfloop>
+                                                <cfif Len(Trim(matchedSmallIntestine))>#HTMLEditFormat(matchedSmallIntestine)#<cfelse>&nbsp;</cfif>
+                                            </td>
+                                            <td>
+                                                <cfset matchedColon = "">
+                                                <cfloop from="1" to="#ArrayLen(Alimentary_SystemArray)#" index="j">
+                                                    <cfif Len(Trim(Colon)) AND ListFind(Colon, Alimentary_SystemArray[j])>
+                                                        <cfif Len(Trim(matchedColon))>
+                                                            <cfset matchedColon = matchedColon & ", " & Alimentary_SystemArray[j]>
+                                                        <cfelse>
+                                                            <cfset matchedColon = Alimentary_SystemArray[j]>
+                                                        </cfif>
+                                                    </cfif>
+                                                </cfloop>
+                                                <cfif Len(Trim(matchedColon))>#HTMLEditFormat(matchedColon)#<cfelse>&nbsp;</cfif>
+                                            </td>
+                                            <td>#AlimentarySystemComments#</td>
+                                        </cfif>
+                                        <cfif structKeyExists(form, "G1ForeignMaterial") AND form.G1ForeignMaterial eq "1">
+                                            <td>#GIForeignMaterialType#</td>
+                                            <td>#MaterialLesionLocation#</td>
+                                            <td>#MaterialCollected#</td>
+                                            <td>#DispositionofMaterialCollected#</td>
+                                            <td>#Parasitecomments#</td>
+                                        </cfif>
+                                
                                     
                                     
                                 </tr>
