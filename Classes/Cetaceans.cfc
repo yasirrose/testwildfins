@@ -884,6 +884,7 @@
                     ON S.ID = SS2.Project_ID
                 WHERE CS1.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#CETACEANID#">
                 AND CL.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cetacean_Code#">
+                AND CL.EnterDate >= <cfqueryparam cfsqltype="cf_sql_date" value="2025-01-01">
                 AND S.IsDeleted != 1
                 AND SS1.IsDeleted != 1
                 AND SS2.IsDeleted != 1
