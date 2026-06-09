@@ -74,6 +74,7 @@ $(document).ready(function() {
           // Revalidate the date field
           var name=$(this).attr('name');
           $("#necropsyDateID").formValidation('revalidateField', name);
+          headerDataSave();
       });
       $('#collection_date_picker').datetimepicker({ format: 'MM/DD/YYYY' }).on('dp.change', function(e) {
           // Revalidate the date field
@@ -5832,6 +5833,7 @@ function headerDataSave(){
 
     species = $('#species').val();
     StTpye = $('#StTpye').val();
+    necropsyDateID = $("#necropsyDateID").val();
     NOAAStock1 = $('#stock_value').val();
     if(NOAAStock1){
       NOAAStock = NOAAStock1.toString();
@@ -5857,10 +5859,10 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxLiveCetaceanExamUpdate",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile, ID:ID},
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile, ID:ID},
       success: function(data) {
         // console.log(data);
-        $('#qLCEDataID').val(data);
+        setAutoSaveId('#qLCEDataID', data);
        
       }
     });
@@ -5868,11 +5870,13 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxLiveCetaceanExamInsert",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
       success: function(data) {
         // console.log(data);
-        $('#qLCEDataID').val(data);
-        $('#LCEID').append(new Option('Select Code', data));
+        var savedId = setAutoSaveId('#qLCEDataID', data);
+        if (savedId) {
+          $('#LCEID').append(new Option('Select Code', savedId));
+        }
         // $("#LCEID").select2().select2('val', data);
       }
     });
@@ -5884,9 +5888,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxHIFormUpdate",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, HIForm_ID:HIForm_ID,headerImages:headerImagesFile},
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, HIForm_ID:HIForm_ID,headerImages:headerImagesFile},
       success: function(data) {
-        $('#HIForm_ID').val(data);
+        setAutoSaveId('#HIForm_ID', data);
       }
     });
   }else{
@@ -5894,9 +5898,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxHIFormInsert",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
       success: function(data) {
-        $('#HIForm_ID').val(data);
+        setAutoSaveId('#HIForm_ID', data);
       }
     });
   }
@@ -5909,9 +5913,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxLevelAFormUpdate",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, level_A_ID:level_A_ID,headerImages:headerImagesFile},
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, level_A_ID:level_A_ID,headerImages:headerImagesFile},
       success: function(data) {
-        $('#level_A_ID').val(data);
+        setAutoSaveId('#level_A_ID', data);
       }
     });
   }else{
@@ -5919,9 +5923,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxLevelAFormInsert",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
       success: function(data) {
-        $('#level_A_ID').val(data);
+        setAutoSaveId('#level_A_ID', data);
       }
     });
   }
@@ -5934,9 +5938,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxHistopathologyUpdate",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, Histo_ID:Histo_ID,headerImages:headerImagesFile},
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, Histo_ID:Histo_ID,headerImages:headerImagesFile},
       success: function(data) {
-        $('#Histo_ID').val(data);
+        setAutoSaveId('#Histo_ID', data);
       }
     });
   }else{
@@ -5944,9 +5948,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxHistopathologyInsert",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
       success: function(data) {
-        $('#Histo_ID').val(data);
+        setAutoSaveId('#Histo_ID', data);
       }
     });
   }
@@ -5957,9 +5961,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxbloodValueUpdate",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, bloodValues_ID:bloodValues_ID,headerImages:headerImagesFile},
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, bloodValues_ID:bloodValues_ID,headerImages:headerImagesFile},
       success: function(data) {
-        $('#bloodValues_ID').val(data);
+        setAutoSaveId('#bloodValues_ID', data);
       }
     });
   }else{
@@ -5967,9 +5971,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxbloodValueInsert",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
       success: function(data) {
-        $('#bloodValues_ID').val(data);
+        setAutoSaveId('#bloodValues_ID', data);
       }
       
     });    
@@ -5982,9 +5986,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxToxicologyUpdate",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, TX_IDValue:TX_IDValue,headerImages:headerImagesFile},
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, TX_IDValue:TX_IDValue,headerImages:headerImagesFile},
       success: function(data) {
-        $('#TX_IDValue').val(data);
+        setAutoSaveId('#TX_IDValue', data);
       }
     });
   }else{
@@ -5992,9 +5996,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxToxicologyInsert",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
       success: function(data) {
-        $('#TX_IDValue').val(data);
+        setAutoSaveId('#TX_IDValue', data);
       }
     });
   }
@@ -6005,9 +6009,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxAncillaryUpdate",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, ADID:ADID,headerImages:headerImagesFile},
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, ADID:ADID,headerImages:headerImagesFile},
       success: function(data) {
-        $('#ADID').val(data);
+        setAutoSaveId('#ADID', data);
       }
     });
   }else{
@@ -6015,9 +6019,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxAncillaryInsert",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
       success: function(data) {
-        $('#ADID').val(data);
+        setAutoSaveId('#ADID', data);
       }
     });
   }
@@ -6028,9 +6032,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxSampleArchiveUpdate",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, SampleArchiveSEID:SampleArchiveSEID,headerImages:headerImagesFile},
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, SampleArchiveSEID:SampleArchiveSEID,headerImages:headerImagesFile},
       success: function(data) {
-        $('#SampleArchiveSEID').val(data);
+        setAutoSaveId('#SampleArchiveSEID', data);
       }
     });
   }else{
@@ -6038,9 +6042,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxSampleArchiveInsert",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
       success: function(data) {
-        $('#SampleArchiveSEID').val(data);
+        setAutoSaveId('#SampleArchiveSEID', data);
       }
     });
   }
@@ -6051,9 +6055,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxNecropsyReportUpdate",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, repotrt_ID:repotrt_ID,headerImages:headerImagesFile},
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, repotrt_ID:repotrt_ID,headerImages:headerImagesFile},
       success: function(data) {
-        $('#repotrt_ID').val(data);
+        setAutoSaveId('#repotrt_ID', data);
       }
     });
   }else{
@@ -6061,9 +6065,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxNecropsyReportInsert",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
       success: function(data) {
-        $('#repotrt_ID').val(data);
+        setAutoSaveId('#repotrt_ID', data);
       }
     });
   }
@@ -6074,9 +6078,9 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxMorphometricsUpdate",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, Morphometricss_ID:Morphometricss_ID,headerImages:headerImagesFile},
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock, Morphometricss_ID:Morphometricss_ID,headerImages:headerImagesFile},
       success: function(data) {
-        $('#Morphometricss_ID').val(data);
+        setAutoSaveId('#Morphometricss_ID', data);
       }
     });
   }else{
@@ -6084,15 +6088,26 @@ if(autoSaveValue == "CetaceanExam"){
     $.ajax({
       url: application_root + "Stranding.cfc?method=AjaxMorphometricsInsert",
       type: "POST",
-      data: {Fnumber:Fnumber, date:date, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
+      data: {Fnumber:Fnumber, date:date, necropsyDateID:necropsyDateID, StandingAgreementAuthority: StandingAgreementAuthority, NDB: NDB, NMFS: NMFS, code: code, affiliatedID:affiliatedID, hera:hera, sex:sex, ageClass:ageClass, actualClass:actualClass, InitialCondition:InitialCondition, FinalCondition:FinalCondition, Location:Location, county:county, lat:lat, lon:lon, BriefHistory:BriefHistory, species:species, StTpye:StTpye, ResearchTeam:ResearchTeam, Veterinarian:Veterinarian, BodyOfWater:BodyOfWater, NOAAStock:NOAAStock,headerImages:headerImagesFile },
       success: function(data) {
-        $('#Morphometricss_ID').val(data);
+        setAutoSaveId('#Morphometricss_ID', data);
       }
     });
   }
 }
 
 }
+}
+
+function setAutoSaveId(selector, data) {
+  var savedId = $.trim(String(data));
+
+  if (/^\d+$/.test(savedId)) {
+    $(selector).val(savedId);
+    return savedId;
+  }
+
+  return "";
 }
 function ResetAll(){
   $('#removeSession').val('removeS');

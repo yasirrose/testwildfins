@@ -4426,58 +4426,68 @@
 
     <cffunction name="gettoxifNumber" returntype="any" output="false" access="public">
         <cfquery name="qgettoxifNumber" datasource="#Application.dsn#">
-            SELECT Fnumber, MIN(ID) AS ID
-            FROM (
-                SELECT Fnumber, ID
+            WITH all_fnumbers AS (
+                SELECT Fnumber, ID, 1 AS priority
                 FROM ST_Toxicology
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 2
                 FROM ST_LiveCetaceanExam
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 3
                 FROM ST_HIForm
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 4
                 FROM ST_LevelAForm
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 5
                 FROM ST_HistoForm
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 6
                 FROM ST_Blood_Values
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 7
                 FROM ST_Ancillary_Diagnostics
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 8
                 FROM ST_SampleArchive
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 9
                 FROM ST_CetaceanNecropsyReport
                 WHERE deleted IS NULL
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 10
                 FROM ST_Morphometrics
                 WHERE deleted IS NULL
-            ) AS AllForms
-            GROUP BY Fnumber
+            )
+            SELECT Fnumber, ID
+            FROM (
+                SELECT
+                    Fnumber,
+                    ID,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY Fnumber
+                        ORDER BY priority
+                    ) AS rn
+                FROM all_fnumbers
+            ) t
+            WHERE rn = 1
             ORDER BY Fnumber ASC
         </cfquery>
     
@@ -7210,58 +7220,68 @@
 
     <cffunction name="getAncillaryBNumber" returntype="any" output="false" access="public">
         <cfquery name="qgetHistoFBNumber" datasource="#Application.dsn#">
-            SELECT Fnumber, MIN(ID) AS ID
-            FROM (
-                SELECT Fnumber, ID
+            WITH all_fnumbers AS (
+                SELECT Fnumber, ID, 1 AS priority
                 FROM ST_Ancillary_Diagnostics
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 2
                 FROM ST_LiveCetaceanExam
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 3
                 FROM ST_HIForm
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 4
                 FROM ST_LevelAForm
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 5
                 FROM ST_HistoForm
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 6
                 FROM ST_Blood_Values
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 7
                 FROM ST_Toxicology
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 8
                 FROM ST_SampleArchive
                 WHERE deleted != '1'
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 9
                 FROM ST_CetaceanNecropsyReport
                 WHERE deleted IS NULL
     
                 UNION ALL
-                SELECT Fnumber, ID
+                SELECT Fnumber, ID, 10
                 FROM ST_Morphometrics
                 WHERE deleted IS NULL
-            ) AS AllForms
-            GROUP BY Fnumber
+            )
+            SELECT Fnumber, ID
+            FROM (
+                SELECT
+                    Fnumber,
+                    ID,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY Fnumber
+                        ORDER BY priority
+                    ) AS rn
+                FROM all_fnumbers
+            ) t
+            WHERE rn = 1
             ORDER BY Fnumber ASC
         </cfquery>
     
@@ -10646,6 +10666,34 @@
         <cfreturn qgetLCEID.ID>
     </cffunction>
 
+    <cffunction name="updateAjaxHeaderNecropsyDate" returntype="any" output="false" access="private">
+        <cfargument name="Fnumber" type="string" required="true">
+        <cfargument name="necropsyDateID" type="string" required="false" default="">
+
+        <cfif trim(arguments.Fnumber) eq "" OR trim(arguments.necropsyDateID) eq "">
+            <cfreturn false>
+        </cfif>
+
+        <cfquery name="qGetNecropsyRecord" datasource="#Application.dsn#">
+            SELECT TOP 1 ID
+            FROM ST_CetaceanNecropsyReport
+            WHERE Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.Fnumber#">
+            AND deleted IS NULL
+            ORDER BY ID DESC
+        </cfquery>
+
+        <cfif qGetNecropsyRecord.recordCount GT 0 AND isNumeric(qGetNecropsyRecord.ID)>
+            <cfquery datasource="#Application.dsn#">
+                UPDATE ST_CetaceanNecropsyReport
+                SET CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.necropsyDateID#">
+                WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#qGetNecropsyRecord.ID#">
+            </cfquery>
+            <cfreturn true>
+        </cfif>
+
+        <cfreturn false>
+    </cffunction>
+
 
     <!--- auto save --->
 
@@ -10739,11 +10787,17 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <cfset LCE_ID = "#return_data.generatedkey#">
         <cfreturn LCE_ID>
         <cfelse>
             <cfset ID = #qgetLCEID.ID#>
             <cfset LCE_ID = "#qgetLCEID.ID#">
+            <cfif isDefined('necropsyDateID')>
+                <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+            </cfif>
             <cfreturn LCE_ID>
             <!--- <cfset AjaxLiveCetaceanExamUpdate(argumentCollection="#ID#")> --->
     </cfif>
@@ -10796,6 +10850,9 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <!--- <cfset UpdateLevelA_HI(argumentCollection="#Form#")> --->
         <cfreturn ID>
     </cffunction>
@@ -10875,11 +10932,17 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <cfset LCE_ID = "#return_data.generatedkey#">
         <cfreturn LCE_ID>
     <cfelse>
         <cfset ID = #qgetLCEID.ID#>
         <cfset LCE_ID = "#qgetLCEID.ID#">
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <cfreturn LCE_ID>
         <!--- <cfset AjaxLiveCetaceanExamUpdate(argumentCollection="#ID#")> --->
 </cfif>
@@ -10930,6 +10993,9 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <!--- <cfset UpdateLevelA_HI(argumentCollection="#Form#")> --->
         <cfreturn HIForm_ID>
     </cffunction>
@@ -11010,11 +11076,17 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <cfset LCE_ID = "#return_data.generatedkey#">
         <cfreturn LCE_ID>
     <cfelse>
         <cfset ID = #qgetLCEID.ID#>
         <cfset LCE_ID = "#qgetLCEID.ID#">
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <cfreturn LCE_ID>
         <!--- <cfset AjaxLiveCetaceanExamUpdate(argumentCollection="#ID#")> --->
 </cfif>
@@ -11065,6 +11137,9 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <!--- <cfset UpdateLevelA_HI(argumentCollection="#Form#")> --->
         <cfreturn level_A_ID>
     </cffunction>
@@ -11197,6 +11272,9 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <!--- <cfset UpdateLevelA_HI(argumentCollection="#Form#")> --->
         <cfreturn Histo_ID>
     </cffunction>
@@ -11276,6 +11354,9 @@
                     <cfdump  var="#cfcatch#"><cfabort>
                 </cfcatch>
             </cftry>
+            <cfif isDefined('necropsyDateID')>
+                <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+            </cfif>
             <cfset LCE_ID = "#return_data.generatedkey#">
             <cfset form.LCE_ID = "0">
             <cfset form.BV_ID = "#LCE_ID#">
@@ -11291,6 +11372,9 @@
         <cfelse>
             <cfset ID = #qgetLCEID.ID#>
             <cfset LCE_ID = "#qgetLCEID.ID#">
+            <cfif isDefined('necropsyDateID')>
+                <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+            </cfif>
             <cfreturn LCE_ID>
         </cfif>
 
@@ -11450,6 +11534,9 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <!--- <cfset UpdateLevelA_HI(argumentCollection="#Form#")> --->
         <cfreturn bloodValues_ID>
     </cffunction>
@@ -11582,6 +11669,9 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
 
         <cfreturn TX_IDValue>
     </cffunction>
@@ -11663,11 +11753,17 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <cfset LCE_ID = "#return_data.generatedkey#">
         <cfreturn LCE_ID>
     <cfelse>
         <cfset ID = #qgetLCEID.ID#>
         <cfset LCE_ID = "#qgetLCEID.ID#">
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <cfreturn LCE_ID>
 </cfif>
     </cffunction>
@@ -11716,6 +11812,9 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
 
         <cfreturn ADID>
     </cffunction>
@@ -11798,11 +11897,17 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <cfset LCE_ID = "#return_data.generatedkey#">
         <cfreturn LCE_ID>
     <cfelse>
         <cfset ID = #qgetLCEID.ID#>
         <cfset LCE_ID = "#qgetLCEID.ID#">
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
         <cfreturn LCE_ID>
 </cfif>
     </cffunction>
@@ -11851,15 +11956,24 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
 
         <cfreturn SampleArchiveSEID>
     </cffunction>
 
 
     <cffunction name="AjaxNecropsyReportInsert" returntype="any" output="false" access="remote" returnformat="plain">
-  
+        <cfif NOT isDefined('necropsyDateID')>
+            <cfset necropsyDateID = "">
+        </cfif>
+
         <cfquery name="qgetLCEID" datasource="#Application.dsn#"  result="return_data" >
-            SELECT ID from ST_CetaceanNecropsyReport where deleted != '1' and Fnumber = '#Fnumber#' 
+            SELECT ID
+            FROM ST_CetaceanNecropsyReport
+            WHERE Fnumber = <cfqueryparam cfsqltype="cf_sql_varchar" value='#Fnumber#'>
+            AND deleted IS NULL
         </cfquery>
         <cfif isDefined('qgetLCEID.ID') and #qgetLCEID.ID# eq ''>
 
@@ -11895,6 +12009,7 @@
             ,lon
             ,actualClass
             ,BriefHistory       
+            ,CNRDATE
 
             ) 
             VALUES
@@ -11923,6 +12038,7 @@
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#lon#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#actualClass#'>
             ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#BriefHistory#'>
+            ,<cfqueryparam cfsqltype="cf_sql_varchar" value='#necropsyDateID#'>
        
             )
         </cfquery>
@@ -11940,11 +12056,9 @@
     </cffunction>
 
     <cffunction name="AjaxNecropsyReportUpdate" returntype="any" output="false" access="remote" returnformat="plain">
-        <cfquery name="qgetLCEID" datasource="#Application.dsn#"  result="return_data" >
-            SELECT ID from ST_CetaceanNecropsyReport where deleted != '1' and Fnumber = '#Fnumber#' 
-        </cfquery>
-
-        <cfif isDefined('qgetLCEID.ID') and #qgetLCEID.ID# eq ''>
+        <cfif NOT isDefined('necropsyDateID')>
+            <cfset necropsyDateID = "">
+        </cfif>
         <cfset userinfo=Application.SuperAdminApp.getUserinfo()>
         <cfset fname = userinfo.first_name>
         <cfset lname = userinfo.last_name>
@@ -11977,6 +12091,7 @@
            ,BriefHistory = <cfqueryparam cfsqltype="cf_sql_varchar" value='#BriefHistory#'>
            ,affiliatedID = <cfqueryparam cfsqltype="cf_sql_varchar" value='#affiliatedID#'>
            ,actualClass = <cfqueryparam cfsqltype="cf_sql_varchar" value='#actualClass#'>
+           ,CNRDATE = <cfqueryparam cfsqltype="cf_sql_varchar" value='#necropsyDateID#'>
 
            WHERE
            ID = <cfqueryparam cfsqltype="cf_sql_integer" value='#repotrt_ID#'>
@@ -11987,11 +12102,6 @@
         </cftry>
 
         <cfreturn repotrt_ID>
-    <cfelse>
-        <cfset ID = #qgetLCEID.ID#>
-        <cfset LCE_ID = "#qgetLCEID.ID#">
-        <cfreturn LCE_ID>
-    </cfif>
     </cffunction>
 
 
@@ -12124,6 +12234,9 @@
             <cfdump  var="#cfcatch#"><cfabort>
         </cfcatch>
         </cftry>
+        <cfif isDefined('necropsyDateID')>
+            <cfset updateAjaxHeaderNecropsyDate(Fnumber=Fnumber, necropsyDateID=necropsyDateID)>
+        </cfif>
 
         <cfreturn Morphometricss_ID>
     </cffunction>

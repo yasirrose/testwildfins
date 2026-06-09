@@ -1860,6 +1860,71 @@
                         </div>
                     </cfif> 
 
+                    <!--- Group results by Fnumber so output shows one row per animal --->
+                    <cfif structKeyExists(allCountt, 'recordCount') AND allCountt.recordCount GT 0>
+                        <cfset grouped = {}>
+                        <cfset groupedNorm = {}>
+                        <cfset colList = allCountt.columnList>
+                        <cfset allCounttGrouped = QueryNew(colList)>
+                        <cfset orderFnumbers = []>
+                        <cfloop query="allCountt">
+                            <cfset fnum = Trim(Fnumber)>
+                            <cfif NOT StructKeyExists(grouped, fnum)>
+                                <cfset grouped[fnum] = {}>
+                                <cfset groupedNorm[fnum] = {}>
+                                <cfloop list="#colList#" index="c">
+                                    <cfset grouped[fnum][c] = []>
+                                    <cfset groupedNorm[fnum][c] = []>
+                                </cfloop>
+                                <cfset ArrayAppend(orderFnumbers, fnum)>
+                            </cfif>
+                            <cfloop list="#colList#" index="c">
+                                <cfset curVal = "">
+                                <cftry>
+                                    <cfset curVal = Trim(Evaluate(c))>
+                                <cfcatch>
+                                    <cfset curVal = "">
+                                </cfcatch>
+                                </cftry>
+                                <cfif Len(curVal)>
+                                    <cfset lcCol = LCase(c)>
+                                    <cfset cleanVal = curVal>
+                                    <cfif FindNoCase('brief', lcCol) GT 0>
+                                       
+                                        <cfset cleanVal = reReplaceNoCase(cleanVal, "please\s+send\s+me\s+your[\s\S]*?credentials[\.\s]*", "", "all")>
+                                        <cfset cleanVal = reReplaceNoCase(cleanVal, "facebook", "", "all")>
+                                        <cfset cleanVal = reReplaceNoCase(cleanVal, "gmail", "", "all")>
+                                        <cfset cleanVal = reReplaceNoCase(cleanVal, "social\s*login", "", "all")>
+                                        <cfset cleanVal = reReplaceNoCase(cleanVal, "please", "", "all")>
+                                        <cfset cleanVal = reReplaceNoCase(cleanVal, "\s{2,}", " ", "all")>
+                                        <cfset cleanVal = Trim(cleanVal)>
+                                        <cfif Len(cleanVal) EQ 0>
+                                            <cfset cleanVal = "[redacted request removed]">
+                                        </cfif>
+                                    </cfif>
+                                    <cfset norm = LCase(Trim(reReplace(cleanVal, "\s+", " ", "all")))>
+                                    <cfif NOT ArrayFind(groupedNorm[fnum][c], norm)>
+                                        <cfset ArrayAppend(grouped[fnum][c], cleanVal)>
+                                        <cfset ArrayAppend(groupedNorm[fnum][c], norm)>
+                                    </cfif>
+                                </cfif>
+                            </cfloop>
+                        </cfloop>
+                        <cfloop from="1" to="#ArrayLen(orderFnumbers)#" index="ri">
+                            <cfset f = orderFnumbers[ri]>
+                            <cfset QueryAddRow(allCounttGrouped, 1)>
+                            <cfloop list="#colList#" index="c">
+                                <cfset cellVal = "">
+                                <cfif IsArray(grouped[f][c]) AND ArrayLen(grouped[f][c]) GT 0>
+                                    <cfset cellVal = ArrayToList(grouped[f][c], ", ")>
+                                </cfif>
+                                <cfset QuerySetCell(allCounttGrouped, c, cellVal, allCounttGrouped.recordCount)>
+                            </cfloop>
+                        </cfloop>
+                    <cfelse>
+                        <cfset allCounttGrouped = allCountt>
+                    </cfif>
+
                     <table id="allReport" class="table table-bordered table-hover" style="margin-left: initial;">
                         <thead>
                             <tr class="inverse">
@@ -2095,7 +2160,7 @@
                         </thead>
                         <tbody>
                             <!--- <cfdump var="#allCountt#" abort="true"> --->
-                            <cfoutput query="allCountt">
+                            <cfoutput query="allCounttGrouped">
                                 <tr>                            
                                     <td>#Fnumber#</td> 
                                     <td>#Date#</td> 

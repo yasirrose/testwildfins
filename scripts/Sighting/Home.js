@@ -135,6 +135,10 @@ $(document).ready(function() {
         placeholder: "Select a Cetacean Name/Codeeeee"
     });
 
+    $(document).on('input focusout', '.restricted-decimal', function () {
+        sanitizeRestrictedDecimalField(this);
+    });
+
 
 
     handleDateTimePicker = function () {
@@ -1745,6 +1749,35 @@ function validateMyForm(e){
     else{
         console.log('else');
         $('#ResetMe').submit();
+    }
+}
+
+function sanitizeRestrictedDecimalValue(value) {
+    if (value === undefined || value === null) {
+        return '';
+    }
+
+    value = value.toString().replace(/,/g, '');
+    value = value.replace(/[^0-9.]/g, '');
+
+    var firstDecimalIndex = value.indexOf('.');
+    if (firstDecimalIndex !== -1) {
+        var wholePart = value.substring(0, firstDecimalIndex + 1);
+        var decimalPart = value.substring(firstDecimalIndex + 1).replace(/\./g, '').substring(0, 2);
+        value = wholePart + decimalPart;
+    }
+
+    return value;
+}
+
+function sanitizeRestrictedDecimalField(elm) {
+    if (!elm) {
+        return;
+    }
+
+    var sanitizedValue = sanitizeRestrictedDecimalValue(elm.value);
+    if (elm.value !== sanitizedValue) {
+        elm.value = sanitizedValue;
     }
 }
 

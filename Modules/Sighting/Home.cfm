@@ -826,14 +826,14 @@
                     <div class="form-group">
                     <label class="col-lg-5 col-md-5 col-sm-12 control-label">At Depth</label>
                       <div class="input col-lg-5 col-md-9 col-sm-12 col-xs-12">
-                      <input type="text" value="#qGetSightings.HabitatDepth#" name="HabitatDepth" id="HabitatDepth" onblur="checkValue(this)"  class="form-control inputCustomReset" />
+                      <input type="text" value="#qGetSightings.HabitatDepth#" name="HabitatDepth" id="HabitatDepth" onblur="checkValue(this)" inputmode="decimal" class="form-control inputCustomReset restricted-decimal" />
                       </div>
                     </div>
 
                     <div class="form-group">
                       <label class="col-lg-5 col-md-5 col-sm-12 control-label">End Depth</label>
                         <div class="input col-lg-5 col-md-9 col-sm-12 col-xs-12">
-                        <input type="text" value="#qGetSightings.EndDepth#"  name="EndDepth" id="EndDepth" onblur="checkValue(this)"  class="form-control inputCustomReset" />
+                        <input type="text" value="#qGetSightings.EndDepth#"  name="EndDepth" id="EndDepth" onblur="checkValue(this)" inputmode="decimal" class="form-control inputCustomReset restricted-decimal" />
                         </div>
                       </div>
 
@@ -873,14 +873,14 @@
                     <div class="form-group">
                       <label class="col-lg-5 col-md-5 col-sm-12 control-label">Air Temp</label>
                       <div class="input col-lg-5 col-md-9 col-sm-12 col-xs-12">
-                        <input type="text" value="#qGetSightings.AirTemp#" id="AirTemp" name="AirTemp" onblur="checkValue(this)"  class="form-control inputCustomReset" />
+                        <input type="text" value="#qGetSightings.AirTemp#" id="AirTemp" name="AirTemp" onblur="checkValue(this)" inputmode="decimal" class="form-control inputCustomReset restricted-decimal" />
                         <!---<input type="number" value="<cfif qGetSightings.AirTemp neq "">#numberFormat(qGetSightings.AirTemp,'__.0')#</cfif>" name="AirTemp"  class="form-control inputCustomReset" />--->
                       </div>
                     </div>
                     <div class="form-group">
                       <label class="col-lg-5 col-md-5 col-sm-12 control-label">Water Temp</label>
                       <div class="input col-lg-5 col-md-9 col-sm-12 col-xs-12">
-                         <input type="text" value="#qGetSightings.WaterTemp#" name="WaterTemp" id="WaterTemp" onblur="checkValue(this)"  class="form-control inputCustomReset" /> 
+                         <input type="text" value="#qGetSightings.WaterTemp#" name="WaterTemp" id="WaterTemp" onblur="checkValue(this)" inputmode="decimal" class="form-control inputCustomReset restricted-decimal" /> 
                        <!--- <input type="number" value="<cfif qGetSightings.WaterTemp neq "">#numberFormat(qGetSightings.WaterTemp,'__.0')#</cfif>" name="WaterTemp"  class="form-control inputCustomReset" />--->
                       </div>
                     </div>
@@ -923,32 +923,32 @@
                     <div class="form-group">
                       <label class="col-lg-5 col-md-5 col-sm-12 control-label">Salinity</label>
                       <div class="input col-lg-7 col-md-9 col-sm-12 col-xs-12">
-                        <input type="text" value="#qGetSightings.Salinity#" name="Salinity" id="Salinity" onblur="checkValue(this)" class="form-control inputCustomReset" />
+                        <input type="text" value="#qGetSightings.Salinity#" name="Salinity" id="Salinity" onblur="checkValue(this)" inputmode="decimal" class="form-control inputCustomReset restricted-decimal" />
                       </div>
                     </div>
 
                     <div class="form-group">
                       <label class="col-lg-5 col-md-5 col-sm-12 control-label">pH</label>
                         <div class="input col-lg-7 col-md-9 col-sm-12 col-xs-12">
-                        <input type="text" value="#qGetSightings.pH#" name="pH" id="pH" onblur="checkValue(this)" class="form-control inputCustomReset" />
+                        <input type="text" value="#qGetSightings.pH#" name="pH" id="pH" onblur="checkValue(this)" inputmode="decimal" class="form-control inputCustomReset restricted-decimal" />
                       </div>
                     </div>
                     <div class="form-group">
                       <label class="col-lg-5 col-md-5 col-sm-12 control-label">DO (%)</label>
                       <div class="input col-lg-7 col-md-9 col-sm-12 col-xs-12">
-                        <input type="text" value="#qGetSightings.DO#" name="DO" id="DO" onblur="checkValue(this)" class="form-control inputCustomReset" />
+                        <input type="text" value="#qGetSightings.DO#" name="DO" id="DO" onblur="checkValue(this)" inputmode="decimal" class="form-control inputCustomReset restricted-decimal" />
                       </div>
                     </div>
                     <div class="form-group">
                       <label class="col-lg-5 col-md-5 col-sm-12 control-label">DO (mg/L)</label>
                       <div class="input col-lg-7 col-md-9 col-sm-12 col-xs-12">
-                        <input type="text" value="#qGetSightings.dissolvedOxygen#" name="dissolvedOxygen" id="dissolvedOxygen" onblur="checkValue(this)" class="form-control inputCustomReset" />
+                        <input type="text" value="#qGetSightings.dissolvedOxygen#" name="dissolvedOxygen" id="dissolvedOxygen" onblur="checkValue(this)" inputmode="decimal" class="form-control inputCustomReset restricted-decimal" />
                       </div>
                     </div>
                     <div class="form-group">
                       <label class="col-lg-5 col-md-5 col-sm-12 control-label">Conductivity</label>
                       <div class="input col-lg-7 col-md-9 col-sm-12 col-xs-12">
-                        <input type="text" value="#qGetSightings.Conductivity#" name="Conductivity" id="Conductivity" onblur="checkValue(this)"  class="form-control inputCustomReset" />
+                        <input type="text" value="#qGetSightings.Conductivity#" name="Conductivity" id="Conductivity" onblur="checkValue(this)" inputmode="decimal" class="form-control inputCustomReset restricted-decimal" />
                       </div>
                     </div>
 
@@ -1908,15 +1908,21 @@
   }
 
   function checkValue(elm){
-    value = elm.value;
-    num = value.match(/\./g).length;
-    for (let i = 0; i < num; i=i+10) {
+    if ($(elm).hasClass('restricted-decimal')) {
+      sanitizeRestrictedDecimalField(elm);
+      return;
+    }
+
+    var value = elm.value || "";
+    var periods = value.match(/\./g);
+    var num = periods ? periods.length : 0;
+    for (var i = 0; i < num; i = i + 10) {
           value = value.replace('.....','.');
           value = value.replace('....','.');
           value = value.replace('...','.');
           value = value.replace('..','.');
         }
-    ID = elm.id;
+    var ID = elm.id;
     $('#'+ID).val(value);
   
     }

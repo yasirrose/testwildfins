@@ -263,24 +263,36 @@
             ss.EndLongitude,
             ss.WaterTemp,
             ss.Comments,
-            w.[Desc] as Weather,
-            wh.[Desc] as WaveHeight,
-            g.[Desc] as Glare,
-            gd.[Desc] as GlareDirection,
-            st.[Desc] as Sightability,
-            bt.[Desc] as Beaufort,
+            ss.Weather,
+            -- w.[Desc] as Weather,
+            ss.WaveHeight,
+            ss.Glare,
+            ss.GlareDirection,
+            ss.Sightability,
+            ss.Beaufort,
+            -- wh.[Desc] as WaveHeight,
+            -- g.[Desc] as Glare,
+            -- gd.[Desc] as GlareDirection,
+            -- st.[Desc] as Sightability,
+            -- bt.[Desc] as Beaufort,
             ss.HabitatDepth,
+            ss.HabitatType,
 
-            ht.HabitatName,
+            -- ht.HabitatName,
 
             ss.AirTemp,
             ss.WindSpeed,
-            gdw.[Desc] as WindDirection,
-            td.TideName,
+            ss.WindDirection,
+            -- gdw.[Desc] as WindDirection,
+            -- td.TideName,
+            ss.Tide,
             ss.Salinity,
-            ih.HeadingName as InitialHeading,
-            gh.GHeadingName as GeneralHeading,
-            fh.FHeadingName as FinalHeading,
+            ss.InitialHeading,
+            ss.GeneralHeading,
+            ss.FinalHeading,
+            -- ih.HeadingName as InitialHeading,
+            -- gh.GHeadingName as GeneralHeading,            
+            -- fh.FHeadingName as FinalHeading,
             ss.AssocBio,
             FE_TotalCetaceans_Max,
             FE_TotalCetaceans_Min,
@@ -373,10 +385,15 @@
             TotalTimeDive3,
             TotalTimeDive4,
             TotalTimeDive5,
-            cm.Camera,
-            lns.Lens,
-            rtp.RT_MemberName as Photographer,
-            rtd.RT_MemberName as Driver,
+            ss.Camera,
+            ss.Lens,
+            ss.Photographer,
+            ss.Driver,
+            ss.HabitatType,
+            -- cm.Camera,
+            -- lns.Lens,
+            -- rtp.RT_MemberName as Photographer,
+            -- rtd.RT_MemberName as Driver,
             ss.EnteredBy as CompletedBy,
             cs.SDR,
             cs.BestSighting,
@@ -421,24 +438,26 @@
             LEFT JOIN Cetacean_Sightings cs ON ss.ID= cs.Sighting_ID
             LEFT JOIN Cetaceans c ON cs.Cetaceans_ID= c.ID
             LEFT JOIN TLU_CetaceanSpecies tlu ON tlu.ID= c.CetaceanSpecies
-            LEFT JOIN TLU_Camera cm ON cm.ID = ss.Camera
-            LEFT JOIN TLU_Lens lns ON lns.ID = ss.Lens
-            LEFT JOIN TLU_Weather w ON w.ID = ss.Weather
-            LEFT JOIN TLU_WaveHight wh ON wh.ID = ss.WaveHeight
-            LEFT JOIN TLU_Glare g ON g.ID = ss.Glare
-            LEFT JOIN TLU_GlareDirection gd ON gd.ID = ss.GlareDirection
-            LEFT JOIN TLU_Sightability st ON st.ID = ss.Sightability
-            LEFT JOIN TLU_Beaufort bt ON bt.ID = ss.Beaufort
 
-            LEFT JOIN TLU_Habitat ht ON ht.HabitatID = TRY_CAST(ss.HabitatType AS int)
 
-            LEFT JOIN TLU_GlareDirection gdw ON gdw.ID = ss.WindDirection
-            LEFT JOIN TLU_Tide td ON td.TideID = ss.Tide
-            LEFT JOIN TLU_Heading ih ON ih.ID = ss.InitialHeading
-            LEFT JOIN TLU_GeneralHeading gh ON gh.ID = ss.GeneralHeading
-            LEFT JOIN TLU_FinalHeading fh ON fh.ID = ss.FinalHeading
-            LEFT JOIN TLU_ResearchTeamMembers rtp ON rtp.RT_ID = ss.Photographer
-            LEFT JOIN TLU_ResearchTeamMembers rtd ON rtd.RT_ID = ss.Driver
+            -- LEFT JOIN TLU_Camera cm ON cm.ID = ss.Camera
+            -- LEFT JOIN TLU_Lens lns ON lns.ID = ss.Lens
+            -- LEFT JOIN TLU_Weather w ON w.ID = ss.Weather
+            -- LEFT JOIN TLU_WaveHight wh ON wh.ID = ss.WaveHeight
+            -- LEFT JOIN TLU_Glare g ON g.ID = ss.Glare
+            -- LEFT JOIN TLU_GlareDirection gd ON gd.ID = ss.GlareDirection
+            -- LEFT JOIN TLU_Sightability st ON st.ID = ss.Sightability
+            -- LEFT JOIN TLU_Beaufort bt ON bt.ID = ss.Beaufort
+
+            -- LEFT JOIN TLU_Habitat ht ON ht.HabitatID = TRY_CAST(ss.HabitatType AS int)
+
+            -- LEFT JOIN TLU_GlareDirection gdw ON gdw.ID = ss.WindDirection
+            -- LEFT JOIN TLU_Tide td ON td.TideID = ss.Tide
+            -- LEFT JOIN TLU_Heading ih ON ih.ID = ss.InitialHeading
+            -- LEFT JOIN TLU_GeneralHeading gh ON gh.ID = ss.GeneralHeading
+            -- LEFT JOIN TLU_FinalHeading fh ON fh.ID = ss.FinalHeading
+            -- LEFT JOIN TLU_ResearchTeamMembers rtp ON rtp.RT_ID = ss.Photographer
+            -- LEFT JOIN TLU_ResearchTeamMembers rtd ON rtd.RT_ID = ss.Driver
                         
             where 1=1
             <cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">and CONVERT(char(10), s.Date,126) BETWEEN '#form.startDate#' AND '#form.endDate#'</cfif>
@@ -453,7 +472,7 @@
             <cfif isdefined("form.NOAAStock") and form.NOAAStock neq ""> and s.NOAAStock like '%#form.NOAAStock#%'</cfif>
             <cfif isdefined("form.surveyEffort") and form.surveyEffort neq ""> and ss.Survey = '#form.surveyEffort#'</cfif>
             AND s.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value="1">
-            and tlu.CetaceanSpeciesName != ''
+            -- and tlu.CetaceanSpeciesName != ''
             
             ORDER BY s.ID 
             <cfif #form.LesionType# eq "">
@@ -572,6 +591,32 @@
     <cfset getBodyRibs = Application.ConditionLesions.getBodyRibs()>
     <!---  Tail Condition   --->
     <cfset getTailTransversePro = Application.ConditionLesions.getTailTransversePro()>
+
+    <cfset getGlareDirection = Application.StaticDataNew.getGlareDirection()>
+    <cfset getSightability = Application.SightingNew.getSightability()>
+    <cfset getHabitatList = Application.SightingNew.getHabitat()>
+    <cfset TideList = Application.SightingNew.getTide()>
+    
+    
+    <cfset getTeams=Application.SightingNew.getTeams()>
+    <cfset getuserlist=Application.Accounts.getuserlist()>
+    <cfset getDscoreCode = Application.Sighting.getDscoreDropdown()>    
+    <cfset cameralist = Application.SightingNew.getCamera()>
+    <cfset lenslist = Application.SightingNew.getLens()>
+
+    <cfset getSourceSex = Application.Dolphin.getSourceSex()>
+    <cfset getYOBSource=Application.Dolphin.get_YOB_Source()>
+    
+
+    <cfset getWaveHeight = Application.SightingNew.getWaveHeight()>
+    <cfset getWeather = Application.SightingNew.getWeather()>
+    <cfset getGlare = Application.SightingNew.getGlare()>
+    <cfset qGetBeaufort=Application.SightingNew.qGetBeaufort()>
+
+    <cfset qGetHeadingData=Application.StaticDataNew.getHeading()>
+    <cfset qGetGHeadingData=Application.StaticDataNew.getGHeading()>
+    <cfset qGetFHeadingData=Application.StaticDataNew.getFHeading()>
+
 
     <cfset qgetLesionScarType = Application.StaticDataNew.getLesionScarType()>
 
@@ -965,7 +1010,7 @@
 
         
         
-        <cfif #qFiltered.CetaceanSpeciesName# neq '' >
+        <cfif #qFiltered.recordCount# neq 0 >
 
             <div class="section-container section-with-top-border"> 
                 <div class="">
@@ -1252,14 +1297,77 @@
                                         </cfif>
                                         #WaterT#
                                     </td>
-                                    <td class="ConditionFromSighting hidden">#Weather#</td>
-                                    <td class="ConditionFromSighting hidden">#WaveHeight#</td>
-                                    <td class="ConditionFromSighting hidden">#Glare#</td>
-                                    <td class="ConditionFromSighting hidden">#GlareDirection#</td>
-                                    <td class="ConditionFromSighting hidden">#Sightability#</td>
-                                    <td class="ConditionFromSighting hidden">#Beaufort#</td>
+                                    <td class="ConditionFromSighting hidden">
+                                        <!--- #Weather# --->
+                                        <cfset bd = listToArray(Weather, ",", false, true)>
+                                        <cfloop query="getWeather">
+                                            <cfif ArrayContains(bd, ID)>
+                                                #trim(Desc)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
+                                    <td class="ConditionFromSighting hidden">
+                                        <!--- #WaveHeight# --->
+                                        <cfset bd = listToArray(WaveHeight, ",", false, true)>
+                                        <cfloop query="getWaveHeight">
+                                            <cfif ArrayContains(bd, ID)>
+                                                #trim(Desc)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
+                                    <td class="ConditionFromSighting hidden">
+                                        <!--- #Glare# --->
+                                        <cfset bd = listToArray(Glare, ",", false, true)>
+                                        <cfloop query="getGlare">
+                                            <cfif ArrayContains(bd, ID)>
+                                                #trim(Desc)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
+                                    <td class="ConditionFromSighting hidden">
+                                        <!--- #GlareDirection# --->
+                                        <cfset bd = listToArray(GlareDirection, ",", false, true)>
+                                        <cfloop query="getGlareDirection">
+                                            <cfif ArrayContains(bd, ID)>
+                                                #trim(Desc)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
+                                    <td class="ConditionFromSighting hidden">
+                                        <!--- #Sightability# --->
+                                        <cfset bd = listToArray(Sightability, ",", false, true)>
+                                        <cfloop query="getSightability">
+                                            <cfif ArrayContains(bd, ID)>
+                                                #trim(Desc)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
+                                    <td class="ConditionFromSighting hidden">
+                                        <!--- #Beaufort# --->
+                                        <cfset bd = listToArray(Beaufort, ",", false, true)>
+                                        <cfloop query="qGetBeaufort">
+                                            <cfif ArrayContains(bd, ID)>
+                                                #trim(Desc)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
                                     <td class="ConditionFromSighting hidden">#HabitatDepth#</td>
-                                    <td class="ConditionFromSighting hidden">#HabitatName#</td>
+                                    <td class="ConditionFromSighting hidden">
+                                        <!--- #HabitatName# --->
+                                        <cfset bd = listToArray(HabitatType, ",", false, true)>
+                                        <cfloop query="getHabitatList">
+                                            <cfif ArrayContains(bd, HabitatID)>
+                                                #trim(HabitatName)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
                                     <td class="ConditionFromSighting hidden">
                                         <cfif AirTemp neq "">
                                             <cfset AirT = #numberFormat(AirTemp,'__.0')#>
@@ -1269,15 +1377,60 @@
                                         #AirT#
                                     </td>
                                     <td class="ConditionFromSighting hidden">#WindSpeed#</td>
-                                    <td class="ConditionFromSighting hidden">#WindDirection#</td>
-                                    <td class="ConditionFromSighting hidden">#TideName#</td>
+                                    <td class="ConditionFromSighting hidden">
+                                        <!--- #WindDirection# --->
+                                        <cfset bd = listToArray(WindDirection, ",", false, true)>
+                                                <cfloop query="getGlareDirection">
+                                            <cfif ArrayContains(bd, ID)>
+                                                #trim(Desc)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
+                                    <td class="ConditionFromSighting hidden">
+                                        <!--- #TideName# --->
+                                        <cfset bd = listToArray(Tide, ",", false, true)>
+                                        <cfloop query="TideList">
+                                            <cfif ArrayContains(bd, TideID)>
+                                                #trim(TideName)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
                                     <td class="ConditionFromSighting hidden">#Salinity#</td>
                                     <td class="ConditionFromSighting hidden">#pH#</td>
                                     <td class="ConditionFromSighting hidden">#DO#</td>
                                     <td class="ConditionFromSighting hidden">#Conductivity#</td>
-                                    <td class="ConditionFromSighting hidden">#InitialHeading#</td>
-                                    <td class="ConditionFromSighting hidden">#GeneralHeading#</td>
-                                    <td class="ConditionFromSighting hidden">#FinalHeading#</td>
+                                    <td class="ConditionFromSighting hidden">
+                                        <!--- #InitialHeading# --->
+                                        <cfset bd = listToArray(InitialHeading, ",", false, true)>
+                                        <cfloop query="qGetHeadingData">
+                                            <cfif ArrayContains(bd, ID)>
+                                                #trim(HeadingName)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
+                                    <td class="ConditionFromSighting hidden">
+                                        <!--- #GeneralHeading# --->
+                                        <cfset bd = listToArray(GeneralHeading, ",", false, true)>
+                                        <cfloop query="qGetGHeadingData">
+                                            <cfif ArrayContains(bd, ID)>
+                                                #trim(GHeadingName)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
+                                    <td class="ConditionFromSighting hidden">
+                                        <!--- #FinalHeading# --->
+                                        <cfset bd = listToArray(FinalHeading, ",", false, true)>
+                                        <cfloop query="qGetFHeadingData">
+                                            <cfif ArrayContains(bd, ID)>
+                                                #trim(FHeadingName)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
                                     <td class="ConditionFromSighting hidden">
                                         <cfset bd = listToArray(#AssocBio#, ",", false, true)> 
                                         <cfset d = 1>
@@ -1429,10 +1582,46 @@
                                     <td class="divetimes hidden">#StratTimeDive5#</td>
                                     <td class="divetimes hidden">#EndTimeDive5#</td>
                                     <td class="divetimes hidden">#TotalTimeDive5#</td>                                
-                                    <td>#Camera#</td>
-                                    <td>#Lens#</td>
-                                    <td>#Photographer#</td>
-                                    <td>#Driver#</td>
+                                    <td>
+                                        <!--- #Camera# --->
+                                        <cfset bd = listToArray(Camera, ",", false, true)>
+                                        <cfloop query="cameralist">
+                                            <cfif ArrayContains(bd, ID)>
+                                                #trim(Camera)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
+                                    <td>
+                                        <!--- #Lens# --->
+                                        <cfset bd = listToArray(Lens, ",", false, true)>
+                                        <cfloop query="lenslist">
+                                            <cfif ArrayContains(bd, ID)>
+                                                #trim(Lens)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
+                                    <td>
+                                        <!--- #Photographer# --->
+                                        <cfset bd = listToArray(Photographer, ",", false, true)>
+                                        <cfloop query="getTeams">
+                                            <cfif ArrayContains(bd, RT_ID)>
+                                                #trim(RT_MemberName)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
+                                    <td>
+                                        <!--- #Driver# --->
+                                        <cfset bd = listToArray(Driver, ",", false, true)>
+                                        <cfloop query="getTeams">
+                                            <cfif ArrayContains(bd, RT_ID)>
+                                                #trim(RT_MemberName)#
+                                                <cfif arrayLen(bd) GT 1>/</cfif>
+                                            </cfif>
+                                        </cfloop>
+                                    </td>
 
                                     <td>#CompletedBy#</td>
                                     <td>

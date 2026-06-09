@@ -7619,7 +7619,7 @@
                                                 <div class="form-group">
                                                     <label class="date-padd">Necropsy Date</label>
                                                     <div class="input-group date " id="datetimepicker_NDate">
-                                                        <input type="text" placeholder="mm/dd/yyyy" name="necropsyDateID" id="necropsyDateID" class="form-control" value="<cfif isDefined('qgetcetaceanDate.CNRDATE') and #DateTimeFormat(qgetcetaceanDate.CNRDATE, 'MM/DD/YYYY')# neq ''>#DateTimeFormat(qgetcetaceanDate.CNRDATE, 'MM/dd/YYYY')#</cfif>"/>
+                                                        <input type="text" placeholder="mm/dd/yyyy" name="necropsyDateID" id="necropsyDateID" onblur="headerDataSave()" class="form-control" value="<cfif isDefined('qgetcetaceanDate.CNRDATE') and #DateTimeFormat(qgetcetaceanDate.CNRDATE, 'MM/DD/YYYY')# neq ''>#DateTimeFormat(qgetcetaceanDate.CNRDATE, 'MM/dd/YYYY')#</cfif>"/>
                                                         <span class="input-group-addon time-icon"> <span class="glyphicon glyphicon-calendar"></span> </span>
                                                     </div>
                                                 </div>
