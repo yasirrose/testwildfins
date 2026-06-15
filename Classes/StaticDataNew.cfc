@@ -865,38 +865,217 @@
           </cfquery>
     </cffunction>
 
+    <cffunction name="normalizeDynamicResponseLabel" returntype="string" output="false" access="private">
+        <cfargument name="label" type="string" required="true">
+        <cfset var normalizedLabel = trim(arguments.label)>
+        <cfset normalizedLabel = rereplace(normalizedLabel, "\s+", " ", "all")>
+        <cfset normalizedLabel = lcase(normalizedLabel)>
+        <cfreturn normalizedLabel>
+    </cffunction>
+
+    <cffunction name="masterDataTableHasSortOrder" returntype="boolean" output="false" access="private">
+        <cfargument name="tableName" type="string" required="true">
+        <cfset var qCheckSortOrder = "">
+
+        <cfquery name="qCheckSortOrder" datasource="#variables.dsn#">
+            SELECT 1
+            FROM sys.columns
+            WHERE object_id = OBJECT_ID(<cfqueryparam cfsqltype="cf_sql_varchar" value="dbo.#arguments.tableName#">)
+              AND name = 'SortOrder'
+        </cfquery>
+
+        <cfreturn qCheckSortOrder.recordCount GT 0>
+    </cffunction>
+
+    <cffunction name="getFisherResponseToCetaceanUsageCount" returntype="numeric" output="false" access="private">
+        <cfargument name="response_id" type="numeric" required="true">
+        <cfset var qOption = "">
+        <cfset var qLegacyUsage = "">
+        <cfset var qChildUsage = "">
+        <cfset var normalizedLabel = "">
+        <cfset var legacyColumn = "">
+        <cfset var usageCount = 0>
+
+        <cfquery name="qOption" datasource="#variables.dsn#">
+            SELECT [Desc]
+            FROM TLU_FisherResponseToCetacean
+            WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.response_id#">
+        </cfquery>
+
+        <cfif qOption.recordcount EQ 0>
+            <cfreturn 0>
+        </cfif>
+
+        <cfset normalizedLabel = normalizeDynamicResponseLabel(qOption.Desc)>
+
+        <cfif normalizedLabel EQ "approach">
+            <cfset legacyColumn = "FisherResponsetoCetacean1">
+        <cfelseif normalizedLabel EQ "no response">
+            <cfset legacyColumn = "FisherResponsetoCetacean2">
+        <cfelseif normalizedLabel EQ "pull in line">
+            <cfset legacyColumn = "FisherResponsetoCetacean3">
+        <cfelseif normalizedLabel EQ "relocate">
+            <cfset legacyColumn = "FisherResponsetoCetacean4">
+        </cfif>
+
+        <cftry>
+            <cfquery name="qChildUsage" datasource="#variables.dsn#">
+                SELECT COUNT(*) AS UsageCount
+                FROM Survey_Sighting_FisherResponseToCetacean
+                WHERE ResponseOptionID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.response_id#">
+            </cfquery>
+            <cfset usageCount = usageCount + qChildUsage.UsageCount>
+            <cfcatch type="any">
+            </cfcatch>
+        </cftry>
+
+        <cfif len(legacyColumn) GT 0>
+            <cfquery name="qLegacyUsage" datasource="#variables.dsn#">
+                SELECT COUNT(*) AS UsageCount
+                FROM Survey_Sightings
+                WHERE #legacyColumn# IS NOT NULL
+            </cfquery>
+            <cfset usageCount = usageCount + qLegacyUsage.UsageCount>
+        </cfif>
+
+        <cfreturn usageCount>
+    </cffunction>
+
+    <cffunction name="getVesselResponseToCetaceanUsageCount" returntype="numeric" output="false" access="private">
+        <cfargument name="response_id" type="numeric" required="true">
+        <cfset var qOption = "">
+        <cfset var qLegacyUsage = "">
+        <cfset var qChildUsage = "">
+        <cfset var normalizedLabel = "">
+        <cfset var legacyColumn = "">
+        <cfset var usageCount = 0>
+
+        <cfquery name="qOption" datasource="#variables.dsn#">
+            SELECT [Desc]
+            FROM TLU_VesselResponseToCetacean
+            WHERE ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.response_id#">
+        </cfquery>
+
+        <cfif qOption.recordcount EQ 0>
+            <cfreturn 0>
+        </cfif>
+
+        <cfset normalizedLabel = normalizeDynamicResponseLabel(qOption.Desc)>
+
+        <cfif normalizedLabel EQ "approach">
+            <cfset legacyColumn = "VesselResponsetoCetacean1">
+        <cfelseif normalizedLabel EQ "no response">
+            <cfset legacyColumn = "VesselResponsetoCetacean2">
+        <cfelseif normalizedLabel EQ "out of gear">
+            <cfset legacyColumn = "VesselResponsetoCetacean3">
+        <cfelseif normalizedLabel EQ "relocate">
+            <cfset legacyColumn = "VesselResponsetoCetacean4">
+        </cfif>
+
+        <cftry>
+            <cfquery name="qChildUsage" datasource="#variables.dsn#">
+                SELECT COUNT(*) AS UsageCount
+                FROM Survey_Sighting_VesselResponseToCetacean
+                WHERE ResponseOptionID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.response_id#">
+            </cfquery>
+            <cfset usageCount = usageCount + qChildUsage.UsageCount>
+            <cfcatch type="any">
+            </cfcatch>
+        </cftry>
+
+        <cfif len(legacyColumn) GT 0>
+            <cfquery name="qLegacyUsage" datasource="#variables.dsn#">
+                SELECT COUNT(*) AS UsageCount
+                FROM Survey_Sightings
+                WHERE #legacyColumn# IS NOT NULL
+            </cfquery>
+            <cfset usageCount = usageCount + qLegacyUsage.UsageCount>
+        </cfif>
+
+        <cfreturn usageCount>
+    </cffunction>
+
 
      <!--- Fisher Response To Cetacean --->
     <cffunction name="FisherResponseToCetaceanInsert" returntype="any" output="false" access="public" >
+        <cfset var hasSortOrder = masterDataTableHasSortOrder("TLU_FisherResponseToCetacean")>
+        <cfset var sortOrderValue = "">
+        <cfif structKeyExists(FORM, "SortOrder")><cfset sortOrderValue = trim(FORM.SortOrder)></cfif>
         <cfquery name="qFisherResponseToCetaceanInsert" datasource="#variables.dsn#"  result="return_data" >
-            INSERT INTO TLU_FisherResponseToCetacean ([Desc],active) VALUES(<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Desc#' >,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.active#' >)
+            INSERT INTO TLU_FisherResponseToCetacean
+            (
+                [Desc],
+                active
+                <cfif hasSortOrder>, SortOrder</cfif>
+            )
+            VALUES
+            (
+                <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Desc#' >,
+                <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.active#' >
+                <cfif hasSortOrder>,
+                    <cfqueryparam cfsqltype="cf_sql_integer" value='#sortOrderValue#' null="#IIF(len(sortOrderValue) EQ 0, true, false)#">
+                </cfif>
+            )
         </cfquery>
         <cfreturn return_data>
     </cffunction>
     <cffunction name="getFisherResponseToCetacean" returntype="any" output="false" access="public" >
+        <cfset var hasSortOrder = masterDataTableHasSortOrder("TLU_FisherResponseToCetacean")>
         <cfquery name="qgetFisherResponseToCetacean" datasource="#variables.dsn#"  >
-            SELECT * from TLU_FisherResponseToCetacean
+            SELECT
+                ID,
+                [Desc],
+                active,
+                <cfif hasSortOrder>ISNULL(SortOrder, ID)<cfelse>ID</cfif> AS SortOrder
+            FROM TLU_FisherResponseToCetacean
+            ORDER BY <cfif hasSortOrder>ISNULL(SortOrder, ID)<cfelse>ID</cfif>, [Desc], ID
         </cfquery>
         <cfreturn qgetFisherResponseToCetacean>
     </cffunction>
     <cffunction name="getFisherResponseToCetaceanByword" returntype="any" output="false" access="public" >
+        <cfset var hasSortOrder = masterDataTableHasSortOrder("TLU_FisherResponseToCetacean")>
         <cfquery name="qgetFisherResponseToCetacean" datasource="#variables.dsn#"  >
-            SELECT * from TLU_FisherResponseToCetacean where [Desc] like '%#form.searchword#%'
+            SELECT
+                ID,
+                [Desc],
+                active,
+                <cfif hasSortOrder>ISNULL(SortOrder, ID)<cfelse>ID</cfif> AS SortOrder
+            FROM TLU_FisherResponseToCetacean
+            WHERE [Desc] LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%#form.searchword#%">
+            ORDER BY <cfif hasSortOrder>ISNULL(SortOrder, ID)<cfelse>ID</cfif>, [Desc], ID
         </cfquery>
         <cfreturn qgetFisherResponseToCetacean>
     </cffunction>
     <cffunction name="EditFisherResponseToCetacean" returntype="any" output="false" access="public" >
+     <cfset var hasSortOrder = masterDataTableHasSortOrder("TLU_FisherResponseToCetacean")>
+     <cfset var sortOrderValue = "">
+     <cfif structKeyExists(FORM, "SortOrder")><cfset sortOrderValue = trim(FORM.SortOrder)></cfif>
      <cfquery name="qEditFisherResponseToCetacean" datasource="#variables.dsn#" result="FisherResponseToCetaceanUpdate">
         UPDATE TLU_FisherResponseToCetacean SET [Desc] = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Desc#' >,
         active=<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.active#' >
+        <cfif hasSortOrder>,
+        SortOrder=<cfqueryparam cfsqltype="cf_sql_integer" value='#sortOrderValue#' null="#IIF(len(sortOrderValue) EQ 0, true, false)#" >
+        </cfif>
         WHERE ID = <cfqueryparam  cfsqltype="cf_sql_integer" value='#FORM.ID#' >
       </cfquery>
         <cfreturn FisherResponseToCetaceanUpdate>
      </cffunction>
-    <cffunction name="DeleteFisherResponseToCetacean" returntype="any" output="false"  access="remote" >
-         <cfquery name="qDeleteFisherResponseToCetacean" datasource="#variables.dsn#">
+    <cffunction name="DeleteFisherResponseToCetacean" returntype="struct" returnformat="JSON" output="false"  access="remote" >
+        <cfset var response = structNew()>
+        <cfset response.success = true>
+        <cfset response.message = "Record deleted successfully.">
+
+        <cfif getFisherResponseToCetaceanUsageCount(URL.id) GT 0>
+            <cfset response.success = false>
+            <cfset response.message = "This Fisher Response to Cetacean option is already used in sightings. Set it inactive instead of deleting it.">
+            <cfreturn response>
+        </cfif>
+
+        <cfquery name="qDeleteFisherResponseToCetacean" datasource="#variables.dsn#">
             DELETE FROM TLU_FisherResponseToCetacean WHERE ID = <cfqueryparam  cfsqltype="cf_sql_integer" value='#URL.id#' >
-          </cfquery>
+        </cfquery>
+
+        <cfreturn response>
     </cffunction>
 
      <!--- Cetacean Response to Vessel --->
@@ -935,35 +1114,84 @@
 
          <!--- Vessel Response to Cetacean --->
     <cffunction name="VesselResponseToCetaceanInsert" returntype="any" output="false" access="public" >
+        <cfset var hasSortOrder = masterDataTableHasSortOrder("TLU_VesselResponseToCetacean")>
+        <cfset var sortOrderValue = "">
+        <cfif structKeyExists(FORM, "SortOrder")><cfset sortOrderValue = trim(FORM.SortOrder)></cfif>
         <cfquery name="qVesselResponseToCetaceanInsert" datasource="#variables.dsn#"  result="return_data" >
-            INSERT INTO TLU_VesselResponseToCetacean ([Desc],active) VALUES(<cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Desc#' >,<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.active#' >)
+            INSERT INTO TLU_VesselResponseToCetacean
+            (
+                [Desc],
+                active
+                <cfif hasSortOrder>, SortOrder</cfif>
+            )
+            VALUES
+            (
+                <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Desc#' >,
+                <cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.active#' >
+                <cfif hasSortOrder>,
+                    <cfqueryparam cfsqltype="cf_sql_integer" value='#sortOrderValue#' null="#IIF(len(sortOrderValue) EQ 0, true, false)#">
+                </cfif>
+            )
         </cfquery>
         <cfreturn return_data>
     </cffunction>
     <cffunction name="getVesselResponseToCetacean" returntype="any" output="false" access="public" >
+        <cfset var hasSortOrder = masterDataTableHasSortOrder("TLU_VesselResponseToCetacean")>
         <cfquery name="qgetVesselResponseToCetacean" datasource="#variables.dsn#"  >
-            SELECT * from TLU_VesselResponseToCetacean
+            SELECT
+                ID,
+                [Desc],
+                active,
+                <cfif hasSortOrder>ISNULL(SortOrder, ID)<cfelse>ID</cfif> AS SortOrder
+            FROM TLU_VesselResponseToCetacean
+            ORDER BY <cfif hasSortOrder>ISNULL(SortOrder, ID)<cfelse>ID</cfif>, [Desc], ID
         </cfquery>
         <cfreturn qgetVesselResponseToCetacean>
     </cffunction>
     <cffunction name="getVesselResponseToCetaceanByword" returntype="any" output="false" access="public" >
+        <cfset var hasSortOrder = masterDataTableHasSortOrder("TLU_VesselResponseToCetacean")>
         <cfquery name="qgetVesselResponseToCetacean" datasource="#variables.dsn#"  >
-            SELECT * from TLU_VesselResponseToCetacean where [Desc] like '%#form.searchword#%'
+            SELECT
+                ID,
+                [Desc],
+                active,
+                <cfif hasSortOrder>ISNULL(SortOrder, ID)<cfelse>ID</cfif> AS SortOrder
+            FROM TLU_VesselResponseToCetacean
+            WHERE [Desc] LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%#form.searchword#%">
+            ORDER BY <cfif hasSortOrder>ISNULL(SortOrder, ID)<cfelse>ID</cfif>, [Desc], ID
         </cfquery>
         <cfreturn qgetVesselResponseToCetacean>
     </cffunction>
     <cffunction name="EditVesselResponseToCetacean" returntype="any" output="false" access="public" >
+     <cfset var hasSortOrder = masterDataTableHasSortOrder("TLU_VesselResponseToCetacean")>
+     <cfset var sortOrderValue = "">
+     <cfif structKeyExists(FORM, "SortOrder")><cfset sortOrderValue = trim(FORM.SortOrder)></cfif>
      <cfquery name="qEditVesselResponseToCetacean" datasource="#variables.dsn#" result="VesselResponseToCetaceanUpdate">
         UPDATE TLU_VesselResponseToCetacean SET [Desc] = <cfqueryparam cfsqltype="cf_sql_varchar" value='#FORM.Desc#' >,
         active=<cfqueryparam cfsqltype="cf_sql_integer" value='#FORM.active#' >
+        <cfif hasSortOrder>,
+        SortOrder=<cfqueryparam cfsqltype="cf_sql_integer" value='#sortOrderValue#' null="#IIF(len(sortOrderValue) EQ 0, true, false)#" >
+        </cfif>
         WHERE ID = <cfqueryparam  cfsqltype="cf_sql_integer" value='#FORM.ID#' >
       </cfquery>
         <cfreturn VesselResponseToCetaceanUpdate>
      </cffunction>
-    <cffunction name="DeleteVesselResponseToCetacean" returntype="any" output="false"  access="remote" >
-         <cfquery name="qDeleteVesselResponseToCetacean" datasource="#variables.dsn#" >
+    <cffunction name="DeleteVesselResponseToCetacean" returntype="struct" returnformat="JSON" output="false"  access="remote" >
+        <cfset var response = structNew()>
+        <cfset response.success = true>
+        <cfset response.message = "Record deleted successfully.">
+
+        <cfif getVesselResponseToCetaceanUsageCount(URL.id) GT 0>
+            <cfset response.success = false>
+            <cfset response.message = "This Vessel Response to Cetacean option is already used in sightings. Set it inactive instead of deleting it.">
+            <cfreturn response>
+        </cfif>
+
+        <cfquery name="qDeleteVesselResponseToCetacean" datasource="#variables.dsn#" >
             DELETE FROM TLU_VesselResponseToCetacean WHERE ID = <cfqueryparam  cfsqltype="cf_sql_integer" value='#URL.id#' >
-          </cfquery>
+        </cfquery>
+
+        <cfreturn response>
     </cffunction>
 
 

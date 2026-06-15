@@ -10,7 +10,6 @@
   <cfquery name="query" datasource="#variables.dsn#" >
         SELECT DOLPHIN_SIGHTINGS.Dolphin_ID, COUNT (DOLPHIN_SIGHTINGS.Dolphin_ID) AS SEEN_TIMES,DOLPHINS.Name,DOLPHINS.Code,DOLPHINS.Sex,
         DOLPHINS.YearOfBirth,YEAR (DOLPHINS.[Date of Death]) AS DeathYear,DOLPHINS.[Dead?] AS IsDead,
-        
            (SELECT  count(ds.Dolphin_ID)
             FROM PROJECTS p
             INNER JOIN SIGHTINGS s ON s.Project_ID = p.ID
@@ -5522,6 +5521,8 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
   <cfset getBehaviorsData = Application.StaticDataNew.getBehavior()>
   <cfset getPreySpeciesData = Application.StaticDataNew.getPreySpecies()>
   <cfset StructureList = Application.SightingNew.getStructureList()>
+  <cfset qFisherResponseToCetacean = Application.SightingNew.qFisherResponseToCetacean()>
+  <cfset qVesselResponseToCetacean = Application.SightingNew.qVesselResponseToCetacean()>
   <cfset getStock = Application.StaticDataNew.getStock()>
   <cfif isdefined("form.date") and form.date NEQ "">
     <cfset form.startDate = dateformat(form.date.split('-')[1],'YYYY-mm-dd')>
@@ -5815,6 +5816,119 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
     ORDER BY
     s.ID DESC
   </cfquery>
+
+  <cfset fisherResponseColumns = []>
+  <cfset vesselResponseColumns = []>
+  <cfset fisherResponseColumnIndex = structNew()>
+  <cfset vesselResponseColumnIndex = structNew()>
+  <cfset fisherResponseCountMap = structNew()>
+  <cfset vesselResponseCountMap = structNew()>
+  <cfset exportSightingIds = ValueList(qFiltered.sightingID)>
+  <cfset qExportFisherResponseToCetacean = queryNew("SightingID,ResponseLabel,ResponseCount,SortOrder")>
+  <cfset qExportVesselResponseToCetacean = queryNew("SightingID,ResponseLabel,ResponseCount,SortOrder")>
+
+  <cfloop query="qFisherResponseToCetacean">
+    <cfset fisherHeaderLabel = trim(Desc)>
+    <cfset fisherHeaderKey = lcase(rereplace(fisherHeaderLabel, "\s+", " ", "all"))>
+    <cfset fisherColumnName = "FisherResponsetoCetacean_" & rereplace(replace(fisherHeaderLabel, " ", "_", "all"), "[^A-Za-z0-9_]", "", "all")>
+    <cfif NOT structKeyExists(fisherResponseColumnIndex, fisherHeaderKey)>
+      <cfset ArrayAppend(fisherResponseColumns, {
+        Label = fisherHeaderLabel,
+        Key = fisherHeaderKey,
+        ColumnName = fisherColumnName
+      })>
+      <cfset fisherResponseColumnIndex[fisherHeaderKey] = arrayLen(fisherResponseColumns)>
+      <cfif listFindNoCase(qFiltered.columnList, fisherColumnName) EQ 0>
+        <cfset QueryAddColumn(qFiltered, fisherColumnName, "varchar", [""])>
+      </cfif>
+    </cfif>
+  </cfloop>
+
+  <cfloop query="qVesselResponseToCetacean">
+    <cfset vesselHeaderLabel = trim(Desc)>
+    <cfset vesselHeaderKey = lcase(rereplace(vesselHeaderLabel, "\s+", " ", "all"))>
+    <cfset vesselColumnName = "VesselResponseToCetacean_" & rereplace(replace(vesselHeaderLabel, " ", "_", "all"), "[^A-Za-z0-9_]", "", "all")>
+    <cfif NOT structKeyExists(vesselResponseColumnIndex, vesselHeaderKey)>
+      <cfset ArrayAppend(vesselResponseColumns, {
+        Label = vesselHeaderLabel,
+        Key = vesselHeaderKey,
+        ColumnName = vesselColumnName
+      })>
+      <cfset vesselResponseColumnIndex[vesselHeaderKey] = arrayLen(vesselResponseColumns)>
+      <cfif listFindNoCase(qFiltered.columnList, vesselColumnName) EQ 0>
+        <cfset QueryAddColumn(qFiltered, vesselColumnName, "varchar", [""])>
+      </cfif>
+    </cfif>
+  </cfloop>
+
+  <cfif len(exportSightingIds)>
+    <cftry>
+      <cfquery name="qExportFisherResponseToCetacean" datasource="#variables.dsn#">
+        SELECT
+          SightingID,
+          ResponseLabel,
+          ResponseCount,
+          SortOrder
+        FROM Survey_Sighting_FisherResponseToCetacean
+        WHERE SightingID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#exportSightingIds#">)
+        ORDER BY ISNULL(SortOrder, 9999), ResponseLabel
+      </cfquery>
+      <cfquery name="qExportVesselResponseToCetacean" datasource="#variables.dsn#">
+        SELECT
+          SightingID,
+          ResponseLabel,
+          ResponseCount,
+          SortOrder
+        FROM Survey_Sighting_VesselResponseToCetacean
+        WHERE SightingID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#exportSightingIds#">)
+        ORDER BY ISNULL(SortOrder, 9999), ResponseLabel
+      </cfquery>
+      <cfcatch type="any">
+        <cfset qExportFisherResponseToCetacean = queryNew("SightingID,ResponseLabel,ResponseCount,SortOrder")>
+        <cfset qExportVesselResponseToCetacean = queryNew("SightingID,ResponseLabel,ResponseCount,SortOrder")>
+      </cfcatch>
+    </cftry>
+  </cfif>
+
+  <cfloop query="qExportFisherResponseToCetacean">
+    <cfset fisherHeaderLabel = trim(ResponseLabel)>
+    <cfset fisherHeaderKey = lcase(rereplace(fisherHeaderLabel, "\s+", " ", "all"))>
+    <cfset fisherColumnName = "FisherResponsetoCetacean_" & rereplace(replace(fisherHeaderLabel, " ", "_", "all"), "[^A-Za-z0-9_]", "", "all")>
+    <cfif len(fisherHeaderKey) GT 0>
+      <cfif NOT structKeyExists(fisherResponseColumnIndex, fisherHeaderKey)>
+        <cfset ArrayAppend(fisherResponseColumns, {
+          Label = fisherHeaderLabel,
+          Key = fisherHeaderKey,
+          ColumnName = fisherColumnName
+        })>
+        <cfset fisherResponseColumnIndex[fisherHeaderKey] = arrayLen(fisherResponseColumns)>
+        <cfif listFindNoCase(qFiltered.columnList, fisherColumnName) EQ 0>
+          <cfset QueryAddColumn(qFiltered, fisherColumnName, "varchar", [""])>
+        </cfif>
+      </cfif>
+      <cfset fisherResponseCountMap["#SightingID#|#fisherHeaderKey#"] = ResponseCount>
+    </cfif>
+  </cfloop>
+
+  <cfloop query="qExportVesselResponseToCetacean">
+    <cfset vesselHeaderLabel = trim(ResponseLabel)>
+    <cfset vesselHeaderKey = lcase(rereplace(vesselHeaderLabel, "\s+", " ", "all"))>
+    <cfset vesselColumnName = "VesselResponseToCetacean_" & rereplace(replace(vesselHeaderLabel, " ", "_", "all"), "[^A-Za-z0-9_]", "", "all")>
+    <cfif len(vesselHeaderKey) GT 0>
+      <cfif NOT structKeyExists(vesselResponseColumnIndex, vesselHeaderKey)>
+        <cfset ArrayAppend(vesselResponseColumns, {
+          Label = vesselHeaderLabel,
+          Key = vesselHeaderKey,
+          ColumnName = vesselColumnName
+        })>
+        <cfset vesselResponseColumnIndex[vesselHeaderKey] = arrayLen(vesselResponseColumns)>
+        <cfif listFindNoCase(qFiltered.columnList, vesselColumnName) EQ 0>
+          <cfset QueryAddColumn(qFiltered, vesselColumnName, "varchar", [""])>
+        </cfif>
+      </cfif>
+      <cfset vesselResponseCountMap["#SightingID#|#vesselHeaderKey#"] = ResponseCount>
+    </cfif>
+  </cfloop>
  
   <!--- query to count maximum number of Lesion against a cetacean --->
   <cfquery datasource="#variables.dsn#" name="maximumLesions">
@@ -5887,6 +6001,40 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
   
     <cfset Dated = Left(#DATE#,10)>
     <cfset QuerySetCell(qFiltered, "DATE", #Dated#, qFiltered.currentRow)>
+
+    <cfloop array="#fisherResponseColumns#" index="fisherResponseColumn">
+      <cfset fisherResponseValue = "">
+      <cfset fisherResponseMapKey = "#sightingID#|#fisherResponseColumn.Key#">
+      <cfif structKeyExists(fisherResponseCountMap, fisherResponseMapKey)>
+        <cfset fisherResponseValue = fisherResponseCountMap[fisherResponseMapKey]>
+      <cfelseif fisherResponseColumn.Key EQ "approach">
+        <cfset fisherResponseValue = FisherResponsetoCetacean_Approach>
+      <cfelseif fisherResponseColumn.Key EQ "no response">
+        <cfset fisherResponseValue = FisherResponsetoCetacean_No_Response>
+      <cfelseif fisherResponseColumn.Key EQ "pull in line">
+        <cfset fisherResponseValue = FisherResponsetoCetacean_Pull_in_Line>
+      <cfelseif fisherResponseColumn.Key EQ "relocate">
+        <cfset fisherResponseValue = FisherResponsetoCetacean_Relocate>
+      </cfif>
+      <cfset QuerySetCell(qFiltered, fisherResponseColumn.ColumnName, fisherResponseValue, qFiltered.currentRow)>
+    </cfloop>
+
+    <cfloop array="#vesselResponseColumns#" index="vesselResponseColumn">
+      <cfset vesselResponseValue = "">
+      <cfset vesselResponseMapKey = "#sightingID#|#vesselResponseColumn.Key#">
+      <cfif structKeyExists(vesselResponseCountMap, vesselResponseMapKey)>
+        <cfset vesselResponseValue = vesselResponseCountMap[vesselResponseMapKey]>
+      <cfelseif vesselResponseColumn.Key EQ "approach">
+        <cfset vesselResponseValue = VesselResponseToCetacean_Approach>
+      <cfelseif vesselResponseColumn.Key EQ "no response">
+        <cfset vesselResponseValue = VesselResponseToCetacean_No_Response>
+      <cfelseif vesselResponseColumn.Key EQ "out of gear">
+        <cfset vesselResponseValue = VesselResponseToCetacean_Out_Of_Gear>
+      <cfelseif vesselResponseColumn.Key EQ "relocate">
+        <cfset vesselResponseValue = VesselResponseToCetacean_Relocate>
+      </cfif>
+      <cfset QuerySetCell(qFiltered, vesselResponseColumn.ColumnName, vesselResponseValue, qFiltered.currentRow)>
+    </cfloop>
 
     ///////////////
 
@@ -6201,10 +6349,9 @@ select SIGHTING_YEAR,sum(calf) calf,sum(juvenal) juvenal,sum(adult) adult,sum(un
        
         return obj.LesionType1 eq #form.LesionType# OR obj.LesionType2 eq #form.LesionType# OR obj.LesionType3 eq #form.LesionType#;
       });
-    }  
+    }
   </cfscript>
-   
+
 <cfreturn qFiltered>
 </cffunction>
 </cfcomponent>
-  

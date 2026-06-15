@@ -1152,10 +1152,14 @@
 		<cfreturn query>
 	</cffunction>
 
-        <!---- get FisherResponseToCetacean ---->
+    <!---- get FisherResponseToCetacean ---->
 	<cffunction name="qFisherResponseToCetacean" returntype="any" output="false" access="public" >
+        <cfset var hasSortOrder = masterDataTableHasSortOrder("TLU_FisherResponseToCetacean")>
 		<cfquery name="query" datasource="#variables.dsn#">
-        	SELECT * FROM TLU_FisherResponseToCetacean  where active=1 order by [Desc] asc
+            SELECT *
+            FROM TLU_FisherResponseToCetacean
+            WHERE active=1
+            ORDER BY <cfif hasSortOrder>ISNULL(SortOrder, ID)<cfelse>ID</cfif>, [Desc], ID
         </cfquery>
 		<cfreturn query>
 	</cffunction>
@@ -1171,11 +1175,439 @@
 
     <!---- get VesselResponseToCetacean ---->
 	<cffunction name="qVesselResponseToCetacean" returntype="any" output="false" access="public" >
+        <cfset var hasSortOrder = masterDataTableHasSortOrder("TLU_VesselResponseToCetacean")>
 		<cfquery name="query" datasource="#variables.dsn#">
-        	SELECT * FROM TLU_VesselResponseToCetacean  where active=1 order by [Desc] asc
+            SELECT *
+            FROM TLU_VesselResponseToCetacean
+            WHERE active=1
+            ORDER BY <cfif hasSortOrder>ISNULL(SortOrder, ID)<cfelse>ID</cfif>, [Desc], ID
         </cfquery>
 		<cfreturn query>
 	</cffunction>
+
+    <cffunction name="masterDataTableHasSortOrder" returntype="boolean" output="false" access="private">
+        <cfargument name="tableName" type="string" required="true">
+        <cfset var qCheckSortOrder = "">
+
+        <cfquery name="qCheckSortOrder" datasource="#variables.dsn#">
+            SELECT 1
+            FROM sys.columns
+            WHERE object_id = OBJECT_ID(<cfqueryparam cfsqltype="cf_sql_varchar" value="dbo.#arguments.tableName#">)
+              AND name = 'SortOrder'
+        </cfquery>
+
+        <cfreturn qCheckSortOrder.recordCount GT 0>
+    </cffunction>
+
+    <cffunction name="normalizeSightingResponseLabel" returntype="string" output="false" access="private">
+        <cfargument name="label" type="string" required="true">
+        <cfset var normalizedLabel = trim(arguments.label)>
+        <cfset normalizedLabel = rereplace(normalizedLabel, "\s+", " ", "all")>
+        <cfset normalizedLabel = lcase(normalizedLabel)>
+        <cfreturn normalizedLabel>
+    </cffunction>
+
+    <cffunction name="buildLegacyDynamicResponseValues" returntype="struct" output="false" access="private">
+        <cfargument name="FORM" type="struct" required="true">
+        <cfset var legacyValues = {
+            FisherResponsetoCetacean1 = "",
+            FisherResponsetoCetacean2 = "",
+            FisherResponsetoCetacean3 = "",
+            FisherResponsetoCetacean4 = "",
+            VesselResponsetoCetacean1 = "",
+            VesselResponsetoCetacean2 = "",
+            VesselResponsetoCetacean3 = "",
+            VesselResponsetoCetacean4 = ""
+        }>
+        <cfset var formKeys = structKeyArray(arguments.FORM)>
+        <cfset var currentKey = "">
+        <cfset var token = "">
+        <cfset var labelKey = "">
+        <cfset var normalizedLabel = "">
+        <cfset var countValue = "">
+        <cfset var hasDynamicFisher = false>
+        <cfset var hasDynamicVessel = false>
+
+        <cfloop array="#formKeys#" index="currentKey">
+            <cfif left(currentKey, 20) EQ "FisherResponseCount_">
+                <cfset hasDynamicFisher = true>
+                <cfset token = replaceNoCase(currentKey, "FisherResponseCount_", "", "one")>
+                <cfset labelKey = "FisherResponseLabel_" & token>
+                <cfset countValue = trim(arguments.FORM[currentKey])>
+                <cfif structKeyExists(arguments.FORM, labelKey)>
+                    <cfset normalizedLabel = normalizeSightingResponseLabel(arguments.FORM[labelKey])>
+                    <cfif normalizedLabel EQ "approach">
+                        <cfset legacyValues.FisherResponsetoCetacean1 = countValue>
+                    <cfelseif normalizedLabel EQ "no response">
+                        <cfset legacyValues.FisherResponsetoCetacean2 = countValue>
+                    <cfelseif normalizedLabel EQ "pull in line">
+                        <cfset legacyValues.FisherResponsetoCetacean3 = countValue>
+                    <cfelseif normalizedLabel EQ "relocate">
+                        <cfset legacyValues.FisherResponsetoCetacean4 = countValue>
+                    </cfif>
+                </cfif>
+            <cfelseif left(currentKey, 20) EQ "VesselResponseCount_">
+                <cfset hasDynamicVessel = true>
+                <cfset token = replaceNoCase(currentKey, "VesselResponseCount_", "", "one")>
+                <cfset labelKey = "VesselResponseLabel_" & token>
+                <cfset countValue = trim(arguments.FORM[currentKey])>
+                <cfif structKeyExists(arguments.FORM, labelKey)>
+                    <cfset normalizedLabel = normalizeSightingResponseLabel(arguments.FORM[labelKey])>
+                    <cfif normalizedLabel EQ "approach">
+                        <cfset legacyValues.VesselResponsetoCetacean1 = countValue>
+                    <cfelseif normalizedLabel EQ "no response">
+                        <cfset legacyValues.VesselResponsetoCetacean2 = countValue>
+                    <cfelseif normalizedLabel EQ "out of gear">
+                        <cfset legacyValues.VesselResponsetoCetacean3 = countValue>
+                    <cfelseif normalizedLabel EQ "relocate">
+                        <cfset legacyValues.VesselResponsetoCetacean4 = countValue>
+                    </cfif>
+                </cfif>
+            </cfif>
+        </cfloop>
+
+        <cfif NOT hasDynamicFisher>
+            <cfif structKeyExists(arguments.FORM, "FisherResponsetoCetacean1")><cfset legacyValues.FisherResponsetoCetacean1 = arguments.FORM.FisherResponsetoCetacean1></cfif>
+            <cfif structKeyExists(arguments.FORM, "FisherResponsetoCetacean2")><cfset legacyValues.FisherResponsetoCetacean2 = arguments.FORM.FisherResponsetoCetacean2></cfif>
+            <cfif structKeyExists(arguments.FORM, "FisherResponsetoCetacean3")><cfset legacyValues.FisherResponsetoCetacean3 = arguments.FORM.FisherResponsetoCetacean3></cfif>
+            <cfif structKeyExists(arguments.FORM, "FisherResponsetoCetacean4")><cfset legacyValues.FisherResponsetoCetacean4 = arguments.FORM.FisherResponsetoCetacean4></cfif>
+        </cfif>
+
+        <cfif NOT hasDynamicVessel>
+            <cfif structKeyExists(arguments.FORM, "VesselResponsetoCetacean1")><cfset legacyValues.VesselResponsetoCetacean1 = arguments.FORM.VesselResponsetoCetacean1></cfif>
+            <cfif structKeyExists(arguments.FORM, "VesselResponsetoCetacean2")><cfset legacyValues.VesselResponsetoCetacean2 = arguments.FORM.VesselResponsetoCetacean2></cfif>
+            <cfif structKeyExists(arguments.FORM, "VesselResponsetoCetacean3")><cfset legacyValues.VesselResponsetoCetacean3 = arguments.FORM.VesselResponsetoCetacean3></cfif>
+            <cfif structKeyExists(arguments.FORM, "VesselResponsetoCetacean4")><cfset legacyValues.VesselResponsetoCetacean4 = arguments.FORM.VesselResponsetoCetacean4></cfif>
+        </cfif>
+
+        <cfreturn legacyValues>
+    </cffunction>
+
+    <cffunction name="getSightingFisherResponseToCetaceanRows" returntype="any" output="false" access="public">
+        <cfargument name="sight_id" type="numeric" required="true" default="0">
+        <cfset var hasSortOrder = masterDataTableHasSortOrder("TLU_FisherResponseToCetacean")>
+        <cftry>
+            <cfquery name="query" datasource="#variables.dsn#">
+                SELECT
+                    CAST('FR' + CAST(md.ID AS VARCHAR(20)) AS VARCHAR(30)) AS RowToken,
+                    md.ID AS ResponseOptionID,
+                    md.[Desc] AS ResponseLabel,
+                    CAST(
+                        COALESCE(
+                            rcMatch.ResponseCount,
+                            CASE
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'approach' THEN ss.FisherResponsetoCetacean1
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'no response' THEN ss.FisherResponsetoCetacean2
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'pull in line' THEN ss.FisherResponsetoCetacean3
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'relocate' THEN ss.FisherResponsetoCetacean4
+                                ELSE NULL
+                            END
+                        ) AS INT
+                    ) AS ResponseCount,
+                    CAST(CASE WHEN rcMatch.ID IS NOT NULL AND md.active <> 1 THEN 1 ELSE 0 END AS BIT) AS HistoricalOnly,
+                    <cfif hasSortOrder>ISNULL(md.SortOrder, md.ID)<cfelse>md.ID</cfif> AS SortOrder
+                FROM TLU_FisherResponseToCetacean md
+                LEFT JOIN Survey_Sightings ss
+                    ON ss.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
+                OUTER APPLY (
+                    SELECT TOP 1
+                        rc.ID,
+                        rc.ResponseCount
+                    FROM Survey_Sighting_FisherResponseToCetacean rc
+                    WHERE rc.SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
+                      AND (
+                            rc.ResponseOptionID = md.ID
+                            OR LOWER(LTRIM(RTRIM(rc.ResponseLabel))) = LOWER(LTRIM(RTRIM(md.[Desc])))
+                            <cfif hasSortOrder>
+                            OR ISNULL(rc.SortOrder, md.ID) = ISNULL(md.SortOrder, md.ID)
+                            </cfif>
+                      )
+                    ORDER BY
+                        CASE
+                            WHEN rc.ResponseOptionID = md.ID THEN 0
+                            WHEN LOWER(LTRIM(RTRIM(rc.ResponseLabel))) = LOWER(LTRIM(RTRIM(md.[Desc]))) THEN 1
+                            ELSE 2
+                        END,
+                        rc.ID DESC
+                ) rcMatch
+                WHERE md.active = 1
+
+                UNION ALL
+
+                SELECT
+                    CAST('FRH' + CAST(rc.ID AS VARCHAR(20)) AS VARCHAR(30)) AS RowToken,
+                    rc.ResponseOptionID,
+                    rc.ResponseLabel,
+                    rc.ResponseCount,
+                    CAST(1 AS BIT) AS HistoricalOnly,
+                    <cfif hasSortOrder>ISNULL(rc.SortOrder, 9999)<cfelse>rc.ID</cfif> AS SortOrder
+                FROM Survey_Sighting_FisherResponseToCetacean rc
+                LEFT JOIN TLU_FisherResponseToCetacean md
+                    ON md.active = 1
+                    AND (
+                        md.ID = rc.ResponseOptionID
+                        OR LOWER(LTRIM(RTRIM(md.[Desc]))) = LOWER(LTRIM(RTRIM(rc.ResponseLabel)))
+                        <cfif hasSortOrder>
+                        OR ISNULL(md.SortOrder, md.ID) = ISNULL(rc.SortOrder, md.ID)
+                        </cfif>
+                    )
+                WHERE rc.SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
+                AND md.ID IS NULL
+                ORDER BY HistoricalOnly,
+                         <cfif hasSortOrder>SortOrder<cfelse>ResponseLabel</cfif>,
+                         ResponseLabel
+            </cfquery>
+            <cfreturn query>
+            <cfcatch type="any">
+                <cfquery name="fallbackQuery" datasource="#variables.dsn#">
+                    SELECT
+                        CAST('FR' + CAST(md.ID AS VARCHAR(20)) AS VARCHAR(30)) AS RowToken,
+                        md.ID AS ResponseOptionID,
+                        md.[Desc] AS ResponseLabel,
+                        CAST(
+                            CASE
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'approach' THEN ss.FisherResponsetoCetacean1
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'no response' THEN ss.FisherResponsetoCetacean2
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'pull in line' THEN ss.FisherResponsetoCetacean3
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'relocate' THEN ss.FisherResponsetoCetacean4
+                                ELSE NULL
+                            END AS INT
+                        ) AS ResponseCount,
+                        CAST(0 AS BIT) AS HistoricalOnly,
+                        <cfif hasSortOrder>ISNULL(md.SortOrder, md.ID)<cfelse>md.ID</cfif> AS SortOrder
+                    FROM TLU_FisherResponseToCetacean md
+                    LEFT JOIN Survey_Sightings ss
+                        ON ss.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
+                    WHERE md.active = 1
+                    ORDER BY <cfif hasSortOrder>ISNULL(md.SortOrder, md.ID)<cfelse>md.ID</cfif>, md.[Desc], md.ID
+                </cfquery>
+                <cfreturn fallbackQuery>
+            </cfcatch>
+        </cftry>
+    </cffunction>
+
+    <cffunction name="getSightingVesselResponseToCetaceanRows" returntype="any" output="false" access="public">
+        <cfargument name="sight_id" type="numeric" required="true" default="0">
+        <cfset var hasSortOrder = masterDataTableHasSortOrder("TLU_VesselResponseToCetacean")>
+        <cftry>
+            <cfquery name="query" datasource="#variables.dsn#">
+                SELECT
+                    CAST('VR' + CAST(md.ID AS VARCHAR(20)) AS VARCHAR(30)) AS RowToken,
+                    md.ID AS ResponseOptionID,
+                    md.[Desc] AS ResponseLabel,
+                    CAST(
+                        COALESCE(
+                            rcMatch.ResponseCount,
+                            CASE
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'approach' THEN ss.VesselResponsetoCetacean1
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'no response' THEN ss.VesselResponsetoCetacean2
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'out of gear' THEN ss.VesselResponsetoCetacean3
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'relocate' THEN ss.VesselResponsetoCetacean4
+                                ELSE NULL
+                            END
+                        ) AS INT
+                    ) AS ResponseCount,
+                    CAST(CASE WHEN rcMatch.ID IS NOT NULL AND md.active <> 1 THEN 1 ELSE 0 END AS BIT) AS HistoricalOnly,
+                    <cfif hasSortOrder>ISNULL(md.SortOrder, md.ID)<cfelse>md.ID</cfif> AS SortOrder
+                FROM TLU_VesselResponseToCetacean md
+                LEFT JOIN Survey_Sightings ss
+                    ON ss.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
+                OUTER APPLY (
+                    SELECT TOP 1
+                        rc.ID,
+                        rc.ResponseCount
+                    FROM Survey_Sighting_VesselResponseToCetacean rc
+                    WHERE rc.SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
+                      AND (
+                            rc.ResponseOptionID = md.ID
+                            OR LOWER(LTRIM(RTRIM(rc.ResponseLabel))) = LOWER(LTRIM(RTRIM(md.[Desc])))
+                            <cfif hasSortOrder>
+                            OR ISNULL(rc.SortOrder, md.ID) = ISNULL(md.SortOrder, md.ID)
+                            </cfif>
+                      )
+                    ORDER BY
+                        CASE
+                            WHEN rc.ResponseOptionID = md.ID THEN 0
+                            WHEN LOWER(LTRIM(RTRIM(rc.ResponseLabel))) = LOWER(LTRIM(RTRIM(md.[Desc]))) THEN 1
+                            ELSE 2
+                        END,
+                        rc.ID DESC
+                ) rcMatch
+                WHERE md.active = 1
+
+                UNION ALL
+
+                SELECT
+                    CAST('VRH' + CAST(rc.ID AS VARCHAR(20)) AS VARCHAR(30)) AS RowToken,
+                    rc.ResponseOptionID,
+                    rc.ResponseLabel,
+                    rc.ResponseCount,
+                    CAST(1 AS BIT) AS HistoricalOnly,
+                    <cfif hasSortOrder>ISNULL(rc.SortOrder, 9999)<cfelse>rc.ID</cfif> AS SortOrder
+                FROM Survey_Sighting_VesselResponseToCetacean rc
+                LEFT JOIN TLU_VesselResponseToCetacean md
+                    ON md.active = 1
+                    AND (
+                        md.ID = rc.ResponseOptionID
+                        OR LOWER(LTRIM(RTRIM(md.[Desc]))) = LOWER(LTRIM(RTRIM(rc.ResponseLabel)))
+                        <cfif hasSortOrder>
+                        OR ISNULL(md.SortOrder, md.ID) = ISNULL(rc.SortOrder, md.ID)
+                        </cfif>
+                    )
+                WHERE rc.SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
+                AND md.ID IS NULL
+                ORDER BY HistoricalOnly,
+                         <cfif hasSortOrder>SortOrder<cfelse>ResponseLabel</cfif>,
+                         ResponseLabel
+            </cfquery>
+            <cfreturn query>
+            <cfcatch type="any">
+                <cfquery name="fallbackQuery" datasource="#variables.dsn#">
+                    SELECT
+                        CAST('VR' + CAST(md.ID AS VARCHAR(20)) AS VARCHAR(30)) AS RowToken,
+                        md.ID AS ResponseOptionID,
+                        md.[Desc] AS ResponseLabel,
+                        CAST(
+                            CASE
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'approach' THEN ss.VesselResponsetoCetacean1
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'no response' THEN ss.VesselResponsetoCetacean2
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'out of gear' THEN ss.VesselResponsetoCetacean3
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'relocate' THEN ss.VesselResponsetoCetacean4
+                                ELSE NULL
+                            END AS INT
+                        ) AS ResponseCount,
+                        CAST(0 AS BIT) AS HistoricalOnly,
+                        <cfif hasSortOrder>ISNULL(md.SortOrder, md.ID)<cfelse>md.ID</cfif> AS SortOrder
+                    FROM TLU_VesselResponseToCetacean md
+                    LEFT JOIN Survey_Sightings ss
+                        ON ss.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
+                    WHERE md.active = 1
+                    ORDER BY <cfif hasSortOrder>ISNULL(md.SortOrder, md.ID)<cfelse>md.ID</cfif>, md.[Desc], md.ID
+                </cfquery>
+                <cfreturn fallbackQuery>
+            </cfcatch>
+        </cftry>
+    </cffunction>
+
+    <cffunction name="saveSightingFisherResponseToCetacean" returntype="void" output="false" access="public">
+        <cfargument name="sight_id" type="numeric" required="true">
+        <cfargument name="FORM" type="struct" required="true">
+        <cfset var formKeys = structKeyArray(arguments.FORM)>
+        <cfset var currentKey = "">
+        <cfset var token = "">
+        <cfset var labelKey = "">
+        <cfset var optionKey = "">
+        <cfset var sortOrderKey = "">
+        <cfset var responseLabel = "">
+        <cfset var responseCount = "">
+        <cfset var responseOptionID = "">
+        <cfset var sortOrder = "">
+
+        <cftry>
+            <cfquery name="qDeleteResponses" datasource="#variables.dsn#">
+                DELETE FROM Survey_Sighting_FisherResponseToCetacean
+                WHERE SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
+            </cfquery>
+
+            <cfloop array="#formKeys#" index="currentKey">
+                <cfif left(currentKey, 20) EQ "FisherResponseCount_">
+                    <cfset token = replaceNoCase(currentKey, "FisherResponseCount_", "", "one")>
+                    <cfset labelKey = "FisherResponseLabel_" & token>
+                    <cfset optionKey = "FisherResponseOptionID_" & token>
+                    <cfset sortOrderKey = "FisherResponseSortOrder_" & token>
+                    <cfset responseLabel = "">
+                    <cfset responseCount = trim(arguments.FORM[currentKey])>
+                    <cfset responseOptionID = "">
+                    <cfset sortOrder = "">
+                    <cfif structKeyExists(arguments.FORM, labelKey)><cfset responseLabel = trim(arguments.FORM[labelKey])></cfif>
+                    <cfif structKeyExists(arguments.FORM, optionKey)><cfset responseOptionID = trim(arguments.FORM[optionKey])></cfif>
+                    <cfif structKeyExists(arguments.FORM, sortOrderKey)><cfset sortOrder = trim(arguments.FORM[sortOrderKey])></cfif>
+                    <cfif len(responseLabel) GT 0 AND len(responseCount) GT 0>
+                        <cfquery name="qInsertResponse" datasource="#variables.dsn#">
+                            INSERT INTO Survey_Sighting_FisherResponseToCetacean
+                            (
+                                SightingID,
+                                ResponseOptionID,
+                                ResponseLabel,
+                                ResponseCount,
+                                SortOrder
+                            )
+                            VALUES
+                            (
+                                <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">,
+                                <cfqueryparam cfsqltype="cf_sql_integer" value="#responseOptionID#" null="#IIF(len(responseOptionID) EQ 0, true, false)#">,
+                                <cfqueryparam cfsqltype="cf_sql_varchar" value="#responseLabel#">,
+                                <cfqueryparam cfsqltype="cf_sql_integer" value="#responseCount#">,
+                                <cfqueryparam cfsqltype="cf_sql_integer" value="#sortOrder#" null="#IIF(len(sortOrder) EQ 0, true, false)#">
+                            )
+                        </cfquery>
+                    </cfif>
+                </cfif>
+            </cfloop>
+            <cfcatch type="any">
+            </cfcatch>
+        </cftry>
+    </cffunction>
+
+    <cffunction name="saveSightingVesselResponseToCetacean" returntype="void" output="false" access="public">
+        <cfargument name="sight_id" type="numeric" required="true">
+        <cfargument name="FORM" type="struct" required="true">
+        <cfset var formKeys = structKeyArray(arguments.FORM)>
+        <cfset var currentKey = "">
+        <cfset var token = "">
+        <cfset var labelKey = "">
+        <cfset var optionKey = "">
+        <cfset var sortOrderKey = "">
+        <cfset var responseLabel = "">
+        <cfset var responseCount = "">
+        <cfset var responseOptionID = "">
+        <cfset var sortOrder = "">
+
+        <cftry>
+            <cfquery name="qDeleteResponses" datasource="#variables.dsn#">
+                DELETE FROM Survey_Sighting_VesselResponseToCetacean
+                WHERE SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
+            </cfquery>
+
+            <cfloop array="#formKeys#" index="currentKey">
+                <cfif left(currentKey, 20) EQ "VesselResponseCount_">
+                    <cfset token = replaceNoCase(currentKey, "VesselResponseCount_", "", "one")>
+                    <cfset labelKey = "VesselResponseLabel_" & token>
+                    <cfset optionKey = "VesselResponseOptionID_" & token>
+                    <cfset sortOrderKey = "VesselResponseSortOrder_" & token>
+                    <cfset responseLabel = "">
+                    <cfset responseCount = trim(arguments.FORM[currentKey])>
+                    <cfset responseOptionID = "">
+                    <cfset sortOrder = "">
+                    <cfif structKeyExists(arguments.FORM, labelKey)><cfset responseLabel = trim(arguments.FORM[labelKey])></cfif>
+                    <cfif structKeyExists(arguments.FORM, optionKey)><cfset responseOptionID = trim(arguments.FORM[optionKey])></cfif>
+                    <cfif structKeyExists(arguments.FORM, sortOrderKey)><cfset sortOrder = trim(arguments.FORM[sortOrderKey])></cfif>
+                    <cfif len(responseLabel) GT 0 AND len(responseCount) GT 0>
+                        <cfquery name="qInsertResponse" datasource="#variables.dsn#">
+                            INSERT INTO Survey_Sighting_VesselResponseToCetacean
+                            (
+                                SightingID,
+                                ResponseOptionID,
+                                ResponseLabel,
+                                ResponseCount,
+                                SortOrder
+                            )
+                            VALUES
+                            (
+                                <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">,
+                                <cfqueryparam cfsqltype="cf_sql_integer" value="#responseOptionID#" null="#IIF(len(responseOptionID) EQ 0, true, false)#">,
+                                <cfqueryparam cfsqltype="cf_sql_varchar" value="#responseLabel#">,
+                                <cfqueryparam cfsqltype="cf_sql_integer" value="#responseCount#">,
+                                <cfqueryparam cfsqltype="cf_sql_integer" value="#sortOrder#" null="#IIF(len(sortOrder) EQ 0, true, false)#">
+                            )
+                        </cfquery>
+                    </cfif>
+                </cfif>
+            </cfloop>
+            <cfcatch type="any">
+            </cfcatch>
+        </cftry>
+    </cffunction>
 
 
 <!----Last Project ID ---->
@@ -1282,6 +1714,15 @@
 		<cfelse>
 			<cfset project_id = qgetSurvey.id>
         </cfif>
+        <cfset legacyDynamicResponseValues = buildLegacyDynamicResponseValues(FORM)>
+        <cfset FisherResponsetoCetacean1 = legacyDynamicResponseValues.FisherResponsetoCetacean1>
+        <cfset FisherResponsetoCetacean2 = legacyDynamicResponseValues.FisherResponsetoCetacean2>
+        <cfset FisherResponsetoCetacean3 = legacyDynamicResponseValues.FisherResponsetoCetacean3>
+        <cfset FisherResponsetoCetacean4 = legacyDynamicResponseValues.FisherResponsetoCetacean4>
+        <cfset VesselResponsetoCetacean1 = legacyDynamicResponseValues.VesselResponsetoCetacean1>
+        <cfset VesselResponsetoCetacean2 = legacyDynamicResponseValues.VesselResponsetoCetacean2>
+        <cfset VesselResponsetoCetacean3 = legacyDynamicResponseValues.VesselResponsetoCetacean3>
+        <cfset VesselResponsetoCetacean4 = legacyDynamicResponseValues.VesselResponsetoCetacean4>
     
         <!---getting time for all Divetime fields and caculating total time --->
         <cfset dd= "2021-8-9">
@@ -1573,6 +2014,15 @@
 		<cfelse>
 			<cfset HabitatType=''>
         </cfif>
+        <cfset legacyDynamicResponseValues = buildLegacyDynamicResponseValues(FORM)>
+        <cfset FisherResponsetoCetacean1 = legacyDynamicResponseValues.FisherResponsetoCetacean1>
+        <cfset FisherResponsetoCetacean2 = legacyDynamicResponseValues.FisherResponsetoCetacean2>
+        <cfset FisherResponsetoCetacean3 = legacyDynamicResponseValues.FisherResponsetoCetacean3>
+        <cfset FisherResponsetoCetacean4 = legacyDynamicResponseValues.FisherResponsetoCetacean4>
+        <cfset VesselResponsetoCetacean1 = legacyDynamicResponseValues.VesselResponsetoCetacean1>
+        <cfset VesselResponsetoCetacean2 = legacyDynamicResponseValues.VesselResponsetoCetacean2>
+        <cfset VesselResponsetoCetacean3 = legacyDynamicResponseValues.VesselResponsetoCetacean3>
+        <cfset VesselResponsetoCetacean4 = legacyDynamicResponseValues.VesselResponsetoCetacean4>
         <!--- <cfdump var="#HabitatType#" abort="true"> --->
         <cfset dd= "2021-8-9">
         <cfset totaltimes = []>

@@ -8,6 +8,14 @@ function deleteRecord(id) {
                     id: id
                 },
                 success: function(data) {
+                    var response = data;
+                    if (typeof data === "string") {
+                        response = JSON.parse(data);
+                    }
+                    if (response.success === false) {
+                        bootbox.alert(response.message || "Unable to delete this record.");
+                        return;
+                    }
 
                     $('html, body').animate({
                         scrollTop: 0
@@ -25,6 +33,7 @@ function deleteRecord(id) {
 
 function updateRecord(id) {
     $('#Desc').val($('#cam-' + id).text());
+    $('#SortOrder').val($('#selectedSortOrder-' + id).val());
     $("#add").attr('name', 'editFisherResponseToCetacean');
     $("#add").text('Edit');
     $("#FisherResponseToCetacean_id").val(id);
@@ -48,6 +57,16 @@ $('form').formValidation({
             validators: {
                 notEmpty: {
                     message: 'Please enter DESC'
+                }
+            }
+        },
+        SortOrder: {
+            validators: {
+                notEmpty: {
+                    message: 'Please enter sort order'
+                },
+                integer: {
+                    message: 'Sort order must be a whole number'
                 }
             }
         }

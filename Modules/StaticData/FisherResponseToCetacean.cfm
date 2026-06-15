@@ -54,6 +54,12 @@
                      </div>
                   </div>
                   <div class="form-group m-b-10">
+                     <label class="col-md-3 control-label">Sort Order</label>
+                     <div class="col-md-7">
+                        <input type="number" min="0" class="form-control" name="SortOrder" id="SortOrder" placeholder="Please input sort order" required/>
+                     </div>
+                  </div>
+                  <div class="form-group m-b-10">
                      <label class="col-md-3 control-label">Status</label>
                      <div class="col-md-7">
                         <select class="form-control" name="active" id="active">
@@ -97,11 +103,12 @@
       </div>
       <!-- begin panel -->
       <div class="panel pagination-inverse m-b-0 clearfix">
-         <table id="example" data-order='[[1,"asc"]]' class="table table-bordered table-hover">
+         <table id="example" data-order='[[2,"asc"],[1,"asc"]]' class="table table-bordered table-hover">
             <thead>
                <tr class="inverse">
                   <th>Sr#</th>
                   <th>Fisher Response to Cetacean</th>
+                  <th>Sort Order</th>
                   <th>Status</th>
                   <th>Actions</th>
                </tr>
@@ -111,6 +118,7 @@
                   <tr class="inverse" id="remov_#ID#">
                      <td>#qgetFisherResponseToCetacean.currentRow#</td>
                      <td id='cam-#id#'>#Desc#</td>
+                     <td id='sort-#id#'>#SortOrder#</td>
                      <td>
                         <cfif active eq 1 >
                            Active
@@ -119,6 +127,7 @@
                         </cfif>
                      </td>
                      <input type="hidden" name="seletecActiveValue-#id#" id="seletecActiveValue-#id#" value="#active#">
+                     <input type="hidden" name="selectedSortOrder-#id#" id="selectedSortOrder-#id#" value="#SortOrder#">
                      <td >
                         <button class="btn btn-xs btn-primary update" onclick="updateRecord(#ID#)"><i class="fa fa-pencil-square-o"></i></button> &nbsp; &nbsp;&nbsp;&nbsp; <button class="btn btn-xs btn-primary" onclick="return deleteRecord(#ID#)"><i class="glyphicon glyphicon-trash"></i></button>
                      </td>

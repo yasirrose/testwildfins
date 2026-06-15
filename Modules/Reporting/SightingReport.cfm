@@ -1458,6 +1458,84 @@
 
 
                 </cfscript>
+                <cfset qFisherResponseToCetacean = Application.SightingNew.qFisherResponseToCetacean()>
+                <cfset qVesselResponseToCetacean = Application.SightingNew.qVesselResponseToCetacean()>
+                <cfset fisherResponseHeaders = []>
+                <cfset vesselResponseHeaders = []>
+                <cfset fisherResponseHeaderIndex = structNew()>
+                <cfset vesselResponseHeaderIndex = structNew()>
+                <cfset fisherResponseCountMap = structNew()>
+                <cfset vesselResponseCountMap = structNew()>
+                <cfset reportSightingIds = ValueList(qFiltered.sightingID)>
+                <cfset qReportFisherResponseToCetacean = queryNew("SightingID,ResponseLabel,ResponseCount,SortOrder")>
+                <cfset qReportVesselResponseToCetacean = queryNew("SightingID,ResponseLabel,ResponseCount,SortOrder")>
+
+                <cfloop query="qFisherResponseToCetacean">
+                    <cfset fisherHeaderKey = lcase(rereplace(trim(Desc), "\s+", " ", "all"))>
+                    <cfif NOT structKeyExists(fisherResponseHeaderIndex, fisherHeaderKey)>
+                        <cfset ArrayAppend(fisherResponseHeaders, {Label = trim(Desc), Key = fisherHeaderKey})>
+                        <cfset fisherResponseHeaderIndex[fisherHeaderKey] = arrayLen(fisherResponseHeaders)>
+                    </cfif>
+                </cfloop>
+
+                <cfloop query="qVesselResponseToCetacean">
+                    <cfset vesselHeaderKey = lcase(rereplace(trim(Desc), "\s+", " ", "all"))>
+                    <cfif NOT structKeyExists(vesselResponseHeaderIndex, vesselHeaderKey)>
+                        <cfset ArrayAppend(vesselResponseHeaders, {Label = trim(Desc), Key = vesselHeaderKey})>
+                        <cfset vesselResponseHeaderIndex[vesselHeaderKey] = arrayLen(vesselResponseHeaders)>
+                    </cfif>
+                </cfloop>
+
+                <cfif len(reportSightingIds)>
+                    <cftry>
+                        <cfquery name="qReportFisherResponseToCetacean" datasource="#variables.dsn#">
+                            SELECT
+                                SightingID,
+                                ResponseLabel,
+                                ResponseCount,
+                                SortOrder
+                            FROM Survey_Sighting_FisherResponseToCetacean
+                            WHERE SightingID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#reportSightingIds#">)
+                            ORDER BY ISNULL(SortOrder, 9999), ResponseLabel
+                        </cfquery>
+                        <cfquery name="qReportVesselResponseToCetacean" datasource="#variables.dsn#">
+                            SELECT
+                                SightingID,
+                                ResponseLabel,
+                                ResponseCount,
+                                SortOrder
+                            FROM Survey_Sighting_VesselResponseToCetacean
+                            WHERE SightingID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#reportSightingIds#">)
+                            ORDER BY ISNULL(SortOrder, 9999), ResponseLabel
+                        </cfquery>
+                        <cfcatch type="any">
+                            <cfset qReportFisherResponseToCetacean = queryNew("SightingID,ResponseLabel,ResponseCount,SortOrder")>
+                            <cfset qReportVesselResponseToCetacean = queryNew("SightingID,ResponseLabel,ResponseCount,SortOrder")>
+                        </cfcatch>
+                    </cftry>
+                </cfif>
+
+                <cfloop query="qReportFisherResponseToCetacean">
+                    <cfset fisherHeaderKey = lcase(rereplace(trim(ResponseLabel), "\s+", " ", "all"))>
+                    <cfif len(fisherHeaderKey) GT 0>
+                        <cfif NOT structKeyExists(fisherResponseHeaderIndex, fisherHeaderKey)>
+                            <cfset ArrayAppend(fisherResponseHeaders, {Label = trim(ResponseLabel), Key = fisherHeaderKey})>
+                            <cfset fisherResponseHeaderIndex[fisherHeaderKey] = arrayLen(fisherResponseHeaders)>
+                        </cfif>
+                        <cfset fisherResponseCountMap["#SightingID#|#fisherHeaderKey#"] = ResponseCount>
+                    </cfif>
+                </cfloop>
+
+                <cfloop query="qReportVesselResponseToCetacean">
+                    <cfset vesselHeaderKey = lcase(rereplace(trim(ResponseLabel), "\s+", " ", "all"))>
+                    <cfif len(vesselHeaderKey) GT 0>
+                        <cfif NOT structKeyExists(vesselResponseHeaderIndex, vesselHeaderKey)>
+                            <cfset ArrayAppend(vesselResponseHeaders, {Label = trim(ResponseLabel), Key = vesselHeaderKey})>
+                            <cfset vesselResponseHeaderIndex[vesselHeaderKey] = arrayLen(vesselResponseHeaders)>
+                        </cfif>
+                        <cfset vesselResponseCountMap["#SightingID#|#vesselHeaderKey#"] = ResponseCount>
+                    </cfif>
+                </cfloop>
             
                 <div class="section-container  p-b-10">
                     <cfif qFiltered.recordcount NEQ 0>
@@ -1556,10 +1634,9 @@
                                         <th>Cetacean Response to Fisher (Approach)</th>
                                         <th>Cetacean Response to Fisher (Neutral)</th>
                                         <th>Cetacean Response to Fisher (Relocate)</th>
-                                        <th>Fisher response to cetacean (Approach)</th>
-                                        <th>Fisher response to cetacean (No Response)</th>
-                                        <th>Fisher response to cetacean (Pull in Line)</th>
-                                        <th>Fisher response to cetacean (Relocate)</th>
+                                        <cfloop array="#fisherResponseHeaders#" index="fisherResponseHeader">
+                                            <th>Fisher response to cetacean (#fisherResponseHeader.Label#)</th>
+                                        </cfloop>
                                         <th>Depredation</th>
                                     </cfif>
                                     <cfif structKeyExists(form, "BoatingInteractions") AND form.BoatingInteractions EQ "1">
@@ -1568,10 +1645,9 @@
                                         <th>Cetacean Response to Vessel (Approach)</th>
                                         <th>Cetacean Response to Vessel (Neutral)</th>
                                         <th>Cetacean Response to Vessel (Relocate)</th>
-                                        <th>Vessel Response to Cetaceans (Approach)</th>
-                                        <th>Vessel Response to Cetaceans (No Response)</th>
-                                        <th>Vessel Response to Cetaceans (Pull in Line)</th>
-                                        <th>Vessel Response to Cetaceans (Relocate)</th>
+                                        <cfloop array="#vesselResponseHeaders#" index="vesselResponseHeader">
+                                            <th>Vessel Response to Cetaceans (#vesselResponseHeader.Label#)</th>
+                                        </cfloop>
                                     </cfif>
                                     <cfif structKeyExists(form, "HBOIvesselinteractions") AND form.HBOIvesselinteractions EQ "1">
                                         <th>no of Cetaceans</th>
@@ -1963,10 +2039,22 @@
                                             <td>#CetaceanResponsetoFisher1#</td>
                                             <td>#CetaceanResponsetoFisher2#</td>
                                             <td>#CetaceanResponsetoFisher3#</td>
-                                            <td>#FisherResponsetoCetacean1#</td>
-                                            <td>#FisherResponsetoCetacean2#</td>
-                                            <td>#FisherResponsetoCetacean3#</td>
-                                            <td>#FisherResponsetoCetacean4#</td>
+                                            <cfloop array="#fisherResponseHeaders#" index="fisherResponseHeader">
+                                                <cfset fisherResponseValue = "">
+                                                <cfset fisherResponseMapKey = "#sightingID#|#fisherResponseHeader.Key#">
+                                                <cfif structKeyExists(fisherResponseCountMap, fisherResponseMapKey)>
+                                                    <cfset fisherResponseValue = fisherResponseCountMap[fisherResponseMapKey]>
+                                                <cfelseif fisherResponseHeader.Key EQ "approach">
+                                                    <cfset fisherResponseValue = FisherResponsetoCetacean1>
+                                                <cfelseif fisherResponseHeader.Key EQ "no response">
+                                                    <cfset fisherResponseValue = FisherResponsetoCetacean2>
+                                                <cfelseif fisherResponseHeader.Key EQ "pull in line">
+                                                    <cfset fisherResponseValue = FisherResponsetoCetacean3>
+                                                <cfelseif fisherResponseHeader.Key EQ "relocate">
+                                                    <cfset fisherResponseValue = FisherResponsetoCetacean4>
+                                                </cfif>
+                                                <td>#fisherResponseValue#</td>
+                                            </cfloop>
                                             <td>#Depredation#</td>
                                         </cfif>
                                         <cfif structKeyExists(form, "BoatingInteractions") AND form.BoatingInteractions EQ "1">
@@ -1975,10 +2063,22 @@
                                             <td>#CetaceanResponsetoVessel1#</td>
                                             <td>#CetaceanResponsetoVessel2#</td>
                                             <td>#CetaceanResponsetoVessel3#</td>
-                                            <td>#VesselResponsetoCetacean1#</td>
-                                            <td>#VesselResponseToCetacean2#</td>
-                                            <td>#VesselResponsetoCetacean3#</td>
-                                            <td>#VesselResponsetoCetacean4#</td>
+                                            <cfloop array="#vesselResponseHeaders#" index="vesselResponseHeader">
+                                                <cfset vesselResponseValue = "">
+                                                <cfset vesselResponseMapKey = "#sightingID#|#vesselResponseHeader.Key#">
+                                                <cfif structKeyExists(vesselResponseCountMap, vesselResponseMapKey)>
+                                                    <cfset vesselResponseValue = vesselResponseCountMap[vesselResponseMapKey]>
+                                                <cfelseif vesselResponseHeader.Key EQ "approach">
+                                                    <cfset vesselResponseValue = VesselResponsetoCetacean1>
+                                                <cfelseif vesselResponseHeader.Key EQ "no response">
+                                                    <cfset vesselResponseValue = VesselResponsetoCetacean2>
+                                                <cfelseif vesselResponseHeader.Key EQ "out of gear">
+                                                    <cfset vesselResponseValue = VesselResponsetoCetacean3>
+                                                <cfelseif vesselResponseHeader.Key EQ "relocate">
+                                                    <cfset vesselResponseValue = VesselResponsetoCetacean4>
+                                                </cfif>
+                                                <td>#vesselResponseValue#</td>
+                                            </cfloop>
                                         </cfif>
                                         <cfif structKeyExists(form, "HBOIvesselinteractions") AND form.HBOIvesselinteractions EQ "1">
                                             <td>#No_of_Cetaceans_wHBOI_Vessel#</td>

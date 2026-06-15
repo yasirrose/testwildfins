@@ -21,11 +21,11 @@
    <!-- begin breadcrumb -->
    <ol class="breadcrumb pull-right">
       <li><a href="javascript:;">Home</a></li>
-      <li><a href="javascript:;">Vessel Response to Cetaceanr</a></li>
+      <li><a href="javascript:;">Vessel Response to Cetacean</a></li>
    </ol>
    <!-- end breadcrumb -->
    <!-- begin page-header -->
-   <h1 class="page-header">Vessel Response to Cetaceanr</h1>
+   <h1 class="page-header">Vessel Response to Cetacean</h1>
    <!-- end page-header -->
    <cfif isdefined('qEditVesselResponseToCetacean') and qEditVesselResponseToCetacean.recordcount eq 1 >
    <div class="alert alert-success fade in m-b-10" id="sucess-div">
@@ -43,14 +43,20 @@
       <div class="row">
          <!-- begin col-6 -->
          <div class="col-md-10">
-            <h5 class="m-t-0">Create Vessel Response to Cetaceanr Record</h5>
+            <h5 class="m-t-0">Create Vessel Response to Cetacean Record</h5>
             <cfoutput>
                <form class="form-horizontal" action="#CGI.SCRIPT_NAME#?#CGI.QUERY_STRING#" name="add-camara" method="post">
                   <div class="form-group m-b-10">
-                     <label class="col-md-3 control-label">Vessel Response to Cetaceanr</label>
+                     <label class="col-md-3 control-label">Vessel Response to Cetacean</label>
                      <div class="col-md-7">
                         <input type="hidden" name="ID" value='' id="VesselResponseToCetacean_id" />
-                        <input type="text" class="form-control" name="Desc" id="Desc" placeholder="Please input Vessel Response to Cetaceanr" required/>
+                        <input type="text" class="form-control" name="Desc" id="Desc" placeholder="Please input Vessel Response to Cetacean" required/>
+                     </div>
+                  </div>
+                  <div class="form-group m-b-10">
+                     <label class="col-md-3 control-label">Sort Order</label>
+                     <div class="col-md-7">
+                        <input type="number" min="0" class="form-control" name="SortOrder" id="SortOrder" placeholder="Please input sort order" required/>
                      </div>
                   </div>
                   <div class="form-group m-b-10">
@@ -76,7 +82,7 @@
    </div>
    <div class="form-group">
       <div class="alert alert-success message" style="display:none">
-         <strong>Success!</strong> Vessel Response to Cetaceanr Deleted.
+         <strong>Success!</strong> Vessel Response to Cetacean Deleted.
       </div>
    </div>
    <!-- begin section-container -->
@@ -97,11 +103,12 @@
       </div>
       <!-- begin panel -->
       <div class="panel pagination-inverse m-b-0 clearfix">
-         <table id="example" data-order='[[1,"asc"]]' class="table table-bordered table-hover">
+         <table id="example" data-order='[[2,"asc"],[1,"asc"]]' class="table table-bordered table-hover">
             <thead>
                <tr class="inverse">
                   <th>Sr#</th>
-                  <th>Vessel Response to Cetaceanr</th>
+                  <th>Vessel Response to Cetacean</th>
+                  <th>Sort Order</th>
                   <th>Status</th>
                   <th>Actions</th>
                </tr>
@@ -111,6 +118,7 @@
                   <tr class="inverse" id="remov_#ID#">
                      <td>#qgetVesselResponseToCetacean.currentRow#</td>
                      <td id='cam-#id#'>#Desc#</td>
+                     <td id='sort-#id#'>#SortOrder#</td>
                      <td>
                         <cfif active eq 1 >
                            Active
@@ -119,6 +127,7 @@
                         </cfif>
                      </td>
                      <input type="hidden" name="seletecActiveValue-#id#" id="seletecActiveValue-#id#" value="#active#">
+                     <input type="hidden" name="selectedSortOrder-#id#" id="selectedSortOrder-#id#" value="#SortOrder#">
                      <td >
                         <button class="btn btn-xs btn-primary update" onclick="updateRecord(#ID#)"><i class="fa fa-pencil-square-o"></i></button> &nbsp; &nbsp;&nbsp;&nbsp; <button class="btn btn-xs btn-primary" onclick="return deleteRecord(#ID#)"><i class="glyphicon glyphicon-trash"></i></button>
                      </td>

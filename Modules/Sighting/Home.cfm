@@ -148,6 +148,10 @@
       <cfset message ="Survey record updated!">
       <cfif isdefined('form.update_data') or isdefined('form.update_data_clear')>
         <cfset qUpdateProject_SIGHT=Application.SightingNew.qUpdateProject_SIGHT(argumentCollection="#Form#")>
+        <cfif isdefined("form.sight_id") AND val(form.sight_id) GT 0>
+          <cfset Application.SightingNew.saveSightingFisherResponseToCetacean(sight_id=form.sight_id, FORM=Form)>
+          <cfset Application.SightingNew.saveSightingVesselResponseToCetacean(sight_id=form.sight_id, FORM=Form)>
+        </cfif>
         <cfset message ="Survey and Sighting record updated!">
       </cfif>
     </cfif>
@@ -192,6 +196,8 @@
                         <cfif qInsertsigting.RECORDCOUNT eq 1 >
                             <cfset lastsight_id = Application.SightingNew.qInsertids()>
                             <cfset form.sight_id = lastsight_id.ids>
+                            <cfset Application.SightingNew.saveSightingFisherResponseToCetacean(sight_id=form.sight_id, FORM=Form)>
+                            <cfset Application.SightingNew.saveSightingVesselResponseToCetacean(sight_id=form.sight_id, FORM=Form)>
                             <cfset message ="Survey and Sighting Added!">
                               <!--- Here we decide open cetacean sighting modal OR clear sighting--->
                             <cfif isdefined('form.add_survey') >
@@ -255,6 +261,9 @@
         </cftry>
         <!---- last sight ID------>
         <cfset lastsight_id = Application.SightingNew.qInsertids()>
+        <cfset form.sight_id = lastsight_id.ids>
+        <cfset Application.SightingNew.saveSightingFisherResponseToCetacean(sight_id=form.sight_id, FORM=Form)>
+        <cfset Application.SightingNew.saveSightingVesselResponseToCetacean(sight_id=form.sight_id, FORM=Form)>
       </cfif>
     </cfif>
     <!-- time if end -->
@@ -299,9 +308,9 @@
   <cfset qGetWave=Application.SightingNew.qGetWeather()>
 
   <cfset qCetaceanResponseToFisher=Application.SightingNew.qCetaceanResponseToFisher()>
-  <cfset qFisherResponseToCetacean=Application.SightingNew.qFisherResponseToCetacean()>
+  <cfset qSightingFisherResponseToCetacean=Application.SightingNew.getSightingFisherResponseToCetaceanRows(sight_id=val(form.sight_id))>
   <cfset qCetaceanResponseToVessel=Application.SightingNew.qCetaceanResponseToVessel()>
-  <cfset qVesselResponseToCetacean=Application.SightingNew.qVesselResponseToCetacean()>
+  <cfset qSightingVesselResponseToCetacean=Application.SightingNew.getSightingVesselResponseToCetaceanRows(sight_id=val(form.sight_id))>
   <!--- Conditions ---> 
 
   <!--- Cetacean Species --->
@@ -317,12 +326,6 @@
   <cfset getPlateForm=Application.StaticDataNew.getPlateForm()>
 
   <!---  Static data   --->
-
-
-  <cfset staticInteractions = ['','Approach','Neutral','Relocate']>
-  <cfset vesselResponseToCetacean = ['','Approach','Out of Gear','No Response','Other']>
-  <cfset fisherResponseToCetacean = ['','Relocate','Pull in line','Approach','No Response']>
-
 
   <cfset TideList = Application.SightingNew.getTide()>
   <cfset StructureList = Application.SightingNew.getStructureList()>
@@ -1618,16 +1621,21 @@
                       <div class="input col-lg-7 col-md-9 col-sm-12 col-xs-12">
                         <div class="row sp">
                           <div class="col-md-7">
-                            <input type="text" value="Approach"  class="form-control" readonly />
-                            <input type="text" value="No Response"   class="form-control"  readonly/>
-                            <input type="text" value="Pull in Line"  class="form-control"  readonly/>
-                            <input type="text" value="Relocate"  class="form-control"  readonly/>
+                            <cfloop query="qSightingFisherResponseToCetacean">
+                              <cfset fisherDisplayLabel = ResponseLabel>
+                              <cfif HistoricalOnly EQ 1>
+                                <cfset fisherDisplayLabel = fisherDisplayLabel & " (inactive)">
+                              </cfif>
+                              <input type="hidden" name="FisherResponseOptionID_#RowToken#" value="#ResponseOptionID#" />
+                              <input type="hidden" name="FisherResponseLabel_#RowToken#" value="#HTMLEditFormat(ResponseLabel)#" />
+                              <input type="hidden" name="FisherResponseSortOrder_#RowToken#" value="#SortOrder#" />
+                              <input type="text" value="#HTMLEditFormat(fisherDisplayLabel)#" class="form-control" readonly />
+                            </cfloop>
                           </div>
                           <div class="col-md-5">
-                            <input type="number" min="0" value="#qGetSightings.FisherResponsetoCetacean1#" name="FisherResponsetoCetacean1"  class="form-control"  />
-                            <input type="number" min="0" value="#qGetSightings.FisherResponsetoCetacean2#" name="FisherResponsetoCetacean2"  class="form-control"  />
-                            <input type="number" min="0" value="#qGetSightings.FisherResponsetoCetacean3#" name="FisherResponsetoCetacean3"  class="form-control"  />
-                            <input type="number" min="0" value="#qGetSightings.FisherResponsetoCetacean4#" name="FisherResponsetoCetacean4"  class="form-control"  />
+                            <cfloop query="qSightingFisherResponseToCetacean">
+                              <input type="number" min="0" value="#ResponseCount#" name="FisherResponseCount_#RowToken#" class="form-control" />
+                            </cfloop>
                           </div>
                         </div>
                       </div>
@@ -1695,16 +1703,21 @@
                     <div class="input col-lg-7 col-md-9 col-sm-12 col-xs-12">
                       <div class="row sp">
                         <div class="col-md-7">
-                          <input type="text" value="Approach"  class="form-control" readonly />
-                          <input type="text" value="No Response"   class="form-control"  readonly/>
-                          <input type="text" value="Out of Gear"  class="form-control"  readonly/>
-                          <input type="text" value="Relocate"  class="form-control"  readonly/>
+                          <cfloop query="qSightingVesselResponseToCetacean">
+                            <cfset vesselDisplayLabel = ResponseLabel>
+                            <cfif HistoricalOnly EQ 1>
+                              <cfset vesselDisplayLabel = vesselDisplayLabel & " (inactive)">
+                            </cfif>
+                            <input type="hidden" name="VesselResponseOptionID_#RowToken#" value="#ResponseOptionID#" />
+                            <input type="hidden" name="VesselResponseLabel_#RowToken#" value="#HTMLEditFormat(ResponseLabel)#" />
+                            <input type="hidden" name="VesselResponseSortOrder_#RowToken#" value="#SortOrder#" />
+                            <input type="text" value="#HTMLEditFormat(vesselDisplayLabel)#" class="form-control" readonly />
+                          </cfloop>
                         </div>
                         <div class="col-md-5">
-                          <input type="number" min="0" value="#qGetSightings.VesselResponsetoCetacean1#" name="VesselResponsetoCetacean1"  class="form-control"  />
-                          <input type="number" min="0" value="#qGetSightings.VesselResponsetoCetacean2#" name="VesselResponsetoCetacean2"  class="form-control"  />
-                          <input type="number" min="0" value="#qGetSightings.VesselResponsetoCetacean3#" name="VesselResponsetoCetacean3"  class="form-control"  />
-                          <input type="number" min="0" value="#qGetSightings.VesselResponsetoCetacean4#" name="VesselResponsetoCetacean4"  class="form-control"  />
+                          <cfloop query="qSightingVesselResponseToCetacean">
+                            <input type="number" min="0" value="#ResponseCount#" name="VesselResponseCount_#RowToken#" class="form-control" />
+                          </cfloop>
                         </div>
                       </div>
                     </div>
