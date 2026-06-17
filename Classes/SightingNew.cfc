@@ -1294,7 +1294,7 @@
                     md.[Desc] AS ResponseLabel,
                     CAST(
                         COALESCE(
-                            rcMatch.ResponseCount,
+                            rc.ResponseCount,
                             CASE
                                 WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'approach' THEN ss.FisherResponsetoCetacean1
                                 WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'no response' THEN ss.FisherResponsetoCetacean2
@@ -1304,32 +1304,14 @@
                             END
                         ) AS INT
                     ) AS ResponseCount,
-                    CAST(CASE WHEN rcMatch.ID IS NOT NULL AND md.active <> 1 THEN 1 ELSE 0 END AS BIT) AS HistoricalOnly,
+                    CAST(CASE WHEN rc.ID IS NOT NULL AND md.active <> 1 THEN 1 ELSE 0 END AS BIT) AS HistoricalOnly,
                     <cfif hasSortOrder>ISNULL(md.SortOrder, md.ID)<cfelse>md.ID</cfif> AS SortOrder
                 FROM TLU_FisherResponseToCetacean md
+                LEFT JOIN Survey_Sighting_FisherResponseToCetacean rc
+                    ON rc.SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
+                    AND rc.ResponseOptionID = md.ID
                 LEFT JOIN Survey_Sightings ss
                     ON ss.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
-                OUTER APPLY (
-                    SELECT TOP 1
-                        rc.ID,
-                        rc.ResponseCount
-                    FROM Survey_Sighting_FisherResponseToCetacean rc
-                    WHERE rc.SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
-                      AND (
-                            rc.ResponseOptionID = md.ID
-                            OR LOWER(LTRIM(RTRIM(rc.ResponseLabel))) = LOWER(LTRIM(RTRIM(md.[Desc])))
-                            <cfif hasSortOrder>
-                            OR ISNULL(rc.SortOrder, md.ID) = ISNULL(md.SortOrder, md.ID)
-                            </cfif>
-                      )
-                    ORDER BY
-                        CASE
-                            WHEN rc.ResponseOptionID = md.ID THEN 0
-                            WHEN LOWER(LTRIM(RTRIM(rc.ResponseLabel))) = LOWER(LTRIM(RTRIM(md.[Desc]))) THEN 1
-                            ELSE 2
-                        END,
-                        rc.ID DESC
-                ) rcMatch
                 WHERE md.active = 1
 
                 UNION ALL
@@ -1340,22 +1322,14 @@
                     rc.ResponseLabel,
                     rc.ResponseCount,
                     CAST(1 AS BIT) AS HistoricalOnly,
-                    <cfif hasSortOrder>ISNULL(rc.SortOrder, 9999)<cfelse>rc.ID</cfif> AS SortOrder
+                    ISNULL(rc.SortOrder, 9999) AS SortOrder
                 FROM Survey_Sighting_FisherResponseToCetacean rc
                 LEFT JOIN TLU_FisherResponseToCetacean md
-                    ON md.active = 1
-                    AND (
-                        md.ID = rc.ResponseOptionID
-                        OR LOWER(LTRIM(RTRIM(md.[Desc]))) = LOWER(LTRIM(RTRIM(rc.ResponseLabel)))
-                        <cfif hasSortOrder>
-                        OR ISNULL(md.SortOrder, md.ID) = ISNULL(rc.SortOrder, md.ID)
-                        </cfif>
-                    )
+                    ON md.ID = rc.ResponseOptionID
+                    AND md.active = 1
                 WHERE rc.SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
                 AND md.ID IS NULL
-                ORDER BY HistoricalOnly,
-                         <cfif hasSortOrder>SortOrder<cfelse>ResponseLabel</cfif>,
-                         ResponseLabel
+                ORDER BY HistoricalOnly, SortOrder, ResponseLabel
             </cfquery>
             <cfreturn query>
             <cfcatch type="any">
@@ -1397,7 +1371,7 @@
                     md.[Desc] AS ResponseLabel,
                     CAST(
                         COALESCE(
-                            rcMatch.ResponseCount,
+                            rc.ResponseCount,
                             CASE
                                 WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'approach' THEN ss.VesselResponsetoCetacean1
                                 WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'no response' THEN ss.VesselResponsetoCetacean2
@@ -1407,32 +1381,14 @@
                             END
                         ) AS INT
                     ) AS ResponseCount,
-                    CAST(CASE WHEN rcMatch.ID IS NOT NULL AND md.active <> 1 THEN 1 ELSE 0 END AS BIT) AS HistoricalOnly,
+                    CAST(CASE WHEN rc.ID IS NOT NULL AND md.active <> 1 THEN 1 ELSE 0 END AS BIT) AS HistoricalOnly,
                     <cfif hasSortOrder>ISNULL(md.SortOrder, md.ID)<cfelse>md.ID</cfif> AS SortOrder
                 FROM TLU_VesselResponseToCetacean md
+                LEFT JOIN Survey_Sighting_VesselResponseToCetacean rc
+                    ON rc.SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
+                    AND rc.ResponseOptionID = md.ID
                 LEFT JOIN Survey_Sightings ss
                     ON ss.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
-                OUTER APPLY (
-                    SELECT TOP 1
-                        rc.ID,
-                        rc.ResponseCount
-                    FROM Survey_Sighting_VesselResponseToCetacean rc
-                    WHERE rc.SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
-                      AND (
-                            rc.ResponseOptionID = md.ID
-                            OR LOWER(LTRIM(RTRIM(rc.ResponseLabel))) = LOWER(LTRIM(RTRIM(md.[Desc])))
-                            <cfif hasSortOrder>
-                            OR ISNULL(rc.SortOrder, md.ID) = ISNULL(md.SortOrder, md.ID)
-                            </cfif>
-                      )
-                    ORDER BY
-                        CASE
-                            WHEN rc.ResponseOptionID = md.ID THEN 0
-                            WHEN LOWER(LTRIM(RTRIM(rc.ResponseLabel))) = LOWER(LTRIM(RTRIM(md.[Desc]))) THEN 1
-                            ELSE 2
-                        END,
-                        rc.ID DESC
-                ) rcMatch
                 WHERE md.active = 1
 
                 UNION ALL
@@ -1443,22 +1399,14 @@
                     rc.ResponseLabel,
                     rc.ResponseCount,
                     CAST(1 AS BIT) AS HistoricalOnly,
-                    <cfif hasSortOrder>ISNULL(rc.SortOrder, 9999)<cfelse>rc.ID</cfif> AS SortOrder
+                    ISNULL(rc.SortOrder, 9999) AS SortOrder
                 FROM Survey_Sighting_VesselResponseToCetacean rc
                 LEFT JOIN TLU_VesselResponseToCetacean md
-                    ON md.active = 1
-                    AND (
-                        md.ID = rc.ResponseOptionID
-                        OR LOWER(LTRIM(RTRIM(md.[Desc]))) = LOWER(LTRIM(RTRIM(rc.ResponseLabel)))
-                        <cfif hasSortOrder>
-                        OR ISNULL(md.SortOrder, md.ID) = ISNULL(rc.SortOrder, md.ID)
-                        </cfif>
-                    )
+                    ON md.ID = rc.ResponseOptionID
+                    AND md.active = 1
                 WHERE rc.SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
                 AND md.ID IS NULL
-                ORDER BY HistoricalOnly,
-                         <cfif hasSortOrder>SortOrder<cfelse>ResponseLabel</cfif>,
-                         ResponseLabel
+                ORDER BY HistoricalOnly, SortOrder, ResponseLabel
             </cfquery>
             <cfreturn query>
             <cfcatch type="any">

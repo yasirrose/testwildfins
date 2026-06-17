@@ -72,6 +72,9 @@
 
                  <li class="has-sub<cfif Page eq 'StrandingNecropsyReport' AND NOT isArchive> active</cfif>">
                   <a href="#Application.superadmin#?Module=Reporting&Page=StrandingNecropsyReport">Stranding Necropsy Data Report</a>
+                 </li>
+                 <li class="has-sub<cfif Page eq 'SightingReport' AND NOT isArchive> active</cfif>">
+                  <a href="#Application.superadmin#?Module=Reporting&Page=SightingReport">Sighting Report</a>
                  </li> 
                   <!---<li class="has-sub <cfif Page eq 'RollcallReport' OR Page eq 'BestplacesReport' OR Page eq 'BiopsyReport' or Page eq 'BiopsyCatalogReport' or Page eq 'HERAReport' or Page eq 'MMHSRPReport' or Page eq 'NCSGReport' or Page eq 'BiopsyNOAASummary' or Page eq 'SampleDispositionReport'  >active</cfif>">
                      <a href="javascript:;"><b class="caret pull-right"></b>Survey Reports</a>
