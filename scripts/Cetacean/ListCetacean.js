@@ -37,8 +37,8 @@ function ApplyPagination(startmeup) {
 }
 
 function excel(){
-	form=document.getElementById('searchfrom');
-	form.action='http://test.wildfins.org/index.cfm?Module=Cetacean&Page=ExportListCetacean';
+	var form = document.getElementById('searchfrom');
+	form.action = 'index.cfm?Module=Cetacean&Page=ExportListCetacean';
 	// return false;
 	document.searchfrom.submit();
 	form.action='';
