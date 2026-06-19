@@ -61,14 +61,11 @@ function paginate(value){
 	$("#searchAllReports").submit();
 }
 function excel(){
-	form=document.getElementById('searchAllReports');
-	if (location.protocol === 'https:') {
-        form.action = 'https://test.wildfins.org/index.cfm?Module=Reporting&Page=ExportReport';
-    } else {
-        form.action = 'http://test.wildfins.org/index.cfm?Module=Reporting&Page=ExportReport';
-    }
-	form.submit();
-	form.action='';
+	var dataTableExcelButton = $('.buttons-excel');
+	if (dataTableExcelButton.length) {
+		dataTableExcelButton.trigger('click');
+		return;
+	}
 	$('#ConditionFromSighting').attr('checked', false);
 	$('#AtICWMarker').attr('checked', false);
 	$('#SightingStartEnd').attr('checked', false);
