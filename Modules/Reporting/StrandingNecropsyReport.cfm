@@ -752,10 +752,14 @@
         </cfif>
 
         
-        <cfif StructKeyExists(Form, "BodyOfWater") AND Form.BodyOfWater NEQ "">
-            <cfset BodyOfWaterList = Form.BodyOfWater>
-        <cfelse>
-            <cfset BodyOfWaterList = "">  
+        <cfset BodyOfWaterList = "">
+        <cfif StructKeyExists(Form, "BodyOfWater") AND Len(Trim(Form.BodyOfWater))>
+            <cfloop list="#Form.BodyOfWater#" index="bodyOfWaterFormId">
+                <cfset bodyOfWaterFormId = Trim(bodyOfWaterFormId)>
+                <cfif Len(bodyOfWaterFormId)>
+                    <cfset BodyOfWaterList = ListAppend(BodyOfWaterList, bodyOfWaterFormId)>
+                </cfif>
+            </cfloop>
         </cfif>
         <cfif StructKeyExists(Form, "cetaceanSpecies") AND Form.cetaceanSpecies NEQ "">
             <cfset cetaceanSpeciesList = Form.cetaceanSpecies>
@@ -787,6 +791,11 @@
         <cfelse>
             <cfset LesionTypeList = "">  
         </cfif>
+        <cfif StructKeyExists(Form, "Tissue_type") AND Form.Tissue_type NEQ "">
+            <cfset TissueTypeList = Form.Tissue_type>
+        <cfelse>
+            <cfset TissueTypeList = "">
+        </cfif>
         <cfif StructKeyExists(Form, "DiagnosticTest") AND Form.DiagnosticTest NEQ "">
             <cfset DiagnosticTestList = Form.DiagnosticTest>
         <cfelse>
@@ -802,6 +811,11 @@
             <cfset SampleTypeList = Form.SampleType>
         <cfelse>
             <cfset SampleTypeList = "">  
+        </cfif>
+        <cfif StructKeyExists(Form, "hisSampleType") AND Form.hisSampleType NEQ "">
+            <cfset HistoSampleTypeList = Form.hisSampleType>
+        <cfelse>
+            <cfset HistoSampleTypeList = "">
         </cfif>
 
        
@@ -836,8 +850,16 @@
                     <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
-                AND BodyOfWater IN (
-                    <cfqueryparam value="#BodyOfWaterList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                AND (
+                    <cfset bodyOfWaterFilterIndex = 0>
+                    <cfloop list="#BodyOfWaterList#" index="bodyOfWaterId">
+                        <cfset bodyOfWaterId = Trim(bodyOfWaterId)>
+                        <cfif Len(bodyOfWaterId)>
+                            <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
+                            <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                        </cfif>
+                    </cfloop>
                 )
             </cfif>
             <cfif isdefined("cetaceanSpeciesList") and cetaceanSpeciesList neq "">
@@ -888,8 +910,16 @@
                     <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
-                AND BodyOfWater IN (
-                    <cfqueryparam value="#BodyOfWaterList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                AND (
+                    <cfset bodyOfWaterFilterIndex = 0>
+                    <cfloop list="#BodyOfWaterList#" index="bodyOfWaterId">
+                        <cfset bodyOfWaterId = Trim(bodyOfWaterId)>
+                        <cfif Len(bodyOfWaterId)>
+                            <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
+                            <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                        </cfif>
+                    </cfloop>
                 )
             </cfif>
             <cfif isdefined("cetaceanSpeciesList") and cetaceanSpeciesList neq "">
@@ -926,8 +956,16 @@
                     <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
-                AND BodyOfWater IN (
-                    <cfqueryparam value="#BodyOfWaterList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                AND (
+                    <cfset bodyOfWaterFilterIndex = 0>
+                    <cfloop list="#BodyOfWaterList#" index="bodyOfWaterId">
+                        <cfset bodyOfWaterId = Trim(bodyOfWaterId)>
+                        <cfif Len(bodyOfWaterId)>
+                            <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
+                            <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                        </cfif>
+                    </cfloop>
                 )
             </cfif>
             <cfif isdefined("cetaceanSpeciesList") and cetaceanSpeciesList neq "">
@@ -956,10 +994,6 @@
         
             SELECT 'Histo Form' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_CE# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other# #necropsyCordiovasculorColumnList_Other# #necnopsyPulmonaryColumnList_Other# #necropsyEndocnineColumnList_Other# #neonpsyCentraeNenvusSysemColumnList_Other# #neenpsylymphoreticulorColumnList_Other# #necropsyUrogenitalColumnList_Other# #necropsyAlimentaryColumnList_Other# #G1ForeignMaterialColumnList_Other#
             FROM ST_HistoForm
-            <cfif isdefined("SampleTypeList") AND SampleTypeList NEQ "">
-                LEFT JOIN ST_HistoSampleData 
-                    ON ST_HistoForm.ID = ST_HistoSampleData.HI_ID
-            </cfif>
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
                 AND CONVERT(char(10), Date, 126) BETWEEN 
@@ -968,8 +1002,16 @@
                     <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
-                AND BodyOfWater IN (
-                    <cfqueryparam value="#BodyOfWaterList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                AND (
+                    <cfset bodyOfWaterFilterIndex = 0>
+                    <cfloop list="#BodyOfWaterList#" index="bodyOfWaterId">
+                        <cfset bodyOfWaterId = Trim(bodyOfWaterId)>
+                        <cfif Len(bodyOfWaterId)>
+                            <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
+                            <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                        </cfif>
+                    </cfloop>
                 )
             </cfif>
             <cfif isdefined("cetaceanSpeciesList") and cetaceanSpeciesList neq "">
@@ -992,6 +1034,25 @@
                     <cfqueryparam value="#countyList#" list="true" cfsqltype="CF_SQL_VARCHAR">
                 )
             </cfif>
+            <cfif isdefined("HistoSampleTypeList") AND HistoSampleTypeList NEQ "">
+                AND EXISTS (
+                    SELECT 1
+                    FROM ST_HistoSampleData
+                    WHERE ST_HistoSampleData.HI_ID = ST_HistoForm.ID
+                        AND (
+                            ST_HistoSampleData.SampleType IN (
+                                <cfqueryparam value="#HistoSampleTypeList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                            )
+                            OR ST_HistoSampleData.SampleType IN (
+                                SELECT CAST(TLU_Sample_Type.ID AS VARCHAR(50))
+                                FROM TLU_Sample_Type
+                                WHERE TLU_Sample_Type.[Type] IN (
+                                    <cfqueryparam value="#HistoSampleTypeList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                                )
+                            )
+                        )
+                )
+            </cfif>
       
         
             UNION ALL
@@ -1006,8 +1067,16 @@
                     <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
-                AND BodyOfWater IN (
-                    <cfqueryparam value="#BodyOfWaterList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                AND (
+                    <cfset bodyOfWaterFilterIndex = 0>
+                    <cfloop list="#BodyOfWaterList#" index="bodyOfWaterId">
+                        <cfset bodyOfWaterId = Trim(bodyOfWaterId)>
+                        <cfif Len(bodyOfWaterId)>
+                            <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
+                            <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                        </cfif>
+                    </cfloop>
                 )
             </cfif>
             <cfif isdefined("cetaceanSpeciesList") and cetaceanSpeciesList neq "">
@@ -1035,10 +1104,6 @@
             UNION ALL
             SELECT 'Toxicology' AS SourceTable, ST_Toxicology.ID AS toxicologyID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other# #necropsyCordiovasculorColumnList_Other# #necnopsyPulmonaryColumnList_Other# #necropsyEndocnineColumnList_Other# #neonpsyCentraeNenvusSysemColumnList_Other# #neenpsylymphoreticulorColumnList_Other# #necropsyUrogenitalColumnList_Other# #necropsyAlimentaryColumnList_Other# #G1ForeignMaterialColumnList_Other#
             FROM ST_Toxicology
-            <cfif isdefined("DiagnosticTestList") AND DiagnosticTestList NEQ "">
-                LEFT JOIN ST_Ancillary_Report 
-                    ON ST_Toxicology.ID = ST_Ancillary_Report.AD_ID
-            </cfif>
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
                 AND CONVERT(char(10), Date, 126) BETWEEN 
@@ -1047,8 +1112,16 @@
                     <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
-                AND BodyOfWater IN (
-                    <cfqueryparam value="#BodyOfWaterList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                AND (
+                    <cfset bodyOfWaterFilterIndex = 0>
+                    <cfloop list="#BodyOfWaterList#" index="bodyOfWaterId">
+                        <cfset bodyOfWaterId = Trim(bodyOfWaterId)>
+                        <cfif Len(bodyOfWaterId)>
+                            <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
+                            <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                        </cfif>
+                    </cfloop>
                 )
             </cfif>
             <cfif isdefined("cetaceanSpeciesList") and cetaceanSpeciesList neq "">
@@ -1071,10 +1144,14 @@
                     <cfqueryparam value="#countyList#" list="true" cfsqltype="CF_SQL_VARCHAR">
                 )
             </cfif>
-             <!--- Only filter by DiagnosticTest if list exists --->
-             <cfif isdefined("DiagnosticTest") AND DiagnosticTest NEQ "">
-                AND ST_Ancillary_Report.AD_ID IN (
-                    <cfqueryparam value="#DiagnosticTest#" list="true" cfsqltype="CF_SQL_VARCHAR">
+            <cfif isdefined("TissueTypeList") AND TissueTypeList NEQ "">
+                AND EXISTS (
+                    SELECT 1
+                    FROM ST_ToxiType
+                    WHERE ST_ToxiType.Toxi_ID = ST_Toxicology.ID
+                        AND ST_ToxiType.Tissue_type IN (
+                            <cfqueryparam value="#TissueTypeList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                        )
                 )
             </cfif>
       
@@ -1091,8 +1168,16 @@
                     <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
-                AND BodyOfWater IN (
-                    <cfqueryparam value="#BodyOfWaterList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                AND (
+                    <cfset bodyOfWaterFilterIndex = 0>
+                    <cfloop list="#BodyOfWaterList#" index="bodyOfWaterId">
+                        <cfset bodyOfWaterId = Trim(bodyOfWaterId)>
+                        <cfif Len(bodyOfWaterId)>
+                            <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
+                            <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                        </cfif>
+                    </cfloop>
                 )
             </cfif>
             <cfif isdefined("cetaceanSpeciesList") and cetaceanSpeciesList neq "">
@@ -1113,6 +1198,16 @@
             <cfif isdefined("countyList") and countyList neq "">
                 AND county IN (
                     <cfqueryparam value="#countyList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                )
+            </cfif>
+            <cfif isdefined("DiagnosticTestList") AND DiagnosticTestList NEQ "">
+                AND EXISTS (
+                    SELECT 1
+                    FROM ST_Ancillary_Report
+                    WHERE ST_Ancillary_Report.AD_ID = ST_Ancillary_Diagnostics.ID
+                        AND ST_Ancillary_Report.DiagnosticTest IN (
+                            <cfqueryparam value="#DiagnosticTestList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                        )
                 )
             </cfif>
          
@@ -1121,10 +1216,6 @@
          
             SELECT 'Sample Archive' AS SourceTable, ID, Fnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_Other# #histopathologySectionColumnList_Other# #externalExamSectionColumnList_Other# #necnpsyIntegumentColumnList_Other# #necropsyMusculoskeletalColumnList_Other# #necmopsyThoracicCavityColumnList_Other# #nutntionalConditonExternasColumnList_Other# #neenpsyAbdaminalCavityColumnList_Other# #necropsyHepatobilianyColumnList_Other# #necropsyCordiovasculorColumnList_Other# #necnopsyPulmonaryColumnList_Other# #necropsyEndocnineColumnList_Other# #neonpsyCentraeNenvusSysemColumnList_Other# #neenpsylymphoreticulorColumnList_Other# #necropsyUrogenitalColumnList_Other# #necropsyAlimentaryColumnList_Other# #G1ForeignMaterialColumnList_Other#
             FROM ST_SampleArchive
-            <cfif isdefined("SampleTypeList") AND SampleTypeList NEQ "">
-                LEFT JOIN ST_SampleType 
-                    ON ST_SampleArchive.ID = ST_SampleType.SA_ID
-            </cfif>
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
                 AND CONVERT(char(10), Date, 126) BETWEEN 
@@ -1133,8 +1224,16 @@
                     <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
-                AND BodyOfWater IN (
-                    <cfqueryparam value="#BodyOfWaterList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                AND (
+                    <cfset bodyOfWaterFilterIndex = 0>
+                    <cfloop list="#BodyOfWaterList#" index="bodyOfWaterId">
+                        <cfset bodyOfWaterId = Trim(bodyOfWaterId)>
+                        <cfif Len(bodyOfWaterId)>
+                            <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
+                            <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                        </cfif>
+                    </cfloop>
                 )
             </cfif>
             <cfif isdefined("cetaceanSpeciesList") and cetaceanSpeciesList neq "">
@@ -1155,6 +1254,16 @@
             <cfif isdefined("countyList") and countyList neq "">
                 AND county IN (
                     <cfqueryparam value="#countyList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                )
+            </cfif>
+            <cfif isdefined("SampleTypeList") AND SampleTypeList NEQ "">
+                AND EXISTS (
+                    SELECT 1
+                    FROM ST_SampleType
+                    WHERE ST_SampleType.SA_ID = ST_SampleArchive.ID
+                        AND ST_SampleType.SampleType IN (
+                            <cfqueryparam value="#SampleTypeList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                        )
                 )
             </cfif>
     
@@ -1171,8 +1280,16 @@
                     <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
-                AND BodyOfWater IN (
-                    <cfqueryparam value="#BodyOfWaterList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                AND (
+                    <cfset bodyOfWaterFilterIndex = 0>
+                    <cfloop list="#BodyOfWaterList#" index="bodyOfWaterId">
+                        <cfset bodyOfWaterId = Trim(bodyOfWaterId)>
+                        <cfif Len(bodyOfWaterId)>
+                            <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
+                            <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                        </cfif>
+                    </cfloop>
                 )
             </cfif>
             <cfif isdefined("cetaceanSpeciesList") and cetaceanSpeciesList neq "">
@@ -1200,11 +1317,6 @@
             UNION ALL
             SELECT 'Cetacean Necropsy Report' AS SourceTable, ST_CetaceanNecropsyReport.ID AS nID, ST_CetaceanNecropsyReport.Fnumber as Nfnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_CE# #histopathologySectionColumnList# #externalExamSectionColumnList# #necnpsyIntegumentColumnList# #necropsyMusculoskeletalColumnList# #necmopsyThoracicCavityColumnList# #nutntionalConditonExternasColumnList# #neenpsyAbdaminalCavityColumnList# #necropsyHepatobilianyColumnList# #necropsyCordiovasculorColumnList# #necnopsyPulmonaryColumnList# #necropsyEndocnineColumnList# #neonpsyCentraeNenvusSysemColumnList# #neenpsylymphoreticulorColumnList# #necropsyUrogenitalColumnList# #necropsyAlimentaryColumnList# #G1ForeignMaterialColumnList#
             FROM ST_CetaceanNecropsyReport
-            <!--- Conditionally join ParasiteTypeList if LesionTypeList is provided --->
-            <cfif isdefined("ParasiteTypeList") AND ParasiteTypeList NEQ "">
-                LEFT JOIN ST_DynamicParasites 
-                ON ST_CetaceanNecropsyReport.fnumber = ST_DynamicParasites.fnumber
-            </cfif>
             <cfif isdefined("neenpsylymphoreticulor") AND neenpsylymphoreticulor NEQ "">
                 LEFT JOIN ST_DynamicLymphoreticular 
                 ON ST_CetaceanNecropsyReport.fnumber = ST_DynamicLymphoreticular.fnumber
@@ -1218,8 +1330,16 @@
                     <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
-                AND BodyOfWater IN (
-                    <cfqueryparam value="#BodyOfWaterList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                AND (
+                    <cfset bodyOfWaterFilterIndex = 0>
+                    <cfloop list="#BodyOfWaterList#" index="bodyOfWaterId">
+                        <cfset bodyOfWaterId = Trim(bodyOfWaterId)>
+                        <cfif Len(bodyOfWaterId)>
+                            <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
+                            <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                        </cfif>
+                    </cfloop>
                 )
             </cfif>
             <cfif isdefined("cetaceanSpeciesList") and cetaceanSpeciesList neq "">
@@ -1242,10 +1362,14 @@
                     <cfqueryparam value="#countyList#" list="true" cfsqltype="CF_SQL_VARCHAR">
                 )
             </cfif>
-             <!--- Only filter by LesionType if list exists --->
              <cfif isdefined("ParasiteTypeList") AND ParasiteTypeList NEQ "">
-                AND ST_DynamicParasites.fnumber IN (
-                    <cfqueryparam value="#ParasiteTypeList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                AND EXISTS (
+                    SELECT 1
+                    FROM ST_DynamicParasites
+                    WHERE ST_DynamicParasites.fnumber = ST_CetaceanNecropsyReport.fnumber
+                        AND ST_DynamicParasites.ParasiteType IN (
+                            <cfqueryparam value="#ParasiteTypeList#" list="true" cfsqltype="CF_SQL_VARCHAR">
+                        )
                 )
             </cfif>
                
@@ -1337,12 +1461,40 @@
     <cfset qgetDiagnosticTest=Application.StaticDataNew.getDiagnosticTest()>
     <!--- <cfset qgetCetaceanSpecies=Application.Stranding.getCetaceanSpecies()> --->
     <cfset qgetParasiteType= Application.StaticDataNew.getParasiteType()>
+    <cfset qgetStrandingType=Application.StaticDataNew.getStrandingType()>
+    <cfset getStock=Application.StaticDataNew.getStock()>
+    <cfset qgetVeterinarians=Application.StaticDataNew.getVeterinarians()>
     <cfset Conditions = ['Alive', 'Fresh Dead', 'Moderately Decomposed' ,'Advanced Composition','Mummified']>
     <cfset ConditionsValue = ['1', '2', '3' ,'4','5']>
     <cfset qgetSampleType=Application.StaticDataNew.getSampleType()>
     <cfset qgetIR_CountyLocation=Application.StaticDataNew.getIR_CountyLocation()>
     <cfset getLesionTypeData = Application.StaticDataNew.getLesionType()>
     <cfset bodyConditions = ['Emaciated','Underweight/Thin','Ideal','Overweight','Obese']>
+    <cfset blueBoxLookupMap = StructNew()>
+    <cfset blueBoxLookupMap["species"] = StructNew()>
+    <cfloop query="qgetCetaceanSpecies">
+        <cfset blueBoxLookupMap["species"][Trim(qgetCetaceanSpecies.ID)] = qgetCetaceanSpecies.CetaceanSpeciesName>
+    </cfloop>
+    <cfset blueBoxLookupMap["researchteam"] = StructNew()>
+    <cfloop query="RTmembers">
+        <cfset blueBoxLookupMap["researchteam"][Trim(RTmembers.RT_ID)] = RTmembers.RT_MemberName>
+    </cfloop>
+    <cfset blueBoxLookupMap["veterinarian"] = StructNew()>
+    <cfloop query="qgetVeterinarians">
+        <cfset blueBoxLookupMap["veterinarian"][Trim(qgetVeterinarians.ID)] = qgetVeterinarians.Veterinarians>
+    </cfloop>
+    <cfset blueBoxLookupMap["bodyofwater"] = StructNew()>
+    <cfloop query="getSurveyAreaData">
+        <cfset blueBoxLookupMap["bodyofwater"][Trim(getSurveyAreaData.ID)] = getSurveyAreaData.AreaName>
+    </cfloop>
+    <cfset blueBoxLookupMap["sttpye"] = StructNew()>
+    <cfloop query="qgetStrandingType">
+        <cfset blueBoxLookupMap["sttpye"][Trim(qgetStrandingType.ID)] = qgetStrandingType.Type>
+    </cfloop>
+    <cfset blueBoxLookupMap["noaastock"] = StructNew()>
+    <cfloop query="getStock">
+        <cfset blueBoxLookupMap["noaastock"][Trim(getStock.ID)] = getStock.StockName>
+    </cfloop>
 
     <cfset Kidneys_Findings= ['No Findings','Trauma','Enlarged','Masses','Parasites','Other']>
     <cfset Alimentary_SystemArray=['Ulcers/exudate','Trauma','Masses','Impaction','Obstruction','lntussusception','Parasites']>
@@ -1478,7 +1630,7 @@
                                     <div class="form-group col-md-6">
                                         <label class="col-lg-4 col-md-4 col-sm-12 control-label">Sample Type (Sample Archive)</label>
                                         <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
-                                            <select class="form-control search-box" multiple name="" id="SampleType" name="SampleType">
+                                            <select class="form-control search-box" multiple id="SampleType" name="SampleType">
                                                 <!--- <option value="">Select Sample</option> --->
                                                 <cfloop query="qgetSampleType">
                                                     <cfif status  neq 0>
@@ -2167,7 +2319,26 @@
                                     <td>#SourceTable#</td> 
                                     <cfif structKeyExists(form, "BLUEBOX") AND form.BLUEBOX eq "1">
                                         <cfloop list="#blueBoxColumnList#" index="col">
-                                            <td>#Evaluate(col)#</td>
+                                            <cfset blueBoxDisplayValue = Evaluate(col)>
+                                            <cfset blueBoxLookupKey = LCase(col)>
+                                            <cfif StructKeyExists(blueBoxLookupMap, blueBoxLookupKey) AND Len(Trim(blueBoxDisplayValue))>
+                                                <cfset blueBoxDisplayItems = []>
+                                                <cfloop list="#blueBoxDisplayValue#" index="blueBoxLookupId">
+                                                    <cfset blueBoxLookupId = Trim(blueBoxLookupId)>
+                                                    <cfif Len(blueBoxLookupId)>
+                                                        <cfif StructKeyExists(blueBoxLookupMap[blueBoxLookupKey], blueBoxLookupId)>
+                                                            <cfset blueBoxMappedValue = blueBoxLookupMap[blueBoxLookupKey][blueBoxLookupId]>
+                                                        <cfelse>
+                                                            <cfset blueBoxMappedValue = blueBoxLookupId>
+                                                        </cfif>
+                                                        <cfif NOT ArrayFind(blueBoxDisplayItems, blueBoxMappedValue)>
+                                                            <cfset ArrayAppend(blueBoxDisplayItems, blueBoxMappedValue)>
+                                                        </cfif>
+                                                    </cfif>
+                                                </cfloop>
+                                                <cfset blueBoxDisplayValue = ArrayToList(blueBoxDisplayItems, ", ")>
+                                            </cfif>
+                                            <td>#blueBoxDisplayValue#</td>
                                         </cfloop>
                                     </cfif>
                                     <!--- Heart/Resp Data --->
