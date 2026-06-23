@@ -112,7 +112,7 @@
             </cfif>
 
             <cfquery datasource="#variables.dsn#" name="allCount"  result="r">
-                SELECT s.*,cs.Cetaceans_ID AS Cetaceans_I,c.code as cscode,c.name as csname,ss.ID AS sightingID
+                SELECT COUNT(1) AS TotalRows
                 FROM Surveys s
                 LEFT JOIN Survey_Sightings ss ON s.ID= ss.Project_ID
                 LEFT JOIN Cetacean_Sightings cs ON ss.ID= cs.Sighting_ID
@@ -162,93 +162,23 @@
                 ORDER BY MaxLesion desc
             </cfquery>
 
-            <cfset oo = 0>
-            <cfloop index="index" from="1" to="#maximumLesions.MaxLesion#">
-                <cfset oo = incrementValue(#oo#)> 
-                <cfset lp =  "LesionPresent" & #oo#>
-                <cfset tn =  "TypeName" & #oo#>
-                <cfset lete =  "LesionType" & #oo#>
-                <cfset re =  "Region" & #oo#>
-                <cfset slr =  "Side_L_R" & #oo#>
-                <cfset st =  "Status" & #oo#>
-                <cfset lc =  "Comments" & #oo#>
-                <cfset lpn =  "PhotoNumber" & #oo#>
-                <cfset QueryAddColumn(allCount, "#lp#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#tn#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#lete#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#re#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#slr#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#st#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#lc#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#lpn#","varchar",[""])>
-            </cfloop>
-
-            <cfloop query="allCount">
-                <cfif #sightingID# neq "" and #Cetaceans_I# neq ""> 
-                    <!--- Query get lesion data against a cetacean and sighting ID --->
-                    <cfquery datasource="#variables.dsn#" name="cldd">
-                        SELECT SurveyID,SightingNumber,Sighting_ID,Cetaceans_ID,LesionPresent,LesionType,Region,Side_L_R,Status,PhotoNumber,ID, Comments,TypeName
-                        FROM Condition_Lesions cl
-                        where cl.Sighting_ID = #sightingID# and cl.Cetaceans_ID='#cscode#' <cfif isDefined('form.typeName') and form.TypeName NEQ '' >and cl.TypeName = '#form.TypeName#'</cfif> 
-                       
-                    </cfquery>
-                
-                    <cfif cldd.RECORDCOUNT gte 1 >
-                        <cfset cc = 0>
-                        <!--- loop for seting columns data  --->
-                        <cfloop query="cldd" > 
-                            <cfset cc = incrementValue(#cc#)> 
-                            <cfset lp =  "LesionPresent" & #cc#>
-                            <cfset tn =  "TypeName" & #cc#>
-                            <cfset lete =  "LesionType" & #cc#>
-                            <cfset re =  "Region" & #cc#>
-                            <cfset slr =  "Side_L_R" & #cc#>
-                            <cfset st =  "Status" & #cc#>
-                            <cfset lc =  "Comments" & #cc#>
-                            <cfset lpn =  "PhotoNumber" & #cc#>
-                            <cfset QuerySetCell(allCount, "#lp#", #LesionPresent#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#tn#", #TypeName#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#lete#", #LesionType#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#re#", #Region#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#slr#", #Side_L_R#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#st#", #Status#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#lc#", #Comments#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#lpn#", #PhotoNumber#, allCount.currentRow)>
-                        </cfloop>
-                    </cfif>
-                </cfif>
-            </cfloop>
-
-            <cfscript>
-                 if( isDefined('form.LesionType') and form.LesionType neq "")
-                {    
-                    
-                    qFiltered=QueryFilter(allCount,function(obj){
-                    
-                        return obj.LesionType1 eq #form.LesionType# OR obj.LesionType2 eq #form.LesionType# OR obj.LesionType3 eq #form.LesionType#;
-                    });
-                }
-                if( isDefined('form.Typename') and form.Typename neq "")
-                {    
-                    
-                    qFiltered=QueryFilter(allCount,function(obj){
-                    
-                        return obj.Typename1 eq #form.Typename# OR obj.Typename2 eq #form.Typename# OR obj.Typename3 eq #form.Typename#;
-                    });
-                }        
-            </cfscript>
             <cfscript>
                 rowsPerPage = 100;
                 currentRecordCount = 100;
-                totalCount = allCount.recordCount;
+                totalCount = allCount.TotalRows;
                 if(totalCount == "")
                 {
                     totalCount=0;
                 }
-                if(isDefined('form.pge'))
+                if(isDefined('form.btnSearchSightings'))
                 {
-                    pg = form.pge;
-                }else
+                    pg = 1;
+                }
+                else if(isDefined('form.pge') AND isNumeric(form.pge) AND val(form.pge) GT 0)
+                {
+                    pg = val(form.pge);
+                }
+                else
                 {
                     pg = 1;
                 }
@@ -263,6 +193,14 @@
                     local.multiUrlParamsReplace = "&";
                 }
                 local.paginationStruct["numberOfPages"] = Ceiling(totalCount/rowsPerPage);
+                if(local.paginationStruct["numberOfPages"] GT 0 AND pg GT local.paginationStruct["numberOfPages"])
+                {
+                    pg = local.paginationStruct["numberOfPages"];
+                }
+                if(pg LT 1)
+                {
+                    pg = 1;
+                }
                 if (totalCount == 0)
                     local.paginationStruct["startCount"] = 1;
                 else	
@@ -605,7 +543,7 @@
                 
                 
                 
-                ORDER BY s.ID 
+                ORDER BY s.Date DESC, s.ID DESC, ss.ID DESC
                 
                 
             </cfquery>
@@ -637,35 +575,73 @@
             </cfif>
             
 
-            <cfloop query="qFiltered" >
-                
-                <cfif #sightingID# neq "" and #Code# neq ""  >
-                    <cfquery datasource="#variables.dsn#" name="cldd">
-                        SELECT 
-                        SurveyID, 
-                        SightingNumber, 
-                        Sighting_ID, 
-                        Cetaceans_ID, 
-                        LesionPresent, 
-                        LesionType, Region, 
-                        Side_L_R,
-                        Status,
-                        PhotoNumber,
-                        ID,
-                        Comments, 
-                        TypeName
+            <cfif qFiltered.recordCount NEQ 0 AND maximumLesions.recordCount NEQ 0>
+                <cfset lesionReportRows = structNew()>
+                <cfset lesionSightingIdMap = structNew()>
+                <cfset lesionCetaceanCodeMap = structNew()>
+                <cfset lesionSightingIds = "">
+                <cfset lesionCetaceanCodes = "">
+
+                <cfloop query="qFiltered">
+                    <cfif sightingID neq "" and Code neq "">
+                        <cfset lesionRowKey = "#sightingID#|#Code#">
+                        <cfif NOT structKeyExists(lesionReportRows, lesionRowKey)>
+                            <cfset lesionReportRows[lesionRowKey] = []>
+                        </cfif>
+                        <cfset ArrayAppend(lesionReportRows[lesionRowKey], qFiltered.currentRow)>
+
+                        <cfif NOT structKeyExists(lesionSightingIdMap, "#sightingID#")>
+                            <cfset lesionSightingIdMap["#sightingID#"] = true>
+                            <cfset lesionSightingIds = listAppend(lesionSightingIds, sightingID)>
+                        </cfif>
+
+                        <cfif NOT structKeyExists(lesionCetaceanCodeMap, "#Code#")>
+                            <cfset lesionCetaceanCodeMap["#Code#"] = true>
+                            <cfset lesionCetaceanCodes = listAppend(lesionCetaceanCodes, Code)>
+                        </cfif>
+                    </cfif>
+                </cfloop>
+
+                <cfset lesionParamCount = listLen(lesionSightingIds) + listLen(lesionCetaceanCodes)>
+                <cfset regionNameCache = structNew()>
+
+                <cfif len(lesionSightingIds) AND len(lesionCetaceanCodes) AND lesionParamCount LTE 1900>
+                    <cfquery datasource="#variables.dsn#" name="qReportLesions">
+                        SELECT
+                            SurveyID,
+                            SightingNumber,
+                            Sighting_ID,
+                            Cetaceans_ID,
+                            LesionPresent,
+                            LesionType,
+                            Region,
+                            Side_L_R,
+                            Status,
+                            PhotoNumber,
+                            ID,
+                            Comments,
+                            TypeName
                         FROM Condition_Lesions cl
-                        where cl.Sighting_ID = #sightingID# and cl.Cetaceans_ID='#Code#'  <cfif isDefined('form.typeName') and form.TypeName NEQ '' >and cl.TypeName = '#form.TypeName#'</cfif> 
+                        WHERE cl.Sighting_ID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#lesionSightingIds#">)
+                            AND cl.Cetaceans_ID IN (<cfqueryparam cfsqltype="cf_sql_varchar" list="true" value="#lesionCetaceanCodes#">)
+                            <cfif isDefined('form.typeName') and form.TypeName NEQ ''>
+                                AND cl.TypeName = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.TypeName#">
+                            </cfif>
+                        ORDER BY cl.Sighting_ID, cl.Cetaceans_ID, cl.ID
                     </cfquery>
 
-                        
-                    
+                    <cfset lesionIndexByRow = structNew()>
 
-                    <cfif cldd.RECORDCOUNT gte 1>
-                        <cfset cne = 0>
-                        
-                        <cfloop query="cldd"> 
-                            <cfset cne = incrementValue(#cne#)> 
+                    <cfloop query="qReportLesions">
+                        <cfset lesionRowKey = "#Sighting_ID#|#Cetaceans_ID#">
+                        <cfif structKeyExists(lesionReportRows, lesionRowKey)>
+                            <cfif NOT structKeyExists(lesionIndexByRow, lesionRowKey)>
+                                <cfset lesionIndexByRow[lesionRowKey] = 1>
+                            <cfelse>
+                                <cfset lesionIndexByRow[lesionRowKey] = lesionIndexByRow[lesionRowKey] + 1>
+                            </cfif>
+
+                            <cfset cne = lesionIndexByRow[lesionRowKey]>
                             <cfset lp =  "LesionPresent" & #cne#>
                             <cfset tn =  "TypeName" & #cne#>
                             <cfset lete =  "LesionType" & #cne#>
@@ -674,21 +650,91 @@
                             <cfset st =  "Status" & #cne#>
                             <cfset pn =  "PhotoNumber" & #cne#>
                             <cfset cn =  "Comments" & #cne#>
-                            <cfset QuerySetCell(qFiltered, "#lp#", #LesionPresent#, qFiltered.currentRow)>
-                            <cfset QuerySetCell(qFiltered, "#tn#", #TypeName#, qFiltered.currentRow)>
-                            <cfset QuerySetCell(qFiltered, "#lete#", #LesionType#, qFiltered.currentRow)>
-                            <cfset QuerySetCell(qFiltered, "#slr#", #Side_L_R#, qFiltered.currentRow)>
-                            <cfset QuerySetCell(qFiltered, "#st#", #Status#, qFiltered.currentRow)>
-                            <cfset QuerySetCell(qFiltered, "#pn#", #PhotoNumber#, qFiltered.currentRow)>
-                            <cfset QuerySetCell(qFiltered, "#cn#", #Comments#, qFiltered.currentRow)>
-                            <cfif #Region# NEQ "">
-                                <cfset regionN = Application.Cetaceans.getRegionNamebyId(Region)>
-                                <cfset QuerySetCell(qFiltered, "#re#", #regionN#, qFiltered.currentRow)>
+
+                            <cfif listFindNoCase(qFiltered.columnList, lp)>
+                                <cfset regionN = "">
+                                <cfif Region NEQ "">
+                                    <cfset regionCacheKey = trim(Region)>
+                                    <cfif NOT structKeyExists(regionNameCache, regionCacheKey)>
+                                        <cfset regionNameCache[regionCacheKey] = Application.Cetaceans.getRegionNamebyId(regionCacheKey)>
+                                    </cfif>
+                                    <cfset regionN = regionNameCache[regionCacheKey]>
+                                </cfif>
+
+                                <cfloop array="#lesionReportRows[lesionRowKey]#" index="lesionReportRow">
+                                    <cfset QuerySetCell(qFiltered, "#lp#", #LesionPresent#, lesionReportRow)>
+                                    <cfset QuerySetCell(qFiltered, "#tn#", #TypeName#, lesionReportRow)>
+                                    <cfset QuerySetCell(qFiltered, "#lete#", #LesionType#, lesionReportRow)>
+                                    <cfset QuerySetCell(qFiltered, "#slr#", #Side_L_R#, lesionReportRow)>
+                                    <cfset QuerySetCell(qFiltered, "#st#", #Status#, lesionReportRow)>
+                                    <cfset QuerySetCell(qFiltered, "#pn#", #PhotoNumber#, lesionReportRow)>
+                                    <cfset QuerySetCell(qFiltered, "#cn#", #Comments#, lesionReportRow)>
+                                    <cfif regionN NEQ "">
+                                        <cfset QuerySetCell(qFiltered, "#re#", #regionN#, lesionReportRow)>
+                                    </cfif>
+                                </cfloop>
                             </cfif>
-                        </cfloop>
-                    </cfif>
+                        </cfif>
+                    </cfloop>
+                <cfelseif len(lesionSightingIds) AND len(lesionCetaceanCodes)>
+                    <cfloop query="qFiltered" >
+                        <cfif sightingID neq "" and Code neq ""  >
+                            <cfquery datasource="#variables.dsn#" name="cldd">
+                                SELECT
+                                    SurveyID,
+                                    SightingNumber,
+                                    Sighting_ID,
+                                    Cetaceans_ID,
+                                    LesionPresent,
+                                    LesionType,
+                                    Region,
+                                    Side_L_R,
+                                    Status,
+                                    PhotoNumber,
+                                    ID,
+                                    Comments,
+                                    TypeName
+                                FROM Condition_Lesions cl
+                                WHERE cl.Sighting_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#sightingID#">
+                                    AND cl.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Code#">
+                                    <cfif isDefined('form.typeName') and form.TypeName NEQ ''>
+                                        AND cl.TypeName = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.TypeName#">
+                                    </cfif>
+                            </cfquery>
+
+                            <cfif cldd.RECORDCOUNT gte 1>
+                                <cfset cne = 0>
+
+                                <cfloop query="cldd">
+                                    <cfset cne = incrementValue(#cne#)>
+                                    <cfset lp =  "LesionPresent" & #cne#>
+                                    <cfset tn =  "TypeName" & #cne#>
+                                    <cfset lete =  "LesionType" & #cne#>
+                                    <cfset re =  "Region" & #cne#>
+                                    <cfset slr =  "Side_L_R" & #cne#>
+                                    <cfset st =  "Status" & #cne#>
+                                    <cfset pn =  "PhotoNumber" & #cne#>
+                                    <cfset cn =  "Comments" & #cne#>
+                                    <cfset QuerySetCell(qFiltered, "#lp#", #LesionPresent#, qFiltered.currentRow)>
+                                    <cfset QuerySetCell(qFiltered, "#tn#", #TypeName#, qFiltered.currentRow)>
+                                    <cfset QuerySetCell(qFiltered, "#lete#", #LesionType#, qFiltered.currentRow)>
+                                    <cfset QuerySetCell(qFiltered, "#slr#", #Side_L_R#, qFiltered.currentRow)>
+                                    <cfset QuerySetCell(qFiltered, "#st#", #Status#, qFiltered.currentRow)>
+                                    <cfset QuerySetCell(qFiltered, "#pn#", #PhotoNumber#, qFiltered.currentRow)>
+                                    <cfset QuerySetCell(qFiltered, "#cn#", #Comments#, qFiltered.currentRow)>
+                                    <cfif Region NEQ "">
+                                        <cfset regionCacheKey = trim(Region)>
+                                        <cfif NOT structKeyExists(regionNameCache, regionCacheKey)>
+                                            <cfset regionNameCache[regionCacheKey] = Application.Cetaceans.getRegionNamebyId(regionCacheKey)>
+                                        </cfif>
+                                        <cfset QuerySetCell(qFiltered, "#re#", #regionNameCache[regionCacheKey]#, qFiltered.currentRow)>
+                                    </cfif>
+                                </cfloop>
+                            </cfif>
+                        </cfif>
+                    </cfloop>
                 </cfif>
-            </cfloop>
+            </cfif>
 
 
 
@@ -718,6 +764,7 @@
                 <div class="row">
                     <cfoutput>
                         <form action="#CGI.SCRIPT_NAME#?#CGI.QUERY_STRING#" name="searchAllReports" id="searchAllReports" method="post">
+                            <input type="hidden" name="pge" id="pge" value="<cfif isDefined('pg')>#pg#<cfelseif isDefined('form.pge')>#form.pge#<cfelse>1</cfif>">
                             <div class="form-row">
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
                                     <label class="col-lg-4 col-md-4 col-sm-12 control-label top-fld">Date Range</label>
@@ -1025,6 +1072,10 @@
 
                                             secondDropdown.appendChild(option);
                                         });
+
+                                        if (window.jQuery) {
+                                            jQuery(secondDropdown).trigger('change.select2');
+                                        }
                                     }
 
                                     // Set selected values on page load (after submission)
@@ -1434,7 +1485,7 @@
                         </form>
                     </cfoutput>
                 </div>
-            <cfif isdefined("form.btnSearchSightings")>
+            <cfif isdefined("form.btnSearchSightings") or isdefined("form.pge")>
                 <!--- <cfset  qGetIncidentReports = Application.IncidentReport.getIncidentReportsWithFilters(form)> --->
 
                 <cfscript>
@@ -1544,9 +1595,10 @@
                             <thead>
                                 <tr class="inverse">
                                     <th>Date</th>                                    
+                                    <th>Survey ID</th>
+                                    <th>Sighting ID</th>
                                                                       
                                     <cfif structKeyExists(form, "surveyinfo") AND form.surveyinfo EQ "1">
-                                        <th>Survey ID</th>
                                         <th>Engine On</th>
                                         <th>Engine Off</th>
                                         <th>Survey Start</th>
@@ -1554,7 +1606,6 @@
                                         <th>Research Team</th>
                                     </cfif>
                                     <cfif structKeyExists(form, "sightingInfo") AND form.sightingInfo EQ "1">
-                                        <th>Sighting ID</th>
                                         <th>Sighting No</th>
                                         <th>Sighting Start</th>
                                         <th>Sighting End</th>
@@ -1836,12 +1887,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <cfoutput query="qFiltered" >
+                                <cfoutput query="qFiltered" startRow="#paginate.startCount#" maxRows="#rowsPerPage#">
                                     <tr>
                                         <td>#dateformat(Date, "yyyy-mm-dd")#</td>
+                                        <td>#SurveyID#</td>
+                                        <td>#SightingID#</td>
                                         
                                         <cfif structKeyExists(form, "surveyinfo") AND form.surveyinfo EQ "1">
-                                            <td>#SurveyID#</td>
                                             <td>#EngineOn#</td>
                                             <td>#EngineOff#</td>
                                             <td>#SurveyStart#</td>
@@ -1857,7 +1909,6 @@
                                             </td>
                                         </cfif> 
                                         <cfif structKeyExists(form, "sightingInfo") AND form.sightingInfo EQ "1">
-                                            <td>#SightingID#</td>
                                             <td>#Sighting_No#</td>
                                             <td>#SightingStart#</td>
                                             <td>#SightingEnd#</td>
