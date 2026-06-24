@@ -163,13 +163,113 @@
             </cfquery>
 
             <cfscript>
+                function buildSightingReportPagination(totalRows, rowsPerPage, currentRecordCount, requestedPage) {
+                    var paginationStruct = StructNew();
+                    var totalCount = val(arguments.totalRows);
+                    var pageNumber = 1;
+                    var maxPagesBefore = 3;
+                    var maxPagesAfter = 3;
+                    var maxPages = maxPagesBefore + maxPagesAfter + 1;
+                    var startIndex = 1;
+                    var endIndex = 0;
+                    var displayLinks = ArrayNew(1);
+                    var pageObj = StructNew();
+                    var i = 1;
+
+                    if(isNumeric(arguments.requestedPage) AND val(arguments.requestedPage) GT 0)
+                    {
+                        pageNumber = val(arguments.requestedPage);
+                    }
+
+                    paginationStruct["numberOfPages"] = Ceiling(totalCount / arguments.rowsPerPage);
+                    if(paginationStruct["numberOfPages"] GT 0 AND pageNumber GT paginationStruct["numberOfPages"])
+                    {
+                        pageNumber = paginationStruct["numberOfPages"];
+                    }
+                    if(pageNumber LT 1)
+                    {
+                        pageNumber = 1;
+                    }
+
+                    if(totalCount == 0)
+                    {
+                        paginationStruct["startCount"] = 1;
+                    }
+                    else
+                    {
+                        paginationStruct["startCount"] = (((pageNumber - 1) * arguments.rowsPerPage) + 1);
+                    }
+                    paginationStruct["endCount"] = ((pageNumber - 1) * arguments.rowsPerPage) + arguments.currentRecordCount;
+
+                    if(pageNumber == 1)
+                    {
+                        if(totalCount GTE arguments.rowsPerPage)
+                        {
+                            paginationStruct["nextCount"] = arguments.currentRecordCount;
+                        }
+                        else
+                        {
+                            paginationStruct["nextCount"] = totalCount;
+                        }
+                    }
+                    else
+                    {
+                        if(totalCount LT paginationStruct["startCount"] + arguments.rowsPerPage)
+                        {
+                            paginationStruct["nextCount"] = totalCount;
+                        }
+                        else
+                        {
+                            paginationStruct["nextCount"] = (((pageNumber - 1) * arguments.rowsPerPage) + arguments.rowsPerPage);
+                        }
+                    }
+
+                    paginationStruct["totalCount"] = totalCount;
+                    paginationStruct["pageNumber"] = pageNumber;
+                    if(pageNumber LT paginationStruct["numberOfPages"])
+                    {
+                        paginationStruct["nextLink"] = pageNumber + 1;
+                    }
+                    if(pageNumber LTE paginationStruct["numberOfPages"] AND pageNumber GT 1)
+                    {
+                        paginationStruct["previousLink"] = pageNumber - 1;
+                    }
+
+                    endIndex = paginationStruct["numberOfPages"];
+                    if(paginationStruct["numberOfPages"] GT maxPages)
+                    {
+                        startIndex = pageNumber - maxPagesBefore;
+                        endIndex = pageNumber + maxPagesAfter;
+                        if(startIndex LT 1)
+                        {
+                            startIndex = 1;
+                            endIndex = (startIndex + maxPages) - 1;
+                        }
+                        if(endIndex GT paginationStruct["numberOfPages"])
+                        {
+                            startIndex = paginationStruct["numberOfPages"] - maxPages;
+                            endIndex = paginationStruct["numberOfPages"];
+                        }
+                    }
+
+                    if(endIndex GT 1)
+                    {
+                        for(i = startIndex; i <= endIndex; i++)
+                        {
+                            pageObj = StructNew();
+                            pageObj["pageNumber"] = i;
+                            pageObj["pageLink"] = i;
+                            pageObj["isCurrentPage"] = (pageNumber EQ i);
+                            ArrayAppend(displayLinks, pageObj);
+                        }
+                        paginationStruct["displayLinks"] = displayLinks;
+                    }
+
+                    return paginationStruct;
+                }
+
                 rowsPerPage = 100;
                 currentRecordCount = 100;
-                totalCount = allCount.TotalRows;
-                if(totalCount == "")
-                {
-                    totalCount=0;
-                }
                 if(isDefined('form.btnSearchSightings'))
                 {
                     pg = 1;
@@ -182,92 +282,8 @@
                 {
                     pg = 1;
                 }
-                maxPagesBefore = 3;
-                maxPagesAfter = 3;
-                urlString = '';
-                pageVar = 'pg';
-                local.paginationStruct = StructNew();
-                local.multiUrlParamsReplace = "";
-                if (listLen(urlString,"&") GT 1)
-                {
-                    local.multiUrlParamsReplace = "&";
-                }
-                local.paginationStruct["numberOfPages"] = Ceiling(totalCount/rowsPerPage);
-                if(local.paginationStruct["numberOfPages"] GT 0 AND pg GT local.paginationStruct["numberOfPages"])
-                {
-                    pg = local.paginationStruct["numberOfPages"];
-                }
-                if(pg LT 1)
-                {
-                    pg = 1;
-                }
-                if (totalCount == 0)
-                    local.paginationStruct["startCount"] = 1;
-                else	
-                    local.paginationStruct["startCount"] = (((pg-1) * rowsPerPage)+1);
-                    local.paginationStruct["endCount"] = ((pg-1) * rowsPerPage)+currentRecordCount;
-
-                if(pg == 1)
-                {
-                    if(totalCount gte rowsPerPage)
-                    local.paginationStruct["nextCount"] = currentRecordCount;
-                    else
-                    local.paginationStruct["nextCount"] = totalCount;
-                }
-                else
-                {
-                    if(totalCount lt local.paginationStruct["startCount"]+rowsPerPage )
-                    {
-                        local.paginationStruct["nextCount"]=totalCount;
-                    }
-                    else
-                    {
-                        local.paginationStruct["nextCount"] = ((((pg-1) * rowsPerPage))+rowsPerPage);
-                    }
-                }
-                local.paginationStruct["totalCount"] = totalCount;
-                if (pg LT local.paginationStruct["numberOfPages"])
-                {
-                    local.paginationStruct["nextLink"] = replace(urlString,"#local.multiUrlParamsReplace##pg#","")&pg+1;
-                }
-                if (pg LTE local.paginationStruct["numberOfPages"] AND pg GT 1)
-                {
-                    local.paginationStruct["previousLink"] = replace(urlString,"#local.multiUrlParamsReplace##pg#","")&pg-1;
-                }
-                local.maxPages = maxPagesBefore + maxPagesAfter + 1 ;
-                local.startIndex = 1;
-                local.endIndex = local.paginationStruct["numberOfPages"] ;
-                if(local.paginationStruct["numberOfPages"] GT local.maxPages)
-                {
-                    local.startIndex = pg - maxPagesBefore ;
-                    local.endIndex = pg + maxPagesAfter ;
-                    if (local.startIndex LT 1){
-                    local.startIndex = 1 ;
-                    local.endIndex = (local.startIndex + local.maxPages) - 1 ;
-                    }
-                    if (local.endIndex GT local.paginationStruct["numberOfPages"])
-                    {
-                        local.startIndex = local.paginationStruct["numberOfPages"] - local.maxPages ;
-                        local.endIndex = local.paginationStruct["numberOfPages"] ;
-                    }
-                }
-                if (local.endIndex GT 1)
-                {
-                    local.displayLinks = ArrayNew(1);
-                    for ( local.i=#local.startIndex#; local.i<=#local.endIndex#;local.i++)
-                    {
-                        local.pageObj = StructNew();
-                        local.pageObj["pageNumber"] = local.i ;
-                        local.pageObj["pageLink"] = "&"&replace(urlString,"#local.multiUrlParamsReplace##pageVar#=#pg#","")&"#pageVar#="&local.i
-                    if (pg EQ local.i)
-                        local.pageObj["isCurrentPage"] = true ;
-                    else
-                        local.pageObj["isCurrentPage"] = false ;
-                        ArrayAppend(local.displayLinks,local.pageObj);
-                    }			
-                    local.paginationStruct["displayLinks"] = local.displayLinks ;
-                }
-                paginate = local.paginationStruct;
+                paginate = buildSightingReportPagination(allCount.TotalRows, rowsPerPage, currentRecordCount, pg);
+                pg = paginate.pageNumber;
             </cfscript>
 
 
@@ -1508,6 +1524,9 @@
                         } 
 
 
+                        totalCount = qFiltered.recordCount;
+                        paginate = buildSightingReportPagination(totalCount, rowsPerPage, currentRecordCount, pg);
+                        pg = paginate.pageNumber;
                 </cfscript>
                 <cfset qFisherResponseToCetacean = Application.SightingNew.qFisherResponseToCetacean()>
                 <cfset qVesselResponseToCetacean = Application.SightingNew.qVesselResponseToCetacean()>
