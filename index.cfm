@@ -53,18 +53,18 @@
 
 <cfinclude template="Templates/footerincludes.cfm">
 <!--- application level script --->
-<script src="#Application.script#app.js?v=23" ></script>
+<script src="#Application.script#app.js?v=24" ></script>
 <!--- Module level script --->
 <cfif page neq '' and module neq '' and isdefined('SESSION.UserDetails') AND NOT StructIsEmpty(SESSION.UserDetails) >
-<script src="#Application.script##module#.js?v=23" ></script>
+<script src="#Application.script##module#.js?v=24" ></script>
 <!--- Page level script --->
-<script src="#Application.script##module#/#page#.js?v=23" ></script>
+<script src="#Application.script##module#/#page#.js?v=24" ></script>
 </cfif>
 
 <cfif page neq '' and ArchiveModule neq '' and isdefined('SESSION.UserDetails') AND NOT StructIsEmpty(SESSION.UserDetails) >
-<script src="#Application.script##ArchiveModule#.js?v=23" ></script>
+<script src="#Application.script##ArchiveModule#.js?v=24" ></script>
 <!--- Page level script --->
-<script src="#Application.script##ArchiveModule#/#page#.js?v=23" ></script>
+<script src="#Application.script##ArchiveModule#/#page#.js?v=24" ></script>
 </cfif>
 
 <cfinclude template="Templates/footer.cfm">

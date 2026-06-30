@@ -11,7 +11,7 @@
         
         <cfset blueBoxColumns = ""> 
 
-        <cfif structKeyExists(form, "BLUEBOX") AND form.BLUEBOX eq "1">
+        <cfif structKeyExists(form, "blueBox") AND form.blueBox eq "1">
             <cfset collation = "SQL_Latin1_General_CP1_CI_AS">
         
             <!--- Define the blue box column list as a comma-separated list --->
@@ -88,7 +88,7 @@
         <cfset PhysicalColumnList_CE = "">
         <cfset PhysicalColumnList_Other = "">
         
-        <cfif structKeyExists(form, "PhysicalBox") AND form.PhysicalBox eq "1">
+        <cfif structKeyExists(form, "PhysicalExamNotes") AND form.PhysicalExamNotes eq "1">
             
             <cfset PhysicalColumnList_CE = "
                 , CAST(General AS NVARCHAR(1024)) AS General
@@ -834,11 +834,11 @@
                 LEFT JOIN ST_RespRate 
                     ON ST_LiveCetaceanExam.ID = ST_RespRate.LCE_ID
             </cfif>
-            <cfif isdefined("DrigAdminBox") AND DrigAdminBox NEQ "">
+            <cfif structKeyExists(form, "DrigAdminBox") AND form.DrigAdminBox eq "1">
                 LEFT JOIN ST_DrugsAdministered 
                     ON ST_LiveCetaceanExam.ID = ST_DrugsAdministered.LCE_ID
             </cfif>
-            <cfif isdefined("bopsyTyp") AND bopsyTyp NEQ "">
+            <cfif structKeyExists(form, "bopsyTyp") AND form.bopsyTyp eq "1">
                 LEFT JOIN ST_Biopsy 
                     ON ST_LiveCetaceanExam.ID = ST_Biopsy.LCE_ID
             </cfif>
@@ -1317,7 +1317,7 @@
             UNION ALL
             SELECT 'Cetacean Necropsy Report' AS SourceTable, ST_CetaceanNecropsyReport.ID AS nID, ST_CetaceanNecropsyReport.Fnumber as Nfnumber, Date #blueBoxColumns# #heartRespColumnList_Other# #drugColumnList_Other# #biopsyColumnList_Other# #PhysicalColumnList_Other# #entangledRelbateColumnList_Other# #hIFormColumnList_Other# #histoRemarksColumnList_Other# #levelAFormColumnList_Other# #morphometricsColumnList_Other# #necropsyColumnList_CE# #histopathologySectionColumnList# #externalExamSectionColumnList# #necnpsyIntegumentColumnList# #necropsyMusculoskeletalColumnList# #necmopsyThoracicCavityColumnList# #nutntionalConditonExternasColumnList# #neenpsyAbdaminalCavityColumnList# #necropsyHepatobilianyColumnList# #necropsyCordiovasculorColumnList# #necnopsyPulmonaryColumnList# #necropsyEndocnineColumnList# #neonpsyCentraeNenvusSysemColumnList# #neenpsylymphoreticulorColumnList# #necropsyUrogenitalColumnList# #necropsyAlimentaryColumnList# #G1ForeignMaterialColumnList#
             FROM ST_CetaceanNecropsyReport
-            <cfif isdefined("neenpsylymphoreticulor") AND neenpsylymphoreticulor NEQ "">
+            <cfif structKeyExists(form, "neenpsylymphoreticulor") AND form.neenpsylymphoreticulor eq "1">
                 LEFT JOIN ST_DynamicLymphoreticular 
                 ON ST_CetaceanNecropsyReport.fnumber = ST_DynamicLymphoreticular.fnumber
             </cfif>
@@ -1683,17 +1683,6 @@
                                         </div>
                                     </div>                                    
 
-                                    <div class="form-group col-md-6">
-                                        <label class="col-lg-4 col-md-4 col-sm-12 control-label">Date Range</label>
-                                        <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
-                                            <div id="Date-range" class="input-group">
-                                                <input type="text"  class="form-control" name="bloodValueDate" id="bloodValueDate" placeholder="Select Date Range">
-                                                <span class="input-group-btn">
-                                                    <button type="button" class="btn btn-primary"onclick="showdatee()"><i class="fa fa-calendar"></i></button>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
@@ -1709,18 +1698,6 @@
                                             </select>
                                         </div>
                                     </div>
-
-                                    <!--- <div class="form-group col-md-6">
-                                        <label class="col-lg-4 col-md-4 col-sm-12 control-label">Date Range</label>
-                                        <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
-                                            <div id="Date-range" class="input-group">
-                                                <input type="text"  class="form-control" name="bloodValueDate" id="bloodValueDate" placeholder="Select Date Range">
-                                                <span class="input-group-btn">
-                                                    <button type="button" class="btn btn-primary"onclick="showdatee()"><i class="fa fa-calendar"></i></button>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div> --->
                                 </div>
 
                                 <div class="form-row">
@@ -2083,7 +2060,7 @@
                                 <th>Fnumber</th> 
                                 <th>Date</th> 
                                 <th>Tab Name</th> 
-                                <cfif structKeyExists(form, "BLUEBOX") AND form.BLUEBOX eq "1">
+                                <cfif structKeyExists(form, "blueBox") AND form.blueBox eq "1">
                                     <cfloop list="#blueBoxColumnList#" index="col">
                                         <cfoutput><th>#ucase(left(col,1))##lcase(mid(col,2,len(col)))#</th></cfoutput>
                                     </cfloop>
@@ -2106,6 +2083,14 @@
                                     <th>Biopsy Type</th>
                                     <th>Biopsy Location</th>
                                     <th>Biopsy Size</th>
+                                </cfif>
+                                <cfif structKeyExists(form, "PhysicalExamNotes") AND form.PhysicalExamNotes eq "1">
+                                    <th>General</th>
+                                    <th>SNM</th>
+                                    <th>Mentation</th>
+                                    <th>Palpation</th>
+                                    <th>Proprioception</th>
+                                    <th>Reflexes</th>
                                 </cfif>
                                 <cfif structKeyExists(form, "entangledRelbate") AND form.entangledRelbate eq "1">
                                     <th>Entangled</th>
@@ -2317,7 +2302,7 @@
                                     <td>#Fnumber#</td> 
                                     <td>#Date#</td> 
                                     <td>#SourceTable#</td> 
-                                    <cfif structKeyExists(form, "BLUEBOX") AND form.BLUEBOX eq "1">
+                                    <cfif structKeyExists(form, "blueBox") AND form.blueBox eq "1">
                                         <cfloop list="#blueBoxColumnList#" index="col">
                                             <cfset blueBoxDisplayValue = Evaluate(col)>
                                             <cfset blueBoxLookupKey = LCase(col)>
@@ -2361,6 +2346,14 @@
                                         <td>#BiopsyType#</td>
                                         <td>#BiopsyLocation#</td>
                                         <td>#BiopsySize#</td>
+                                    </cfif>
+                                    <cfif structKeyExists(form, "PhysicalExamNotes") AND form.PhysicalExamNotes eq "1">
+                                        <td>#General#</td>
+                                        <td>#SNM#</td>
+                                        <td>#Mentation#</td>
+                                        <td>#Palpation#</td>
+                                        <td>#Proprioception#</td>
+                                        <td>#Reflexes#</td>
                                     </cfif>
                                     <cfif structKeyExists(form, "entangledRelbate") AND form.entangledRelbate eq "1">
                                         <td>#Entangled#</td>
@@ -2418,15 +2411,19 @@
                                         <td>#LevelADate#</td>
                                         <td>#AnimalRenderings#</td>
                                         <td>
-                                           <cfquery name="getlocationName" datasource="#variables.dsn#">
-                                                SELECT * FROM TLU_NxLocation
-                                                WHERE id IN (
-                                                    <cfqueryparam value="#NxLocation#" list="true" cfsqltype="cf_sql_integer">
-                                                )
-                                            </cfquery>
-                                            <cfloop query="getlocationName">
-                                                #Location#<cfif getlocationName.currentRow neq getlocationName.recordCount>, </cfif>
-                                            </cfloop>
+                                            <cfif Len(Trim(NxLocation))>
+                                               <cfquery name="getlocationName" datasource="#variables.dsn#">
+                                                    SELECT * FROM TLU_NxLocation
+                                                    WHERE id IN (
+                                                        <cfqueryparam value="#NxLocation#" list="true" cfsqltype="cf_sql_integer">
+                                                    )
+                                                </cfquery>
+                                                <cfloop query="getlocationName">
+                                                    #Location#<cfif getlocationName.currentRow neq getlocationName.recordCount>, </cfif>
+                                                </cfloop>
+                                            <cfelse>
+                                                &nbsp;
+                                            </cfif>
                                         </td>
                                     </cfif>
                                     <cfif structKeyExists(form, "necnpsyIntegument") AND form.necnpsyIntegument eq "1">
@@ -2472,15 +2469,19 @@
                                     <cfif structKeyExists(form, "necropsyHepatobiliany") AND form.necropsyHepatobiliany eq "1">
                                         <td>#HEPATOBILIARY#</td>
                                         <td>
-                                            <cfquery name="getliverName" datasource="#variables.dsn#">
-                                                SELECT * FROM TLU_LiverFinding
-                                                WHERE id IN (
-                                                    <cfqueryparam value="#Liver_Findings#" list="true" cfsqltype="cf_sql_integer">
-                                                )
-                                            </cfquery>
-                                            <cfloop query="getliverName">
-                                                #finding#<cfif getliverName.currentRow neq getliverName.recordCount>, </cfif>
-                                            </cfloop>
+                                            <cfif Len(Trim(Liver_Findings))>
+                                                <cfquery name="getliverName" datasource="#variables.dsn#">
+                                                    SELECT * FROM TLU_LiverFinding
+                                                    WHERE id IN (
+                                                        <cfqueryparam value="#Liver_Findings#" list="true" cfsqltype="cf_sql_integer">
+                                                    )
+                                                </cfquery>
+                                                <cfloop query="getliverName">
+                                                    #finding#<cfif getliverName.currentRow neq getliverName.recordCount>, </cfif>
+                                                </cfloop>
+                                            <cfelse>
+                                                &nbsp;
+                                            </cfif>
                                             <!--- #Liver_Findings# --->
                                         </td>
                                         <td>#Biliary_Findings#</td>                                        
@@ -2503,15 +2504,19 @@
                                         <td>#Sand_Sediment#</td>
                                         <td>#Trachea_Bronchi#</td>
                                         <td>
-                                            <cfquery name="getLungsName" datasource="#variables.dsn#">
-                                                SELECT * FROM TLU_LungFinding
-                                                WHERE id IN (
-                                                    <cfqueryparam value="#Lungs_Findings#" list="true" cfsqltype="cf_sql_integer">
-                                                )
-                                            </cfquery>
-                                            <cfloop query="getLungsName">
-                                                #finding#<cfif getLungsName.currentRow neq getLungsName.recordCount>, </cfif>
-                                            </cfloop>
+                                            <cfif Len(Trim(Lungs_Findings))>
+                                                <cfquery name="getLungsName" datasource="#variables.dsn#">
+                                                    SELECT * FROM TLU_LungFinding
+                                                    WHERE id IN (
+                                                        <cfqueryparam value="#Lungs_Findings#" list="true" cfsqltype="cf_sql_integer">
+                                                    )
+                                                </cfquery>
+                                                <cfloop query="getLungsName">
+                                                    #finding#<cfif getLungsName.currentRow neq getLungsName.recordCount>, </cfif>
+                                                </cfloop>
+                                            <cfelse>
+                                                &nbsp;
+                                            </cfif>
                                             <!--- #Lungs_Findings# --->
                                         </td>
                                         <td>#Lungs_Float#</td>

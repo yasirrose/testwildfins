@@ -52,14 +52,32 @@ $(document).ready(function () {
 			resetReportPage();
 		}
 	});
+
+	$(document).on('click', '.sighting-report-page-link', function (event) {
+		event.preventDefault();
+		sightingReportPaginate($(this).data('report-page'));
+	});
 });
 function showdate(){
 	$('#date').trigger('click');
 }
 
+function sightingReportPaginate(value){
+	const pageNumber = parseInt(value, 10);
+	const form = document.getElementById('searchAllReports');
+	const pageInput = document.getElementById('pge');
+
+	if (isNaN(pageNumber) || pageNumber < 1 || !form || !pageInput) {
+		return false;
+	}
+
+	pageInput.value = pageNumber;
+	form.submit();
+	return false;
+}
+
 function paginate(value){
-	$("#pge").val(value);
-	$("#searchAllReports").submit();
+	return sightingReportPaginate(value);
 }
 
 function getcode(){

@@ -120,12 +120,45 @@
                 LEFT JOIN TLU_CetaceanSpecies tlu ON tlu.ID= c.CetaceanSpecies
                 where 1=1
                 <cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">and CONVERT(char(10), s.Date,126) BETWEEN '#form.startDate#' AND '#form.endDate#'</cfif>
-                <cfif isdefined("form.surveyRoute") and form.surveyRoute neq ""> and CONCAT(',', s.SurveyRoute, ',') LIKE '%,#form.surveyRoute#,%'</cfif>                
+                <cfif isdefined("form.surveyRoute") and form.surveyRoute neq "">
+                    and (
+                        <cfloop list="#form.surveyRoute#" index="route">
+                            CONCAT(',', s.SurveyRoute, ',') LIKE <cfqueryparam value="%,#route#,%" cfsqltype="cf_sql_varchar"> OR
+                        </cfloop>
+                        1=0
+                    )
+                </cfif>
                 <cfif isdefined("form.BodyCondition") and form.BodyCondition neq ""> and cs.BodyCondition IN (<cfqueryparam value="#form.BodyCondition#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
                 <cfif isdefined("form.bodyOfWater") and form.bodyOfWater neq ""> and s.BodyOfWater IN (<cfqueryparam value="#form.bodyOfWater#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
                 <cfif isdefined("form.surveyType")  and form.surveyType  neq ""> and s.SurveyType IN (<cfqueryparam value="#form.surveyType#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
                 <cfif isdefined("form.platform") and form.platform neq ""> and s.platform IN (<cfqueryparam value="#form.platform#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
                 <cfif isdefined("form.NOAAStock") and form.NOAAStock neq ""> and s.NOAAStock IN (<cfqueryparam value="#form.NOAAStock#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
+
+                <cfif isdefined("form.BehavioralSpecifics") and form.BehavioralSpecifics neq "">
+                    and (
+                            ss.BehavioralSpecifics1 IN (<cfqueryparam value="#form.BehavioralSpecifics#" list="true" cfsqltype="cf_sql_integer">)
+                            OR ss.BehavioralSpecifics2 IN (<cfqueryparam value="#form.BehavioralSpecifics#" list="true" cfsqltype="cf_sql_integer">)
+                            OR ss.BehavioralSpecifics3 IN (<cfqueryparam value="#form.BehavioralSpecifics#" list="true" cfsqltype="cf_sql_integer">)
+                            OR ss.BehavioralSpecifics4 IN (<cfqueryparam value="#form.BehavioralSpecifics#" list="true" cfsqltype="cf_sql_integer">)
+                        )
+                </cfif>
+                <cfif isdefined("form.BehavioralSpecificsNumber") and form.BehavioralSpecificsNumber neq "">
+                    and (
+                            ss.BehavioralSpecificsN1 = '#form.BehavioralSpecificsNumber#'
+                           OR ss.BehavioralSpecificsN2 = '#form.BehavioralSpecificsNumber#'
+                           OR ss.BehavioralSpecificsN3 = '#form.BehavioralSpecificsNumber#'
+                           OR ss.BehavioralSpecificsN4 = '#form.BehavioralSpecificsNumber#'
+                        )
+                </cfif>
+
+                <cfif isdefined("form.searchActivity") and form.searchActivity neq "" and isdefined("form.searchActivityNumber") and form.searchActivityNumber neq "">
+                    and (
+                        <cfloop list="#form.searchActivity#" index="activity">
+                            ss.#activity# IN (<cfqueryparam value="#form.searchActivityNumber#" list="true" cfsqltype="cf_sql_integer">) OR
+                        </cfloop>
+                        1=0
+                    )
+                </cfif>
                 
                 <cfif isdefined("form.cetaceanSpecies") and form.cetaceanSpecies neq ""> and tlu.CetaceanSpeciesName = '#form.cetaceanSpecies#'</cfif>
                 <cfif isdefined("form.code")  and form.code neq ""> and c.Code = '#form.code#'</cfif>
@@ -150,7 +183,7 @@
                 <cfif isdefined("form.Tail_TransversePro") and form.Tail_TransversePro neq ""> and cs.Tail_TransversePro IN (<cfqueryparam value="#form.Tail_TransversePro#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
 
 
-                AND ss.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
+                AND (ss.ID IS NULL OR ss.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>)
                 AND s.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
             </cfquery>
 
@@ -272,17 +305,18 @@
                 currentRecordCount = 100;
                 if(isDefined('form.btnSearchSightings'))
                 {
-                    pg = 1;
+                    requestedPage = 1;
                 }
                 else if(isDefined('form.pge') AND isNumeric(form.pge) AND val(form.pge) GT 0)
                 {
-                    pg = val(form.pge);
+                    requestedPage = val(form.pge);
                 }
                 else
                 {
-                    pg = 1;
+                    requestedPage = 1;
                 }
-                paginate = buildSightingReportPagination(allCount.TotalRows, rowsPerPage, currentRecordCount, pg);
+                pg = requestedPage;
+                paginate = buildSightingReportPagination(allCount.TotalRows, rowsPerPage, currentRecordCount, requestedPage);
                 pg = paginate.pageNumber;
             </cfscript>
 
@@ -555,6 +589,7 @@
 
 
 
+                AND (ss.ID IS NULL OR ss.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value="1">)
                 AND s.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value="1">
                 
                 
@@ -1525,7 +1560,7 @@
 
 
                         totalCount = qFiltered.recordCount;
-                        paginate = buildSightingReportPagination(totalCount, rowsPerPage, currentRecordCount, pg);
+                        paginate = buildSightingReportPagination(totalCount, rowsPerPage, currentRecordCount, requestedPage);
                         pg = paginate.pageNumber;
                 </cfscript>
                 <cfset qFisherResponseToCetacean = Application.SightingNew.qFisherResponseToCetacean()>
@@ -2642,7 +2677,7 @@
                                 if(not StructIsEmpty(paginate)){
                                     writeOutput('<nav aria-label="Page" style="text-align: right;"><ul class="pagination">');
                                     if (StructKeyExists(paginate,"previousLink")){
-                                        writeOutput('<li class="page-item"><a onclick="paginate(#paginate.previousLink#)" class="left" style="cursor: pointer;">&laquo; Previous</a></li>');
+                                        writeOutput('<li class="page-item"><a href="##" data-report-page="#paginate.previousLink#" class="left sighting-report-page-link" style="cursor: pointer;">&laquo; Previous</a></li>');
                                     }
                                     if (StructKeyExists(paginate,"displayLinks")){
                                         for ( i=1; i<=#ArrayLen(paginate.displayLinks)#;i++){
@@ -2651,11 +2686,11 @@
                                             if(thePage.isCurrentPage)
                                                 writeOutput('<li class="page-item active"><a href="##" class="pagingNumber" >#thePage.pageNumber# </a></li>');
                                             else
-                                            writeOutput('<li class="page-item"><a onclick="paginate(#thePage.pageNumber#)" class="pagingNumber" style="cursor: pointer;" title="Go to page #thePage.pageNumber#" value="#thePage.pageNumber#" >#thePage.pageNumber#</a></li>');
+                                            writeOutput('<li class="page-item"><a href="##" data-report-page="#thePage.pageNumber#" class="pagingNumber sighting-report-page-link" style="cursor: pointer;" title="Go to page #thePage.pageNumber#" value="#thePage.pageNumber#" >#thePage.pageNumber#</a></li>');
                                         }
                                     }
                                     if(StructKeyExists(paginate,"nextLink")){
-                                        writeOutput('<li class="page-item"><a onclick="paginate(#paginate.nextLink#)" class="left" style="cursor: pointer;">Next &raquo;</a></li>');
+                                        writeOutput('<li class="page-item"><a href="##" data-report-page="#paginate.nextLink#" class="left sighting-report-page-link" style="cursor: pointer;">Next &raquo;</a></li>');
                                     }
                                     writeOutput('</ul></nav>');
                                     writeOutput('<p>Displaying #paginate.startCount# - #paginate.nextCount# records from #paginate.totalCount#</p>');
