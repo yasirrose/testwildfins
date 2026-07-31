@@ -1,6 +1,12 @@
 $(document).ready(function () {
+	const $reportForm = $('#searchAllReports');
+	const resetReportPage = function () {
+		$('#pge').val(1);
+	};
 
-  $('#allReport').DataTable({
+  const $allReport = $('#allReport');
+  if ($allReport.length) {
+    $allReport.DataTable({
 		"pageLength": 100,
 		"scrollX": true,
 		"paging": false,
@@ -8,6 +14,8 @@ $(document).ready(function () {
 		"info": false,
 		"responsive": true,
 		"title": false,
+		"deferRender": true,
+		"order": [[0, "desc"], [1, "desc"], [2, "desc"]],
 		dom: 'Brtip',
 		buttons: [
 			{
@@ -23,6 +31,7 @@ $(document).ready(function () {
           
         ]
 	});
+  }
   // $(".buttons-html5").removeClass("dt-button");
   // $(".buttons-html5").removeClass("buttons-excel");
 	$('input[name="date"]').daterangepicker({
@@ -33,20 +42,47 @@ $(document).ready(function () {
         endDate: moment(),
         minDate: "01/01/1990"
     });
+
+	$('#add').on('click', function () {
+		resetReportPage();
+	});
+
+	$reportForm.on('change', 'select, input, textarea', function () {
+		if (this.name !== 'pge') {
+			resetReportPage();
+		}
+	});
+
+	$(document).on('click', '.sighting-report-page-link', function (event) {
+		event.preventDefault();
+		sightingReportPaginate($(this).data('report-page'));
+	});
 });
 function showdate(){
 	$('#date').trigger('click');
 }
 
+function sightingReportPaginate(value){
+	const pageNumber = parseInt(value, 10);
+	const form = document.getElementById('searchAllReports');
+	const pageInput = document.getElementById('pge');
+
+	if (isNaN(pageNumber) || pageNumber < 1 || !form || !pageInput) {
+		return false;
+	}
+
+	pageInput.value = pageNumber;
+	form.submit();
+	return false;
+}
+
 function paginate(value){
-	$("#pge").val(value);
-	$("#searchAllReports").submit();
+	return sightingReportPaginate(value);
 }
 
 function getcode(){
 	const v = $('select[name="cetaceanSpecies"]').val();
 	
-	console.log(v);
 	$.ajax({
 		url: application_root + "StaticDataNew.cfc?method=getCetaceancode",
 		type: "post",
@@ -54,13 +90,12 @@ function getcode(){
 			codes:v
 		},
 		success: function (data) {
-			var obj = JSON.parse(data);
-			console.log(obj);			
-			$('select[name="code"]').empty();
-			$('select[name="code"]').append('<option value="">Select Code</option>');
+			const obj = typeof data === 'string' ? JSON.parse(data) : data;
+			const options = ['<option value="">Select Code</option>'];
 			for (var i = 0; i < obj.DATA.length; i++) {
-				$('select[name="code"]').append('<option value="'+obj.DATA[i][1]+'">'+obj.DATA[i][1]+'</option>');
+				options.push('<option value="'+obj.DATA[i][1]+'">'+obj.DATA[i][1]+'</option>');
 			}
+			$('select[name="code"]').html(options.join(''));
 			
 		}
 	});

@@ -112,7 +112,7 @@
             </cfif>
 
             <cfquery datasource="#variables.dsn#" name="allCount"  result="r">
-                SELECT s.*,cs.Cetaceans_ID AS Cetaceans_I,c.code as cscode,c.name as csname,ss.ID AS sightingID
+                SELECT COUNT(1) AS TotalRows
                 FROM Surveys s
                 LEFT JOIN Survey_Sightings ss ON s.ID= ss.Project_ID
                 LEFT JOIN Cetacean_Sightings cs ON ss.ID= cs.Sighting_ID
@@ -120,12 +120,45 @@
                 LEFT JOIN TLU_CetaceanSpecies tlu ON tlu.ID= c.CetaceanSpecies
                 where 1=1
                 <cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">and CONVERT(char(10), s.Date,126) BETWEEN '#form.startDate#' AND '#form.endDate#'</cfif>
-                <cfif isdefined("form.surveyRoute") and form.surveyRoute neq ""> and CONCAT(',', s.SurveyRoute, ',') LIKE '%,#form.surveyRoute#,%'</cfif>                
+                <cfif isdefined("form.surveyRoute") and form.surveyRoute neq "">
+                    and (
+                        <cfloop list="#form.surveyRoute#" index="route">
+                            CONCAT(',', s.SurveyRoute, ',') LIKE <cfqueryparam value="%,#route#,%" cfsqltype="cf_sql_varchar"> OR
+                        </cfloop>
+                        1=0
+                    )
+                </cfif>
                 <cfif isdefined("form.BodyCondition") and form.BodyCondition neq ""> and cs.BodyCondition IN (<cfqueryparam value="#form.BodyCondition#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
                 <cfif isdefined("form.bodyOfWater") and form.bodyOfWater neq ""> and s.BodyOfWater IN (<cfqueryparam value="#form.bodyOfWater#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
                 <cfif isdefined("form.surveyType")  and form.surveyType  neq ""> and s.SurveyType IN (<cfqueryparam value="#form.surveyType#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
                 <cfif isdefined("form.platform") and form.platform neq ""> and s.platform IN (<cfqueryparam value="#form.platform#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
                 <cfif isdefined("form.NOAAStock") and form.NOAAStock neq ""> and s.NOAAStock IN (<cfqueryparam value="#form.NOAAStock#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
+
+                <cfif isdefined("form.BehavioralSpecifics") and form.BehavioralSpecifics neq "">
+                    and (
+                            ss.BehavioralSpecifics1 IN (<cfqueryparam value="#form.BehavioralSpecifics#" list="true" cfsqltype="cf_sql_integer">)
+                            OR ss.BehavioralSpecifics2 IN (<cfqueryparam value="#form.BehavioralSpecifics#" list="true" cfsqltype="cf_sql_integer">)
+                            OR ss.BehavioralSpecifics3 IN (<cfqueryparam value="#form.BehavioralSpecifics#" list="true" cfsqltype="cf_sql_integer">)
+                            OR ss.BehavioralSpecifics4 IN (<cfqueryparam value="#form.BehavioralSpecifics#" list="true" cfsqltype="cf_sql_integer">)
+                        )
+                </cfif>
+                <cfif isdefined("form.BehavioralSpecificsNumber") and form.BehavioralSpecificsNumber neq "">
+                    and (
+                            ss.BehavioralSpecificsN1 = '#form.BehavioralSpecificsNumber#'
+                           OR ss.BehavioralSpecificsN2 = '#form.BehavioralSpecificsNumber#'
+                           OR ss.BehavioralSpecificsN3 = '#form.BehavioralSpecificsNumber#'
+                           OR ss.BehavioralSpecificsN4 = '#form.BehavioralSpecificsNumber#'
+                        )
+                </cfif>
+
+                <cfif isdefined("form.searchActivity") and form.searchActivity neq "" and isdefined("form.searchActivityNumber") and form.searchActivityNumber neq "">
+                    and (
+                        <cfloop list="#form.searchActivity#" index="activity">
+                            ss.#activity# IN (<cfqueryparam value="#form.searchActivityNumber#" list="true" cfsqltype="cf_sql_integer">) OR
+                        </cfloop>
+                        1=0
+                    )
+                </cfif>
                 
                 <cfif isdefined("form.cetaceanSpecies") and form.cetaceanSpecies neq ""> and tlu.CetaceanSpeciesName = '#form.cetaceanSpecies#'</cfif>
                 <cfif isdefined("form.code")  and form.code neq ""> and c.Code = '#form.code#'</cfif>
@@ -150,7 +183,7 @@
                 <cfif isdefined("form.Tail_TransversePro") and form.Tail_TransversePro neq ""> and cs.Tail_TransversePro IN (<cfqueryparam value="#form.Tail_TransversePro#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
 
 
-                AND ss.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
+                AND (ss.ID IS NULL OR ss.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>)
                 AND s.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value='1'>
             </cfquery>
 
@@ -162,174 +195,129 @@
                 ORDER BY MaxLesion desc
             </cfquery>
 
-            <cfset oo = 0>
-            <cfloop index="index" from="1" to="#maximumLesions.MaxLesion#">
-                <cfset oo = incrementValue(#oo#)> 
-                <cfset lp =  "LesionPresent" & #oo#>
-                <cfset tn =  "TypeName" & #oo#>
-                <cfset lete =  "LesionType" & #oo#>
-                <cfset re =  "Region" & #oo#>
-                <cfset slr =  "Side_L_R" & #oo#>
-                <cfset st =  "Status" & #oo#>
-                <cfset lc =  "Comments" & #oo#>
-                <cfset lpn =  "PhotoNumber" & #oo#>
-                <cfset QueryAddColumn(allCount, "#lp#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#tn#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#lete#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#re#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#slr#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#st#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#lc#","varchar",[""])>
-                <cfset QueryAddColumn(allCount, "#lpn#","varchar",[""])>
-            </cfloop>
-
-            <cfloop query="allCount">
-                <cfif #sightingID# neq "" and #Cetaceans_I# neq ""> 
-                    <!--- Query get lesion data against a cetacean and sighting ID --->
-                    <cfquery datasource="#variables.dsn#" name="cldd">
-                        SELECT SurveyID,SightingNumber,Sighting_ID,Cetaceans_ID,LesionPresent,LesionType,Region,Side_L_R,Status,PhotoNumber,ID, Comments,TypeName
-                        FROM Condition_Lesions cl
-                        where cl.Sighting_ID = #sightingID# and cl.Cetaceans_ID='#cscode#' <cfif isDefined('form.typeName') and form.TypeName NEQ '' >and cl.TypeName = '#form.TypeName#'</cfif> 
-                       
-                    </cfquery>
-                
-                    <cfif cldd.RECORDCOUNT gte 1 >
-                        <cfset cc = 0>
-                        <!--- loop for seting columns data  --->
-                        <cfloop query="cldd" > 
-                            <cfset cc = incrementValue(#cc#)> 
-                            <cfset lp =  "LesionPresent" & #cc#>
-                            <cfset tn =  "TypeName" & #cc#>
-                            <cfset lete =  "LesionType" & #cc#>
-                            <cfset re =  "Region" & #cc#>
-                            <cfset slr =  "Side_L_R" & #cc#>
-                            <cfset st =  "Status" & #cc#>
-                            <cfset lc =  "Comments" & #cc#>
-                            <cfset lpn =  "PhotoNumber" & #cc#>
-                            <cfset QuerySetCell(allCount, "#lp#", #LesionPresent#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#tn#", #TypeName#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#lete#", #LesionType#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#re#", #Region#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#slr#", #Side_L_R#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#st#", #Status#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#lc#", #Comments#, allCount.currentRow)>
-                            <cfset QuerySetCell(allCount, "#lpn#", #PhotoNumber#, allCount.currentRow)>
-                        </cfloop>
-                    </cfif>
-                </cfif>
-            </cfloop>
-
             <cfscript>
-                 if( isDefined('form.LesionType') and form.LesionType neq "")
-                {    
-                    
-                    qFiltered=QueryFilter(allCount,function(obj){
-                    
-                        return obj.LesionType1 eq #form.LesionType# OR obj.LesionType2 eq #form.LesionType# OR obj.LesionType3 eq #form.LesionType#;
-                    });
+                function buildSightingReportPagination(totalRows, rowsPerPage, currentRecordCount, requestedPage) {
+                    var paginationStruct = StructNew();
+                    var totalCount = val(arguments.totalRows);
+                    var pageNumber = 1;
+                    var maxPagesBefore = 3;
+                    var maxPagesAfter = 3;
+                    var maxPages = maxPagesBefore + maxPagesAfter + 1;
+                    var startIndex = 1;
+                    var endIndex = 0;
+                    var displayLinks = ArrayNew(1);
+                    var pageObj = StructNew();
+                    var i = 1;
+
+                    if(isNumeric(arguments.requestedPage) AND val(arguments.requestedPage) GT 0)
+                    {
+                        pageNumber = val(arguments.requestedPage);
+                    }
+
+                    paginationStruct["numberOfPages"] = Ceiling(totalCount / arguments.rowsPerPage);
+                    if(paginationStruct["numberOfPages"] GT 0 AND pageNumber GT paginationStruct["numberOfPages"])
+                    {
+                        pageNumber = paginationStruct["numberOfPages"];
+                    }
+                    if(pageNumber LT 1)
+                    {
+                        pageNumber = 1;
+                    }
+
+                    if(totalCount == 0)
+                    {
+                        paginationStruct["startCount"] = 1;
+                    }
+                    else
+                    {
+                        paginationStruct["startCount"] = (((pageNumber - 1) * arguments.rowsPerPage) + 1);
+                    }
+                    paginationStruct["endCount"] = ((pageNumber - 1) * arguments.rowsPerPage) + arguments.currentRecordCount;
+
+                    if(pageNumber == 1)
+                    {
+                        if(totalCount GTE arguments.rowsPerPage)
+                        {
+                            paginationStruct["nextCount"] = arguments.currentRecordCount;
+                        }
+                        else
+                        {
+                            paginationStruct["nextCount"] = totalCount;
+                        }
+                    }
+                    else
+                    {
+                        if(totalCount LT paginationStruct["startCount"] + arguments.rowsPerPage)
+                        {
+                            paginationStruct["nextCount"] = totalCount;
+                        }
+                        else
+                        {
+                            paginationStruct["nextCount"] = (((pageNumber - 1) * arguments.rowsPerPage) + arguments.rowsPerPage);
+                        }
+                    }
+
+                    paginationStruct["totalCount"] = totalCount;
+                    paginationStruct["pageNumber"] = pageNumber;
+                    if(pageNumber LT paginationStruct["numberOfPages"])
+                    {
+                        paginationStruct["nextLink"] = pageNumber + 1;
+                    }
+                    if(pageNumber LTE paginationStruct["numberOfPages"] AND pageNumber GT 1)
+                    {
+                        paginationStruct["previousLink"] = pageNumber - 1;
+                    }
+
+                    endIndex = paginationStruct["numberOfPages"];
+                    if(paginationStruct["numberOfPages"] GT maxPages)
+                    {
+                        startIndex = pageNumber - maxPagesBefore;
+                        endIndex = pageNumber + maxPagesAfter;
+                        if(startIndex LT 1)
+                        {
+                            startIndex = 1;
+                            endIndex = (startIndex + maxPages) - 1;
+                        }
+                        if(endIndex GT paginationStruct["numberOfPages"])
+                        {
+                            startIndex = paginationStruct["numberOfPages"] - maxPages;
+                            endIndex = paginationStruct["numberOfPages"];
+                        }
+                    }
+
+                    if(endIndex GT 1)
+                    {
+                        for(i = startIndex; i <= endIndex; i++)
+                        {
+                            pageObj = StructNew();
+                            pageObj["pageNumber"] = i;
+                            pageObj["pageLink"] = i;
+                            pageObj["isCurrentPage"] = (pageNumber EQ i);
+                            ArrayAppend(displayLinks, pageObj);
+                        }
+                        paginationStruct["displayLinks"] = displayLinks;
+                    }
+
+                    return paginationStruct;
                 }
-                if( isDefined('form.Typename') and form.Typename neq "")
-                {    
-                    
-                    qFiltered=QueryFilter(allCount,function(obj){
-                    
-                        return obj.Typename1 eq #form.Typename# OR obj.Typename2 eq #form.Typename# OR obj.Typename3 eq #form.Typename#;
-                    });
-                }        
-            </cfscript>
-            <cfscript>
+
                 rowsPerPage = 100;
                 currentRecordCount = 100;
-                totalCount = allCount.recordCount;
-                if(totalCount == "")
+                if(isDefined('form.btnSearchSightings'))
                 {
-                    totalCount=0;
+                    requestedPage = 1;
                 }
-                if(isDefined('form.pge'))
+                else if(isDefined('form.pge') AND isNumeric(form.pge) AND val(form.pge) GT 0)
                 {
-                    pg = form.pge;
-                }else
-                {
-                    pg = 1;
-                }
-                maxPagesBefore = 3;
-                maxPagesAfter = 3;
-                urlString = '';
-                pageVar = 'pg';
-                local.paginationStruct = StructNew();
-                local.multiUrlParamsReplace = "";
-                if (listLen(urlString,"&") GT 1)
-                {
-                    local.multiUrlParamsReplace = "&";
-                }
-                local.paginationStruct["numberOfPages"] = Ceiling(totalCount/rowsPerPage);
-                if (totalCount == 0)
-                    local.paginationStruct["startCount"] = 1;
-                else	
-                    local.paginationStruct["startCount"] = (((pg-1) * rowsPerPage)+1);
-                    local.paginationStruct["endCount"] = ((pg-1) * rowsPerPage)+currentRecordCount;
-
-                if(pg == 1)
-                {
-                    if(totalCount gte rowsPerPage)
-                    local.paginationStruct["nextCount"] = currentRecordCount;
-                    else
-                    local.paginationStruct["nextCount"] = totalCount;
+                    requestedPage = val(form.pge);
                 }
                 else
                 {
-                    if(totalCount lt local.paginationStruct["startCount"]+rowsPerPage )
-                    {
-                        local.paginationStruct["nextCount"]=totalCount;
-                    }
-                    else
-                    {
-                        local.paginationStruct["nextCount"] = ((((pg-1) * rowsPerPage))+rowsPerPage);
-                    }
+                    requestedPage = 1;
                 }
-                local.paginationStruct["totalCount"] = totalCount;
-                if (pg LT local.paginationStruct["numberOfPages"])
-                {
-                    local.paginationStruct["nextLink"] = replace(urlString,"#local.multiUrlParamsReplace##pg#","")&pg+1;
-                }
-                if (pg LTE local.paginationStruct["numberOfPages"] AND pg GT 1)
-                {
-                    local.paginationStruct["previousLink"] = replace(urlString,"#local.multiUrlParamsReplace##pg#","")&pg-1;
-                }
-                local.maxPages = maxPagesBefore + maxPagesAfter + 1 ;
-                local.startIndex = 1;
-                local.endIndex = local.paginationStruct["numberOfPages"] ;
-                if(local.paginationStruct["numberOfPages"] GT local.maxPages)
-                {
-                    local.startIndex = pg - maxPagesBefore ;
-                    local.endIndex = pg + maxPagesAfter ;
-                    if (local.startIndex LT 1){
-                    local.startIndex = 1 ;
-                    local.endIndex = (local.startIndex + local.maxPages) - 1 ;
-                    }
-                    if (local.endIndex GT local.paginationStruct["numberOfPages"])
-                    {
-                        local.startIndex = local.paginationStruct["numberOfPages"] - local.maxPages ;
-                        local.endIndex = local.paginationStruct["numberOfPages"] ;
-                    }
-                }
-                if (local.endIndex GT 1)
-                {
-                    local.displayLinks = ArrayNew(1);
-                    for ( local.i=#local.startIndex#; local.i<=#local.endIndex#;local.i++)
-                    {
-                        local.pageObj = StructNew();
-                        local.pageObj["pageNumber"] = local.i ;
-                        local.pageObj["pageLink"] = "&"&replace(urlString,"#local.multiUrlParamsReplace##pageVar#=#pg#","")&"#pageVar#="&local.i
-                    if (pg EQ local.i)
-                        local.pageObj["isCurrentPage"] = true ;
-                    else
-                        local.pageObj["isCurrentPage"] = false ;
-                        ArrayAppend(local.displayLinks,local.pageObj);
-                    }			
-                    local.paginationStruct["displayLinks"] = local.displayLinks ;
-                }
-                paginate = local.paginationStruct;
+                pg = requestedPage;
+                paginate = buildSightingReportPagination(allCount.TotalRows, rowsPerPage, currentRecordCount, requestedPage);
+                pg = paginate.pageNumber;
             </cfscript>
 
 
@@ -601,11 +589,12 @@
 
 
 
+                AND (ss.ID IS NULL OR ss.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value="1">)
                 AND s.IsDeleted != <cfqueryparam  cfsqltype="cf_sql_bit" value="1">
                 
                 
                 
-                ORDER BY s.ID 
+                ORDER BY s.Date DESC, s.ID DESC, ss.ID DESC
                 
                 
             </cfquery>
@@ -637,35 +626,73 @@
             </cfif>
             
 
-            <cfloop query="qFiltered" >
-                
-                <cfif #sightingID# neq "" and #Code# neq ""  >
-                    <cfquery datasource="#variables.dsn#" name="cldd">
-                        SELECT 
-                        SurveyID, 
-                        SightingNumber, 
-                        Sighting_ID, 
-                        Cetaceans_ID, 
-                        LesionPresent, 
-                        LesionType, Region, 
-                        Side_L_R,
-                        Status,
-                        PhotoNumber,
-                        ID,
-                        Comments, 
-                        TypeName
+            <cfif qFiltered.recordCount NEQ 0 AND maximumLesions.recordCount NEQ 0>
+                <cfset lesionReportRows = structNew()>
+                <cfset lesionSightingIdMap = structNew()>
+                <cfset lesionCetaceanCodeMap = structNew()>
+                <cfset lesionSightingIds = "">
+                <cfset lesionCetaceanCodes = "">
+
+                <cfloop query="qFiltered">
+                    <cfif sightingID neq "" and Code neq "">
+                        <cfset lesionRowKey = "#sightingID#|#Code#">
+                        <cfif NOT structKeyExists(lesionReportRows, lesionRowKey)>
+                            <cfset lesionReportRows[lesionRowKey] = []>
+                        </cfif>
+                        <cfset ArrayAppend(lesionReportRows[lesionRowKey], qFiltered.currentRow)>
+
+                        <cfif NOT structKeyExists(lesionSightingIdMap, "#sightingID#")>
+                            <cfset lesionSightingIdMap["#sightingID#"] = true>
+                            <cfset lesionSightingIds = listAppend(lesionSightingIds, sightingID)>
+                        </cfif>
+
+                        <cfif NOT structKeyExists(lesionCetaceanCodeMap, "#Code#")>
+                            <cfset lesionCetaceanCodeMap["#Code#"] = true>
+                            <cfset lesionCetaceanCodes = listAppend(lesionCetaceanCodes, Code)>
+                        </cfif>
+                    </cfif>
+                </cfloop>
+
+                <cfset lesionParamCount = listLen(lesionSightingIds) + listLen(lesionCetaceanCodes)>
+                <cfset regionNameCache = structNew()>
+
+                <cfif len(lesionSightingIds) AND len(lesionCetaceanCodes) AND lesionParamCount LTE 1900>
+                    <cfquery datasource="#variables.dsn#" name="qReportLesions">
+                        SELECT
+                            SurveyID,
+                            SightingNumber,
+                            Sighting_ID,
+                            Cetaceans_ID,
+                            LesionPresent,
+                            LesionType,
+                            Region,
+                            Side_L_R,
+                            Status,
+                            PhotoNumber,
+                            ID,
+                            Comments,
+                            TypeName
                         FROM Condition_Lesions cl
-                        where cl.Sighting_ID = #sightingID# and cl.Cetaceans_ID='#Code#'  <cfif isDefined('form.typeName') and form.TypeName NEQ '' >and cl.TypeName = '#form.TypeName#'</cfif> 
+                        WHERE cl.Sighting_ID IN (<cfqueryparam cfsqltype="cf_sql_integer" list="true" value="#lesionSightingIds#">)
+                            AND cl.Cetaceans_ID IN (<cfqueryparam cfsqltype="cf_sql_varchar" list="true" value="#lesionCetaceanCodes#">)
+                            <cfif isDefined('form.typeName') and form.TypeName NEQ ''>
+                                AND cl.TypeName = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.TypeName#">
+                            </cfif>
+                        ORDER BY cl.Sighting_ID, cl.Cetaceans_ID, cl.ID
                     </cfquery>
 
-                        
-                    
+                    <cfset lesionIndexByRow = structNew()>
 
-                    <cfif cldd.RECORDCOUNT gte 1>
-                        <cfset cne = 0>
-                        
-                        <cfloop query="cldd"> 
-                            <cfset cne = incrementValue(#cne#)> 
+                    <cfloop query="qReportLesions">
+                        <cfset lesionRowKey = "#Sighting_ID#|#Cetaceans_ID#">
+                        <cfif structKeyExists(lesionReportRows, lesionRowKey)>
+                            <cfif NOT structKeyExists(lesionIndexByRow, lesionRowKey)>
+                                <cfset lesionIndexByRow[lesionRowKey] = 1>
+                            <cfelse>
+                                <cfset lesionIndexByRow[lesionRowKey] = lesionIndexByRow[lesionRowKey] + 1>
+                            </cfif>
+
+                            <cfset cne = lesionIndexByRow[lesionRowKey]>
                             <cfset lp =  "LesionPresent" & #cne#>
                             <cfset tn =  "TypeName" & #cne#>
                             <cfset lete =  "LesionType" & #cne#>
@@ -674,21 +701,91 @@
                             <cfset st =  "Status" & #cne#>
                             <cfset pn =  "PhotoNumber" & #cne#>
                             <cfset cn =  "Comments" & #cne#>
-                            <cfset QuerySetCell(qFiltered, "#lp#", #LesionPresent#, qFiltered.currentRow)>
-                            <cfset QuerySetCell(qFiltered, "#tn#", #TypeName#, qFiltered.currentRow)>
-                            <cfset QuerySetCell(qFiltered, "#lete#", #LesionType#, qFiltered.currentRow)>
-                            <cfset QuerySetCell(qFiltered, "#slr#", #Side_L_R#, qFiltered.currentRow)>
-                            <cfset QuerySetCell(qFiltered, "#st#", #Status#, qFiltered.currentRow)>
-                            <cfset QuerySetCell(qFiltered, "#pn#", #PhotoNumber#, qFiltered.currentRow)>
-                            <cfset QuerySetCell(qFiltered, "#cn#", #Comments#, qFiltered.currentRow)>
-                            <cfif #Region# NEQ "">
-                                <cfset regionN = Application.Cetaceans.getRegionNamebyId(Region)>
-                                <cfset QuerySetCell(qFiltered, "#re#", #regionN#, qFiltered.currentRow)>
+
+                            <cfif listFindNoCase(qFiltered.columnList, lp)>
+                                <cfset regionN = "">
+                                <cfif Region NEQ "">
+                                    <cfset regionCacheKey = trim(Region)>
+                                    <cfif NOT structKeyExists(regionNameCache, regionCacheKey)>
+                                        <cfset regionNameCache[regionCacheKey] = Application.Cetaceans.getRegionNamebyId(regionCacheKey)>
+                                    </cfif>
+                                    <cfset regionN = regionNameCache[regionCacheKey]>
+                                </cfif>
+
+                                <cfloop array="#lesionReportRows[lesionRowKey]#" index="lesionReportRow">
+                                    <cfset QuerySetCell(qFiltered, "#lp#", #LesionPresent#, lesionReportRow)>
+                                    <cfset QuerySetCell(qFiltered, "#tn#", #TypeName#, lesionReportRow)>
+                                    <cfset QuerySetCell(qFiltered, "#lete#", #LesionType#, lesionReportRow)>
+                                    <cfset QuerySetCell(qFiltered, "#slr#", #Side_L_R#, lesionReportRow)>
+                                    <cfset QuerySetCell(qFiltered, "#st#", #Status#, lesionReportRow)>
+                                    <cfset QuerySetCell(qFiltered, "#pn#", #PhotoNumber#, lesionReportRow)>
+                                    <cfset QuerySetCell(qFiltered, "#cn#", #Comments#, lesionReportRow)>
+                                    <cfif regionN NEQ "">
+                                        <cfset QuerySetCell(qFiltered, "#re#", #regionN#, lesionReportRow)>
+                                    </cfif>
+                                </cfloop>
                             </cfif>
-                        </cfloop>
-                    </cfif>
+                        </cfif>
+                    </cfloop>
+                <cfelseif len(lesionSightingIds) AND len(lesionCetaceanCodes)>
+                    <cfloop query="qFiltered" >
+                        <cfif sightingID neq "" and Code neq ""  >
+                            <cfquery datasource="#variables.dsn#" name="cldd">
+                                SELECT
+                                    SurveyID,
+                                    SightingNumber,
+                                    Sighting_ID,
+                                    Cetaceans_ID,
+                                    LesionPresent,
+                                    LesionType,
+                                    Region,
+                                    Side_L_R,
+                                    Status,
+                                    PhotoNumber,
+                                    ID,
+                                    Comments,
+                                    TypeName
+                                FROM Condition_Lesions cl
+                                WHERE cl.Sighting_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#sightingID#">
+                                    AND cl.Cetaceans_ID = <cfqueryparam cfsqltype="cf_sql_varchar" value="#Code#">
+                                    <cfif isDefined('form.typeName') and form.TypeName NEQ ''>
+                                        AND cl.TypeName = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form.TypeName#">
+                                    </cfif>
+                            </cfquery>
+
+                            <cfif cldd.RECORDCOUNT gte 1>
+                                <cfset cne = 0>
+
+                                <cfloop query="cldd">
+                                    <cfset cne = incrementValue(#cne#)>
+                                    <cfset lp =  "LesionPresent" & #cne#>
+                                    <cfset tn =  "TypeName" & #cne#>
+                                    <cfset lete =  "LesionType" & #cne#>
+                                    <cfset re =  "Region" & #cne#>
+                                    <cfset slr =  "Side_L_R" & #cne#>
+                                    <cfset st =  "Status" & #cne#>
+                                    <cfset pn =  "PhotoNumber" & #cne#>
+                                    <cfset cn =  "Comments" & #cne#>
+                                    <cfset QuerySetCell(qFiltered, "#lp#", #LesionPresent#, qFiltered.currentRow)>
+                                    <cfset QuerySetCell(qFiltered, "#tn#", #TypeName#, qFiltered.currentRow)>
+                                    <cfset QuerySetCell(qFiltered, "#lete#", #LesionType#, qFiltered.currentRow)>
+                                    <cfset QuerySetCell(qFiltered, "#slr#", #Side_L_R#, qFiltered.currentRow)>
+                                    <cfset QuerySetCell(qFiltered, "#st#", #Status#, qFiltered.currentRow)>
+                                    <cfset QuerySetCell(qFiltered, "#pn#", #PhotoNumber#, qFiltered.currentRow)>
+                                    <cfset QuerySetCell(qFiltered, "#cn#", #Comments#, qFiltered.currentRow)>
+                                    <cfif Region NEQ "">
+                                        <cfset regionCacheKey = trim(Region)>
+                                        <cfif NOT structKeyExists(regionNameCache, regionCacheKey)>
+                                            <cfset regionNameCache[regionCacheKey] = Application.Cetaceans.getRegionNamebyId(regionCacheKey)>
+                                        </cfif>
+                                        <cfset QuerySetCell(qFiltered, "#re#", #regionNameCache[regionCacheKey]#, qFiltered.currentRow)>
+                                    </cfif>
+                                </cfloop>
+                            </cfif>
+                        </cfif>
+                    </cfloop>
                 </cfif>
-            </cfloop>
+            </cfif>
 
 
 
@@ -718,6 +815,7 @@
                 <div class="row">
                     <cfoutput>
                         <form action="#CGI.SCRIPT_NAME#?#CGI.QUERY_STRING#" name="searchAllReports" id="searchAllReports" method="post">
+                            <input type="hidden" name="pge" id="pge" value="<cfif isDefined('pg')>#pg#<cfelseif isDefined('form.pge')>#form.pge#<cfelse>1</cfif>">
                             <div class="form-row">
                                 <div class="form-group col-lg-4 col-md-6 col-sm-12">
                                     <label class="col-lg-4 col-md-4 col-sm-12 control-label top-fld">Date Range</label>
@@ -1025,6 +1123,10 @@
 
                                             secondDropdown.appendChild(option);
                                         });
+
+                                        if (window.jQuery) {
+                                            jQuery(secondDropdown).trigger('change.select2');
+                                        }
                                     }
 
                                     // Set selected values on page load (after submission)
@@ -1434,7 +1536,7 @@
                         </form>
                     </cfoutput>
                 </div>
-            <cfif isdefined("form.btnSearchSightings")>
+            <cfif isdefined("form.btnSearchSightings") or isdefined("form.pge")>
                 <!--- <cfset  qGetIncidentReports = Application.IncidentReport.getIncidentReportsWithFilters(form)> --->
 
                 <cfscript>
@@ -1457,6 +1559,9 @@
                         } 
 
 
+                        totalCount = qFiltered.recordCount;
+                        paginate = buildSightingReportPagination(totalCount, rowsPerPage, currentRecordCount, requestedPage);
+                        pg = paginate.pageNumber;
                 </cfscript>
                 <cfset qFisherResponseToCetacean = Application.SightingNew.qFisherResponseToCetacean()>
                 <cfset qVesselResponseToCetacean = Application.SightingNew.qVesselResponseToCetacean()>
@@ -1544,9 +1649,10 @@
                             <thead>
                                 <tr class="inverse">
                                     <th>Date</th>                                    
+                                    <th>Survey ID</th>
+                                    <th>Sighting ID</th>
                                                                       
                                     <cfif structKeyExists(form, "surveyinfo") AND form.surveyinfo EQ "1">
-                                        <th>Survey ID</th>
                                         <th>Engine On</th>
                                         <th>Engine Off</th>
                                         <th>Survey Start</th>
@@ -1554,7 +1660,6 @@
                                         <th>Research Team</th>
                                     </cfif>
                                     <cfif structKeyExists(form, "sightingInfo") AND form.sightingInfo EQ "1">
-                                        <th>Sighting ID</th>
                                         <th>Sighting No</th>
                                         <th>Sighting Start</th>
                                         <th>Sighting End</th>
@@ -1836,12 +1941,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <cfoutput query="qFiltered" >
+                                <cfoutput query="qFiltered" startRow="#paginate.startCount#" maxRows="#rowsPerPage#">
                                     <tr>
                                         <td>#dateformat(Date, "yyyy-mm-dd")#</td>
+                                        <td>#SurveyID#</td>
+                                        <td>#SightingID#</td>
                                         
                                         <cfif structKeyExists(form, "surveyinfo") AND form.surveyinfo EQ "1">
-                                            <td>#SurveyID#</td>
                                             <td>#EngineOn#</td>
                                             <td>#EngineOff#</td>
                                             <td>#SurveyStart#</td>
@@ -1857,7 +1963,6 @@
                                             </td>
                                         </cfif> 
                                         <cfif structKeyExists(form, "sightingInfo") AND form.sightingInfo EQ "1">
-                                            <td>#SightingID#</td>
                                             <td>#Sighting_No#</td>
                                             <td>#SightingStart#</td>
                                             <td>#SightingEnd#</td>
@@ -2572,7 +2677,7 @@
                                 if(not StructIsEmpty(paginate)){
                                     writeOutput('<nav aria-label="Page" style="text-align: right;"><ul class="pagination">');
                                     if (StructKeyExists(paginate,"previousLink")){
-                                        writeOutput('<li class="page-item"><a onclick="paginate(#paginate.previousLink#)" class="left" style="cursor: pointer;">&laquo; Previous</a></li>');
+                                        writeOutput('<li class="page-item"><a href="##" data-report-page="#paginate.previousLink#" class="left sighting-report-page-link" style="cursor: pointer;">&laquo; Previous</a></li>');
                                     }
                                     if (StructKeyExists(paginate,"displayLinks")){
                                         for ( i=1; i<=#ArrayLen(paginate.displayLinks)#;i++){
@@ -2581,11 +2686,11 @@
                                             if(thePage.isCurrentPage)
                                                 writeOutput('<li class="page-item active"><a href="##" class="pagingNumber" >#thePage.pageNumber# </a></li>');
                                             else
-                                            writeOutput('<li class="page-item"><a onclick="paginate(#thePage.pageNumber#)" class="pagingNumber" style="cursor: pointer;" title="Go to page #thePage.pageNumber#" value="#thePage.pageNumber#" >#thePage.pageNumber#</a></li>');
+                                            writeOutput('<li class="page-item"><a href="##" data-report-page="#thePage.pageNumber#" class="pagingNumber sighting-report-page-link" style="cursor: pointer;" title="Go to page #thePage.pageNumber#" value="#thePage.pageNumber#" >#thePage.pageNumber#</a></li>');
                                         }
                                     }
                                     if(StructKeyExists(paginate,"nextLink")){
-                                        writeOutput('<li class="page-item"><a onclick="paginate(#paginate.nextLink#)" class="left" style="cursor: pointer;">Next &raquo;</a></li>');
+                                        writeOutput('<li class="page-item"><a href="##" data-report-page="#paginate.nextLink#" class="left sighting-report-page-link" style="cursor: pointer;">Next &raquo;</a></li>');
                                     }
                                     writeOutput('</ul></nav>');
                                     writeOutput('<p>Displaying #paginate.startCount# - #paginate.nextCount# records from #paginate.totalCount#</p>');

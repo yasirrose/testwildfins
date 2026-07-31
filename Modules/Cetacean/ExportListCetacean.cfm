@@ -1,4 +1,17 @@
-<cfif CGI.HTTP_REFERER eq '#Application.siteroot#?Module=Cetacean&Page=ListCetacean'>
+<cfset referer = "">
+<cfif structKeyExists(CGI, "HTTP_REFERER")>
+    <cfset referer = CGI.HTTP_REFERER>
+</cfif>
+<cfset currentHost = "">
+<cfif structKeyExists(CGI, "HTTP_HOST")>
+    <cfset currentHost = CGI.HTTP_HOST>
+<cfelseif structKeyExists(CGI, "SERVER_NAME")>
+    <cfset currentHost = CGI.SERVER_NAME>
+</cfif>
+<cfset isSameHostReferer = len(currentHost) GT 0 AND findNoCase("://" & currentHost & "/", referer) GT 0>
+<cfset isListCetaceanReferer = isSameHostReferer AND (findNoCase("?Module=Cetacean&Page=ListCetacean", referer) GT 0 OR findNoCase("index.cfm?Module=Cetacean&Page=ListCetacean", referer) GT 0)>
+
+<cfif isListCetaceanReferer>
     <!--- <cfdump var="#form.SEARCHWORD#" abort="true"> --->
     <cfquery name="query" datasource="wildfins_new">
         SELECT 
@@ -68,4 +81,3 @@
 <cfelse>
     <cflocation url="#Application.siteroot#" addtoken="no">
 </cfif>
-  
