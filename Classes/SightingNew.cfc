@@ -1238,7 +1238,7 @@
                     <cfset normalizedLabel = normalizeSightingResponseLabel(arguments.FORM[labelKey])>
                     <cfif normalizedLabel EQ "approach">
                         <cfset legacyValues.FisherResponsetoCetacean1 = countValue>
-                    <cfelseif normalizedLabel EQ "no response" OR left(normalizedLabel, 7) EQ "neutral">
+                    <cfelseif normalizedLabel EQ "no response" OR normalizedLabel EQ "neutral">
                         <cfset legacyValues.FisherResponsetoCetacean2 = countValue>
                     <cfelseif normalizedLabel EQ "pull in line">
                         <cfset legacyValues.FisherResponsetoCetacean3 = countValue>
@@ -1255,7 +1255,7 @@
                     <cfset normalizedLabel = normalizeSightingResponseLabel(arguments.FORM[labelKey])>
                     <cfif normalizedLabel EQ "approach">
                         <cfset legacyValues.VesselResponsetoCetacean1 = countValue>
-                    <cfelseif normalizedLabel EQ "no response" OR left(normalizedLabel, 7) EQ "neutral">
+                    <cfelseif normalizedLabel EQ "no response" OR normalizedLabel EQ "neutral">
                         <cfset legacyValues.VesselResponsetoCetacean2 = countValue>
                     <cfelseif normalizedLabel EQ "out of gear">
                         <cfset legacyValues.VesselResponsetoCetacean3 = countValue>
@@ -1297,8 +1297,7 @@
                             rcMatch.ResponseCount,
                             CASE
                                 WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'approach' THEN ss.FisherResponsetoCetacean1
-                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'no response'
-                                     OR LOWER(LTRIM(RTRIM(md.[Desc]))) LIKE 'neutral%' THEN ss.FisherResponsetoCetacean2
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) IN ('no response', 'neutral') THEN ss.FisherResponsetoCetacean2
                                 WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'pull in line' THEN ss.FisherResponsetoCetacean3
                                 WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'relocate' THEN ss.FisherResponsetoCetacean4
                                 ELSE NULL
@@ -1322,7 +1321,7 @@
                                LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT
                             OR (
                                 LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT = 'no response'
-                                AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT LIKE 'neutral%'
+                                AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT = 'neutral'
                             )
                       )
                     ORDER BY
@@ -1331,7 +1330,7 @@
                             WHEN LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT =
                                  LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT THEN 1
                             WHEN LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT = 'no response'
-                                 AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT LIKE 'neutral%' THEN 2
+                                 AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT = 'neutral' THEN 2
                             ELSE 3
                         END,
                         rc.ID DESC
@@ -1356,7 +1355,7 @@
                            LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT
                         OR (
                             LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT = 'no response'
-                            AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT LIKE 'neutral%'
+                            AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT = 'neutral'
                         )
                     )
                 WHERE rc.SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
@@ -1384,7 +1383,7 @@
                                                LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT
                                             OR (
                                                 LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT = 'no response'
-                                                AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT LIKE 'neutral%'
+                                                AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT = 'neutral'
                                             )
                                       )
                                     ORDER BY
@@ -1393,15 +1392,14 @@
                                             WHEN LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT =
                                                  LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT THEN 1
                                             WHEN LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT = 'no response'
-                                                 AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT LIKE 'neutral%' THEN 2
+                                                 AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT = 'neutral' THEN 2
                                             ELSE 3
                                         END,
                                         rc.ID DESC
                                 ),
                                 CASE
                                     WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'approach' THEN ss.FisherResponsetoCetacean1
-                                    WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'no response'
-                                         OR LOWER(LTRIM(RTRIM(md.[Desc]))) LIKE 'neutral%' THEN ss.FisherResponsetoCetacean2
+                                    WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) IN ('no response', 'neutral') THEN ss.FisherResponsetoCetacean2
                                     WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'pull in line' THEN ss.FisherResponsetoCetacean3
                                     WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'relocate' THEN ss.FisherResponsetoCetacean4
                                     ELSE NULL
@@ -1435,8 +1433,7 @@
                             rcMatch.ResponseCount,
                             CASE
                                 WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'approach' THEN ss.VesselResponsetoCetacean1
-                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'no response'
-                                     OR LOWER(LTRIM(RTRIM(md.[Desc]))) LIKE 'neutral%' THEN ss.VesselResponsetoCetacean2
+                                WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) IN ('no response', 'neutral') THEN ss.VesselResponsetoCetacean2
                                 WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'out of gear' THEN ss.VesselResponsetoCetacean3
                                 WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'relocate' THEN ss.VesselResponsetoCetacean4
                                 ELSE NULL
@@ -1460,7 +1457,7 @@
                                LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT
                             OR (
                                 LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT = 'no response'
-                                AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT LIKE 'neutral%'
+                                AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT = 'neutral'
                             )
                       )
                     ORDER BY
@@ -1469,7 +1466,7 @@
                             WHEN LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT =
                                  LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT THEN 1
                             WHEN LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT = 'no response'
-                                 AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT LIKE 'neutral%' THEN 2
+                                 AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT = 'neutral' THEN 2
                             ELSE 3
                         END,
                         rc.ID DESC
@@ -1494,7 +1491,7 @@
                            LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT
                         OR (
                             LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT = 'no response'
-                            AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT LIKE 'neutral%'
+                            AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT = 'neutral'
                         )
                     )
                 WHERE rc.SightingID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.sight_id#">
@@ -1522,7 +1519,7 @@
                                                LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT
                                             OR (
                                                 LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT = 'no response'
-                                                AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT LIKE 'neutral%'
+                                                AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT = 'neutral'
                                             )
                                       )
                                     ORDER BY
@@ -1531,15 +1528,14 @@
                                             WHEN LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT =
                                                  LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT THEN 1
                                             WHEN LOWER(LTRIM(RTRIM(rc.ResponseLabel))) COLLATE DATABASE_DEFAULT = 'no response'
-                                                 AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT LIKE 'neutral%' THEN 2
+                                                 AND LOWER(LTRIM(RTRIM(md.[Desc]))) COLLATE DATABASE_DEFAULT = 'neutral' THEN 2
                                             ELSE 3
                                         END,
                                         rc.ID DESC
                                 ),
                                 CASE
                                     WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'approach' THEN ss.VesselResponsetoCetacean1
-                                    WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'no response'
-                                         OR LOWER(LTRIM(RTRIM(md.[Desc]))) LIKE 'neutral%' THEN ss.VesselResponsetoCetacean2
+                                    WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) IN ('no response', 'neutral') THEN ss.VesselResponsetoCetacean2
                                     WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'out of gear' THEN ss.VesselResponsetoCetacean3
                                     WHEN LOWER(LTRIM(RTRIM(md.[Desc]))) = 'relocate' THEN ss.VesselResponsetoCetacean4
                                     ELSE NULL

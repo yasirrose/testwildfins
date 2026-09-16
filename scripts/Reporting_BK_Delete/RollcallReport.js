@@ -1,0 +1,214 @@
+
+
+$(document).ready(function() {
+
+
+var primary		        = '#2184DA',
+    primaryTransparent  = 'rgba(33,132,218,0.15)',
+    primaryLight	    = '#60A1DA',
+    primaryDark	        = '#1e77c5',
+    info		        = '#38AFD3',
+    infoLight	        = '#6FBDD5',
+    infoDark	        = '#2d8ca9',
+    success		        = '#17B6A4',
+    successTransparent	= 'rgba(23,182,264,0.15)',
+    successLight	    = '#59C2B7',
+    successDark	        = '#129283',
+    warning		        = '#fcaf41',
+    warningLight	    = '#EEBD77',
+    warningDark	        = '#ca8c34',
+    inverse		        = '#3C454D',
+    inverseTransparent	= 'rgba(60,69,77,0.15)',
+    grey		        = '#aab3ba',
+    purple		        = '#9b59b6',
+    purpleTransparent	= 'rgba(155,89,182,0.15)',
+    purpleLight	        = '#BE93D0',
+    purpleDark	        = '#7c4792',
+    danger              = '#F04B46',
+    white               = '#fff';
+	
+
+Chart.defaults.global = {
+    animation: true,
+    animationSteps: 60,
+    animationEasing: 'easeOutQuart',
+    showScale: true,
+    scaleOverride: false,
+    scaleSteps: null,
+    scaleStepWidth: null,
+    scaleStartValue: null,
+    scaleLineColor: '#ddd',
+    scaleLineWidth: 1,
+    scaleShowLabels: true,
+    scaleLabel: '<%=value%>',
+    scaleIntegersOnly: true,
+    scaleBeginAtZero: false,
+    scaleFontFamily: '""Nunito", sans-serif',
+    scaleFontSize: 12,
+    scaleFontStyle: '300',
+    scaleFontColor: '#30373e',
+    responsive: true,
+    maintainAspectRatio: true,
+    showTooltips: true,
+    customTooltips: false,
+    tooltipEvents: ['mousemove', 'touchstart', 'touchmove'],
+    tooltipFillColor: 'rgba(0,0,0,0.8)',
+    tooltipFontFamily: '"Nunito", sans-serif',
+    tooltipFontSize: 11,
+    tooltipFontStyle: '300',
+    tooltipFontColor: '#fff',
+    tooltipTitleFontFamily: '"Nunito", sans-serif',
+    tooltipTitleFontSize: 11,
+    tooltipTitleFontStyle: '300',
+    tooltipTitleFontColor: '#fff',
+    tooltipYPadding: 10,
+    tooltipXPadding: 10,
+    tooltipCaretSize: 8,
+    tooltipCornerRadius: 3,
+    tooltipXOffset: 10,
+    tooltipTemplate: '<%if (label){%><%=label%>: <%}%><%= value %>',
+    multiTooltipTemplate: '<%= value %>',
+    onAnimationProgress: function(){},
+    onAnimationComplete: function(){}
+}
+
+var barChartData = {
+    labels : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    datasets : [
+        {
+            
+            data :res
+        }
+    ]
+};
+
+   
+var pieData = [ {
+    value: summary2[0],
+   color: "#F7464A",
+    highlight: "#FF5A5E",
+    label: 'Resident'
+}, {
+    value: summary2[1],
+    color: "#FDB45C",
+    highlight: "#FFC870",
+    label: 'Seasonal'
+}, {
+    value: summary2[2],
+     color: "#46BFBD",
+    highlight: "#5AD3D1",
+    label: 'Transients'
+}];
+
+  
+
+var handleGenerateGraph = function(animationOption) {
+	var animationOption = (animationOption) ? animationOption : false;
+	var ctx2 = document.getElementById('bar-chart').getContext('2d');
+
+    ctx2.canvas.height = 193;
+     window.barChart = new Chart(ctx2).Bar(barChartData, {
+        animation: animationOption,
+		responsive : true
+    });
+	
+	
+	 $("#bar-chart").click( 
+		function(evt){
+			var activeBars = barChart.getBarsAtEvent(evt);
+			if (typeof activeBars[0] != 'undefined') {
+				startYear = $("#fromYear").val();
+				endYear = $("#toYear").val();	
+			$.ajax({
+				url:application_root+"Reporting.cfc?method=getRollCallGrapghMonth",
+				type : "get",
+				data : {monthName : activeBars[0].label,fromYear:startYear,toYear:endYear},
+				success:function(data) {
+				console.log(data);
+				res = JSON.parse(data);
+				console.log(res);
+				count = Object.keys(res.DATA).length;
+				console.log(count);
+				var j ; 
+				$('#tbl_row').html('');
+				for (i=0; i < count; i++) {
+					j= i + 1;
+					console.log(i);
+					if(res.DATA[i][8] === null) { sex = 'N/A';} else {sex = res.DATA[i][8];}
+					$('#tbl_row').append('<tr><td width="80">'+j+'</td><td width="100">'+res.DATA[i][7]+'</td><td width="120"><form action="/?Module=Sighting&Page=Home" method="post" id="sighting_detail" target="_blank"><input type="hidden" name="project_id" value="'+res.DATA[i][1]+'"><input type="hidden" name="sight_id" value="'+res.DATA[i][0]+'"><span class="sighting-detail">'+res.DATA[i][0]+'</span></form></td><td width="250">'+res.DATA[i][6]+'</td><td width="50">'+sex+'</td></tr>');
+					}
+					$('#month_title').html('List of Dolphins for ' + activeBars[0].label);
+					$('#summary1').modal('show');
+					
+				    
+				}
+			});
+		}
+		}
+	);    
+	
+	barChart.datasets[0].bars[0].fillColor = "green"; 
+    barChart.datasets[0].bars[1].fillColor = "orange"; 
+    barChart.datasets[0].bars[2].fillColor = "red"; 
+	 barChart.datasets[0].bars[3].fillColor = "yellow"; 
+	 barChart.datasets[0].bars[4].fillColor = "#69D2E7"; 
+	 barChart.datasets[0].bars[5].fillColor = "#A7DBDB"; 
+	 barChart.datasets[0].bars[6].fillColor = " #28ABE3"; 
+	 barChart.datasets[0].bars[7].fillColor = "#1FDA9A"; 
+	 barChart.datasets[0].bars[8].fillColor = "#FF4C65"; 
+	 barChart.datasets[0].bars[9].fillColor = "#6E9ECF"; 
+	 barChart.datasets[0].bars[10].fillColor = "#75EB00"; 
+	 barChart.datasets[0].bars[11].fillColor = "#9B539C"; 
+    barChart.update();
+	
+ var ctx5 = document.getElementById('pie-chart').getContext('2d');
+    window.myPie = new Chart(ctx5).Pie(pieData,{
+        legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
+    });
+	
+	
+	 $("#pie-chart").click( 
+                        function(evt){
+                            var activePoints = myPie.getSegmentsAtEvent(evt);
+							if (typeof activePoints[0] != 'undefined') {
+								if (activePoints[0].label == 'Seasonal') {
+								$('#seasonal').modal('show');
+								}
+								else if (activePoints[0].label == 'Resident') {
+								$('#resident').modal('show');
+								}
+								else if (activePoints[0].label == 'Transients') {
+								$('#transient').modal('show');
+								}
+							}
+                            //alert(activePoints[0].label);
+                        }
+                    );                  
+	
+	
+	var legend = myPie.generateLegend();
+$("#legend").html(legend);
+	
+
+}
+
+handleGenerateGraph();
+
+$('.dataToggle').click(function() {
+
+     $('.dataToggle').not(this).each(function(){
+		 id  = $(this).attr("id");
+		$("#collapse"+id).removeClass('in');
+     });
+    
+	});
+
+ $(document).on("click",".sighting-detail",function(){
+     var form = $(this).closest("form");
+     form.submit();
+   });
+
+
+
+
+});

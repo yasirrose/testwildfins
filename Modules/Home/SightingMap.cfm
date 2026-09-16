@@ -101,7 +101,7 @@ body { margin: 0; padding: 0; }
 </cfoutput>
 <script>
     $.ajax({
-      url:"http://test.wildfins.org/classes/SightingMap.cfc?method=getSightingMapData",
+      url:"https://test.wildfins.org/classes/SightingMap.cfc?method=getSightingMapData",
       type: "POST",
       data: {},
       success: function(data) {
@@ -223,7 +223,7 @@ body { margin: 0; padding: 0; }
             'text-size': 12
             }
             });
-            // url = http://test.wildfins.org/assets/mapBox_icon.png;   'background-image':" url('../../assets/mapBox_icon.png')",
+            // url = https://test.wildfins.org/assets/mapBox_icon.png;   'background-image':" url('../../assets/mapBox_icon.png')",
             map.addLayer({
             id: 'unclustered-point',
             type: 'symbol',
@@ -298,7 +298,7 @@ body { margin: 0; padding: 0; }
 function saveMapStyle(val){
     
     $.ajax({
-        url:"http://test.wildfins.org/classes/SightingMap.cfc?method=getSightingMapData",
+        url:"https://test.wildfins.org/classes/SightingMap.cfc?method=getSightingMapData",
         type: "POST",
         data: {},
         success: function(data) {
@@ -477,7 +477,7 @@ function showModal(){
 
     function filterData(){
         $.ajax({
-            url:"http://test.wildfins.org/classes/SightingMap.cfc?method=getSightingMapData",
+            url:"httpx://test.wildfins.org/classes/SightingMap.cfc?method=getSightingMapData",
             type: "POST",
             data: {},
             success: function(data) {
