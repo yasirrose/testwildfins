@@ -119,7 +119,10 @@
                 LEFT JOIN Cetaceans c ON cs.Cetaceans_ID= c.ID
                 LEFT JOIN TLU_CetaceanSpecies tlu ON tlu.ID= c.CetaceanSpecies
                 where 1=1
-                <cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">and CONVERT(char(10), s.Date,126) BETWEEN '#form.startDate#' AND '#form.endDate#'</cfif>
+                <cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">
+                    AND s.Date >= <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
+                    AND s.Date < DATEADD(day, 1, <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">)
+                </cfif>
                 <cfif isdefined("form.surveyRoute") and form.surveyRoute neq "">
                     and (
                         <cfloop list="#form.surveyRoute#" index="route">
@@ -144,10 +147,10 @@
                 </cfif>
                 <cfif isdefined("form.BehavioralSpecificsNumber") and form.BehavioralSpecificsNumber neq "">
                     and (
-                            ss.BehavioralSpecificsN1 = '#form.BehavioralSpecificsNumber#'
-                           OR ss.BehavioralSpecificsN2 = '#form.BehavioralSpecificsNumber#'
-                           OR ss.BehavioralSpecificsN3 = '#form.BehavioralSpecificsNumber#'
-                           OR ss.BehavioralSpecificsN4 = '#form.BehavioralSpecificsNumber#'
+                            ss.BehavioralSpecificsN1 = <cfqueryparam value="#form.BehavioralSpecificsNumber#" cfsqltype="cf_sql_varchar">
+                           OR ss.BehavioralSpecificsN2 = <cfqueryparam value="#form.BehavioralSpecificsNumber#" cfsqltype="cf_sql_varchar">
+                           OR ss.BehavioralSpecificsN3 = <cfqueryparam value="#form.BehavioralSpecificsNumber#" cfsqltype="cf_sql_varchar">
+                           OR ss.BehavioralSpecificsN4 = <cfqueryparam value="#form.BehavioralSpecificsNumber#" cfsqltype="cf_sql_varchar">
                         )
                 </cfif>
 
@@ -160,12 +163,12 @@
                     )
                 </cfif>
                 
-                <cfif isdefined("form.cetaceanSpecies") and form.cetaceanSpecies neq ""> and tlu.CetaceanSpeciesName = '#form.cetaceanSpecies#'</cfif>
-                <cfif isdefined("form.code")  and form.code neq ""> and c.Code = '#form.code#'</cfif>
-                <cfif isdefined("form.surveyEffort") and form.surveyEffort neq ""> and ss.Survey = '#form.surveyEffort#'</cfif>
+                <cfif isdefined("form.cetaceanSpecies") and form.cetaceanSpecies neq ""> and tlu.CetaceanSpeciesName = <cfqueryparam value="#form.cetaceanSpecies#" cfsqltype="cf_sql_varchar"></cfif>
+                <cfif isdefined("form.code")  and form.code neq ""> and c.Code = <cfqueryparam value="#form.code#" cfsqltype="cf_sql_varchar"></cfif>
+                <cfif isdefined("form.surveyEffort") and form.surveyEffort neq ""> and ss.Survey = <cfqueryparam value="#form.surveyEffort#" cfsqltype="cf_sql_varchar"></cfif>
                 <cfif isdefined("form.Dscore") and form.Dscore neq ""> and c.Dscore IN (<cfqueryparam value="#form.Dscore#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
                 <cfif isdefined("form.Qscore") and form.Qscore neq ""> and cs.Qscore IN (<cfqueryparam value="#form.Qscore#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
-                <cfif isdefined("form.SDR")  and form.SDR neq ""> and cs.SDR = '#form.SDR#'</cfif>
+                <cfif isdefined("form.SDR")  and form.SDR neq ""> and cs.SDR = <cfqueryparam value="#form.SDR#" cfsqltype="cf_sql_varchar"></cfif>
 
                 <cfif isdefined("form.pq_focus") and form.pq_focus neq ""> and cs.pq_focus IN (<cfqueryparam value="#form.pq_focus#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
                 <cfif isdefined("form.pq_Angle") and form.pq_Angle neq ""> and cs.pq_Angle IN (<cfqueryparam value="#form.pq_Angle#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
@@ -526,7 +529,10 @@
                
                             
                 where 1=1
-                <cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">and CONVERT(char(10), s.Date,126) BETWEEN '#form.startDate#' AND '#form.endDate#'</cfif>
+                <cfif isdefined("form.startDate") and form.startDate neq "" and form.endDate NEQ "">
+                    AND s.Date >= <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
+                    AND s.Date < DATEADD(day, 1, <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">)
+                </cfif>
                 <cfif isdefined("form.surveyRoute") and form.surveyRoute neq "">
                     and (
                         <cfloop list="#form.surveyRoute#" index="route">
@@ -550,10 +556,10 @@
                 </cfif>
                 <cfif isdefined("form.BehavioralSpecificsNumber") and form.BehavioralSpecificsNumber neq "">
                     and (
-                            ss.BehavioralSpecificsN1 = '#form.BehavioralSpecificsNumber#'
-                           OR ss.BehavioralSpecificsN2 = '#form.BehavioralSpecificsNumber#'
-                           OR ss.BehavioralSpecificsN3 = '#form.BehavioralSpecificsNumber#'
-                           OR ss.BehavioralSpecificsN4 = '#form.BehavioralSpecificsNumber#'
+                            ss.BehavioralSpecificsN1 = <cfqueryparam value="#form.BehavioralSpecificsNumber#" cfsqltype="cf_sql_varchar">
+                           OR ss.BehavioralSpecificsN2 = <cfqueryparam value="#form.BehavioralSpecificsNumber#" cfsqltype="cf_sql_varchar">
+                           OR ss.BehavioralSpecificsN3 = <cfqueryparam value="#form.BehavioralSpecificsNumber#" cfsqltype="cf_sql_varchar">
+                           OR ss.BehavioralSpecificsN4 = <cfqueryparam value="#form.BehavioralSpecificsNumber#" cfsqltype="cf_sql_varchar">
                         )
                 </cfif>
 
@@ -565,12 +571,12 @@
                         1=0
                     )
                 </cfif>
-                <cfif isdefined("form.cetaceanSpecies") and form.cetaceanSpecies neq ""> and tlu.CetaceanSpeciesName = '#form.cetaceanSpecies#'</cfif>
-                <cfif isdefined("form.code")  and form.code neq ""> and c.Code = '#form.code#'</cfif>
-                <cfif isdefined("form.surveyEffort") and form.surveyEffort neq ""> and ss.Survey = '#form.surveyEffort#'</cfif>
+                <cfif isdefined("form.cetaceanSpecies") and form.cetaceanSpecies neq ""> and tlu.CetaceanSpeciesName = <cfqueryparam value="#form.cetaceanSpecies#" cfsqltype="cf_sql_varchar"></cfif>
+                <cfif isdefined("form.code")  and form.code neq ""> and c.Code = <cfqueryparam value="#form.code#" cfsqltype="cf_sql_varchar"></cfif>
+                <cfif isdefined("form.surveyEffort") and form.surveyEffort neq ""> and ss.Survey = <cfqueryparam value="#form.surveyEffort#" cfsqltype="cf_sql_varchar"></cfif>
                 <cfif isdefined("form.Dscore") and form.Dscore neq ""> and c.Dscore IN (<cfqueryparam value="#form.Dscore#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
                 <cfif isdefined("form.Qscore") and form.Qscore neq ""> and cs.Qscore IN (<cfqueryparam value="#form.Qscore#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
-                <cfif isdefined("form.SDR")  and form.SDR neq ""> and cs.SDR = '#form.SDR#'</cfif>
+                <cfif isdefined("form.SDR")  and form.SDR neq ""> and cs.SDR = <cfqueryparam value="#form.SDR#" cfsqltype="cf_sql_varchar"></cfif>
 
                 <cfif isdefined("form.pq_focus") and form.pq_focus neq ""> and cs.pq_focus IN (<cfqueryparam value="#form.pq_focus#" list="true" cfsqltype="cf_sql_varchar">)</cfif>
                 <cfif isdefined("form.pq_Angle") and form.pq_Angle neq ""> and cs.pq_Angle IN (<cfqueryparam value="#form.pq_Angle#" list="true" cfsqltype="cf_sql_varchar">)</cfif>

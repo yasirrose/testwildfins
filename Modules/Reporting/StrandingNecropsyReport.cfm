@@ -844,10 +844,8 @@
             </cfif>
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
-                AND CONVERT(char(10), Date, 126) BETWEEN 
-                    <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
-                    AND 
-                    <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
+                AND Date >= <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
+                AND Date < DATEADD(day, 1, <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">)
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
                 AND (
@@ -857,7 +855,7 @@
                         <cfif Len(bodyOfWaterId)>
                             <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
                             <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
-                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(8000)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
                         </cfif>
                     </cfloop>
                 )
@@ -904,10 +902,8 @@
             </cfif>
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
-                AND CONVERT(char(10), Date, 126) BETWEEN 
-                    <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
-                    AND 
-                    <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
+                AND Date >= <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
+                AND Date < DATEADD(day, 1, <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">)
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
                 AND (
@@ -917,7 +913,7 @@
                         <cfif Len(bodyOfWaterId)>
                             <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
                             <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
-                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(8000)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
                         </cfif>
                     </cfloop>
                 )
@@ -950,10 +946,8 @@
             FROM ST_LevelAForm
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
-                AND CONVERT(char(10), Date, 126) BETWEEN 
-                    <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
-                    AND 
-                    <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
+                AND Date >= <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
+                AND Date < DATEADD(day, 1, <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">)
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
                 AND (
@@ -963,7 +957,7 @@
                         <cfif Len(bodyOfWaterId)>
                             <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
                             <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
-                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(8000)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
                         </cfif>
                     </cfloop>
                 )
@@ -996,10 +990,8 @@
             FROM ST_HistoForm
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
-                AND CONVERT(char(10), Date, 126) BETWEEN 
-                    <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
-                    AND 
-                    <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
+                AND Date >= <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
+                AND Date < DATEADD(day, 1, <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">)
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
                 AND (
@@ -1009,7 +1001,7 @@
                         <cfif Len(bodyOfWaterId)>
                             <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
                             <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
-                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(8000)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
                         </cfif>
                     </cfloop>
                 )
@@ -1061,10 +1053,8 @@
             FROM ST_Blood_Values
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
-                AND CONVERT(char(10), Date, 126) BETWEEN 
-                    <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
-                    AND 
-                    <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
+                AND Date >= <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
+                AND Date < DATEADD(day, 1, <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">)
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
                 AND (
@@ -1074,7 +1064,7 @@
                         <cfif Len(bodyOfWaterId)>
                             <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
                             <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
-                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(8000)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
                         </cfif>
                     </cfloop>
                 )
@@ -1106,10 +1096,8 @@
             FROM ST_Toxicology
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
-                AND CONVERT(char(10), Date, 126) BETWEEN 
-                    <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
-                    AND 
-                    <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
+                AND Date >= <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
+                AND Date < DATEADD(day, 1, <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">)
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
                 AND (
@@ -1119,7 +1107,7 @@
                         <cfif Len(bodyOfWaterId)>
                             <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
                             <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
-                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(8000)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
                         </cfif>
                     </cfloop>
                 )
@@ -1162,10 +1150,8 @@
             FROM ST_Ancillary_Diagnostics 
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
-                AND CONVERT(char(10), Date, 126) BETWEEN 
-                    <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
-                    AND 
-                    <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
+                AND Date >= <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
+                AND Date < DATEADD(day, 1, <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">)
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
                 AND (
@@ -1175,7 +1161,7 @@
                         <cfif Len(bodyOfWaterId)>
                             <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
                             <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
-                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(8000)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
                         </cfif>
                     </cfloop>
                 )
@@ -1218,10 +1204,8 @@
             FROM ST_SampleArchive
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
-                AND CONVERT(char(10), Date, 126) BETWEEN 
-                    <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
-                    AND 
-                    <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
+                AND Date >= <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
+                AND Date < DATEADD(day, 1, <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">)
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
                 AND (
@@ -1231,7 +1215,7 @@
                         <cfif Len(bodyOfWaterId)>
                             <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
                             <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
-                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(8000)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
                         </cfif>
                     </cfloop>
                 )
@@ -1274,10 +1258,8 @@
             FROM ST_Morphometrics
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
-                AND CONVERT(char(10), Date, 126) BETWEEN 
-                    <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
-                    AND 
-                    <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
+                AND Date >= <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
+                AND Date < DATEADD(day, 1, <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">)
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
                 AND (
@@ -1287,7 +1269,7 @@
                         <cfif Len(bodyOfWaterId)>
                             <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
                             <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
-                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(8000)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
                         </cfif>
                     </cfloop>
                 )
@@ -1324,10 +1306,8 @@
 
             WHERE 1=1
             <cfif isdefined("form.startDate") AND form.startDate NEQ "" AND isdefined("form.endDate") AND form.endDate NEQ "">
-                AND CONVERT(char(10), Date, 126) BETWEEN 
-                    <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
-                    AND 
-                    <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">
+                AND Date >= <cfqueryparam value="#form.startDate#" cfsqltype="cf_sql_date">
+                AND Date < DATEADD(day, 1, <cfqueryparam value="#form.endDate#" cfsqltype="cf_sql_date">)
             </cfif>
             <cfif isdefined("BodyOfWaterList") and BodyOfWaterList neq "">
                 AND (
@@ -1337,7 +1317,7 @@
                         <cfif Len(bodyOfWaterId)>
                             <cfset bodyOfWaterFilterIndex = bodyOfWaterFilterIndex + 1>
                             <cfif bodyOfWaterFilterIndex GT 1> OR </cfif>
-                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(MAX)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
+                            (',' + REPLACE(COALESCE(CAST(BodyOfWater AS VARCHAR(8000)), ''), ' ', '') + ',') LIKE <cfqueryparam value="%,#bodyOfWaterId#,%" cfsqltype="CF_SQL_VARCHAR">
                         </cfif>
                     </cfloop>
                 )
