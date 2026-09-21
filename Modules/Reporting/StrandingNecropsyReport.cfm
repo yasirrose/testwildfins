@@ -7,7 +7,130 @@
     <cfquery name="lesionRegion" datasource="#variables.dsn#">
         SELECT * from TLU_Regions
     </cfquery>
-    <cfif isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge')>
+    <cfset pg = 1>
+    <cfif isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge') or (isdefined('FORM.exportAll') and FORM.exportAll eq "1")>
+        <cfscript>
+            function buildStrandingReportPagination(totalRows, rowsPerPage, currentRecordCount, requestedPage) {
+                var paginationStruct = StructNew();
+                var totalCount = val(arguments.totalRows);
+                var pageNumber = 1;
+                var maxPagesBefore = 3;
+                var maxPagesAfter = 3;
+                var maxPages = maxPagesBefore + maxPagesAfter + 1;
+                var startIndex = 1;
+                var endIndex = 0;
+                var displayLinks = ArrayNew(1);
+                var pageObj = StructNew();
+                var i = 1;
+
+                if(isNumeric(arguments.requestedPage) AND val(arguments.requestedPage) GT 0)
+                {
+                    pageNumber = val(arguments.requestedPage);
+                }
+
+                paginationStruct["numberOfPages"] = Ceiling(totalCount / arguments.rowsPerPage);
+                if(paginationStruct["numberOfPages"] GT 0 AND pageNumber GT paginationStruct["numberOfPages"])
+                {
+                    pageNumber = paginationStruct["numberOfPages"];
+                }
+                if(pageNumber LT 1)
+                {
+                    pageNumber = 1;
+                }
+
+                if(totalCount == 0)
+                {
+                    paginationStruct["startCount"] = 1;
+                }
+                else
+                {
+                    paginationStruct["startCount"] = (((pageNumber - 1) * arguments.rowsPerPage) + 1);
+                }
+                paginationStruct["endCount"] = ((pageNumber - 1) * arguments.rowsPerPage) + arguments.currentRecordCount;
+
+                if(pageNumber == 1)
+                {
+                    if(totalCount GTE arguments.rowsPerPage)
+                    {
+                        paginationStruct["nextCount"] = arguments.currentRecordCount;
+                    }
+                    else
+                    {
+                        paginationStruct["nextCount"] = totalCount;
+                    }
+                }
+                else
+                {
+                    if(totalCount LT paginationStruct["startCount"] + arguments.rowsPerPage)
+                    {
+                        paginationStruct["nextCount"] = totalCount;
+                    }
+                    else
+                    {
+                        paginationStruct["nextCount"] = (((pageNumber - 1) * arguments.rowsPerPage) + arguments.rowsPerPage);
+                    }
+                }
+
+                paginationStruct["totalCount"] = totalCount;
+                paginationStruct["pageNumber"] = pageNumber;
+                if(pageNumber LT paginationStruct["numberOfPages"])
+                {
+                    paginationStruct["nextLink"] = pageNumber + 1;
+                }
+                if(pageNumber LTE paginationStruct["numberOfPages"] AND pageNumber GT 1)
+                {
+                    paginationStruct["previousLink"] = pageNumber - 1;
+                }
+
+                endIndex = paginationStruct["numberOfPages"];
+                if(paginationStruct["numberOfPages"] GT maxPages)
+                {
+                    startIndex = pageNumber - maxPagesBefore;
+                    endIndex = pageNumber + maxPagesAfter;
+                    if(startIndex LT 1)
+                    {
+                        startIndex = 1;
+                        endIndex = (startIndex + maxPages) - 1;
+                    }
+                    if(endIndex GT paginationStruct["numberOfPages"])
+                    {
+                        startIndex = paginationStruct["numberOfPages"] - maxPages;
+                        endIndex = paginationStruct["numberOfPages"];
+                    }
+                }
+
+                if(endIndex GT 1)
+                {
+                    for(i = startIndex; i <= endIndex; i++)
+                    {
+                        pageObj = StructNew();
+                        pageObj["pageNumber"] = i;
+                        pageObj["pageLink"] = i;
+                        pageObj["isCurrentPage"] = (pageNumber EQ i);
+                        ArrayAppend(displayLinks, pageObj);
+                    }
+                    paginationStruct["displayLinks"] = displayLinks;
+                }
+
+                return paginationStruct;
+            }
+
+            rowsPerPage = 100;
+            currentRecordCount = 100;
+            if(isDefined('form.btnSearchSightings'))
+            {
+                requestedPage = 1;
+            }
+            else if(isDefined('form.pge') AND isNumeric(form.pge) AND val(form.pge) GT 0)
+            {
+                requestedPage = val(form.pge);
+            }
+            else
+            {
+                requestedPage = 1;
+            }
+            pg = requestedPage;
+        </cfscript>
         
         <cfset blueBoxColumns = ""> 
 
@@ -1490,7 +1613,14 @@
             <div class="row">
                 <div class="col-md-12">
                     <cfoutput>
-                        <form action="" name="searchAllReports" id="searchAllReports" method="post">
+                        <form action="#CGI.SCRIPT_NAME#?#CGI.QUERY_STRING#" name="searchAllReports" id="searchAllReports" method="post">
+                            <input type="hidden" name="pge" id="pge" value="<cfif isDefined('pg')>#pg#<cfelseif isDefined('form.pge')>#form.pge#<cfelse>1</cfif>">
+                            <input type="hidden" name="is_pagination_click" id="is_pagination_click" value="0">
+                            <input type="hidden" name="exportAll" id="exportAll" value="0">
+                            <input type="hidden" name="exportFormat" id="exportFormat" value="">
+                            <input type="hidden" name="sort_col" id="sort_col" value="<cfif isDefined('form.sort_col') and isNumeric(form.sort_col)>#val(form.sort_col)#<cfelse>0</cfif>">
+                            <input type="hidden" name="sort_dir" id="sort_dir" value="<cfif isDefined('form.sort_dir') and LCase(Trim(form.sort_dir)) eq 'desc'>desc<cfelse>asc</cfif>">
+                            <input type="hidden" name="sort_name" id="sort_name" value="<cfif isDefined('form.sort_name') and len(trim(form.sort_name))>#trim(form.sort_name)#<cfelse>Fnumber</cfif>">
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label class="col-lg-4 col-md-4 col-sm-12 control-label">Date Range</label>
@@ -1952,13 +2082,13 @@
             </div>
         </div>
         <hr>
-        <cfif isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge')>
+        <cfif isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge') or (isdefined('FORM.exportAll') and FORM.exportAll eq "1")>
             <!--- <cfdump var="test123" abort="true"> --->
         
         
         <!--- <cfif #qFiltered.CetaceanSpeciesName# neq '' > --->
 
-            <div class="section-container section-with-top-border"> 
+            <div id="report-results" class="section-container section-with-top-border"> 
                 <div class="">
                     <cfif allCountt.recordCount neq 0>
                         <div class="row">
@@ -2034,7 +2164,114 @@
                         <cfset allCounttGrouped = allCountt>
                     </cfif>
 
-                    <table id="allReport" class="table table-bordered table-hover" style="margin-left: initial;">
+                    <cfif allCounttGrouped.recordCount NEQ 0>
+                        <cfset activeSortCol = 0>
+                        <cfset activeSortDir = "asc">
+                        <cfset activeSortName = "Fnumber">
+
+                        <cfif isDefined("form.sort_dir") AND LCase(Trim(form.sort_dir)) EQ "desc">
+                            <cfset activeSortDir = "desc">
+                        </cfif>
+                        <cfif isDefined("form.sort_col") AND isNumeric(form.sort_col)>
+                            <cfset activeSortCol = val(form.sort_col)>
+                        </cfif>
+                        <cfif isDefined("form.sort_name") AND Len(Trim(form.sort_name))>
+                            <cfset activeSortName = Trim(form.sort_name)>
+                        </cfif>
+
+                        <cfset targetSortCol = "Fnumber">
+                        <cfif activeSortCol EQ 1 OR LCase(activeSortName) EQ "date">
+                            <cfset targetSortCol = "Date">
+                        <cfelseif activeSortCol EQ 2 OR LCase(activeSortName) EQ "sourcetable" OR LCase(activeSortName) EQ "tab name">
+                            <cfset targetSortCol = "SourceTable">
+                        <cfelse>
+                            <cfloop list="#allCounttGrouped.columnList#" index="chkCol">
+                                <cfif LCase(chkCol) EQ LCase(activeSortName)>
+                                    <cfset targetSortCol = chkCol>
+                                    <cfbreak>
+                                </cfif>
+                            </cfloop>
+                        </cfif>
+                        <cfset targetSortDir = UCase(activeSortDir)>
+
+                        <cfif allCounttGrouped.recordCount GT 1>
+                            <cftry>
+                                <cfquery dbtype="query" name="allCounttGroupedSorted">
+                                    SELECT *
+                                    FROM allCounttGrouped
+                                    ORDER BY #targetSortCol# #targetSortDir#
+                                </cfquery>
+                                <cfset allCounttGrouped = allCounttGroupedSorted>
+                                <cfcatch type="any">
+                                </cfcatch>
+                            </cftry>
+                        </cfif>
+
+                        <cfscript>
+                            paginate = buildStrandingReportPagination(allCounttGrouped.recordCount, rowsPerPage, currentRecordCount, requestedPage);
+                            pg = paginate.pageNumber;
+                        </cfscript>
+                        <cfset isExport = structKeyExists(form, "exportAll") AND form.exportAll eq "1">
+                        <cfset isRawTableExport = isExport AND structKeyExists(form, "exportFormat") AND form.exportFormat eq "raw_table">
+                        <cfif isExport>
+                            <cfcontent reset="true">
+                            <cfif isRawTableExport>
+                                <cfcontent type="text/html; charset=utf-8">
+                            <cfelse>
+                                <cfheader name="Content-Disposition" value="attachment; filename=StrandingNecropsyReport_#DateFormat(Now(), 'yyyy-mm-dd')#.xls">
+                                <cfcontent type="application/vnd.ms-excel">
+                                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                                <head>
+                                    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+                                    <!--[if gte mso 9]>
+                                    <xml>
+                                        <x:ExcelWorkbook>
+                                            <x:ExcelWorksheets>
+                                                <x:ExcelWorksheet>
+                                                    <x:Name>Stranding & Necropsy</x:Name>
+                                                    <x:WorksheetOptions>
+                                                        <x:DisplayGridlines/>
+                                                    </x:WorksheetOptions>
+                                                </x:ExcelWorksheet>
+                                            </x:ExcelWorksheets>
+                                        </x:ExcelWorkbook>
+                                    </xml>
+                                    <![endif]-->
+                                    <style>
+                                        br { mso-data-placement: same-cell; }
+                                        table { border-collapse: collapse; }
+                                        th {
+                                            background-color: ##2b3643;
+                                            color: ##ffffff;
+                                            font-weight: bold;
+                                            border: 0.5pt solid ##000000;
+                                            text-align: left;
+                                            font-family: Calibri, Arial, sans-serif;
+                                            font-size: 11pt;
+                                            padding: 4px 8px;
+                                        }
+                                        td {
+                                            border: 0.5pt solid ##d3d3d3;
+                                            mso-number-format: "\@";
+                                            text-align: left;
+                                            vertical-align: top;
+                                            font-family: Calibri, Arial, sans-serif;
+                                            font-size: 11pt;
+                                            padding: 4px 8px;
+                                        }
+                                    </style>
+                                </head>
+                                <body>
+                            </cfif>
+                        </cfif>
+                        <cfif isExport>
+                            <cfset exportStartRow = 1>
+                            <cfset exportMaxRows = allCounttGrouped.recordCount>
+                        <cfelse>
+                            <cfset exportStartRow = paginate.startCount>
+                            <cfset exportMaxRows = rowsPerPage>
+                        </cfif>
+                    <table <cfif NOT isExport>id="allReport" class="table table-bordered table-hover" style="margin-left: initial;"<cfelse>border="1"</cfif>>
                         <thead>
                             <tr class="inverse">
                                 <th>Fnumber</th> 
@@ -2277,7 +2514,7 @@
                         </thead>
                         <tbody>
                             <!--- <cfdump var="#allCountt#" abort="true"> --->
-                            <cfoutput query="allCounttGrouped">
+                            <cfoutput query="allCounttGrouped" startRow="#exportStartRow#" maxRows="#exportMaxRows#">
                                 <tr>                            
                                     <td>#Fnumber#</td> 
                                     <td>#Date#</td> 
@@ -2677,18 +2914,58 @@
                             </cfoutput>
                         </tbody>
                     </table>
+                    <cfif structKeyExists(form, "exportAll") AND form.exportAll eq "1">
+                        <cfif NOT isRawTableExport>
+                            </body>
+                            </html>
+                        </cfif>
+                        <cfabort>
+                    </cfif>
                     
-                   
+                    <div class="row">
+                        <cfscript>
+                            if(not StructIsEmpty(paginate)){
+                                writeOutput('<nav aria-label="Page" style="text-align: right;"><ul class="pagination">');
+                                if (StructKeyExists(paginate,"previousLink")){
+                                    writeOutput('<li class="page-item"><a href="javascript:void(0);" onclick="paginate(#paginate.previousLink#); return false;" data-report-page="#paginate.previousLink#" class="left stranding-report-page-link" style="cursor: pointer;">&laquo; Previous</a></li>');
+                                }
+                                if (StructKeyExists(paginate,"displayLinks")){
+                                    for ( i=1; i<=#ArrayLen(paginate.displayLinks)#;i++){
+                                        thePage = paginate.displayLinks[i] ;
+                                        if(thePage.isCurrentPage)
+                                            writeOutput('<li class="page-item active"><a href="javascript:void(0);" class="pagingNumber" >#thePage.pageNumber# </a></li>');
+                                        else
+                                            writeOutput('<li class="page-item"><a href="javascript:void(0);" onclick="paginate(#thePage.pageNumber#); return false;" data-report-page="#thePage.pageNumber#" class="pagingNumber stranding-report-page-link" style="cursor: pointer;" title="Go to page #thePage.pageNumber#" value="#thePage.pageNumber#" >#thePage.pageNumber#</a></li>');
+                                    }
+                                }
+                                if(StructKeyExists(paginate,"nextLink")){
+                                    writeOutput('<li class="page-item"><a href="javascript:void(0);" onclick="paginate(#paginate.nextLink#); return false;" data-report-page="#paginate.nextLink#" class="left stranding-report-page-link" style="cursor: pointer;">Next &raquo;</a></li>');
+                                }
+                                writeOutput('</ul></nav>');
+                                writeOutput('<p>Displaying #paginate.startCount# - #paginate.nextCount# records from #paginate.totalCount#</p>');
+                            }
+                        </cfscript>
+                    </div>
+                <cfelse>
+                    <cfif structKeyExists(form, "exportAll") AND form.exportAll eq "1">
+                        <cfcontent reset="true">
+                        <cfif structKeyExists(form, "exportFormat") AND form.exportFormat eq "raw_table">
+                            <cfcontent type="text/html; charset=utf-8">
+                            <p>No records found.</p>
+                        <cfelse>
+                            <cfheader name="Content-Disposition" value="attachment; filename=StrandingNecropsyReport_#DateFormat(Now(), 'yyyy-mm-dd')#.xls">
+                            <cfcontent type="application/vnd.ms-excel">
+                            <p>No records found.</p>
+                        </cfif>
+                        <cfabort>
+                    </cfif>
+                    <div class="alert alert-danger">
+                        <strong>Alert!</strong> No record found.
+                    </div>
+                </cfif>
                 </div>
       
             </div>
-
-
-            <!--- <cfelse>
-                <div class="alert alert-danger">
-                    <strong>Alert!</strong> No record found.
-                </div>
-            </cfif> --->
 
         </cfif>
         <div class="footer" id="footer">
@@ -2717,3 +2994,291 @@
         flex-wrap: nowrap !important;
     }
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+    try { localStorage.removeItem('stranding_necropsy_report_in_pge'); } catch(e) {}
+
+    function scrollToReportResults(smooth) {
+        var $target = $('#report-results');
+        if (!$target.length) {
+            $target = $('#allReport');
+        }
+        if (!$target.length) return;
+
+        var headerHeight = $('#header').outerHeight() || 60;
+        var targetTop = $target.offset().top - headerHeight - 15;
+        if (targetTop < 0) targetTop = 0;
+
+        if (smooth) {
+            $('html, body').stop().animate({
+                scrollTop: targetTop
+            }, 300);
+        } else {
+            window.scrollTo(0, targetTop);
+        }
+    }
+
+    function paginate(value){
+        var pageNumber = parseInt(value, 10);
+        var form = document.getElementById('searchAllReports');
+        var pageInput = document.getElementById('pge');
+
+        if (isNaN(pageNumber) || pageNumber < 1 || !form || !pageInput) {
+            return false;
+        }
+
+        updateSortInputs();
+        pageInput.value = pageNumber;
+        var isPaginationInput = document.getElementById('is_pagination_click');
+        if (isPaginationInput) {
+            isPaginationInput.value = '1';
+        }
+
+        try {
+            sessionStorage.setItem('stranding_report_scroll_to_results', '1');
+        } catch(e) {}
+
+        if (typeof saveFormState === 'function') {
+            try { saveFormState(); } catch(e) {}
+        }
+
+        if (form.action) {
+            form.action = form.action.split('#')[0] + '#report-results';
+        }
+
+        form.submit();
+        return false;
+    }
+
+    function updateSortInputs() {
+        if (!window.jQuery) return;
+        var $ = window.jQuery;
+        var $table = $('#allReport');
+        if (!$table.length || !$.fn.DataTable || !$.fn.DataTable.isDataTable('#allReport')) return;
+
+        var dt = $table.DataTable();
+        var order = dt.order();
+        if (order && order.length && order[0].length >= 2) {
+            var colIdx = parseInt(order[0][0], 10) || 0;
+            var colDir = order[0][1] === 'desc' ? 'desc' : 'asc';
+            var $th = $table.find('thead th').eq(colIdx);
+            var headerText = $th.text().trim();
+            var colName = headerText;
+            if (headerText === 'Tab Name') {
+                colName = 'SourceTable';
+            } else if (headerText === 'Fnumber') {
+                colName = 'Fnumber';
+            } else if (headerText === 'Date') {
+                colName = 'Date';
+            }
+
+            $('#sort_col').val(colIdx);
+            $('#sort_dir').val(colDir);
+            $('#sort_name').val(colName);
+        }
+    }
+
+    function excel(){
+        var $ = window.jQuery;
+        var form = document.getElementById('searchAllReports');
+        if (!form) return;
+
+        updateSortInputs();
+
+        var $btn = $('button[name="excelExport"]');
+        var originalBtnHtml = $btn.length ? $btn.html() : '';
+        if ($btn.length) {
+            $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Exporting...');
+        }
+
+        function restoreButton() {
+            if ($btn.length) {
+                $btn.prop('disabled', false).html(originalBtnHtml);
+            }
+        }
+
+        function doXlsxExport() {
+            var $form = $(form);
+            var formData = $form.serializeArray();
+            formData.push({ name: 'exportAll', value: '1' });
+            formData.push({ name: 'exportFormat', value: 'raw_table' });
+
+            var url = form.action ? form.action.split('#')[0] : window.location.href.split('#')[0];
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: $.param(formData),
+                dataType: 'html',
+                success: function(responseHtml) {
+                    try {
+                        if (!responseHtml || responseHtml.indexOf('<table') === -1) {
+                            alert('No records found to export.');
+                            restoreButton();
+                            return;
+                        }
+
+                        var wb = XLSX.read(responseHtml, { type: 'string', raw: true });
+                        if (!wb || !wb.SheetNames || !wb.SheetNames.length) {
+                            alert('No records found to export.');
+                            restoreButton();
+                            return;
+                        }
+
+                        var firstSheetName = wb.SheetNames[0];
+                        var ws = wb.Sheets[firstSheetName];
+                        wb.Sheets['Stranding & Necropsy'] = ws;
+                        if (firstSheetName !== 'Stranding & Necropsy') {
+                            delete wb.Sheets[firstSheetName];
+                        }
+                        wb.SheetNames[0] = 'Stranding & Necropsy';
+
+                        if (ws && ws['!ref']) {
+                            var range = XLSX.utils.decode_range(ws['!ref']);
+                            var colWidths = [];
+                            for (var C = range.s.c; C <= range.e.c; ++C) {
+                                var maxLen = 10;
+                                for (var R = range.s.r; R <= range.e.r; ++R) {
+                                    var cell = ws[XLSX.utils.encode_cell({ r: R, c: C })];
+                                    if (cell && cell.v !== undefined && cell.v !== null) {
+                                        var len = String(cell.v).length;
+                                        if (len > maxLen) maxLen = Math.min(len, 50);
+                                    }
+                                }
+                                colWidths.push({ wch: maxLen + 2 });
+                            }
+                            ws['!cols'] = colWidths;
+                        }
+
+                        var today = new Date();
+                        var yyyy = today.getFullYear();
+                        var mm = String(today.getMonth() + 1);
+                        if (mm.length < 2) mm = '0' + mm;
+                        var dd = String(today.getDate());
+                        if (dd.length < 2) dd = '0' + dd;
+                        var fileName = 'StrandingNecropsyReport_' + yyyy + '-' + mm + '-' + dd + '.xlsx';
+
+                        XLSX.writeFile(wb, fileName);
+                    } catch(err) {
+                        console.error('XLSX export error:', err);
+                        fallbackIframeExport();
+                    } finally {
+                        restoreButton();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Export request failed:', error);
+                    fallbackIframeExport();
+                    restoreButton();
+                }
+            });
+        }
+
+        if (typeof XLSX !== 'undefined') {
+            doXlsxExport();
+        } else {
+            var script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+            script.onload = function() {
+                doXlsxExport();
+            };
+            script.onerror = function() {
+                fallbackIframeExport();
+                restoreButton();
+            };
+            document.head.appendChild(script);
+        }
+    }
+
+    function fallbackIframeExport() {
+        var form = document.getElementById('searchAllReports');
+        if (!form) return;
+
+        var exportInput = document.getElementById('exportAll');
+        if (!exportInput) {
+            exportInput = document.createElement('input');
+            exportInput.type = 'hidden';
+            exportInput.name = 'exportAll';
+            exportInput.id = 'exportAll';
+            form.appendChild(exportInput);
+        }
+
+        var iframe = document.getElementById('export_iframe');
+        if (!iframe) {
+            iframe = document.createElement('iframe');
+            iframe.id = 'export_iframe';
+            iframe.name = 'export_iframe';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+        }
+
+        var originalTarget = form.target || '';
+        var originalAction = form.action || '';
+
+        exportInput.value = '1';
+        form.target = 'export_iframe';
+        form.action = form.action.split('#')[0];
+
+        form.submit();
+
+        setTimeout(function() {
+            form.target = originalTarget;
+            form.action = originalAction;
+            exportInput.value = '0';
+        }, 1000);
+    }
+
+    function initStrandingInlineScript() {
+        var $ = window.jQuery;
+        if (!$ || !$.fn) {
+            setTimeout(initStrandingInlineScript, 50);
+            return;
+        }
+        $(function() {
+            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#allReport')) {
+                var dt = $('#allReport').DataTable();
+                var initSortCol = parseInt($('#sort_col').val(), 10) || 0;
+                var initSortDir = ($('#sort_dir').val() === 'desc') ? 'desc' : 'asc';
+                dt.order([[initSortCol, initSortDir]]).draw(false);
+                $('#allReport').off('order.dt.exportSync').on('order.dt.exportSync', function() {
+                    updateSortInputs();
+                });
+            }
+
+            var shouldScroll = false;
+            try {
+                if (sessionStorage.getItem('stranding_report_scroll_to_results') === '1') {
+                    shouldScroll = true;
+                    sessionStorage.removeItem('stranding_report_scroll_to_results');
+                }
+            } catch(e) {}
+
+            <cfif isDefined('FORM.pge') AND NOT isDefined('FORM.btnSearchSightings')>
+                shouldScroll = true;
+            </cfif>
+            <cfif isDefined('FORM.is_pagination_click') AND FORM.is_pagination_click EQ "1">
+                shouldScroll = true;
+            </cfif>
+
+            if (shouldScroll) {
+                if ('scrollRestoration' in history) {
+                    try { history.scrollRestoration = 'manual'; } catch(e) {}
+                }
+                scrollToReportResults(false);
+                setTimeout(function() {
+                    scrollToReportResults(true);
+                }, 150);
+                setTimeout(function() {
+                    scrollToReportResults(false);
+                }, 400);
+            }
+        });
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        initStrandingInlineScript();
+    } else {
+        document.addEventListener('DOMContentLoaded', initStrandingInlineScript);
+    }
+</script>
