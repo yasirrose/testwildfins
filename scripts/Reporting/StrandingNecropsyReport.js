@@ -64,7 +64,7 @@ $(document).ready(function () {
 	});
 
 	$reportForm.on('change', 'select, input, textarea', function () {
-		if (this.name !== 'pge' && this.name !== 'is_pagination_click' && this.name !== 'exportAll') {
+		if (this.name !== 'pge' && this.name !== 'is_pagination_click' && this.name !== 'exportAll' && this.name !== 'exportFormat') {
 			resetReportPage();
 		}
 	});
@@ -203,16 +203,29 @@ function excel(){
 
 	function doXlsxExport() {
 		var $form = $(form);
-		var formData = $form.serializeArray();
-		formData.push({ name: 'exportAll', value: '1' });
-		formData.push({ name: 'exportFormat', value: 'raw_table' });
+		var $exportAll = $('#exportAll');
+		if (!$exportAll.length) {
+			$exportAll = $('<input type="hidden" name="exportAll" id="exportAll" value="0">').appendTo(form);
+		}
+		var $exportFormat = $('#exportFormat');
+		if (!$exportFormat.length) {
+			$exportFormat = $('<input type="hidden" name="exportFormat" id="exportFormat" value="">').appendTo(form);
+		}
+
+		$exportAll.val('1');
+		$exportFormat.val('raw_table');
+
+		var serializedData = $form.serialize();
+
+		$exportAll.val('0');
+		$exportFormat.val('');
 
 		var url = form.action ? form.action.split('#')[0] : window.location.href.split('#')[0];
 
 		$.ajax({
 			url: url,
 			type: 'POST',
-			data: $.param(formData),
+			data: serializedData,
 			dataType: 'html',
 			success: function(responseHtml) {
 				try {
@@ -307,6 +320,11 @@ function fallbackIframeExport() {
 		form.appendChild(exportInput);
 	}
 
+	var formatInput = document.getElementById('exportFormat');
+	if (formatInput) {
+		formatInput.value = '';
+	}
+
 	var iframe = document.getElementById('export_iframe');
 	if (!iframe) {
 		iframe = document.createElement('iframe');
@@ -329,6 +347,9 @@ function fallbackIframeExport() {
 		form.target = originalTarget;
 		form.action = originalAction;
 		exportInput.value = '0';
+		if (formatInput) {
+			formatInput.value = '';
+		}
 	}, 1000);
 }
 function clearAll(){

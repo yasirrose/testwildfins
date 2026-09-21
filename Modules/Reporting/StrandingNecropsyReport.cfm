@@ -8,7 +8,7 @@
         SELECT * from TLU_Regions
     </cfquery>
     <cfset pg = 1>
-    <cfif isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge') or (isdefined('FORM.exportAll') and FORM.exportAll eq "1")>
+    <cfif isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge') or (isdefined('FORM.exportAll') and (FORM.exportAll eq "1" or ListFind(FORM.exportAll, "1") GT 0))>
         <cfscript>
             function buildStrandingReportPagination(totalRows, rowsPerPage, currentRecordCount, requestedPage) {
                 var paginationStruct = StructNew();
@@ -2081,8 +2081,9 @@
                 </div>
             </div>
         </div>
-        <hr>
-        <cfif isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge') or (isdefined('FORM.exportAll') and FORM.exportAll eq "1")>
+        <cfif isdefined('FORM.btnSearchSightings') or isdefined('FORM.pge') or (isdefined('FORM.exportAll') and (FORM.exportAll eq "1" or ListFind(FORM.exportAll, "1") GT 0))>
+            <cfset isExport = structKeyExists(form, "exportAll") AND (form.exportAll eq "1" or ListFind(form.exportAll, "1") GT 0)>
+            <cfset isRawTableExport = isExport AND structKeyExists(form, "exportFormat") AND (form.exportFormat eq "raw_table" or ListFind(form.exportFormat, "raw_table") GT 0)>
             <!--- <cfdump var="test123" abort="true"> --->
         
         
@@ -2211,8 +2212,8 @@
                             paginate = buildStrandingReportPagination(allCounttGrouped.recordCount, rowsPerPage, currentRecordCount, requestedPage);
                             pg = paginate.pageNumber;
                         </cfscript>
-                        <cfset isExport = structKeyExists(form, "exportAll") AND form.exportAll eq "1">
-                        <cfset isRawTableExport = isExport AND structKeyExists(form, "exportFormat") AND form.exportFormat eq "raw_table">
+                        <cfset isExport = structKeyExists(form, "exportAll") AND (form.exportAll eq "1" or ListFind(form.exportAll, "1") GT 0)>
+                        <cfset isRawTableExport = isExport AND structKeyExists(form, "exportFormat") AND (form.exportFormat eq "raw_table" or ListFind(form.exportFormat, "raw_table") GT 0)>
                         <cfif isExport>
                             <cfcontent reset="true">
                             <cfif isRawTableExport>
@@ -2914,7 +2915,7 @@
                             </cfoutput>
                         </tbody>
                     </table>
-                    <cfif structKeyExists(form, "exportAll") AND form.exportAll eq "1">
+                    <cfif isExport>
                         <cfif NOT isRawTableExport>
                             </body>
                             </html>
@@ -2947,9 +2948,9 @@
                         </cfscript>
                     </div>
                 <cfelse>
-                    <cfif structKeyExists(form, "exportAll") AND form.exportAll eq "1">
+                    <cfif isExport>
                         <cfcontent reset="true">
-                        <cfif structKeyExists(form, "exportFormat") AND form.exportFormat eq "raw_table">
+                        <cfif isRawTableExport>
                             <cfcontent type="text/html; charset=utf-8">
                             <p>No records found.</p>
                         <cfelse>
@@ -3100,16 +3101,29 @@
 
         function doXlsxExport() {
             var $form = $(form);
-            var formData = $form.serializeArray();
-            formData.push({ name: 'exportAll', value: '1' });
-            formData.push({ name: 'exportFormat', value: 'raw_table' });
+            var $exportAll = $('#exportAll');
+            if (!$exportAll.length) {
+                $exportAll = $('<input type="hidden" name="exportAll" id="exportAll" value="0">').appendTo(form);
+            }
+            var $exportFormat = $('#exportFormat');
+            if (!$exportFormat.length) {
+                $exportFormat = $('<input type="hidden" name="exportFormat" id="exportFormat" value="">').appendTo(form);
+            }
+
+            $exportAll.val('1');
+            $exportFormat.val('raw_table');
+
+            var serializedData = $form.serialize();
+
+            $exportAll.val('0');
+            $exportFormat.val('');
 
             var url = form.action ? form.action.split('#')[0] : window.location.href.split('#')[0];
 
             $.ajax({
                 url: url,
                 type: 'POST',
-                data: $.param(formData),
+                data: serializedData,
                 dataType: 'html',
                 success: function(responseHtml) {
                     try {
@@ -3204,6 +3218,11 @@
             form.appendChild(exportInput);
         }
 
+        var formatInput = document.getElementById('exportFormat');
+        if (formatInput) {
+            formatInput.value = '';
+        }
+
         var iframe = document.getElementById('export_iframe');
         if (!iframe) {
             iframe = document.createElement('iframe');
@@ -3226,6 +3245,9 @@
             form.target = originalTarget;
             form.action = originalAction;
             exportInput.value = '0';
+            if (formatInput) {
+                formatInput.value = '';
+            }
         }, 1000);
     }
 
