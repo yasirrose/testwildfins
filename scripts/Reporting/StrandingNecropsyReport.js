@@ -361,7 +361,14 @@ function clearAll(){
 	}
 
 	$form.find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
-	$form.find('input[type="text"], input[type="number"], input[type="hidden"], textarea').val('');
+	$form.find('input[type="text"], input[type="number"], textarea').val('');
+	$('#pge').val(1);
+	$('#is_pagination_click').val('0');
+	$('#exportAll').val('0');
+	$('#exportFormat').val('');
+	$('#sort_col').val('0');
+	$('#sort_dir').val('asc');
+	$('#sort_name').val('Fnumber');
 	$form.find('select').val(null);
 	triggerSelectUpdates($form.find('select'));
 }

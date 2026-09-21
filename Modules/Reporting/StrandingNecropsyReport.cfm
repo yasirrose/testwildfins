@@ -1626,7 +1626,7 @@
                                     <label class="col-lg-4 col-md-4 col-sm-12 control-label">Date Range</label>
                                     <div class="input-wrap col-lg-8 col-md-8 col-sm-12">
                                         <div id="Date-range" class="input-group">
-                                            <input type="text"  class="form-control" name="date" id="date" placeholder="Select Date Range">
+                                            <input type="text"  class="form-control" name="date" id="date" placeholder="Select Date Range" value="<cfif isDefined('form.date')>#form.date#</cfif>">
                                             <span class="input-group-btn">
                                                 <button type="button" class="btn btn-primary"onclick="showdate()"><i class="fa fa-calendar"></i></button>
                                             </span>
@@ -3249,6 +3249,34 @@
                 formatInput.value = '';
             }
         }, 1000);
+    }
+
+    function clearAll(){
+        if (typeof removeSavedFormState === 'function') {
+            try { removeSavedFormState(); } catch(e) {}
+        }
+
+        var form = document.getElementById('searchAllReports');
+        if (!form) return;
+        var $ = window.jQuery;
+        if ($) {
+            var $form = $(form);
+            $form.find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
+            $form.find('input[type="text"], input[type="number"], textarea').val('');
+            $('#pge').val(1);
+            $('#is_pagination_click').val('0');
+            $('#exportAll').val('0');
+            $('#exportFormat').val('');
+            $('#sort_col').val('0');
+            $('#sort_dir').val('asc');
+            $('#sort_name').val('Fnumber');
+            $form.find('select').val(null);
+            if (typeof triggerSelectUpdates === 'function') {
+                triggerSelectUpdates($form.find('select'));
+            } else {
+                $form.find('select').trigger('change');
+            }
+        }
     }
 
     function initStrandingInlineScript() {
